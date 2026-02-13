@@ -76,6 +76,16 @@ const TEST_CASES: { query: string; expectedIds: string[]; description: string }[
     expectedIds: ["exp-dug-overview", "exp-dug-partnerships"],
     description: "Korean company query should detect DUG",
   },
+  {
+    query: "Tell me about your partnership negotiation experience",
+    expectedIds: ["narrative-partnership-expertise", "exp-dug-partnerships"],
+    description: "BD-focus query should retrieve partnership chunks",
+  },
+  {
+    query: "What RAG and AI tools have you built?",
+    expectedIds: ["exp-dug-ai-ops", "project-whiskey-rag"],
+    description: "AI-focus query should retrieve AI/RAG chunks",
+  },
 ];
 
 const BASE_PINNED_IDS = ["narrative-career-trajectory", "personal-summary"];

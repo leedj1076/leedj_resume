@@ -17,6 +17,8 @@ interface ResumeEntry {
   keywords: string[];
   token_count: number;
   depth?: string;
+  focus_tags?: string[];
+  is_core_strength?: boolean;
 }
 
 function buildEnrichedText(entry: ResumeEntry): string {
@@ -102,6 +104,8 @@ async function main() {
       skills: entry.skills,
       keywords: entry.keywords,
       depth: entry.depth ?? "surface",
+      focus_tags: entry.focus_tags ?? [],
+      is_core_strength: entry.is_core_strength ?? false,
       enrichedText: enrichedTexts[i],
     },
   }));

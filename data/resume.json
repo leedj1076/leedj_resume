@@ -24,7 +24,9 @@
       "industrial design"
     ],
     "token_count": 82,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development", "ai_llms", "leadership_strategy"],
+    "is_core_strength": true
   },
   {
     "chunk_id": "contact-info",
@@ -43,7 +45,9 @@
       "linkedin"
     ],
     "token_count": 40,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": [],
+    "is_core_strength": false
   },
   {
     "chunk_id": "skills-expertise",
@@ -87,7 +91,9 @@
       "technical literacy"
     ],
     "token_count": 95,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development", "ai_llms", "leadership_strategy", "full_stack"],
+    "is_core_strength": true
   },
   {
     "chunk_id": "languages-international",
@@ -114,7 +120,9 @@
       "Germany"
     ],
     "token_count": 68,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": [],
+    "is_core_strength": false
   },
   {
     "chunk_id": "edu-kaist-masters",
@@ -138,7 +146,9 @@
       "Daejeon"
     ],
     "token_count": 57,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": [],
+    "is_core_strength": false
   },
   {
     "chunk_id": "edu-kit-dual-degree",
@@ -163,7 +173,9 @@
       "Bavarian formula"
     ],
     "token_count": 64,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": [],
+    "is_core_strength": false
   },
   {
     "chunk_id": "edu-kaist-bachelors",
@@ -189,7 +201,9 @@
       "Daejeon"
     ],
     "token_count": 74,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": [],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-dug-overview",
@@ -217,7 +231,9 @@
       "Seoul"
     ],
     "token_count": 74,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development", "leadership_strategy"],
+    "is_core_strength": true
   },
   {
     "chunk_id": "exp-dug-partnerships",
@@ -246,7 +262,9 @@
       "flagship title"
     ],
     "token_count": 83,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-dug-revenue",
@@ -274,7 +292,9 @@
       "promotions"
     ],
     "token_count": 78,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-dug-apple-spatial",
@@ -303,7 +323,9 @@
       "VisionOS-native"
     ],
     "token_count": 95,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["full_stack"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-dug-ai-ops",
@@ -330,7 +352,9 @@
       "business operations"
     ],
     "token_count": 68,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["ai_llms"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-flint-overview",
@@ -356,7 +380,9 @@
       "Seoul"
     ],
     "token_count": 68,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development", "leadership_strategy", "ai_llms"],
+    "is_core_strength": true
   },
   {
     "chunk_id": "exp-flint-product-gtm",
@@ -383,7 +409,9 @@
       "iteration"
     ],
     "token_count": 97,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development", "leadership_strategy"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-flint-fundraising",
@@ -408,7 +436,9 @@
       "growth metrics"
     ],
     "token_count": 55,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-tmax-team-lead",
@@ -436,7 +466,9 @@
       "Seongnam"
     ],
     "token_count": 101,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["leadership_strategy", "full_stack"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-tmax-enterprise-clients",
@@ -464,7 +496,9 @@
       "Tier-1"
     ],
     "token_count": 72,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development", "full_stack"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-tmax-software-engineer",
@@ -490,7 +524,9 @@
       "data management"
     ],
     "token_count": 56,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["full_stack", "ai_llms"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "exp-kit-research",
@@ -518,7 +554,9 @@
       "Germany"
     ],
     "token_count": 70,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["full_stack"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "extracurricular-atrium",
@@ -544,7 +582,9 @@
       "student organization"
     ],
     "token_count": 76,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["leadership_strategy"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "honors-awards",
@@ -571,7 +611,9 @@
       "finalist"
     ],
     "token_count": 66,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": [],
+    "is_core_strength": false
   },
   {
     "chunk_id": "narrative-career-trajectory",
@@ -597,7 +639,9 @@
       "Devs United Games"
     ],
     "token_count": 106,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["leadership_strategy", "business_development"],
+    "is_core_strength": true
   },
   {
     "chunk_id": "narrative-partnership-expertise",
@@ -624,7 +668,9 @@
       "platform relationships"
     ],
     "token_count": 97,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["business_development"],
+    "is_core_strength": true
   },
   {
     "chunk_id": "story-meta-quest-plus-revenue",
@@ -652,7 +698,9 @@
       "data-driven pivot"
     ],
     "token_count": 120,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-apple-partnership-negotiation",
@@ -681,7 +729,9 @@
       "negotiation style"
     ],
     "token_count": 175,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-meta-funding-negotiation",
@@ -710,7 +760,9 @@
       "financial analysis"
     ],
     "token_count": 160,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-meta-game-concepts",
@@ -737,7 +789,9 @@
       "target demographics"
     ],
     "token_count": 90,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-google-android-xr-partnership",
@@ -765,7 +819,9 @@
       "cross-platform leverage"
     ],
     "token_count": 130,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-partnership-negotiation-philosophy",
@@ -794,7 +850,9 @@
       "Google"
     ],
     "token_count": 155,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-dug-cs-automation",
@@ -818,7 +876,9 @@
       "community management"
     ],
     "token_count": 65,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["ai_llms"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-whiskey-rag-personal",
@@ -848,7 +908,9 @@
       "schema tuning"
     ],
     "token_count": 90,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["ai_llms"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "project-whiskey-rag",
@@ -879,7 +941,9 @@
       "retrieval optimization"
     ],
     "token_count": 110,
-    "depth": "surface"
+    "depth": "surface",
+    "focus_tags": ["ai_llms"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-flint-problem-statement",
@@ -906,7 +970,9 @@
       "problem statement"
     ],
     "token_count": 135,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["leadership_strategy"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-flint-product-concept",
@@ -934,7 +1000,9 @@
       "workflow integration"
     ],
     "token_count": 145,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["ai_llms", "leadership_strategy"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-flint-validation-traction",
@@ -966,7 +1034,9 @@
       "product-market fit"
     ],
     "token_count": 165,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["leadership_strategy"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-flint-business-model-growth",
@@ -994,7 +1064,9 @@
       "network analysis"
     ],
     "token_count": 125,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development", "leadership_strategy"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-flint-gnn-technical",
@@ -1023,7 +1095,9 @@
       "adoption"
     ],
     "token_count": 155,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["ai_llms"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-tmax-database-tuning",
@@ -1054,7 +1128,9 @@
       "enterprise migration"
     ],
     "token_count": 125,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["full_stack"],
+    "is_core_strength": false
   },
   {
     "chunk_id": "story-tmax-samsung-dbms-monitoring",
@@ -1084,6 +1160,8 @@
       "feature prioritization"
     ],
     "token_count": 160,
-    "depth": "deep_dive"
+    "depth": "deep_dive",
+    "focus_tags": ["business_development", "full_stack"],
+    "is_core_strength": false
   }
 ]
