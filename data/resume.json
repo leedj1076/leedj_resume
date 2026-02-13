@@ -1,0 +1,1189 @@
+[
+  {
+    "chunk_id": "personal-summary",
+    "text": "Dong Jae Lee is a strategic business development professional with a multidisciplinary background in mechanical engineering, AI, and robotics. He has a proven record of leading cross-company PoC initiatives and global partnerships with Apple, Meta, and Google. He is skilled in translating frontier technologies—AI models, sensors, and robotics systems—into scalable commercial solutions. He is a former Co-Founder who combines a rigorous engineering background with Industrial Design principles to drive user-centric business strategies.",
+    "source_type": "resume",
+    "section": "summary",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "strategic planning",
+      "business development",
+      "partnership management",
+      "go-to-market strategy",
+      "AI solutions",
+      "cross-functional leadership"
+    ],
+    "keywords": [
+      "PoC",
+      "frontier technologies",
+      "scalable commercial solutions",
+      "co-founder",
+      "industrial design"
+    ],
+    "token_count": 82,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "contact-info",
+    "text": "Dong Jae Lee can be reached at phone number +82-10-2310-0776, email leedj.1076@gmail.com, and LinkedIn at https://www.linkedin.com/in/dongjae-lee/.",
+    "source_type": "resume",
+    "section": "summary",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [],
+    "keywords": [
+      "contact",
+      "phone",
+      "email",
+      "linkedin"
+    ],
+    "token_count": 40,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "skills-expertise",
+    "text": "Dong Jae Lee's core skills and expertise include: Strategic Planning, Partnership Management, Go-to-Market (GTM) Strategy, Business Development, Cross-functional Leadership, Investor Relations, Product Strategy, Competitive Analysis, Market Intelligence, and Operational Optimization. His technical literacy covers Big Data & Cloud Infrastructure (SaaS/PaaS models, Hadoop, Kubernetes), Generative AI (RAG Architecture, Stable Diffusion, Gemini workflows), Graph Neural Networks, Unity game engine, VisionOS, photogrammetry pipelines, and database management systems.",
+    "source_type": "resume",
+    "section": "skills",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "strategic planning",
+      "partnership management",
+      "GTM strategy",
+      "business development",
+      "cross-functional leadership",
+      "investor relations",
+      "product strategy",
+      "competitive analysis",
+      "market intelligence",
+      "operational optimization",
+      "big data",
+      "cloud infrastructure",
+      "SaaS",
+      "PaaS",
+      "Hadoop",
+      "Kubernetes",
+      "generative AI",
+      "RAG",
+      "stable diffusion",
+      "Gemini",
+      "graph neural networks",
+      "Unity",
+      "VisionOS",
+      "photogrammetry",
+      "DBMS"
+    ],
+    "keywords": [
+      "skills",
+      "expertise",
+      "technical literacy"
+    ],
+    "token_count": 95,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "languages-international",
+    "text": "Dong Jae Lee has bilingual fluency in Korean and English, and advanced German proficiency (TestDAF scores: 5/5/4/5). He has extensive international experience, having resided in the United States (1998-2000), Austria (2002-2008), and Germany (2016-2017). He is experienced in international collaboration, with academic and professional exposure across Korea, Germany, Austria, and the U.S.",
+    "source_type": "resume",
+    "section": "skills",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "Korean",
+      "English",
+      "German",
+      "international collaboration"
+    ],
+    "keywords": [
+      "bilingual",
+      "TestDAF",
+      "multilingual",
+      "languages",
+      "USA",
+      "Austria",
+      "Germany"
+    ],
+    "token_count": 68,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "edu-kaist-masters",
+    "text": "Dong Jae Lee earned a Master of Science in Mechanical Engineering from the Korea Advanced Institute of Science and Technology (KAIST) in Daejeon, Korea, from September 2015 to February 2018. He achieved a GPA of 3.76/4.3 and was a recipient of both the National Scholarship and BK21 Scholarship.",
+    "source_type": "resume",
+    "section": "education",
+    "company": "KAIST",
+    "role": "Master of Science",
+    "start_date": "2015-09",
+    "end_date": "2018-02",
+    "skills": [
+      "mechanical engineering",
+      "research"
+    ],
+    "keywords": [
+      "KAIST",
+      "masters",
+      "GPA 3.76",
+      "national scholarship",
+      "BK21",
+      "Daejeon"
+    ],
+    "token_count": 57,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "edu-kit-dual-degree",
+    "text": "Dong Jae Lee completed 65 ECTS towards a Master of Science in Mechanical Engineering at the Karlsruher Institut für Technologie (KIT) in Karlsruhe, Germany, from September 2016 to September 2017. This was a Dual Degree Program with KAIST. He achieved a GPA of 1.3 on the German scale, equivalent to 4.12/4.3 according to the Modified Bavarian formula.",
+    "source_type": "resume",
+    "section": "education",
+    "company": "KIT",
+    "role": "Dual Degree Program",
+    "start_date": "2016-09",
+    "end_date": "2017-09",
+    "skills": [
+      "mechanical engineering",
+      "research"
+    ],
+    "keywords": [
+      "KIT",
+      "Karlsruhe",
+      "Germany",
+      "dual degree",
+      "ECTS",
+      "GPA 1.3",
+      "Bavarian formula"
+    ],
+    "token_count": 64,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "edu-kaist-bachelors",
+    "text": "Dong Jae Lee earned a Bachelor of Science with a double major in Mechanical Engineering and Industrial Design from the Korea Advanced Institute of Science and Technology (KAIST) in Daejeon, Korea, from September 2010 to August 2015. He graduated cum laude with a GPA of 3.7/4.3, completing 177 credits. He was a National Scholarship recipient and was selected for the Dean's List for outstanding scholastic achievement in 2014.",
+    "source_type": "resume",
+    "section": "education",
+    "company": "KAIST",
+    "role": "Bachelor of Science",
+    "start_date": "2010-09",
+    "end_date": "2015-08",
+    "skills": [
+      "mechanical engineering",
+      "industrial design"
+    ],
+    "keywords": [
+      "KAIST",
+      "bachelors",
+      "double major",
+      "cum laude",
+      "GPA 3.7",
+      "Dean's List",
+      "national scholarship",
+      "Daejeon"
+    ],
+    "token_count": 74,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-dug-overview",
+    "text": "Dong Jae Lee served as Director of the Business & Publishing Division at Devs United Games, Inc. in Seoul, Korea, from February 2024 to August 2025. Devs United Games is an XR game studio creating immersive experiences for the era of spatial computing. He oversaw foundational business operations including HR, legal, and finance, while guiding strategic growth initiatives such as partnerships and revenue generation, ensuring daily execution aligned with long-term company goals.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "business operations",
+      "HR",
+      "legal",
+      "finance",
+      "strategic planning",
+      "revenue generation",
+      "partnership management"
+    ],
+    "keywords": [
+      "XR",
+      "spatial computing",
+      "game studio",
+      "director",
+      "Seoul"
+    ],
+    "token_count": 74,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-dug-partnerships",
+    "text": "At Devs United Games, Dong Jae Lee directed strategic partnerships with Senior Directors at major tech platforms including Meta, Apple, and Google, leading initiatives from product roadmap alignment. He led the strategic partnership with Apple from initial outreach to launch, resulting in Fishing Haven being featured on the Vision Pro App Store. He also managed the porting of a flagship title to a new Google device, managing timelines, trackers, and cross-functional teams to ensure a successful launch.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "strategic partnerships",
+      "partnership management",
+      "product roadmap alignment",
+      "cross-functional leadership",
+      "deal negotiation"
+    ],
+    "keywords": [
+      "Meta",
+      "Apple",
+      "Google",
+      "Vision Pro",
+      "Fishing Haven",
+      "porting",
+      "App Store",
+      "flagship title"
+    ],
+    "token_count": 83,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-dug-revenue",
+    "text": "At Devs United Games, Dong Jae Lee increased revenue by 55.47% YoY for H1 2025 by driving platform promotions, DLC strategy, and securing inclusion in major sales events and premium subscription programs. He analyzed the emerging Spatial Computing market landscape to formulate the studio's multi-platform entry strategy and successfully pivoted the business model towards high-margin premium subscription services based on competitive benchmarking and user retention analysis.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "revenue growth",
+      "GTM strategy",
+      "DLC strategy",
+      "competitive benchmarking",
+      "user retention analysis",
+      "market analysis"
+    ],
+    "keywords": [
+      "55.47% YoY",
+      "revenue",
+      "subscription",
+      "spatial computing",
+      "multi-platform",
+      "promotions"
+    ],
+    "token_count": 78,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-dug-apple-spatial",
+    "text": "At Devs United Games, Dong Jae Lee partnered with internal developers to align Unity-based and VisionOS-native workflows with Apple's platform standards. He served as the primary liaison with Unity Professional Services, ensuring seamless upgrade and compliance with Unity 6.0 release requirements. He contributed to proposal development for Apple Immersive Video content centered on Taekwondo, bridging cultural storytelling with Apple's spatial video format. He also led an end-to-end photogrammetry pipeline—from high-resolution photography to 3D deployment—optimized for standalone headsets including Vision Pro.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "Unity",
+      "VisionOS",
+      "photogrammetry",
+      "3D deployment",
+      "spatial computing",
+      "content production"
+    ],
+    "keywords": [
+      "Apple",
+      "Vision Pro",
+      "Unity 6.0",
+      "Immersive Video",
+      "Taekwondo",
+      "photogrammetry pipeline",
+      "VisionOS-native"
+    ],
+    "token_count": 95,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-dug-ai-ops",
+    "text": "At Devs United Games, Dong Jae Lee pioneered the use of ChatGPT and OpenAI-based RAG to streamline customer service workflows, reducing average player response time by over 50% and significantly improving consistency for community management. He spearheaded the restructuring of internal business operations (finance, legal, CS) and established scalable frameworks and automated workflows using AI tools to support rapid organizational growth.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "ChatGPT",
+      "RAG",
+      "OpenAI",
+      "AI automation",
+      "customer service",
+      "operational optimization"
+    ],
+    "keywords": [
+      "response time 50%",
+      "community management",
+      "automated workflows",
+      "LLM",
+      "business operations"
+    ],
+    "token_count": 68,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-flint-overview",
+    "text": "Dong Jae Lee co-founded Flint Technologies Inc. and served as Co-Founder & COO from May 2021 to February 2024 in Seoul, Korea. Flint Technologies is a technology startup that developed an intelligent knowledge management tool utilizing Graph Neural Networks. He directed corporate strategy and investor relations, and led cross-functional product, engineering, and go-to-market teams to align AI capabilities with business growth objectives.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "startup founding",
+      "corporate strategy",
+      "investor relations",
+      "cross-functional leadership",
+      "GTM strategy"
+    ],
+    "keywords": [
+      "co-founder",
+      "COO",
+      "graph neural networks",
+      "knowledge management",
+      "Seoul"
+    ],
+    "token_count": 68,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-flint-product-gtm",
+    "text": "At Flint Technologies, Dong Jae Lee designed and built the company's product feedback pipeline from the ground up, creating a scalable system to track, test, and analyze user data that directly informed GTM strategy and core feature development. He analyzed qualitative and quantitative user data to define the MVP (Minimum Viable Product) and prioritize the development roadmap, ensuring engineering resources focused on high-impact features. He developed and executed the initial GTM strategy, identifying early adopter segments and validating business hypotheses through rapid A/B testing and iteration.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "product management",
+      "GTM strategy",
+      "user analytics",
+      "A/B testing",
+      "MVP definition",
+      "product feedback pipeline"
+    ],
+    "keywords": [
+      "feedback pipeline",
+      "user data",
+      "early adopter",
+      "roadmap",
+      "iteration"
+    ],
+    "token_count": 97,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-flint-fundraising",
+    "text": "At Flint Technologies, Dong Jae Lee directed corporate strategy and investor relations, securing KRW 450M in seed and government funding. He managed relationships with investors and partners, representing the company at global startup and business events to pitch the business vision, demonstrate growth metrics, and secure strategic support.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "fundraising",
+      "investor relations",
+      "pitching",
+      "stakeholder management"
+    ],
+    "keywords": [
+      "KRW 450M",
+      "seed funding",
+      "government funding",
+      "global events",
+      "growth metrics"
+    ],
+    "token_count": 55,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-flint-ai-tech",
+    "text": "At Flint Technologies, Dong Jae Lee developed an AI-driven recommendation engine using Graph Neural Networks for intelligent knowledge management. The startup's product was an intelligent knowledge management tool utilizing Graph Neural Network technology to help users organize and discover information.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "graph neural networks",
+      "AI",
+      "machine learning",
+      "recommendation engine",
+      "knowledge management"
+    ],
+    "keywords": [
+      "GNN",
+      "recommendation engine",
+      "knowledge management",
+      "AI-driven"
+    ],
+    "token_count": 44,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-tmax-team-lead",
+    "text": "Dong Jae Lee served as Team Lead at TmaxTibero from July 2019 to May 2021 in Seongnam, Korea. TmaxTibero is a multinational corporation specializing in enterprise data management systems. This role was part of his enlistment as Technical Research Personnel (May 25, 2018 – May 24, 2021). He contributed to developing product strategies by researching global trends in Big Data and Cloud Computing, and benchmarked Database Management products and marketing strategies of leading companies including Oracle and Microsoft. He bridged R&D and enterprise needs by translating client requirements into technical roadmaps, shaping product development across data and AI infrastructure.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Team Lead",
+    "start_date": "2019-07",
+    "end_date": "2021-05",
+    "skills": [
+      "product strategy",
+      "big data",
+      "cloud computing",
+      "competitive analysis",
+      "technical roadmap"
+    ],
+    "keywords": [
+      "team lead",
+      "Oracle",
+      "Microsoft",
+      "DBMS",
+      "R&D",
+      "technical research personnel",
+      "Seongnam"
+    ],
+    "token_count": 101,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-tmax-enterprise-clients",
+    "text": "As Team Lead at TmaxTibero, Dong Jae Lee supported enterprise migrations for Samsung Electronics and Hyundai to Tibero RDBMS. He shaped product roadmaps by conducting technical discovery and strategic planning sessions with C-level and senior stakeholders at Tier-1 enterprise clients. He developed tailored adoption strategies that aligned product capabilities with enterprise-grade security and scalability requirements. He earned a company Achievement Award for exceeding client expectations.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Team Lead",
+    "start_date": "2019-07",
+    "end_date": "2021-05",
+    "skills": [
+      "enterprise sales",
+      "technical discovery",
+      "stakeholder management",
+      "migration",
+      "RDBMS"
+    ],
+    "keywords": [
+      "Samsung Electronics",
+      "Hyundai",
+      "Tibero",
+      "RDBMS",
+      "C-level",
+      "achievement award",
+      "Tier-1"
+    ],
+    "token_count": 72,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-tmax-software-engineer",
+    "text": "Dong Jae Lee worked as a Software Engineer at TmaxTibero from February 2018 to July 2019 in Seongnam, Korea. He leveraged emerging practices for data management utilizing Big Data and Cloud platforms including Hadoop and Kubernetes. He co-developed an autonomous database system utilizing machine learning, coordinating project milestones with AI specialists.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Software Engineer",
+    "start_date": "2018-02",
+    "end_date": "2019-07",
+    "skills": [
+      "software engineering",
+      "big data",
+      "Hadoop",
+      "Kubernetes",
+      "machine learning",
+      "database systems"
+    ],
+    "keywords": [
+      "autonomous database",
+      "cloud platforms",
+      "AI specialists",
+      "data management"
+    ],
+    "token_count": 56,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "exp-kit-research",
+    "text": "Dong Jae Lee worked as a Research Assistant (Hiwi) at the Institute of Microstructure Technology at Karlsruher Institut für Technologie (KIT) in Karlsruhe, Germany, from October 2016 to August 2017. He established fabrication and calibration processes for micro-nanostructures, providing a foundation in sensor and materials systems relevant to robotics and embedded AI hardware. He performed optical and morphological analysis on nano-imprinted solar cells.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Institute of Microstructure Technology, KIT",
+    "role": "Research Assistant (Hiwi)",
+    "start_date": "2016-10",
+    "end_date": "2017-08",
+    "skills": [
+      "nano-fabrication",
+      "calibration",
+      "sensor systems",
+      "materials science",
+      "optical analysis"
+    ],
+    "keywords": [
+      "micro-nanostructures",
+      "solar cells",
+      "nano-imprint",
+      "robotics",
+      "embedded AI",
+      "Karlsruhe",
+      "Germany"
+    ],
+    "token_count": 70,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "extracurricular-atrium",
+    "text": "Dong Jae Lee was a Founding Member and Co-President of Atrium, a student-led organization at KAIST that developed appropriate technology in collaboration with National Research Institutes and NGOs, from September 2012 to September 2015 in Daejeon, Korea. He conducted market research and assisted in developing a business plan for market penetration in Mongolia. He led research to improve efficiency, usability, and manufacturability of a heat preservation device for product differentiation.",
+    "source_type": "resume",
+    "section": "leadership",
+    "company": "Atrium, KAIST",
+    "role": "Founding Member & Co-President",
+    "start_date": "2012-09",
+    "end_date": "2015-09",
+    "skills": [
+      "leadership",
+      "market research",
+      "business planning",
+      "appropriate technology",
+      "product development"
+    ],
+    "keywords": [
+      "KAIST",
+      "NGO",
+      "Mongolia",
+      "heat preservation",
+      "student organization"
+    ],
+    "token_count": 76,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "honors-awards",
+    "text": "Dong Jae Lee's honors and awards include: Finalist at the Global Social Venture Competition (GSVC) at Haas School of Business in 2013; 1st Place at the Social Venture Competition Asia (SVCA), organized by the Social Enterprise Network (SEN) and British Council in 2012; and the Presidential Design Award from the Korea Advanced Institute of Science and Technology (KAIST) in 2010.",
+    "source_type": "resume",
+    "section": "skills",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "social entrepreneurship",
+      "design",
+      "venture competition"
+    ],
+    "keywords": [
+      "GSVC",
+      "Haas",
+      "SVCA",
+      "British Council",
+      "Presidential Design Award",
+      "KAIST",
+      "1st place",
+      "finalist"
+    ],
+    "token_count": 66,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "narrative-career-trajectory",
+    "text": "Dong Jae Lee's career trajectory spans from engineering foundations to strategic business leadership. He started with a strong STEM education at KAIST (BS and MS in Mechanical Engineering with Industrial Design) and KIT (dual degree in Germany). He began his career as a Software Engineer at TmaxTibero working on Big Data and autonomous database systems, was promoted to Team Lead managing enterprise clients like Samsung and Hyundai, then co-founded Flint Technologies as COO building an AI-powered knowledge management startup, and most recently served as Director of Business & Publishing at Devs United Games (Feb 2024 – Aug 2025) leading XR/spatial computing partnerships with Apple, Meta, and Google.",
+    "source_type": "resume",
+    "section": "summary",
+    "company": null,
+    "role": null,
+    "start_date": "2010-09",
+    "end_date": "2025-08",
+    "skills": [
+      "career progression",
+      "engineering",
+      "business leadership",
+      "startup founding"
+    ],
+    "keywords": [
+      "career trajectory",
+      "KAIST",
+      "KIT",
+      "TmaxTibero",
+      "Flint",
+      "Devs United Games"
+    ],
+    "token_count": 106,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "narrative-partnership-expertise",
+    "text": "Dong Jae Lee has deep expertise in strategic partnerships and business development with major technology platforms. He has direct experience working with Apple (Vision Pro launch, featured app, Immersive Video content proposals), Meta (XR game partnerships, project funding), and Google (porting flagship titles, device partnerships). He manages the entire deal cycle from product roadmap alignment through end-to-end negotiations. Having been both a startup founder seeking partnerships and a business director managing platform relationships, he brings a unique partner-centric perspective to drive growth and execute high-value technical collaborations.",
+    "source_type": "resume",
+    "section": "summary",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "strategic partnerships",
+      "business development",
+      "deal negotiation",
+      "partner management"
+    ],
+    "keywords": [
+      "Apple",
+      "Meta",
+      "Google",
+      "Vision Pro",
+      "deal cycle",
+      "partner-centric",
+      "platform relationships"
+    ],
+    "token_count": 97,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "narrative-technical-background",
+    "text": "Dong Jae Lee has a strong technical foundation spanning mechanical engineering, AI, and software development. He has hands-on experience with Big Data platforms (Hadoop, Kubernetes), cloud infrastructure (SaaS/PaaS), machine learning (autonomous database systems, Graph Neural Networks), Generative AI (RAG Architecture, Stable Diffusion, Gemini workflows), Unity game engine, VisionOS development, photogrammetry pipelines, and micro-nanostructure fabrication. His research background includes sensor systems, materials science, and nano-imprinted solar cells at KIT in Germany.",
+    "source_type": "resume",
+    "section": "skills",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "big data",
+      "Hadoop",
+      "Kubernetes",
+      "SaaS",
+      "PaaS",
+      "machine learning",
+      "graph neural networks",
+      "generative AI",
+      "RAG",
+      "stable diffusion",
+      "Gemini",
+      "Unity",
+      "VisionOS",
+      "photogrammetry",
+      "nano-fabrication"
+    ],
+    "keywords": [
+      "technical foundation",
+      "mechanical engineering",
+      "AI",
+      "software development",
+      "sensor systems",
+      "solar cells"
+    ],
+    "token_count": 88,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "narrative-startup-founder",
+    "text": "As Co-Founder and COO of Flint Technologies (2021-2024), Dong Jae Lee has firsthand experience building a technology startup from the ground up. He directed corporate strategy and investor relations, securing KRW 450M in seed and government funding. He developed an AI-driven recommendation engine using Graph Neural Networks and led cross-functional product, engineering, and go-to-market teams to align AI capabilities with business growth objectives.",
+    "source_type": "resume",
+    "section": "summary",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "startup founding",
+      "fundraising",
+      "corporate strategy",
+      "investor relations",
+      "graph neural networks",
+      "GTM strategy"
+    ],
+    "keywords": [
+      "co-founder",
+      "COO",
+      "KRW 450M",
+      "seed funding",
+      "AI-driven",
+      "recommendation engine"
+    ],
+    "token_count": 70,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "narrative-spatial-computing",
+    "text": "Dong Jae Lee has significant experience in the spatial computing and XR (Extended Reality) industry through his role at Devs United Games (Feb 2024 – Aug 2025). He led the Apple Vision Pro launch partnership resulting in a featured app (Fishing Haven), managed photogrammetry pipelines for standalone headsets, worked with VisionOS-native and Unity-based workflows, contributed to Apple Immersive Video content proposals, and managed multi-platform game porting strategies across Meta Quest and Google devices. He understands the spatial computing market landscape and has formulated multi-platform entry strategies for XR content.",
+    "source_type": "resume",
+    "section": "summary",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "spatial computing",
+      "XR",
+      "VisionOS",
+      "Unity",
+      "photogrammetry",
+      "content strategy",
+      "multi-platform strategy"
+    ],
+    "keywords": [
+      "Vision Pro",
+      "Fishing Haven",
+      "Meta Quest",
+      "Google",
+      "Apple Immersive Video",
+      "game porting",
+      "standalone headsets"
+    ],
+    "token_count": 96,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "story-meta-quest-plus-revenue",
+    "text": "At Devs United Games, Dong Jae Lee evaluated and secured entry into Meta Quest+, a game subscription service where Quest+ subscribers receive 2 new games monthly. The business model gave Devs United Games a portion of subscription fees based on how many Quest users downloaded their product. Dong Jae led the analysis of whether joining the program would cause cannibalization—users who would have purchased the game outright instead obtaining it through the subscription. After determining the opportunity outweighed the cannibalization risk, he negotiated the deal with Meta. The result was 55.47% YoY revenue growth for H1 2025. No custom pricing model was needed as the subscription revenue share was set by Meta's program terms.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "revenue analysis",
+      "cannibalization analysis",
+      "subscription models",
+      "deal evaluation",
+      "data-driven decision making"
+    ],
+    "keywords": [
+      "Meta Quest+",
+      "subscription",
+      "cannibalization",
+      "55.47% YoY",
+      "revenue growth",
+      "revenue share",
+      "data-driven pivot"
+    ],
+    "token_count": 120,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-apple-partnership-negotiation",
+    "text": "At Devs United Games, Dong Jae Lee navigated Apple's unique partnership culture for the Vision Pro launch. Through conversations with their Apple Developer Relations contact, he learned that Apple is highly performance-based and operates without direct confirmations. Their dev rel representative acted as an intermediary to internal Apple teams but received no direct confirmation on outcomes either—communication was one-sided. The strategy Dong Jae developed was to say yes to every opportunity presented and deliver exceptional results. When Apple indirectly asked if they would be interested in porting their game to Apple Vision Pro (Apple never asks or orders directly), they agreed immediately and began development. As they delivered more demos, Apple provided increasingly specific timelines, such as the Vision Pro launching in Korea in Q4 2024. Once launching support was confirmed, Dong Jae provided all marketing materials needed. This approach required reading between the lines and building trust through consistent delivery rather than formal commitments.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "stakeholder management",
+      "partner relations",
+      "strategic communication",
+      "trust building",
+      "ambiguity management"
+    ],
+    "keywords": [
+      "Apple",
+      "Vision Pro",
+      "dev rel",
+      "indirect communication",
+      "trust building",
+      "Korea launch",
+      "Q4 2024",
+      "negotiation style"
+    ],
+    "token_count": 175,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-meta-funding-negotiation",
+    "text": "At Devs United Games, Dong Jae Lee renegotiated a previously dropped Meta funding deal. The original funding had fallen through before he joined due to mismatches in contract terms—funding amount, exclusivity requirements, and revenue share structure. He analyzed the previous deal terms and proposed new terms with clear rationale: for example, the game was now on a much bigger scale requiring additional developers, justifying a higher funding amount. The funding used a revenue share model where the studio would share revenue at one percentage until the funding amount was recouped, then switch to a different percentage for a set number of years. After thorough analysis of the company's financial state, Dong Jae concluded the funding amount was not significant enough relative to the revenue share obligations, and the team decided not to close the deal. This demonstrates his ability to walk away from deals that don't serve the company's long-term interests.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "deal analysis",
+      "contract negotiation",
+      "financial modeling",
+      "revenue share analysis",
+      "strategic decision making"
+    ],
+    "keywords": [
+      "Meta",
+      "funding",
+      "revenue share",
+      "exclusivity",
+      "contract terms",
+      "renegotiation",
+      "walk away",
+      "financial analysis"
+    ],
+    "token_count": 160,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-meta-game-concepts",
+    "text": "At Devs United Games, Dong Jae Lee participated in designing new game concepts including Outdoor Haven and Aquascape for the Meta platform. He was responsible for presenting these concepts to Meta's developer relations team and developer publishing contacts. His presentations covered why each concept would appeal to the target audience, estimated revenue projections, and core target demographics. This work combined creative product thinking with business case development to secure platform support for new titles.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "product concept development",
+      "pitching",
+      "revenue projection",
+      "audience analysis",
+      "game design"
+    ],
+    "keywords": [
+      "Outdoor Haven",
+      "Aquascape",
+      "Meta",
+      "game concepts",
+      "revenue projection",
+      "target demographics"
+    ],
+    "token_count": 90,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-google-android-xr-partnership",
+    "text": "At Devs United Games, Dong Jae Lee led the partnership initiative with Google to port their game to the Android XR platform. He approached Google's developer relations team in games, leveraging the studio's track record of success on Meta and Apple platforms to demonstrate credibility. Google expressed interest and requested the port. During the process, Dong Jae managed negotiations for dev kit access, schedule alignment, and funding structure—including the timing of payments (initial amount at what date, remainder upon completion). He pushed for a larger upfront funding amount to support development cash flow. This demonstrates his ability to use existing platform success as leverage when opening new partnership channels.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "partnership development",
+      "deal negotiation",
+      "funding structure",
+      "leverage building",
+      "platform expansion"
+    ],
+    "keywords": [
+      "Google",
+      "Android XR",
+      "dev kit",
+      "funding structure",
+      "payment timing",
+      "platform porting",
+      "cross-platform leverage"
+    ],
+    "token_count": 130,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-partnership-negotiation-philosophy",
+    "text": "Through managing partnerships with Apple, Meta, and Google at Devs United Games, Dong Jae Lee developed a key insight: each company has a fundamentally different working style, and successful negotiation requires understanding the partner's internal dynamics rather than just discussing deal terms. His approach involves asking about the counterpart's work environment, how their performance is evaluated, what their KPIs are, and how their company operates internally. He uses casual conversation to gather this intelligence. For example, at Apple he learned that decisions flow indirectly through dev rel intermediaries with no direct confirmation. At Meta, the process is more structured with clear programs and funding mechanisms. At Google, leveraging existing success on competing platforms creates negotiation leverage. This partner-centric intelligence gathering is central to how he structures deals and manages expectations.",
+    "source_type": "qa_story",
+    "section": "leadership",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "negotiation",
+      "stakeholder intelligence",
+      "adaptive communication",
+      "relationship management",
+      "partner analysis"
+    ],
+    "keywords": [
+      "negotiation philosophy",
+      "KPIs",
+      "working style",
+      "casual conversation",
+      "partner intelligence",
+      "Apple",
+      "Meta",
+      "Google",
+      "conflict resolution"
+    ],
+    "token_count": 155,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-cs-rag-implementation",
+    "text": "At Devs United Games, Dong Jae Lee built a customer service automation system by compiling a database of all player questions and corresponding answers into a structured table, then feeding it to ChatGPT to automate responses. This reduced average player response time by over 50%. He has since evolved his RAG expertise through a personal project: a whiskey recommending RAG system using Pinecone as a vector database and Google Gemini as the LLM. To handle hallucinations, he created hundreds of sample question-answer pairs based on his data, systematically tested the RAG against these, evaluated answer quality, and iteratively tuned the data retrieval process by modifying the schema and adding new tags. This demonstrates his hands-on ability to build, test, and iterate on RAG systems end-to-end.",
+    "source_type": "qa_story",
+    "section": "project",
+    "company": null,
+    "role": null,
+    "start_date": "2024-02",
+    "end_date": null,
+    "skills": [
+      "RAG architecture",
+      "Pinecone",
+      "Gemini",
+      "ChatGPT",
+      "vector database",
+      "prompt engineering",
+      "evaluation",
+      "schema design"
+    ],
+    "keywords": [
+      "RAG",
+      "Pinecone",
+      "Gemini",
+      "whiskey recommender",
+      "hallucination mitigation",
+      "QA testing",
+      "schema tuning",
+      "customer service automation",
+      "ChatGPT"
+    ],
+    "token_count": 145,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "project-whiskey-rag",
+    "text": "Dong Jae Lee built a whiskey recommendation RAG (Retrieval-Augmented Generation) system as a personal project. The tech stack uses Pinecone as the vector database for semantic search and Google Gemini as the LLM for generating responses. He created a custom knowledge base, then validated the system by generating hundreds of sample questions and expected answers. He evaluated output quality systematically and improved retrieval accuracy by iterating on the database schema—restructuring chunks, adding metadata tags, and tuning the retrieval parameters. This project demonstrates his end-to-end RAG development capability from data ingestion and embedding to evaluation and optimization.",
+    "source_type": "resume",
+    "section": "project",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "RAG architecture",
+      "Pinecone",
+      "Gemini",
+      "vector database",
+      "embedding",
+      "schema design",
+      "evaluation",
+      "prompt engineering"
+    ],
+    "keywords": [
+      "whiskey recommender",
+      "RAG",
+      "Pinecone",
+      "Gemini",
+      "personal project",
+      "hallucination mitigation",
+      "retrieval optimization"
+    ],
+    "token_count": 110,
+    "depth": "surface"
+  },
+  {
+    "chunk_id": "story-flint-problem-statement",
+    "text": "Flint Technologies was founded to solve the problem of digital information overload for knowledge workers. The specific pain point was that people have become digital hoarders—keeping hundreds of tabs open, saving files in messy folders—but the saved information gets lost and is never used. Existing productivity tools required significant behavior changes, constant organization and management, and became less effective the more information was collected. They were designed for 'super organizers,' not regular knowledge workers. With the knowledge worker population exceeding 1 billion and the Productivity Software Market already exceeding $47 billion, Dong Jae Lee and his co-founders saw an opportunity to build a tool that focused on automatic, context-aware information retrieval rather than manual organization.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "market analysis",
+      "problem identification",
+      "product vision",
+      "user research"
+    ],
+    "keywords": [
+      "information overload",
+      "knowledge workers",
+      "digital hoarding",
+      "productivity software",
+      "$47B market",
+      "pain point",
+      "problem statement"
+    ],
+    "token_count": 135,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-flint-product-concept",
+    "text": "Flint was a hyper-personalized assistant for knowledge retrieval. Its core innovation was automatic memory retrieval: when a user added a file, article, or note, Flint's AI engine (using Graph Neural Networks) automatically found previously saved notes that were most relevant to the user at that moment—similar to how a new thought jogs old memories. The product focused on providing a natural way to review and build on existing knowledge without requiring users to actively remember or organize everything. Unlike existing solutions that focused on organizing knowledge, Flint focused on automatic and context-aware information management and retrieval that blended into existing workflows. The system augmented knowledge workers in their typical responsibilities: reading information, extracting relevant passages, and turning information into answers or reports.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "product design",
+      "graph neural networks",
+      "AI product development",
+      "knowledge management",
+      "UX design"
+    ],
+    "keywords": [
+      "automatic memory retrieval",
+      "hyper-personalized",
+      "context-aware",
+      "knowledge retrieval",
+      "GNN",
+      "AI engine",
+      "workflow integration"
+    ],
+    "token_count": 145,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-flint-validation-traction",
+    "text": "Flint Technologies validated its product through a founder-first approach: the co-founders were the first users and clients of the software, proving its usefulness internally before external launch. They then opened the MVP to a handful of users and maintained extremely close relationships with them—getting feedback through offline meetings, regular interviews, and direct conversations. The product achieved 860+ users who accumulated over 20,000 items in Flint within seven months with zero marketing spend. Heavy users used Flint multiple times daily. Users did not know or care whether Graph Neural Networks powered the recommendations—they simply valued the automatic retrieval experience. Early customer personas were knowledge workers who research daily: journalists, content marketers, and investors. Creators particularly loved the product, sharing how they overcame creative blocks by utilizing resurfaced ideas they had saved in the past.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "product validation",
+      "user research",
+      "MVP testing",
+      "community building",
+      "product-market fit"
+    ],
+    "keywords": [
+      "860 users",
+      "20k items",
+      "zero marketing",
+      "MVP",
+      "founder-first",
+      "user interviews",
+      "creative blocks",
+      "journalists",
+      "investors",
+      "content marketers",
+      "product-market fit"
+    ],
+    "token_count": 165,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-flint-business-model-growth",
+    "text": "Flint Technologies planned a freemium-based subscription model where users would pay for different tiers based on the number of workspaces allowed and the types of files supported. The go-to-market strategy started with individual users, then planned expansion to teams and eventually companies. The vision was that with telecommuting becoming more widespread, Flint would help people work more effectively and asynchronously by combining sources of knowledge at individual, team, and organizational levels to achieve collective intelligence. The founding team comprised designers with UI/UX expertise and software developers with expertise in network analysis and databases, united by a shared desire to solve the information overload problem.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "business model design",
+      "GTM strategy",
+      "pricing strategy",
+      "team building",
+      "product roadmap"
+    ],
+    "keywords": [
+      "freemium",
+      "subscription",
+      "individual to teams",
+      "collective intelligence",
+      "telecommuting",
+      "UI/UX",
+      "network analysis"
+    ],
+    "token_count": 125,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-flint-gnn-technical",
+    "text": "At Flint Technologies, the Graph Neural Network implementation required users to manually connect notes as nodes in a knowledge graph—a design decision Dong Jae Lee later identified as a critical mistake, since manual friction kills adoption even with AI assistance. To reduce this friction, they built a GNN-based recommendation system: when a new note was created, the system provided a list of possibly related notes on the side panel, and users could then connect these with a single click. The similarity computation was multi-modal: it considered which other knowledge nodes were already connected to a given note (providing graph-based context) and keyword similarities. This experience taught Dong Jae that even with strong AI recommendations, requiring users to change their behavior is harder than changing code—a key product lesson he carries forward.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "Co-Founder & COO",
+    "start_date": "2021-05",
+    "end_date": "2024-02",
+    "skills": [
+      "graph neural networks",
+      "product design",
+      "recommendation systems",
+      "user behavior analysis",
+      "multi-modal similarity"
+    ],
+    "keywords": [
+      "GNN",
+      "manual friction",
+      "node connection",
+      "recommendation",
+      "keyword similarity",
+      "graph context",
+      "lesson learned",
+      "adoption"
+    ],
+    "token_count": 155,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-tmax-database-tuning",
+    "text": "At TmaxTibero, Dong Jae Lee dealt with enterprise database performance challenges during client migrations from Oracle to Tibero RDBMS. Tibero was not as efficiently optimized as Oracle for certain workloads, so the team had to fine-tune the database for each client's specific use cases. This involved adjusting memory usage configurations, optimizing caching mechanisms, and tuning SQL queries to reduce database reads. There were instances where the team had to visit client sites and tune the database overnight to meet performance requirements. This hands-on experience gave Dong Jae deep technical knowledge of database internals and the discipline required for enterprise-grade reliability under pressure.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Team Lead",
+    "start_date": "2019-07",
+    "end_date": "2021-05",
+    "skills": [
+      "database tuning",
+      "SQL optimization",
+      "memory management",
+      "caching",
+      "performance engineering",
+      "on-site support"
+    ],
+    "keywords": [
+      "Oracle",
+      "Tibero",
+      "database performance",
+      "SQL tuning",
+      "memory usage",
+      "caching",
+      "overnight",
+      "on-site",
+      "enterprise migration"
+    ],
+    "token_count": 125,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-tmax-samsung-dbms-monitoring",
+    "text": "At TmaxTibero, Dong Jae Lee was responsible for delivering a DBMS monitoring system to Samsung Electronics. He conducted requirement-gathering meetings with Samsung stakeholders to understand what monitoring features they needed, then organized and prioritized those requirements. The role required managing three-way coordination: keeping the client satisfied through regular communication, planning with his own team (which involved keeping them motivated, convincing them of feature importance, and designing features into the existing software architecture), and requesting new capabilities from the core Database development team. Since the monitoring software needed real-time information from the database itself, Dong Jae had to meet with DB architecture teams to request new APIs and agents that would expose specific data points. This experience honed his ability to act as a bridge between client needs, product planning, and deep technical infrastructure teams.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Team Lead",
+    "start_date": "2019-07",
+    "end_date": "2021-05",
+    "skills": [
+      "requirements gathering",
+      "stakeholder management",
+      "product management",
+      "cross-team coordination",
+      "API design",
+      "client management"
+    ],
+    "keywords": [
+      "Samsung Electronics",
+      "DBMS monitoring",
+      "requirements gathering",
+      "three-way coordination",
+      "API requests",
+      "DB architecture",
+      "client satisfaction",
+      "feature prioritization"
+    ],
+    "token_count": 160,
+    "depth": "deep_dive"
+  }
+]
