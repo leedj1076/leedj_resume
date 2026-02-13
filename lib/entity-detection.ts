@@ -47,15 +47,16 @@ export function detectFilter(query: string): DetectedFilter {
   }
 
   // 3. Year-based temporal detection ("in 2020", "during 2019")
+  // Dates stored as numeric YYYYMM in Pinecone (e.g., 202012)
   const yearMatch = query.match(/\b(20[12]\d)\b/);
   if (yearMatch) {
-    const year = yearMatch[1];
+    const year = parseInt(yearMatch[1], 10);
     return {
       type: "temporal",
       filter: {
         $and: [
-          { start_date: { $lte: `${year}-12` } },
-          { end_date: { $gte: `${year}-01` } },
+          { start_date: { $lte: year * 100 + 12 } },
+          { end_date: { $gte: year * 100 + 1 } },
         ],
       },
     };

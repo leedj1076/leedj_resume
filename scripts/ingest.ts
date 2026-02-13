@@ -33,6 +33,11 @@ function buildEnrichedText(entry: ResumeEntry): string {
   return `${prefix}${entry.text}`;
 }
 
+// Convert "YYYY-MM" to numeric YYYYMM for Pinecone filter comparisons
+function dateToNum(date: string): number {
+  return parseInt(date.replace("-", ""), 10);
+}
+
 async function main() {
   const indexName = process.env.PINECONE_INDEX_NAME!;
   const NAMESPACE = "resume";
@@ -92,8 +97,8 @@ async function main() {
       section: entry.section,
       company: entry.company ?? "",
       role: entry.role ?? "",
-      start_date: entry.start_date ?? "",
-      end_date: entry.end_date ?? "",
+      start_date: entry.start_date ? dateToNum(entry.start_date) : 0,
+      end_date: entry.end_date ? dateToNum(entry.end_date) : 0,
       skills: entry.skills,
       keywords: entry.keywords,
       depth: entry.depth ?? "surface",
