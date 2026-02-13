@@ -28,10 +28,9 @@ function buildEnrichedText(entry: ResumeEntry): string {
     const dates = [entry.start_date, entry.end_date].filter(Boolean).join(" – ");
     parts.push(`(${dates})`);
   }
-  if (entry.section) parts.push(`[${entry.section}]`);
 
-  const prefix = parts.length > 0 ? `Context: ${parts.join(" ")}. ` : "";
-  return `${prefix}Content: ${entry.text}`;
+  const prefix = parts.length > 0 ? `${parts.join(" ")}. ` : "";
+  return `${prefix}${entry.text}`;
 }
 
 async function main() {
@@ -52,6 +51,7 @@ async function main() {
   const { embeddings } = await embedMany({
     model: google.embedding("gemini-embedding-001"),
     values: enrichedTexts,
+    providerOptions: { google: { taskType: "RETRIEVAL_DOCUMENT" } },
   });
   console.log(`Generated ${embeddings.length} embeddings (dim=${embeddings[0].length})`);
 
@@ -94,8 +94,8 @@ async function main() {
       role: entry.role ?? "",
       start_date: entry.start_date ?? "",
       end_date: entry.end_date ?? "",
-      skills: entry.skills.join(", "),
-      keywords: entry.keywords.join(", "),
+      skills: entry.skills,
+      keywords: entry.keywords,
       depth: entry.depth ?? "surface",
       enrichedText: enrichedTexts[i],
     },

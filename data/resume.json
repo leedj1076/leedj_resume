@@ -411,31 +411,6 @@
     "depth": "surface"
   },
   {
-    "chunk_id": "exp-flint-ai-tech",
-    "text": "At Flint Technologies, Dong Jae Lee developed an AI-driven recommendation engine using Graph Neural Networks for intelligent knowledge management. The startup's product was an intelligent knowledge management tool utilizing Graph Neural Network technology to help users organize and discover information.",
-    "source_type": "resume",
-    "section": "experience",
-    "company": "Flint Technologies",
-    "role": "Co-Founder & COO",
-    "start_date": "2021-05",
-    "end_date": "2024-02",
-    "skills": [
-      "graph neural networks",
-      "AI",
-      "machine learning",
-      "recommendation engine",
-      "knowledge management"
-    ],
-    "keywords": [
-      "GNN",
-      "recommendation engine",
-      "knowledge management",
-      "AI-driven"
-    ],
-    "token_count": 44,
-    "depth": "surface"
-  },
-  {
     "chunk_id": "exp-tmax-team-lead",
     "text": "Dong Jae Lee served as Team Lead at TmaxTibero from July 2019 to May 2021 in Seongnam, Korea. TmaxTibero is a multinational corporation specializing in enterprise data management systems. This role was part of his enlistment as Technical Research Personnel (May 25, 2018 – May 24, 2021). He contributed to developing product strategies by researching global trends in Big Data and Cloud Computing, and benchmarked Database Management products and marketing strategies of leading companies including Oracle and Microsoft. He bridged R&D and enterprise needs by translating client requirements into technical roadmaps, shaping product development across data and AI infrastructure.",
     "source_type": "resume",
@@ -522,7 +497,7 @@
     "text": "Dong Jae Lee worked as a Research Assistant (Hiwi) at the Institute of Microstructure Technology at Karlsruher Institut für Technologie (KIT) in Karlsruhe, Germany, from October 2016 to August 2017. He established fabrication and calibration processes for micro-nanostructures, providing a foundation in sensor and materials systems relevant to robotics and embedded AI hardware. He performed optical and morphological analysis on nano-imprinted solar cells.",
     "source_type": "resume",
     "section": "experience",
-    "company": "Institute of Microstructure Technology, KIT",
+    "company": "KIT",
     "role": "Research Assistant (Hiwi)",
     "start_date": "2016-10",
     "end_date": "2017-08",
@@ -575,7 +550,7 @@
     "chunk_id": "honors-awards",
     "text": "Dong Jae Lee's honors and awards include: Finalist at the Global Social Venture Competition (GSVC) at Haas School of Business in 2013; 1st Place at the Social Venture Competition Asia (SVCA), organized by the Social Enterprise Network (SEN) and British Council in 2012; and the Presidential Design Award from the Korea Advanced Institute of Science and Technology (KAIST) in 2010.",
     "source_type": "resume",
-    "section": "skills",
+    "section": "awards",
     "company": null,
     "role": null,
     "start_date": null,
@@ -649,101 +624,6 @@
       "platform relationships"
     ],
     "token_count": 97,
-    "depth": "surface"
-  },
-  {
-    "chunk_id": "narrative-technical-background",
-    "text": "Dong Jae Lee has a strong technical foundation spanning mechanical engineering, AI, and software development. He has hands-on experience with Big Data platforms (Hadoop, Kubernetes), cloud infrastructure (SaaS/PaaS), machine learning (autonomous database systems, Graph Neural Networks), Generative AI (RAG Architecture, Stable Diffusion, Gemini workflows), Unity game engine, VisionOS development, photogrammetry pipelines, and micro-nanostructure fabrication. His research background includes sensor systems, materials science, and nano-imprinted solar cells at KIT in Germany.",
-    "source_type": "resume",
-    "section": "skills",
-    "company": null,
-    "role": null,
-    "start_date": null,
-    "end_date": null,
-    "skills": [
-      "big data",
-      "Hadoop",
-      "Kubernetes",
-      "SaaS",
-      "PaaS",
-      "machine learning",
-      "graph neural networks",
-      "generative AI",
-      "RAG",
-      "stable diffusion",
-      "Gemini",
-      "Unity",
-      "VisionOS",
-      "photogrammetry",
-      "nano-fabrication"
-    ],
-    "keywords": [
-      "technical foundation",
-      "mechanical engineering",
-      "AI",
-      "software development",
-      "sensor systems",
-      "solar cells"
-    ],
-    "token_count": 88,
-    "depth": "surface"
-  },
-  {
-    "chunk_id": "narrative-startup-founder",
-    "text": "As Co-Founder and COO of Flint Technologies (2021-2024), Dong Jae Lee has firsthand experience building a technology startup from the ground up. He directed corporate strategy and investor relations, securing KRW 450M in seed and government funding. He developed an AI-driven recommendation engine using Graph Neural Networks and led cross-functional product, engineering, and go-to-market teams to align AI capabilities with business growth objectives.",
-    "source_type": "resume",
-    "section": "summary",
-    "company": "Flint Technologies",
-    "role": "Co-Founder & COO",
-    "start_date": "2021-05",
-    "end_date": "2024-02",
-    "skills": [
-      "startup founding",
-      "fundraising",
-      "corporate strategy",
-      "investor relations",
-      "graph neural networks",
-      "GTM strategy"
-    ],
-    "keywords": [
-      "co-founder",
-      "COO",
-      "KRW 450M",
-      "seed funding",
-      "AI-driven",
-      "recommendation engine"
-    ],
-    "token_count": 70,
-    "depth": "surface"
-  },
-  {
-    "chunk_id": "narrative-spatial-computing",
-    "text": "Dong Jae Lee has significant experience in the spatial computing and XR (Extended Reality) industry through his role at Devs United Games (Feb 2024 – Aug 2025). He led the Apple Vision Pro launch partnership resulting in a featured app (Fishing Haven), managed photogrammetry pipelines for standalone headsets, worked with VisionOS-native and Unity-based workflows, contributed to Apple Immersive Video content proposals, and managed multi-platform game porting strategies across Meta Quest and Google devices. He understands the spatial computing market landscape and has formulated multi-platform entry strategies for XR content.",
-    "source_type": "resume",
-    "section": "summary",
-    "company": "Devs United Games",
-    "role": "Director, Business & Publishing Division",
-    "start_date": "2024-02",
-    "end_date": "2025-08",
-    "skills": [
-      "spatial computing",
-      "XR",
-      "VisionOS",
-      "Unity",
-      "photogrammetry",
-      "content strategy",
-      "multi-platform strategy"
-    ],
-    "keywords": [
-      "Vision Pro",
-      "Fishing Haven",
-      "Meta Quest",
-      "Google",
-      "Apple Immersive Video",
-      "game porting",
-      "standalone headsets"
-    ],
-    "token_count": 96,
     "depth": "surface"
   },
   {
@@ -891,7 +771,7 @@
     "chunk_id": "story-partnership-negotiation-philosophy",
     "text": "Through managing partnerships with Apple, Meta, and Google at Devs United Games, Dong Jae Lee developed a key insight: each company has a fundamentally different working style, and successful negotiation requires understanding the partner's internal dynamics rather than just discussing deal terms. His approach involves asking about the counterpart's work environment, how their performance is evaluated, what their KPIs are, and how their company operates internally. He uses casual conversation to gather this intelligence. For example, at Apple he learned that decisions flow indirectly through dev rel intermediaries with no direct confirmation. At Meta, the process is more structured with clear programs and funding mechanisms. At Google, leveraging existing success on competing platforms creates negotiation leverage. This partner-centric intelligence gathering is central to how he structures deals and manages expectations.",
     "source_type": "qa_story",
-    "section": "leadership",
+    "section": "experience",
     "company": "Devs United Games",
     "role": "Director, Business & Publishing Division",
     "start_date": "2024-02",
@@ -911,26 +791,48 @@
       "partner intelligence",
       "Apple",
       "Meta",
-      "Google",
-      "conflict resolution"
+      "Google"
     ],
     "token_count": 155,
     "depth": "deep_dive"
   },
   {
-    "chunk_id": "story-cs-rag-implementation",
-    "text": "At Devs United Games, Dong Jae Lee built a customer service automation system by compiling a database of all player questions and corresponding answers into a structured table, then feeding it to ChatGPT to automate responses. This reduced average player response time by over 50%. He has since evolved his RAG expertise through a personal project: a whiskey recommending RAG system using Pinecone as a vector database and Google Gemini as the LLM. To handle hallucinations, he created hundreds of sample question-answer pairs based on his data, systematically tested the RAG against these, evaluated answer quality, and iteratively tuned the data retrieval process by modifying the schema and adding new tags. This demonstrates his hands-on ability to build, test, and iterate on RAG systems end-to-end.",
+    "chunk_id": "story-dug-cs-automation",
+    "text": "At Devs United Games, Dong Jae Lee built a customer service automation system by compiling a database of all player questions and corresponding answers into a structured table, then feeding it to ChatGPT to automate responses. This reduced average player response time by over 50%. The system significantly improved consistency for community management and established scalable frameworks for customer service operations.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director, Business & Publishing Division",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "ChatGPT",
+      "AI automation",
+      "customer service",
+      "community management"
+    ],
+    "keywords": [
+      "response time 50%",
+      "customer service automation",
+      "ChatGPT",
+      "community management"
+    ],
+    "token_count": 65,
+    "depth": "deep_dive"
+  },
+  {
+    "chunk_id": "story-whiskey-rag-personal",
+    "text": "Dong Jae Lee built a whiskey recommending RAG system as a personal project using Pinecone as a vector database and Google Gemini as the LLM. To handle hallucinations, he created hundreds of sample question-answer pairs based on his data, systematically tested the RAG against these, evaluated answer quality, and iteratively tuned the data retrieval process by modifying the schema and adding new tags. This demonstrates his hands-on ability to build, test, and iterate on RAG systems end-to-end.",
     "source_type": "qa_story",
     "section": "project",
     "company": null,
     "role": null,
-    "start_date": "2024-02",
+    "start_date": null,
     "end_date": null,
     "skills": [
       "RAG architecture",
       "Pinecone",
       "Gemini",
-      "ChatGPT",
       "vector database",
       "prompt engineering",
       "evaluation",
@@ -943,11 +845,9 @@
       "whiskey recommender",
       "hallucination mitigation",
       "QA testing",
-      "schema tuning",
-      "customer service automation",
-      "ChatGPT"
+      "schema tuning"
     ],
-    "token_count": 145,
+    "token_count": 90,
     "depth": "deep_dive"
   },
   {

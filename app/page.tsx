@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
 
 type Lang = "en" | "ko";
@@ -17,8 +17,9 @@ const UI = {
     thinking: "Thinking...",
     user: "Recruiter",
     assistant: "Assistant",
+    error: "Something went wrong. Please try again.",
     questions: [
-      "What is your most recent role?",
+      "What did you do at Devs United Games?",
       "What technologies do you work with?",
       "Tell me about your education",
       "Describe your partnership experience",
@@ -34,8 +35,9 @@ const UI = {
     thinking: "\uC0DD\uAC01 \uC911...",
     user: "\uBA74\uC811\uAD00",
     assistant: "\uC5B4\uC2DC\uC2A4\uD134\uD2B8",
+    error: "\uBB38\uC81C\uAC00 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4. \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.",
     questions: [
-      "\uAC00\uC7A5 \uCD5C\uADFC \uC5ED\uD560\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
+      "\uB370\uBE0C\uC2A4 \uC720\uB098\uC774\uD2F0\uB4DC\uC5D0\uC11C \uBB34\uC5C7\uC744 \uD558\uC168\uB098\uC694?",
       "\uC5B4\uB5A4 \uAE30\uC220\uC744 \uB2E4\uB8E8\uC2DC\uB098\uC694?",
       "\uD559\uB825\uC5D0 \uB300\uD574 \uC54C\uB824\uC8FC\uC138\uC694",
       "\uD30C\uD2B8\uB108\uC2ED \uACBD\uD5D8\uC744 \uC124\uBA85\uD574 \uC8FC\uC138\uC694",
@@ -44,12 +46,20 @@ const UI = {
 } as const;
 
 export default function Home() {
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, error } = useChat({
+    onError: (err) => console.error("Chat error:", err),
+  });
   const [input, setInput] = useState("");
   const [lang, setLang] = useState<Lang>("en");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const t = UI[lang];
   const isLoading = status === "submitted" || status === "streaming";
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, status]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +163,18 @@ export default function Home() {
               </div>
             </div>
           )}
+
+          {/* Error state */}
+          {status === "error" && error && (
+            <div className="flex justify-start">
+              <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3">
+                <p className="text-sm text-red-600">{t.error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Auto-scroll anchor */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 

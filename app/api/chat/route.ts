@@ -1,14 +1,15 @@
 import { streamText, embed, convertToModelMessages } from "ai";
 import { google } from "@ai-sdk/google";
 import { getResumeIndex } from "@/lib/pinecone";
-import { detectCompany } from "@/lib/entity-detection";
+import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
 
-// IDs that should always be included as context
-const PINNED_IDS = [
+// Always-pinned: neutral context chunks
+const BASE_PINNED_IDS = [
   "narrative-career-trajectory",
-  "exp-dug-overview",
   "personal-summary",
 ];
+
+const MAX_HISTORY = 10; // Keep last 5 exchanges (user + assistant)
 
 interface ChunkRecord {
   id: string;
@@ -16,151 +17,176 @@ interface ChunkRecord {
   depth: string;
 }
 
+export const maxDuration = 30;
+
+/**
+ * Build a retrieval query that incorporates conversation context.
+ * For follow-ups like "How did you negotiate that?", this prepends the last
+ * assistant summary so the embedding captures the topic being discussed.
+ */
+function buildRetrievalQuery(
+  query: string,
+  messages: Array<{ role: string; content?: string; parts?: Array<{ type: string; text?: string }> }>
+): string {
+  // Find the last assistant message
+  for (let i = messages.length - 2; i >= 0; i--) {
+    if (messages[i].role === "assistant") {
+      const assistantText =
+        messages[i].content ??
+        messages[i].parts
+          ?.filter((p: { type: string }) => p.type === "text")
+          .map((p: { text?: string }) => p.text ?? "")
+          .join(" ") ??
+        "";
+      if (assistantText) {
+        // Truncate assistant context to ~100 words to keep embedding focused
+        const truncated = assistantText.split(/\s+/).slice(0, 100).join(" ");
+        return `${truncated} ${query}`;
+      }
+      break;
+    }
+  }
+  return query;
+}
+
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  try {
+    const { messages } = await req.json();
 
-  // 1. Get the latest user message text
-  const lastMessage = messages[messages.length - 1];
-  const query =
-    lastMessage.content ??
-    lastMessage.parts
-      ?.filter((p: { type: string }) => p.type === "text")
-      .map((p: { text: string }) => p.text)
-      .join(" ") ??
-    "";
+    // 1. Get the latest user message text
+    const lastMessage = messages[messages.length - 1];
+    const query =
+      lastMessage.content ??
+      lastMessage.parts
+        ?.filter((p: { type: string }) => p.type === "text")
+        .map((p: { text: string }) => p.text)
+        .join(" ") ??
+      "";
 
-  // 2. Detect company entity in query
-  const detectedCompany = detectCompany(query);
+    // 2. Validate input
+    if (!query.trim()) {
+      return new Response(
+        JSON.stringify({ error: "Empty message" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const truncatedQuery = query.slice(0, 2000);
 
-  // 3. Embed the query
-  const { embedding } = await embed({
-    model: google.embedding("gemini-embedding-001"),
-    value: query,
-  });
+    // 3. Detect entity/section filter in query
+    const detected = detectFilter(truncatedQuery);
 
-  const index = getResumeIndex();
-  const ns = index.namespace("resume");
+    // 4. Build retrieval query with conversation context for better follow-up handling
+    const retrievalQuery = buildRetrievalQuery(truncatedQuery, messages);
 
-  // 4. Fetch chunks — 3 parallel sources when company detected, 2 otherwise
-  const chunks = new Map<string, ChunkRecord>();
+    // 5. Embed the retrieval query
+    const { embedding } = await embed({
+      model: google.embedding("gemini-embedding-001"),
+      value: retrievalQuery.slice(0, 2000),
+      providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
+    });
 
-  if (detectedCompany) {
-    // Hybrid retrieval: semantic + metadata filter + pinned — all in parallel
-    const [semanticResults, companyResults, pinnedResults] = await Promise.all([
-      ns.query({
-        vector: embedding,
-        topK: 5,
-        includeMetadata: true,
-      }),
-      ns.query({
-        vector: embedding,
-        topK: 20,
-        includeMetadata: true,
-        filter: { company: { $eq: detectedCompany } },
-      }),
-      ns.fetch({ ids: PINNED_IDS }),
-    ]);
+    const index = getResumeIndex();
+    const ns = index.namespace("resume");
 
-    // Add pinned chunks first (highest priority)
-    for (const id of PINNED_IDS) {
-      const record = pinnedResults.records[id];
-      if (record?.metadata?.enrichedText) {
-        chunks.set(id, {
-          id,
-          enrichedText: record.metadata.enrichedText as string,
-          depth: (record.metadata.depth as string) ?? "surface",
-        });
-      }
+    // 6. Build dynamic pinned IDs
+    const pinnedIds = [...BASE_PINNED_IDS];
+    if (detected?.type === "company") {
+      const overviewId = getCompanyOverviewId(detected.value);
+      if (overviewId) pinnedIds.push(overviewId);
     }
 
-    // Add all company-filtered chunks (guaranteed complete for that company)
-    for (const match of companyResults.matches) {
-      if (!chunks.has(match.id) && match.metadata?.enrichedText) {
-        chunks.set(match.id, {
-          id: match.id,
-          enrichedText: match.metadata.enrichedText as string,
-          depth: (match.metadata.depth as string) ?? "surface",
-        });
-      }
-    }
+    // 7. Fetch chunks — parallel sources based on detected filter type
+    const chunks = new Map<string, ChunkRecord>();
 
-    // Add semantic results (may include cross-cutting chunks)
-    for (const match of semanticResults.matches) {
-      if (!chunks.has(match.id) && match.metadata?.enrichedText) {
-        chunks.set(match.id, {
-          id: match.id,
-          enrichedText: match.metadata.enrichedText as string,
-          depth: (match.metadata.depth as string) ?? "surface",
-        });
-      }
-    }
-  } else {
-    // No company detected: standard semantic search + pinned
-    const [semanticResults, pinnedResults] = await Promise.all([
-      ns.query({
-        vector: embedding,
-        topK: 10,
-        includeMetadata: true,
-      }),
-      ns.fetch({ ids: PINNED_IDS }),
-    ]);
+    if (detected?.type === "company") {
+      // Hybrid: semantic + company filter + pinned
+      const [semanticResults, companyResults, pinnedResults] = await Promise.all([
+        ns.query({ vector: embedding, topK: 5, includeMetadata: true }),
+        ns.query({
+          vector: embedding,
+          topK: 20,
+          includeMetadata: true,
+          filter: { company: { $eq: detected.value } },
+        }),
+        ns.fetch({ ids: pinnedIds }),
+      ]);
 
-    // Add pinned chunks first
-    for (const id of PINNED_IDS) {
-      const record = pinnedResults.records[id];
-      if (record?.metadata?.enrichedText) {
-        chunks.set(id, {
-          id,
-          enrichedText: record.metadata.enrichedText as string,
-          depth: (record.metadata.depth as string) ?? "surface",
-        });
-      }
-    }
+      addPinnedChunks(chunks, pinnedIds, pinnedResults);
+      addMatchChunks(chunks, companyResults.matches);
+      addMatchChunks(chunks, semanticResults.matches);
+    } else if (detected?.type === "section") {
+      // Hybrid: semantic + section filter + pinned
+      const [semanticResults, sectionResults, pinnedResults] = await Promise.all([
+        ns.query({ vector: embedding, topK: 5, includeMetadata: true }),
+        ns.query({
+          vector: embedding,
+          topK: 15,
+          includeMetadata: true,
+          filter: { section: { $eq: detected.value } },
+        }),
+        ns.fetch({ ids: pinnedIds }),
+      ]);
 
-    // Add semantic results
-    for (const match of semanticResults.matches) {
-      if (!chunks.has(match.id) && match.metadata?.enrichedText) {
-        chunks.set(match.id, {
-          id: match.id,
-          enrichedText: match.metadata.enrichedText as string,
-          depth: (match.metadata.depth as string) ?? "surface",
-        });
-      }
-    }
-  }
-
-  // 5. Assemble structured context — separate overview from deep-dive
-  const overviewChunks: string[] = [];
-  const deepDiveChunks: string[] = [];
-
-  for (const chunk of chunks.values()) {
-    if (chunk.depth === "deep_dive") {
-      deepDiveChunks.push(chunk.enrichedText);
+      addPinnedChunks(chunks, pinnedIds, pinnedResults);
+      addMatchChunks(chunks, sectionResults.matches);
+      addMatchChunks(chunks, semanticResults.matches);
     } else {
-      overviewChunks.push(chunk.enrichedText);
+      // No filter: standard semantic search + pinned
+      const [semanticResults, pinnedResults] = await Promise.all([
+        ns.query({ vector: embedding, topK: 10, includeMetadata: true }),
+        ns.fetch({ ids: pinnedIds }),
+      ]);
+
+      addPinnedChunks(chunks, pinnedIds, pinnedResults);
+      addMatchChunks(chunks, semanticResults.matches);
     }
-  }
 
-  let context = "--- OVERVIEW ---\n" + overviewChunks.join("\n\n");
-  if (deepDiveChunks.length > 0) {
-    context +=
-      "\n\n--- DETAILED STORIES (for follow-up depth) ---\n" +
-      deepDiveChunks.join("\n\n");
-  }
-  context += "\n--- END RESUME ---";
+    // 8. Assemble structured context — separate overview from deep-dive
+    const overviewChunks: string[] = [];
+    const deepDiveChunks: string[] = [];
 
-  // 6. Convert UI messages to model messages
-  const modelMessages = await convertToModelMessages(messages);
+    for (const chunk of chunks.values()) {
+      if (chunk.depth === "deep_dive") {
+        deepDiveChunks.push(chunk.enrichedText);
+      } else {
+        overviewChunks.push(chunk.enrichedText);
+      }
+    }
 
-  // 7. Stream response with context injection
-  const result = streamText({
-    model: google("gemini-2.5-flash"),
-    system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
+    let context = "--- OVERVIEW ---\n" + overviewChunks.join("\n\n");
+    if (deepDiveChunks.length > 0) {
+      context +=
+        "\n\n--- DETAILED STORIES (for follow-up depth) ---\n" +
+        deepDiveChunks.join("\n\n");
+    }
+    context += "\n--- END RESUME ---";
+
+    // 9. Log retrieval details in dev mode
+    if (process.env.NODE_ENV === "development") {
+      console.log("[RAG] Query:", truncatedQuery);
+      console.log("[RAG] Retrieval query:", retrievalQuery.slice(0, 200));
+      console.log("[RAG] Detected filter:", detected);
+      console.log("[RAG] Pinned IDs:", pinnedIds);
+      console.log("[RAG] Retrieved chunks:", [...chunks.keys()]);
+      console.log("[RAG] Overview:", overviewChunks.length, "Deep:", deepDiveChunks.length);
+    }
+
+    // 10. Convert UI messages to model messages (sliding window)
+    const recentMessages = messages.slice(-MAX_HISTORY);
+    const modelMessages = await convertToModelMessages(recentMessages);
+
+    // 11. Stream response with context injection
+    const result = streamText({
+      model: google("gemini-2.5-flash"),
+      temperature: 0.3,
+      maxOutputTokens: 1024,
+      abortSignal: req.signal,
+      system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Be warm, conversational, and natural — like you're chatting with a recruiter over coffee.
 Use a friendly but professional tone. Stay grounded in the facts from your resume.
 
 RESPONSE DEPTH — this is critical:
-- INITIAL or NEW TOPIC question: Give a **comprehensive overview** using the OVERVIEW section (4-6 bullet points covering ALL major aspects). Hit ALL the highlights so the recruiter gets a complete picture, and invite follow-up.
+- INITIAL or NEW TOPIC question: Give a **concise overview** using the OVERVIEW section (3-5 bullet points highlighting the most impressive achievements). Invite follow-up.
 - FOLLOW-UP question (same topic as previous exchange): Go **deeper** — use the DETAILED STORIES section to share specific stories, metrics, negotiation details, and nuances. Be thorough and engaging.
 - When the user switches to an UNRELATED topic: **reset to overview level** again.
 - How to tell: if the user's question clearly relates to what was just discussed (e.g. "tell me more", "what about...", "how did you...", or referencing the same company/role/skill), treat it as a follow-up. Otherwise, treat it as a new topic.
@@ -187,8 +213,49 @@ Do not fabricate experience, skills, or details that are not in the context.
 
 --- MY RESUME ---
 ${context}`,
-    messages: modelMessages,
-  });
+      messages: modelMessages,
+    });
 
-  return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse();
+  } catch (error) {
+    console.error("[RAG] Error:", error);
+    return new Response(
+      JSON.stringify({ error: "Something went wrong. Please try again." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
+
+// --- Helpers ---
+
+function addPinnedChunks(
+  chunks: Map<string, ChunkRecord>,
+  ids: string[],
+  pinnedResults: { records: Record<string, { metadata?: Record<string, unknown> } | undefined> }
+) {
+  for (const id of ids) {
+    const record = pinnedResults.records[id];
+    if (record?.metadata?.enrichedText) {
+      chunks.set(id, {
+        id,
+        enrichedText: record.metadata.enrichedText as string,
+        depth: (record.metadata.depth as string) ?? "surface",
+      });
+    }
+  }
+}
+
+function addMatchChunks(
+  chunks: Map<string, ChunkRecord>,
+  matches: Array<{ id: string; metadata?: Record<string, unknown> }>
+) {
+  for (const match of matches) {
+    if (!chunks.has(match.id) && match.metadata?.enrichedText) {
+      chunks.set(match.id, {
+        id: match.id,
+        enrichedText: match.metadata.enrichedText as string,
+        depth: (match.metadata.depth as string) ?? "surface",
+      });
+    }
+  }
 }
