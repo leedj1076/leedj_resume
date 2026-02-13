@@ -8,12 +8,14 @@
     "start": "next start",
     "lint": "eslint",
     "ingest": "tsx --env-file=.env.local scripts/ingest.ts",
-    "eval": "tsx --env-file=.env.local scripts/eval.ts"
+    "eval": "tsx --env-file=.env.local scripts/eval.ts",
+    "structure": "tsx --env-file=.env.local scripts/structure.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.29",
     "@ai-sdk/react": "^3.0.87",
     "@pinecone-database/pinecone": "^7.0.0",
+    "@supabase/supabase-js": "^2.95.3",
     "@tailwindcss/typography": "^0.5.19",
     "ai": "^6.0.85",
     "next": "16.1.6",
