@@ -3,6 +3,22 @@ import { google } from "@ai-sdk/google";
 import { getResumeIndex } from "@/lib/pinecone";
 import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
 
+// Simple in-memory rate limiter (per-IP, resets on deploy)
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 15; // max requests per window
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
 // Always-pinned: neutral context chunks
 const BASE_PINNED_IDS = [
   "narrative-career-trajectory",
@@ -50,6 +66,15 @@ function buildRetrievalQuery(
 }
 
 export async function POST(req: Request) {
+  // Rate limit check
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return new Response(
+      JSON.stringify({ error: "Too many requests. Please wait a moment." }),
+      { status: 429, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const { messages } = await req.json();
 
@@ -113,6 +138,22 @@ export async function POST(req: Request) {
 
       addPinnedChunks(chunks, pinnedIds, pinnedResults);
       addMatchChunks(chunks, companyResults.matches);
+      addMatchChunks(chunks, semanticResults.matches);
+    } else if (detected?.type === "temporal") {
+      // Hybrid: semantic + temporal date-range filter + pinned
+      const [semanticResults, temporalResults, pinnedResults] = await Promise.all([
+        ns.query({ vector: embedding, topK: 5, includeMetadata: true }),
+        ns.query({
+          vector: embedding,
+          topK: 15,
+          includeMetadata: true,
+          filter: detected.filter,
+        }),
+        ns.fetch({ ids: pinnedIds }),
+      ]);
+
+      addPinnedChunks(chunks, pinnedIds, pinnedResults);
+      addMatchChunks(chunks, temporalResults.matches);
       addMatchChunks(chunks, semanticResults.matches);
     } else if (detected?.type === "section") {
       // Hybrid: semantic + section filter + pinned

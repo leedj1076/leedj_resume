@@ -46,7 +46,7 @@ const UI = {
 } as const;
 
 export default function Home() {
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, stop, status, error } = useChat({
     onError: (err) => console.error("Chat error:", err),
   });
   const [input, setInput] = useState("");
@@ -55,6 +55,11 @@ export default function Home() {
 
   const t = UI[lang];
   const isLoading = status === "submitted" || status === "streaming";
+
+  // Sync html lang attribute with selected language
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -190,13 +195,23 @@ export default function Home() {
             placeholder={t.placeholder}
             className="flex-1 px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-            className="px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {t.send}
-          </button>
+          {isLoading ? (
+            <button
+              type="button"
+              onClick={() => stop()}
+              className="px-6 py-3 bg-red-500 text-white text-sm font-medium rounded-full hover:bg-red-600 transition-colors"
+            >
+              Stop
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {t.send}
+            </button>
+          )}
         </form>
       </div>
     </div>
