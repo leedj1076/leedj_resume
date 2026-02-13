@@ -21,3 +21,28 @@ export function logAnalytics(event: Record<string, unknown>): void {
       if (error) console.error("[ANALYTICS] Supabase insert error:", error.message);
     });
 }
+
+export function logExchange(exchange: {
+  sessionId: string;
+  persona: string;
+  focus: string;
+  lang: string;
+  query: string;
+  response: string;
+  chunksUsed: string[];
+}): void {
+  supabase
+    ?.from("chat_exchanges")
+    .insert({
+      session_id: exchange.sessionId,
+      persona: exchange.persona,
+      focus: exchange.focus,
+      lang: exchange.lang,
+      query: exchange.query,
+      response: exchange.response,
+      chunks_used: exchange.chunksUsed,
+    })
+    .then(({ error }) => {
+      if (error) console.error("[EXCHANGE] Supabase insert error:", error.message);
+    });
+}

@@ -2,11 +2,10 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Markdown from "react-markdown";
 import type { VisitorData } from "@/lib/types";
 import { PERSONA_QUESTIONS } from "@/lib/persona-config";
-import { logAnalytics } from "@/lib/analytics";
 import WelcomeModal from "@/components/WelcomeModal";
 import FeedbackButtons from "@/components/FeedbackButtons";
 import SkeletonLoader from "@/components/SkeletonLoader";
@@ -69,6 +68,7 @@ export default function Home() {
   const [coldStartLoading, setColdStartLoading] = useState(false);
   const [input, setInput] = useState("");
   const [lang, setLang] = useState<Lang>("en");
+  const [sessionId] = useState(() => crypto.randomUUID());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const visitorDataRef = useRef<VisitorData | null>(null);
@@ -76,10 +76,19 @@ export default function Home() {
     visitorDataRef.current = visitorData;
   }, [visitorData]);
 
+  const langRef = useRef<Lang>(lang);
+  useEffect(() => {
+    langRef.current = lang;
+  }, [lang]);
+
   const transportRef = useRef(
     new DefaultChatTransport({
       api: "/api/chat",
-      body: () => ({ visitorData: visitorDataRef.current ?? undefined }),
+      body: () => ({
+        visitorData: visitorDataRef.current ?? undefined,
+        sessionId,
+        lang: langRef.current,
+      }),
     })
   );
 
@@ -123,13 +132,6 @@ export default function Home() {
     visitorDataRef.current = data;
     setShowModal(false);
     setColdStartLoading(true);
-    logAnalytics({
-      type: "session_start",
-      persona: data.persona,
-      focus: data.focus,
-      lang,
-      timestamp: new Date().toISOString(),
-    });
 
     try {
       const res = await fetch("/api/chat", {
@@ -172,16 +174,22 @@ export default function Home() {
     }
   }
 
-  function handleFeedback(messageId: string, value: "up" | "down") {
-    logAnalytics({
-      type: "feedback",
-      messageId,
-      value,
-      persona: visitorData?.persona,
-      focus: visitorData?.focus,
-      timestamp: new Date().toISOString(),
-    });
-  }
+  const handleFeedback = useCallback(
+    (messageId: string, value: "up" | "down") => {
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messageId,
+          value,
+          persona: visitorData?.persona,
+          focus: visitorData?.focus,
+          sessionId,
+        }),
+      }).catch(() => {});
+    },
+    [visitorData, sessionId]
+  );
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">

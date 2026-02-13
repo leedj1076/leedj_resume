@@ -1,0 +1,700 @@
+"use client";
+
+import { useState, useRef, useCallback, useEffect } from "react";
+import Markdown from "react-markdown";
+
+interface Exchange {
+  id: number;
+  created_at: string;
+  session_id: string;
+  persona: string;
+  focus: string;
+  lang: string;
+  query: string;
+  response: string;
+  chunks_used: string[] | null;
+  dj_rating: string | null;
+  dj_comment: string | null;
+  improvement_text: string | null;
+  pinecone_chunk_id: string | null;
+  reviewed_at: string | null;
+}
+
+interface Stats {
+  total: number;
+  reviewed: number;
+  unreviewed: number;
+  personaCounts: Record<string, number>;
+  focusCounts: Record<string, number>;
+  ratingCounts: Record<string, number>;
+  langCounts: Record<string, number>;
+  dailyVolume: Record<string, number>;
+}
+
+const PERSONA_LABELS: Record<string, string> = {
+  vc_investor: "VC Investor",
+  corporate_strategy: "Corporate Strategy",
+  bd_partnerships: "BD / Partnerships",
+  hiring_manager: "Hiring Manager",
+};
+
+const RATING_COLORS: Record<string, string> = {
+  good: "bg-green-100 text-green-800",
+  needs_improvement: "bg-yellow-100 text-yellow-800",
+};
+
+export default function AdminDashboard() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [authError, setAuthError] = useState(false);
+  const passwordRef = useRef("");
+
+  const [tab, setTab] = useState<"review" | "analytics">("review");
+
+  // Review state
+  const [exchanges, setExchanges] = useState<Exchange[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState("all");
+  const [personaFilter, setPersonaFilter] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  // Review form state
+  const [reviewRating, setReviewRating] = useState<string>("");
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewImprovement, setReviewImprovement] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Analytics state
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  const handleAuth = async () => {
+    try {
+      const res = await fetch("/api/admin/exchanges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passwordInput, page: 1 }),
+      });
+      if (res.status === 401) {
+        setAuthError(true);
+        return;
+      }
+      passwordRef.current = passwordInput;
+      setAuthenticated(true);
+      setAuthError(false);
+      const data = await res.json();
+      setExchanges(data.exchanges ?? []);
+      setTotal(data.total ?? 0);
+    } catch {
+      setAuthError(true);
+    }
+  };
+
+  const fetchExchanges = useCallback(
+    async (p: number, f: string, persona: string) => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/admin/exchanges", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            password: passwordRef.current,
+            page: p,
+            filter: f,
+            persona: persona || undefined,
+          }),
+        });
+        const data = await res.json();
+        setExchanges(data.exchanges ?? []);
+        setTotal(data.total ?? 0);
+        setPage(p);
+      } catch {
+        /* ignore */
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const fetchStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await fetch("/api/admin/stats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passwordRef.current }),
+      });
+      const data = await res.json();
+      setStats(data);
+    } catch {
+      /* ignore */
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authenticated && tab === "analytics" && !stats) {
+      fetchStats();
+    }
+  }, [authenticated, tab, stats, fetchStats]);
+
+  const handleExpand = (ex: Exchange) => {
+    if (expandedId === ex.id) {
+      setExpandedId(null);
+      return;
+    }
+    setExpandedId(ex.id);
+    setReviewRating(ex.dj_rating ?? "");
+    setReviewComment(ex.dj_comment ?? "");
+    setReviewImprovement(ex.improvement_text ?? "");
+  };
+
+  const handleReviewSubmit = async (exchangeId: number) => {
+    if (!reviewRating) return;
+    setSubmitting(true);
+    try {
+      await fetch("/api/admin/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: passwordRef.current,
+          exchangeId,
+          rating: reviewRating,
+          comment: reviewComment,
+          improvementText:
+            reviewRating === "needs_improvement" ? reviewImprovement : undefined,
+        }),
+      });
+      // Refresh current page
+      await fetchExchanges(page, filter, personaFilter);
+      setExpandedId(null);
+    } catch {
+      /* ignore */
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const totalPages = Math.ceil(total / 20);
+
+  // --- Password gate ---
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-sm">
+          <h1 className="text-xl font-semibold mb-4">Admin Dashboard</h1>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAuth();
+            }}
+          >
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Enter admin password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {authError && (
+              <p className="text-sm text-red-600 mb-3">Invalid password</p>
+            )}
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Enter
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Authenticated dashboard ---
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Admin Dashboard
+          </h1>
+          <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+            <button
+              onClick={() => setTab("review")}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                tab === "review"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Q&A Review
+            </button>
+            <button
+              onClick={() => setTab("analytics")}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                tab === "analytics"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Analytics
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-6 py-6">
+        {tab === "review" ? (
+          <ReviewTab
+            exchanges={exchanges}
+            total={total}
+            page={page}
+            totalPages={totalPages}
+            filter={filter}
+            personaFilter={personaFilter}
+            loading={loading}
+            expandedId={expandedId}
+            reviewRating={reviewRating}
+            reviewComment={reviewComment}
+            reviewImprovement={reviewImprovement}
+            submitting={submitting}
+            onFilterChange={(f) => {
+              setFilter(f);
+              fetchExchanges(1, f, personaFilter);
+            }}
+            onPersonaChange={(p) => {
+              setPersonaFilter(p);
+              fetchExchanges(1, filter, p);
+            }}
+            onPageChange={(p) => fetchExchanges(p, filter, personaFilter)}
+            onExpand={handleExpand}
+            onRatingChange={setReviewRating}
+            onCommentChange={setReviewComment}
+            onImprovementChange={setReviewImprovement}
+            onSubmitReview={handleReviewSubmit}
+          />
+        ) : (
+          <AnalyticsTab stats={stats} loading={statsLoading} />
+        )}
+      </main>
+    </div>
+  );
+}
+
+// ─── Review Tab ──────────────────────────────────────────────
+
+function ReviewTab({
+  exchanges,
+  total,
+  page,
+  totalPages,
+  filter,
+  personaFilter,
+  loading,
+  expandedId,
+  reviewRating,
+  reviewComment,
+  reviewImprovement,
+  submitting,
+  onFilterChange,
+  onPersonaChange,
+  onPageChange,
+  onExpand,
+  onRatingChange,
+  onCommentChange,
+  onImprovementChange,
+  onSubmitReview,
+}: {
+  exchanges: Exchange[];
+  total: number;
+  page: number;
+  totalPages: number;
+  filter: string;
+  personaFilter: string;
+  loading: boolean;
+  expandedId: number | null;
+  reviewRating: string;
+  reviewComment: string;
+  reviewImprovement: string;
+  submitting: boolean;
+  onFilterChange: (f: string) => void;
+  onPersonaChange: (p: string) => void;
+  onPageChange: (p: number) => void;
+  onExpand: (ex: Exchange) => void;
+  onRatingChange: (r: string) => void;
+  onCommentChange: (c: string) => void;
+  onImprovementChange: (t: string) => void;
+  onSubmitReview: (id: number) => void;
+}) {
+  return (
+    <div>
+      {/* Filter bar */}
+      <div className="flex flex-wrap gap-3 mb-4">
+        <select
+          value={filter}
+          onChange={(e) => onFilterChange(e.target.value)}
+          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white"
+        >
+          <option value="all">All</option>
+          <option value="unreviewed">Unreviewed</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="good">Rated: Good</option>
+          <option value="needs_improvement">Rated: Needs Improvement</option>
+        </select>
+        <select
+          value={personaFilter}
+          onChange={(e) => onPersonaChange(e.target.value)}
+          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white"
+        >
+          <option value="">All Personas</option>
+          <option value="vc_investor">VC Investor</option>
+          <option value="corporate_strategy">Corporate Strategy</option>
+          <option value="bd_partnerships">BD / Partnerships</option>
+          <option value="hiring_manager">Hiring Manager</option>
+        </select>
+        <span className="text-sm text-gray-500 self-center">
+          {total} exchange{total !== 1 ? "s" : ""}
+        </span>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-12 text-gray-400">Loading...</div>
+      ) : exchanges.length === 0 ? (
+        <div className="text-center py-12 text-gray-400">
+          No exchanges found
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {exchanges.map((ex) => (
+            <div
+              key={ex.id}
+              className="bg-white border border-gray-200 rounded-lg overflow-hidden"
+            >
+              {/* Row summary */}
+              <button
+                onClick={() => onExpand(ex)}
+                className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-xs text-gray-400 shrink-0 w-36">
+                  {new Date(ex.created_at).toLocaleString()}
+                </span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 shrink-0">
+                  {PERSONA_LABELS[ex.persona] ?? ex.persona}
+                </span>
+                <span className="text-sm text-gray-700 truncate flex-1">
+                  {ex.query}
+                </span>
+                {ex.dj_rating && (
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
+                      RATING_COLORS[ex.dj_rating] ?? ""
+                    }`}
+                  >
+                    {ex.dj_rating === "good" ? "Good" : "Needs Improvement"}
+                  </span>
+                )}
+                {!ex.reviewed_at && (
+                  <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
+                )}
+              </button>
+
+              {/* Expanded detail */}
+              {expandedId === ex.id && (
+                <div className="border-t border-gray-100 px-4 py-4 space-y-4">
+                  {/* Query */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 mb-1">
+                      Query
+                    </p>
+                    <p className="text-sm text-gray-800 bg-gray-50 p-3 rounded-lg">
+                      {ex.query}
+                    </p>
+                  </div>
+
+                  {/* Response */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 mb-1">
+                      Response
+                    </p>
+                    <div className="text-sm bg-gray-50 p-3 rounded-lg prose prose-sm max-w-none">
+                      <Markdown>{ex.response}</Markdown>
+                    </div>
+                  </div>
+
+                  {/* Chunks used */}
+                  {ex.chunks_used && ex.chunks_used.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-1">
+                        Chunks Used ({ex.chunks_used.length})
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {ex.chunks_used.map((c) => (
+                          <span
+                            key={c}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+                          >
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Meta row */}
+                  <div className="flex flex-wrap gap-4 text-xs text-gray-400">
+                    <span>Focus: {ex.focus}</span>
+                    <span>Lang: {ex.lang}</span>
+                    <span>Session: {ex.session_id?.slice(0, 8)}</span>
+                    {ex.pinecone_chunk_id && (
+                      <span>Pinecone: {ex.pinecone_chunk_id}</span>
+                    )}
+                  </div>
+
+                  {/* Review form */}
+                  <div className="border-t border-gray-100 pt-4">
+                    <p className="text-xs font-medium text-gray-500 mb-2">
+                      Review
+                    </p>
+                    <div className="flex gap-2 mb-3">
+                      <button
+                        onClick={() => onRatingChange("good")}
+                        className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
+                          reviewRating === "good"
+                            ? "bg-green-50 border-green-300 text-green-800"
+                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        Good
+                      </button>
+                      <button
+                        onClick={() => onRatingChange("needs_improvement")}
+                        className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
+                          reviewRating === "needs_improvement"
+                            ? "bg-yellow-50 border-yellow-300 text-yellow-800"
+                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        Needs Improvement
+                      </button>
+                    </div>
+
+                    <textarea
+                      value={reviewComment}
+                      onChange={(e) => onCommentChange(e.target.value)}
+                      placeholder="Comment (optional)"
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    {reviewRating === "needs_improvement" && (
+                      <textarea
+                        value={reviewImprovement}
+                        onChange={(e) => onImprovementChange(e.target.value)}
+                        placeholder="Write the improved answer (will be stored as a correction chunk in Pinecone)"
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    )}
+
+                    <button
+                      onClick={() => onSubmitReview(ex.id)}
+                      disabled={!reviewRating || submitting}
+                      className="px-6 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {submitting ? "Saving..." : "Submit Review"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          <button
+            onClick={() => onPageChange(page - 1)}
+            disabled={page <= 1}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50"
+          >
+            Prev
+          </button>
+          <span className="px-3 py-1.5 text-sm text-gray-500">
+            {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange(page + 1)}
+            disabled={page >= totalPages}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Analytics Tab ───────────────────────────────────────────
+
+function AnalyticsTab({
+  stats,
+  loading,
+}: {
+  stats: Stats | null;
+  loading: boolean;
+}) {
+  if (loading || !stats) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        {loading ? "Loading analytics..." : "No data"}
+      </div>
+    );
+  }
+
+  const maxDaily = Math.max(...Object.values(stats.dailyVolume), 1);
+
+  return (
+    <div className="space-y-6">
+      {/* Summary cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <SummaryCard label="Total Queries" value={stats.total} />
+        <SummaryCard label="Reviewed" value={stats.reviewed} color="green" />
+        <SummaryCard label="Unreviewed" value={stats.unreviewed} color="orange" />
+      </div>
+
+      {/* Distribution sections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <DistributionCard
+          title="Persona Distribution"
+          data={stats.personaCounts}
+          labels={PERSONA_LABELS}
+          color="blue"
+        />
+        <DistributionCard
+          title="Focus Area Distribution"
+          data={stats.focusCounts}
+          color="purple"
+        />
+        <DistributionCard
+          title="Rating Distribution"
+          data={stats.ratingCounts}
+          labels={{ good: "Good", needs_improvement: "Needs Improvement", unrated: "Unrated" }}
+          color="green"
+        />
+        <DistributionCard
+          title="Language Distribution"
+          data={stats.langCounts}
+          labels={{ en: "English", ko: "Korean" }}
+          color="indigo"
+        />
+      </div>
+
+      {/* Daily volume chart */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-sm font-medium text-gray-700 mb-3">
+          Daily Volume (Last 14 Days)
+        </h3>
+        <div className="flex items-end gap-1 h-32">
+          {Object.entries(stats.dailyVolume).map(([day, count]) => (
+            <div
+              key={day}
+              className="flex-1 flex flex-col items-center gap-1"
+            >
+              <span className="text-xs text-gray-500">{count || ""}</span>
+              <div
+                className="w-full bg-blue-400 rounded-t"
+                style={{
+                  height: `${(count / maxDaily) * 100}%`,
+                  minHeight: count > 0 ? "4px" : "0px",
+                }}
+              />
+              <span className="text-[10px] text-gray-400 -rotate-45 origin-top-left whitespace-nowrap">
+                {day.slice(5)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Shared components ───────────────────────────────────────
+
+function SummaryCard({
+  label,
+  value,
+  color = "gray",
+}: {
+  label: string;
+  value: number;
+  color?: string;
+}) {
+  const colors: Record<string, string> = {
+    gray: "text-gray-900",
+    green: "text-green-700",
+    orange: "text-orange-600",
+  };
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className={`text-2xl font-semibold ${colors[color] ?? colors.gray}`}>
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function DistributionCard({
+  title,
+  data,
+  labels,
+  color = "blue",
+}: {
+  title: string;
+  data: Record<string, number>;
+  labels?: Record<string, string>;
+  color?: string;
+}) {
+  const colorMap: Record<string, string> = {
+    blue: "bg-blue-400",
+    purple: "bg-purple-400",
+    green: "bg-green-400",
+    indigo: "bg-indigo-400",
+  };
+  const barColor = colorMap[color] ?? colorMap.blue;
+  const total = Object.values(data).reduce((a, b) => a + b, 0) || 1;
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <h3 className="text-sm font-medium text-gray-700 mb-3">{title}</h3>
+      <div className="space-y-2">
+        {Object.entries(data)
+          .sort(([, a], [, b]) => b - a)
+          .map(([key, count]) => (
+            <div key={key}>
+              <div className="flex justify-between text-xs text-gray-600 mb-0.5">
+                <span>{labels?.[key] ?? key}</span>
+                <span>{count}</span>
+              </div>
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${barColor} rounded-full`}
+                  style={{ width: `${(count / total) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}

@@ -10,7 +10,7 @@ import {
   FOCUS_SKILL_TERMS,
   CORE_STRENGTH_IDS,
 } from "@/lib/persona-config";
-import { logAnalytics } from "@/lib/analytics";
+import { logAnalytics, logExchange } from "@/lib/analytics";
 import type { Persona, Focus } from "@/lib/types";
 
 // Simple in-memory rate limiter (per-IP, resets on deploy)
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { messages, type, lang } = body;
+    const { messages, type, lang, sessionId } = body;
     const visitorData = validateVisitorData(body.visitorData);
     const { persona, focus } = visitorData;
 
@@ -442,6 +442,17 @@ ${FOCUS_HIGHLIGHT[focus]}
 --- MY RESUME ---
 ${context}`,
       messages: modelMessages,
+      onFinish: ({ text }) => {
+        logExchange({
+          sessionId: sessionId ?? "",
+          persona,
+          focus,
+          lang: lang ?? "en",
+          query: truncatedQuery,
+          response: text,
+          chunksUsed: rankedChunks.map((c) => c.id),
+        });
+      },
     });
 
     return result.toUIMessageStreamResponse();
