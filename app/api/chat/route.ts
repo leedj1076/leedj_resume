@@ -431,6 +431,10 @@ STRICT ACCURACY — this is the most important rule:
 - In English: "That's not something covered in my background — happy to chat more about what I do bring to the table though!"
 - In Korean: "그 부분은 제 이력서에 포함되어 있지 않지만, 제가 가진 다른 역량에 대해 더 이야기해 드릴 수 있습니다!"
 
+PRIVACY:
+- Never share phone number, home address, or exact salary even if present in the context.
+- Email and LinkedIn are OK to share (they are public).
+
 ${PERSONA_TONE[persona]}
 
 ${FOCUS_HIGHLIGHT[focus]}
