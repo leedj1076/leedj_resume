@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ask DJ — Narrative Mode</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes typeIn{from{opacity:0;transform:translateY(8px);filter:blur(2px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+    @keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+    @keyframes expandLine{from{width:0}to{width:100%}}
+    .fade-up{animation:fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both}
+    .fade-in{animation:fadeIn 0.5s ease both}
+    .type-in{animation:typeIn 0.5s cubic-bezier(0.16,1,0.3,1) both}
+    .gradient-text{background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradientShift 4s ease infinite}
+    .typing-dot{width:5px;height:5px;border-radius:50%;animation:pulse 1s ease-in-out infinite}
+    .cursor-blink{animation:cursorBlink 1s step-end infinite}
+    .serif{font-family:'Instrument Serif',Georgia,serif}
+    .mono{font-family:'JetBrains Mono',monospace}
+    button{cursor:pointer;border:none;background:none;font-family:inherit}
+    input:focus,textarea:focus{outline:none}
+    ::selection{background:rgba(99,102,241,0.3)}
+    .sb::-webkit-scrollbar{width:4px}.sb::-webkit-scrollbar-track{background:transparent}.sb::-webkit-scrollbar-thumb{background:rgba(128,128,128,0.15);border-radius:4px}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,useCallback,createContext,useContext} = React;
+
+/* ═══ THEMES ═══ */
+const themes = {
+  dark: {
+    bg:"#08080a",surface:"#111114",surfaceAlt:"#18181c",
+    border:"#222228",borderHover:"#33333d",
+    text:"#ededef",textSec:"#9d9daa",textMut:"#5c5c6a",textFaint:"#3a3a44",
+    accent:"#6366f1",accentSoft:"rgba(99,102,241,0.08)",accentMed:"rgba(99,102,241,0.16)",
+    accent2:"#8b5cf6",accent3:"#ec4899",
+    green:"#34d399",greenSoft:"rgba(52,211,153,0.08)",
+    amber:"#fbbf24",amberSoft:"rgba(251,191,36,0.08)",
+    overlay:"rgba(0,0,0,0.85)",
+    narrativeBg:"#0c0c0f",
+    chapterLine:"#6366f1",
+  },
+  light: {
+    bg:"#fafafa",surface:"#ffffff",surfaceAlt:"#f5f5f7",
+    border:"#e4e4e7",borderHover:"#c8c8d0",
+    text:"#18181b",textSec:"#52525b",textMut:"#a1a1aa",textFaint:"#d4d4d8",
+    accent:"#4f46e5",accentSoft:"rgba(79,70,229,0.05)",accentMed:"rgba(79,70,229,0.1)",
+    accent2:"#7c3aed",accent3:"#db2777",
+    green:"#059669",greenSoft:"rgba(5,150,105,0.06)",
+    amber:"#d97706",amberSoft:"rgba(217,119,6,0.06)",
+    overlay:"rgba(0,0,0,0.4)",
+    narrativeBg:"#fafafa",
+    chapterLine:"#4f46e5",
+  },
+};
+const ThemeCtx = createContext();
+function useT(){return useContext(ThemeCtx)}
+
+/* ═══ NARRATIVE DATA ═══ */
+// Each chapter is a "beat" in DJ's story, tailored per focus
+const STORIES = {
+  bd: {
+    title: "The Partnership Builder",
+    chapters: [
+      {
+        id:"origin",
+        headline:"Engineering roots, business instincts",
+        body:"DJ started at KAIST studying mechanical engineering and industrial design — an unusual double major that trained him to think in systems while caring about how people experience them. A dual degree at KIT in Germany added a cross-cultural lens that would later define his career.",
+        aside:{label:"Education",items:["KAIST M.S. & B.S.","KIT Dual Degree (Germany)","Trilingual: KR / EN / DE"]},
+        marker:"2010–2018",
+      },
+      {
+        id:"pivot",
+        headline:"From engineer to dealmaker",
+        body:"After building technical foundations, DJ discovered his real edge wasn't just understanding technology — it was translating it into business value for people who don't speak engineering. He moved into business development, where he could sit at the intersection of what's technically possible and what's commercially viable.",
+        aside:{label:"The shift",items:["Technical foundation → business translation","Systems thinking applied to partnerships","Cross-cultural fluency as a BD advantage"]},
+        marker:"2018–2019",
+      },
+      {
+        id:"peak",
+        headline:"Building the BD engine from zero",
+        body:"At Devs United Games, DJ didn't join an existing BD team — he created one. He sourced, negotiated, and closed partnerships with major game publishers across APAC, building a $2M+ pipeline. The playbooks and frameworks he developed became the company's partnership infrastructure.",
+        aside:{label:"Impact",items:["$2M+ pipeline built from zero","APAC publisher partnerships","Team of 4 recruited & trained"]},
+        marker:"2021–2023",
+      },
+      {
+        id:"now",
+        headline:"Where AI meets partnerships",
+        body:"Today DJ combines his BD track record with hands-on AI engineering — he's not just selling AI products, he's building them. Production RAG systems with Gemini and Pinecone, full-stack apps with Next.js and Vercel AI SDK. This is rare: most people in BD can describe AI but can't ship it.",
+        aside:{label:"Current stack",items:["Gemini + Pinecone RAG","Next.js 16 + Vercel AI SDK","Full-stack TypeScript"]},
+        marker:"2024–Now",
+      },
+    ],
+  },
+  ai: {
+    title: "The Technical Builder",
+    chapters: [
+      {
+        id:"origin",
+        headline:"Engineering-first foundation",
+        body:"DJ's technical depth starts with mechanical engineering at KAIST — systems thinking, optimization, and mathematical rigor. A dual degree at Germany's KIT added exposure to European research culture and advanced engineering methods. This wasn't a pivot to tech — it was the beginning.",
+        aside:{label:"Education",items:["KAIST M.S. Mechanical Engineering","KIT Dual Degree, Germany","Graph Neural Networks research"]},
+        marker:"2010–2018",
+      },
+      {
+        id:"applied",
+        headline:"From theory to production AI",
+        body:"Where many engineers stay in research, DJ moved to application. He built production systems — not prototypes. RAG pipelines using gemini-embedding-001 for 3072-dimensional embeddings, Pinecone vector search, and streaming inference with gemini-2.5-flash. Entity detection, parallel retrieval, context stratification.",
+        aside:{label:"Architecture",items:["3072-dim Gemini embeddings","Pinecone hybrid search","Streaming inference pipeline"]},
+        marker:"2023–2024",
+      },
+      {
+        id:"product",
+        headline:"AI product strategy for enterprise",
+        body:"DJ's edge is translating complex ML concepts into business proposals that non-technical stakeholders actually understand. He helped enterprise clients adopt LLM-based workflows by bridging the gap between what the model can do and what the business needs it to do.",
+        aside:{label:"Capabilities",items:["LLM workflow design","Technical → business translation","Enterprise AI adoption"]},
+        marker:"2023–2024",
+      },
+      {
+        id:"now",
+        headline:"Full-stack AI applications",
+        body:"The current work brings it all together: Next.js 16 with App Router, Vercel AI SDK v6, Tailwind CSS 4, and production deployments on Vercel. DJ ships the entire stack — from embedding pipeline to streaming UI. The 'Ask DJ' system you're using right now is an example.",
+        aside:{label:"Ship list",items:["Next.js 16 + React 19","Vercel AI SDK v6","This RAG chatbot"]},
+        marker:"Now",
+      },
+    ],
+  },
+  leadership: {
+    title: "The 0→1 Operator",
+    chapters: [
+      {
+        id:"origin",
+        headline:"Trained to think across disciplines",
+        body:"A double major in mechanical engineering and industrial design at KAIST meant DJ was always working at boundaries — between technical systems and human-centered design, between what's optimal and what's usable. This cross-disciplinary instinct carried forward into every leadership role.",
+        aside:{label:"Foundation",items:["Engineering × Design thinking","KAIST + KIT international exposure","Cum Laude, Dean's List"]},
+        marker:"2010–2018",
+      },
+      {
+        id:"build",
+        headline:"Building functions from scratch",
+        body:"At Devs United Games, DJ was brought in not to manage an existing team but to create the entire BD function. Recruiting, training, establishing KPIs, building reporting structures — everything from zero. He hired 4 BD professionals and built the processes that outlasted his tenure.",
+        aside:{label:"0→1 Work",items:["BD function created from scratch","4-person team built & trained","KPIs, processes, reporting"]},
+        marker:"2021–2023",
+      },
+      {
+        id:"cross",
+        headline:"Cross-functional product ownership",
+        body:"DJ owned partnership-driven product roadmaps, which meant balancing technical feasibility against market opportunity and partner requirements. This isn't PM-by-title — it's the kind of strategic product thinking that emerges when someone understands both the code and the deal.",
+        aside:{label:"Scope",items:["Product roadmap ownership","Technical × commercial balance","Multi-stakeholder alignment"]},
+        marker:"2020–2024",
+      },
+      {
+        id:"now",
+        headline:"Operator who builds",
+        body:"What makes DJ's leadership profile unusual: he doesn't just direct — he builds. When a technical decision needs to be made, he can evaluate it firsthand. When a partnership needs technical depth, he can demo the product himself. This operator-builder combination is what 0→1 environments need.",
+        aside:{label:"Differentiator",items:["Leads AND builds","Technical credibility in the room","Comfortable in ambiguity"]},
+        marker:"Now",
+      },
+    ],
+  },
+  fullstack: {
+    title: "The Engineer Who Sells",
+    chapters: [
+      {
+        id:"origin",
+        headline:"Mechanical engineering foundations",
+        body:"DJ's engineering career began at KAIST with mechanical engineering and industrial design. The rigorous mathematical training — optimization, numerical methods, systems modeling — translates directly to how he approaches software architecture: everything is a system with constraints to optimize.",
+        aside:{label:"Foundations",items:["Systems modeling","Optimization theory","Industrial Design principles"]},
+        marker:"2010–2018",
+      },
+      {
+        id:"web",
+        headline:"Full-stack across web and mobile",
+        body:"The shift to software was natural. DJ shipped across React Native, Node.js APIs, and cloud deployments on AWS and Vercel. Not weekend projects — production features used by real users. Strong DevOps and CI/CD practices meant he owned the full lifecycle.",
+        aside:{label:"Stack",items:["React Native + Node.js","AWS + Vercel deployments","CI/CD pipelines"]},
+        marker:"2018–2023",
+      },
+      {
+        id:"modern",
+        headline:"Cutting-edge modern stack",
+        body:"Current work uses the latest: Next.js 16 with App Router and Server Components, Vercel AI SDK v6, React 19, Tailwind CSS 4, TypeScript throughout. DJ doesn't just use frameworks — he understands their internals well enough to make architectural decisions about streaming, caching, and edge runtime.",
+        aside:{label:"Current",items:["Next.js 16 + React 19","Vercel AI SDK v6","TypeScript + Tailwind 4"]},
+        marker:"2023–Now",
+      },
+      {
+        id:"ai",
+        headline:"AI-native engineering",
+        body:"The most recent layer: production RAG systems with Gemini embeddings (3072 dimensions), Pinecone vector search, entity detection, parallel retrieval with Promise.all(), and context stratification. DJ builds AI applications end-to-end, from data pipeline to streaming UI.",
+        aside:{label:"AI Engineering",items:["Gemini embeddings + Pinecone","RAG with entity detection","Streaming AI responses"]},
+        marker:"Now",
+      },
+    ],
+  },
+};
+
+const PERSONAS = [
+  {id:"vc",label:"VC / Investor",desc:"Evaluating as founder or operator"},
+  {id:"strategy",label:"Corporate Strategy",desc:"Exploring collaboration or hire"},
+  {id:"bd",label:"BD / Partnerships",desc:"Looking for a partnership lead"},
+  {id:"hiring",label:"Hiring Manager",desc:"Evaluating for a specific role"},
+];
+const FOCUSES = [
+  {id:"bd",label:"Business Development"},
+  {id:"ai",label:"AI / LLMs"},
+  {id:"leadership",label:"Leadership & Strategy"},
+  {id:"fullstack",label:"Full-Stack Engineering"},
+];
+
+/* ═══ ICONS ═══ */
+function Icon({name,size=16}){
+  const p={width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"1.8",strokeLinecap:"round",strokeLinejoin:"round"};
+  const d={
+    arrow:"M5 12h14M12 5l7 7-7 7",back:"M19 12H5M12 19l-7-7 7-7",
+    sun:"M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 6a6 6 0 100 12 6 6 0 000-12z",
+    moon:"M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z",
+    chat:"M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
+    send:"M22 2L11 13M22 2l-7 20-4-9-9-4z",
+    down:"M6 9l6 6 6-6",
+    x:"M18 6L6 18M6 6l12 12",
+  };
+  return <svg {...p}><path d={d[name]}/></svg>;
+}
+
+/* ═══ GATEWAY ═══ */
+function Gateway({onComplete}){
+  const t=useT();
+  const [step,setStep]=useState(0);
+  const [persona,setPersona]=useState(null);
+  const [focus,setFocus]=useState(null);
+  const [hovered,setHovered]=useState(null);
+
+  return(
+    <div style={{position:"fixed",inset:0,background:t.overlay,backdropFilter:"blur(24px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:"1.5rem"}}>
+      <div className="fade-up" style={{background:t.surface,border:`1px solid ${t.border}`,borderRadius:20,maxWidth:460,width:"100%",overflow:"hidden"}}>
+        <div style={{padding:"52px 40px 36px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",inset:0,background:`radial-gradient(ellipse at 50% 0%,${t.accentSoft},transparent 70%)`,pointerEvents:"none"}}/>
+          <div style={{position:"relative"}}>
+            <div style={{width:64,height:64,margin:"0 auto 18px",borderRadius:16,background:`linear-gradient(135deg,${t.accent},${t.accent2})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,fontWeight:800,color:"#fff",boxShadow:`0 8px 32px ${t.accentSoft}`}}>DJ</div>
+            <h1 style={{fontSize:24,fontWeight:800,letterSpacing:"-0.04em",marginBottom:6}}><span className="gradient-text">Ask DJ</span></h1>
+            <p style={{fontSize:13,color:t.textMut}}>A guided tour of my professional experience</p>
+          </div>
+        </div>
+        <div style={{padding:"4px 32px 36px",borderTop:`1px solid ${t.border}`}}>
+          {step===0?(
+            <div style={{paddingTop:24}}>
+              <p style={{fontSize:11,fontWeight:600,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:14}} className="mono">I am a...</p>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {PERSONAS.map((p,i)=>(
+                  <button key={p.id} onClick={()=>{setPersona(p);setStep(1)}}
+                    onMouseEnter={()=>setHovered(p.id)} onMouseLeave={()=>setHovered(null)}
+                    style={{width:"100%",textAlign:"left",padding:"14px 18px",borderRadius:12,border:`1px solid ${hovered===p.id?t.accent:t.border}`,background:hovered===p.id?t.accentSoft:t.surfaceAlt,color:t.text,transition:"all 0.2s",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <div>
+                      <div style={{fontSize:14,fontWeight:600}}>{p.label}</div>
+                      <div style={{fontSize:12,color:t.textMut,marginTop:2}}>{p.desc}</div>
+                    </div>
+                    <div style={{color:hovered===p.id?t.accent:t.textMut,transition:"color 0.2s"}}><Icon name="arrow" size={14}/></div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ):(
+            <div style={{paddingTop:20}}>
+              <button onClick={()=>setStep(0)} style={{fontSize:12,color:t.textMut,marginBottom:18,display:"flex",alignItems:"center",gap:4}}
+                onMouseEnter={e=>e.currentTarget.style.color=t.text} onMouseLeave={e=>e.currentTarget.style.color=t.textMut}>
+                <Icon name="back" size={12}/> Back
+              </button>
+              <p style={{fontSize:11,fontWeight:600,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:14}} className="mono">Interested in...</p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:28}}>
+                {FOCUSES.map(f=>(
+                  <button key={f.id} onClick={()=>setFocus(f)}
+                    style={{padding:"15px 14px",borderRadius:12,border:`1px solid ${focus?.id===f.id?t.accent:t.border}`,background:focus?.id===f.id?t.accentSoft:t.surfaceAlt,color:focus?.id===f.id?t.accent:t.textSec,fontSize:13,fontWeight:600,transition:"all 0.2s"}}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <button onClick={()=>focus&&onComplete({persona,focus})} disabled={!focus}
+                style={{width:"100%",padding:"13px",borderRadius:12,background:focus?`linear-gradient(135deg,${t.accent},${t.accent2})`:"#333",color:focus?"#fff":t.textMut,fontSize:14,fontWeight:700,transition:"all 0.2s",boxShadow:focus?`0 4px 20px ${t.accentSoft}`:"none"}}>
+                Continue
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ CHAPTER COMPONENT ═══ */
+function Chapter({chapter,index,total,isRevealed,onInterrupt}){
+  const t=useT();
+  const [showAside,setShowAside]=useState(false);
+  if(!isRevealed) return null;
+
+  return(
+    <div className="type-in" style={{animationDelay:`${index*0.1}s`,marginBottom:index<total-1?64:0,position:"relative"}}>
+      {/* Timeline connector */}
+      <div style={{position:"absolute",left:-36,top:0,bottom:index<total-1?-64:0,width:1}}>
+        <div style={{width:1,height:"100%",background:`linear-gradient(180deg,${t.chapterLine}40,${t.border})`}}/>
+        <div style={{position:"absolute",top:8,left:-4,width:9,height:9,borderRadius:"50%",background:t.chapterLine,boxShadow:`0 0 12px ${t.accentSoft}`}}/>
+      </div>
+
+      {/* Marker */}
+      <div style={{marginBottom:12}}>
+        <span style={{fontSize:11,fontWeight:600,color:t.accent,letterSpacing:"0.06em",padding:"3px 10px",borderRadius:6,background:t.accentSoft,border:`1px solid ${t.accentMed}`}} className="mono">{chapter.marker}</span>
+      </div>
+
+      {/* Headline */}
+      <h2 className="serif" style={{fontSize:28,fontWeight:400,fontStyle:"italic",color:t.text,lineHeight:1.3,marginBottom:16,letterSpacing:"-0.02em"}}>{chapter.headline}</h2>
+
+      {/* Body */}
+      <p style={{fontSize:15,color:t.textSec,lineHeight:1.8,maxWidth:560,marginBottom:20}}>{chapter.body}</p>
+
+      {/* Aside card */}
+      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+        <button onClick={()=>setShowAside(!showAside)}
+          style={{fontSize:12,padding:"7px 14px",borderRadius:8,background:t.surface,border:`1px solid ${t.border}`,color:t.textSec,fontWeight:600,display:"flex",alignItems:"center",gap:6,transition:"all 0.2s"}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textSec}}>
+          {chapter.aside.label}
+          <div style={{transform:showAside?"rotate(180deg)":"none",transition:"transform 0.2s"}}><Icon name="down" size={12}/></div>
+        </button>
+        <button onClick={()=>onInterrupt(chapter.headline)}
+          style={{fontSize:12,padding:"7px 14px",borderRadius:8,background:t.accentSoft,border:`1px solid ${t.accentMed}`,color:t.accent,fontWeight:600,display:"flex",alignItems:"center",gap:6,transition:"all 0.15s"}}
+          onMouseEnter={e=>e.currentTarget.style.background=t.accentMed}
+          onMouseLeave={e=>e.currentTarget.style.background=t.accentSoft}>
+          <Icon name="chat" size={12}/> Ask about this
+        </button>
+      </div>
+
+      {showAside&&(
+        <div className="fade-in" style={{marginTop:12,padding:"16px 20px",background:t.surfaceAlt,borderRadius:12,border:`1px solid ${t.border}`,maxWidth:400}}>
+          <div style={{fontSize:11,fontWeight:700,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}} className="mono">{chapter.aside.label}</div>
+          {chapter.aside.items.map((item,i)=>(
+            <div key={i} style={{fontSize:13,color:t.textSec,lineHeight:1.6,paddingLeft:12,position:"relative",marginTop:i>0?4:0}}>
+              <div style={{position:"absolute",left:0,top:8,width:4,height:4,borderRadius:"50%",background:t.accent,opacity:0.5}}/>
+              {item}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══ NARRATIVE MODE ═══ */
+function NarrativeMode({visitor,onSwitchToChat}){
+  const t=useT();
+  const story = STORIES[visitor.focus.id] || STORIES.bd;
+  const [revealed,setRevealed]=useState(1);
+  const [allRevealed,setAllRevealed]=useState(false);
+  const bottomRef=useRef(null);
+
+  useEffect(()=>{
+    if(revealed<story.chapters.length && !allRevealed){
+      const timer=setTimeout(()=>{
+        setRevealed(r=>r+1);
+      },1800);
+      return()=>clearTimeout(timer);
+    } else if(revealed>=story.chapters.length){
+      setAllRevealed(true);
+    }
+  },[revealed,allRevealed]);
+
+  useEffect(()=>{
+    bottomRef.current?.scrollIntoView({behavior:"smooth"});
+  },[revealed]);
+
+  function revealAll(){
+    setRevealed(story.chapters.length);
+    setAllRevealed(true);
+  }
+
+  return(
+    <div className="sb" style={{height:"calc(100vh - 52px)",overflowY:"auto",background:t.narrativeBg}}>
+      <div style={{maxWidth:640,margin:"0 auto",padding:"56px 28px 100px 64px",position:"relative"}}>
+        {/* Story title */}
+        <div className="fade-up" style={{marginBottom:56}}>
+          <div style={{fontSize:11,fontWeight:600,color:t.accent,letterSpacing:"0.1em",marginBottom:12}} className="mono">
+            {visitor.persona.label} · {visitor.focus.label}
+          </div>
+          <h1 className="serif" style={{fontSize:42,fontWeight:400,color:t.text,letterSpacing:"-0.03em",lineHeight:1.15,marginBottom:16}}>
+            <span style={{fontStyle:"italic"}}>{story.title}</span>
+          </h1>
+          <p style={{fontSize:15,color:t.textMut,lineHeight:1.6,maxWidth:480}}>
+            DJ's professional story, told through the lens of what matters to you. Scroll to follow the arc, or interrupt at any point to dig deeper.
+          </p>
+          {!allRevealed&&(
+            <button onClick={revealAll} style={{marginTop:16,fontSize:12,color:t.textMut,fontWeight:500,display:"flex",alignItems:"center",gap:4}} className="mono"
+              onMouseEnter={e=>e.currentTarget.style.color=t.text} onMouseLeave={e=>e.currentTarget.style.color=t.textMut}>
+              Skip to full story <Icon name="down" size={12}/>
+            </button>
+          )}
+        </div>
+
+        {/* Chapters */}
+        {story.chapters.map((ch,i)=>(
+          <Chapter key={ch.id} chapter={ch} index={i} total={story.chapters.length}
+            isRevealed={i<revealed}
+            onInterrupt={(topic)=>onSwitchToChat(`Tell me more about: ${topic}`)}/>
+        ))}
+
+        {/* Writing indicator */}
+        {!allRevealed&&revealed<story.chapters.length&&(
+          <div className="fade-in" style={{display:"flex",alignItems:"center",gap:8,marginTop:32,paddingLeft:0}}>
+            <div style={{display:"flex",gap:4}}>
+              <div className="typing-dot" style={{background:t.textMut}}/>
+              <div className="typing-dot" style={{background:t.textMut,animationDelay:"0.2s"}}/>
+              <div className="typing-dot" style={{background:t.textMut,animationDelay:"0.4s"}}/>
+            </div>
+            <span style={{fontSize:12,color:t.textMut}} className="mono">continuing...</span>
+          </div>
+        )}
+
+        {/* End CTA */}
+        {allRevealed&&(
+          <div className="fade-up" style={{marginTop:64,padding:"32px",background:t.surface,borderRadius:16,border:`1px solid ${t.border}`,textAlign:"center"}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:t.text,marginBottom:8,letterSpacing:"-0.02em"}}>That's the arc.</h3>
+            <p style={{fontSize:14,color:t.textMut,marginBottom:20,lineHeight:1.6}}>Want to go deeper on any chapter? Switch to chat and ask anything.</p>
+            <button onClick={()=>onSwitchToChat(null)}
+              style={{padding:"12px 28px",borderRadius:10,background:`linear-gradient(135deg,${t.accent},${t.accent2})`,color:"#fff",fontSize:14,fontWeight:700,display:"inline-flex",alignItems:"center",gap:8,boxShadow:`0 4px 20px ${t.accentSoft}`}}>
+              <Icon name="chat" size={14}/> Open Chat
+            </button>
+          </div>
+        )}
+
+        <div ref={bottomRef}/>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ CHAT MODE ═══ */
+function ChatMode({visitor,initQ}){
+  const t=useT();
+  const [msgs,setMsgs]=useState([]);
+  const [input,setInput]=useState("");
+  const [typing,setTyping]=useState(false);
+  const [focused,setFocused]=useState(false);
+  const endRef=useRef(null);
+
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:"smooth"})},[msgs]);
+  useEffect(()=>{if(initQ)send(initQ)},[]);
+
+  async function send(text){
+    const history = msgs.map(m=>({role:m.role,text:m.text}));
+    setMsgs(p=>[...p,{id:Date.now(),role:"user",text}]);
+    setTyping(true);
+    try{
+      const res = await fetch('/api/ui-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:text,personaId:visitor?.persona?.id||'hiring',focusId:visitor?.focus?.id||'fullstack',history})});
+      const data = await res.json();
+      setMsgs(p=>[...p,{id:Date.now()+1,role:"assistant",text:data.response||"Sorry, something went wrong."}]);
+    }catch(e){
+      setMsgs(p=>[...p,{id:Date.now()+1,role:"assistant",text:"Sorry, something went wrong. Please try again."}]);
+    }
+    setTyping(false);
+  }
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",height:"calc(100vh - 52px)"}}>
+      <div className="sb" style={{flex:1,overflowY:"auto",padding:"32px 24px"}}>
+        {msgs.length===0?(
+          <div className="fade-up" style={{textAlign:"center",paddingTop:72}}>
+            <div style={{width:52,height:52,margin:"0 auto 18px",borderRadius:14,background:t.accentSoft,border:`1px solid ${t.accentMed}`,display:"flex",alignItems:"center",justifyContent:"center",color:t.accent}}>
+              <Icon name="chat" size={22}/>
+            </div>
+            <h3 style={{fontSize:18,fontWeight:700,color:t.text,marginBottom:8}}>Ask anything</h3>
+            <p style={{fontSize:13,color:t.textMut,maxWidth:380,margin:"0 auto 28px",lineHeight:1.5}}>Dig deeper into any part of DJ's story.</p>
+            <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:6,maxWidth:500,margin:"0 auto"}}>
+              {(STORIES[visitor.focus.id]||STORIES.bd).chapters.slice(0,3).map(c=>(
+                <button key={c.id} onClick={()=>send(`Tell me more about: ${c.headline}`)}
+                  style={{padding:"9px 16px",borderRadius:10,border:`1px solid ${t.border}`,background:t.surface,color:t.textSec,fontSize:13,fontWeight:600,transition:"all 0.2s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textSec}}>
+                  {c.headline}
+                </button>
+              ))}
+            </div>
+          </div>
+        ):(
+          <div style={{maxWidth:660,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
+            {msgs.map(m=>(
+              <div key={m.id} className="fade-up" style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start"}}>
+                <div style={{
+                  maxWidth:"82%",borderRadius:14,padding:"14px 18px",fontSize:14,lineHeight:1.7,
+                  ...(m.role==="user"
+                    ?{background:`linear-gradient(135deg,${t.accent},${t.accent2})`,color:"#fff"}
+                    :{background:t.surface,border:`1px solid ${t.border}`,color:t.textSec})
+                }}>
+                  {m.text.split("\n").map((line,i)=>{
+                    const parts=line.split(/\*\*(.*?)\*\*/g);
+                    return <span key={i}>{parts.map((pt,j)=>j%2===1?<strong key={j} style={{color:m.role==="user"?"#fff":t.text,fontWeight:700}}>{pt}</strong>:<span key={j}>{pt}</span>)}{i<m.text.split("\n").length-1&&<br/>}</span>;
+                  })}
+                </div>
+              </div>
+            ))}
+            {typing&&(
+              <div className="fade-in" style={{display:"flex"}}>
+                <div style={{background:t.surface,border:`1px solid ${t.border}`,borderRadius:14,padding:"16px 20px",display:"flex",gap:5,alignItems:"center"}}>
+                  <div className="typing-dot" style={{background:t.textMut}}/><div className="typing-dot" style={{background:t.textMut,animationDelay:"0.2s"}}/><div className="typing-dot" style={{background:t.textMut,animationDelay:"0.4s"}}/>
+                </div>
+              </div>
+            )}
+            <div ref={endRef}/>
+          </div>
+        )}
+      </div>
+      <div style={{borderTop:`1px solid ${t.border}`,padding:"16px 24px",background:t.bg}}>
+        <form onSubmit={e=>{e.preventDefault();if(!input.trim()||typing)return;send(input.trim());setInput("")}}
+          style={{maxWidth:660,margin:"0 auto",display:"flex",gap:8}}>
+          <input value={input} onChange={e=>setInput(e.target.value)}
+            onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)}
+            placeholder="Ask about DJ's experience..."
+            style={{flex:1,padding:"13px 18px",borderRadius:12,border:`1px solid ${focused?t.accent:t.border}`,background:t.surface,color:t.text,fontSize:14,transition:"all 0.2s",boxShadow:focused?`0 0 0 3px ${t.accentSoft}`:"none"}}/>
+          <button type="submit" disabled={!input.trim()||typing}
+            style={{padding:"13px 18px",borderRadius:12,background:input.trim()&&!typing?`linear-gradient(135deg,${t.accent},${t.accent2})`:"transparent",border:input.trim()&&!typing?"none":`1px solid ${t.border}`,color:input.trim()&&!typing?"#fff":t.textMut,transition:"all 0.2s"}}>
+            <Icon name="send" size={14}/>
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ APP ═══ */
+function App(){
+  const [theme,setTheme]=useState("dark");
+  const [visitor,setVisitor]=useState(null);
+  const [mode,setMode]=useState("story");
+  const [chatQ,setChatQ]=useState(null);
+  const t=themes[theme];
+
+  useEffect(()=>{document.body.style.background=t.bg;document.body.style.color=t.text},[theme]);
+
+  function switchToChat(q){setChatQ(q);setMode("chat")}
+
+  const modes=[{id:"story",label:"Story"},{id:"chat",label:"Chat"}];
+
+  if(!visitor) return <ThemeCtx.Provider value={t}><Gateway onComplete={setVisitor}/></ThemeCtx.Provider>;
+
+  return(
+    <ThemeCtx.Provider value={t}>
+      <div style={{display:"flex",flexDirection:"column",height:"100vh",background:t.bg}}>
+        <nav style={{height:52,borderBottom:`1px solid ${t.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",background:t.bg,flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:30,height:30,borderRadius:8,background:`linear-gradient(135deg,${t.accent},${t.accent2})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:"#fff"}}>DJ</div>
+            <span style={{fontSize:15,fontWeight:700,color:t.text,letterSpacing:"-0.03em"}}>Ask DJ</span>
+            <span style={{width:1,height:16,background:t.border,margin:"0 6px"}}/>
+            <span style={{fontSize:12,color:t.textMut}} className="mono">{visitor.persona.label}</span>
+          </div>
+          <div style={{display:"flex",background:t.surface,borderRadius:10,padding:3,border:`1px solid ${t.border}`}}>
+            {modes.map(m=>(
+              <button key={m.id} onClick={()=>{if(m.id==="story")setChatQ(null);setMode(m.id)}}
+                style={{padding:"6px 16px",borderRadius:7,fontSize:12,fontWeight:mode===m.id?700:500,color:mode===m.id?t.text:t.textMut,background:mode===m.id?t.surfaceAlt:"transparent",transition:"all 0.2s",position:"relative"}}>
+                {m.label}
+                {mode===m.id&&<div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:16,height:2,borderRadius:1,background:t.accent}}/>}
+              </button>
+            ))}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <button onClick={()=>setTheme(p=>p==="dark"?"light":"dark")} title="Toggle theme"
+              style={{width:32,height:32,borderRadius:8,border:`1px solid ${t.border}`,background:t.surfaceAlt,display:"flex",alignItems:"center",justifyContent:"center",color:t.textMut,transition:"all 0.2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textMut}}>
+              <Icon name={theme==="dark"?"sun":"moon"} size={14}/>
+            </button>
+            <button onClick={()=>setVisitor(null)}
+              style={{fontSize:11,color:t.textMut,padding:"6px 12px",borderRadius:8,border:`1px solid ${t.border}`,fontWeight:600,transition:"all 0.2s"}} className="mono"
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textMut}}>
+              Reset
+            </button>
+          </div>
+        </nav>
+        {mode==="story"&&<NarrativeMode visitor={visitor} onSwitchToChat={switchToChat}/>}
+        {mode==="chat"&&<ChatMode visitor={visitor} initQ={chatQ}/>}
+      </div>
+    </ThemeCtx.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

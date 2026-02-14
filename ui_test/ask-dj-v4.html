@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ask DJ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;transition:background 0.3s ease,color 0.3s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes barGrow{from{width:0}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .fade-up{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both}
+    .fade-in{animation:fadeIn 0.4s ease both}
+    .d1{animation-delay:0.06s}.d2{animation-delay:0.12s}.d3{animation-delay:0.18s}.d4{animation-delay:0.24s}
+    .typing-dot{width:5px;height:5px;border-radius:50%;animation:pulse 1s ease-in-out infinite}
+    .bar-grow{animation:barGrow 0.8s cubic-bezier(0.16,1,0.3,1) both}
+    .gradient-text{background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradientShift 4s ease infinite}
+    input:focus,textarea:focus{outline:none}
+    button{cursor:pointer;border:none;background:none;font-family:inherit}
+    ::selection{background:rgba(99,102,241,0.3)}
+    .sb::-webkit-scrollbar{width:4px}.sb::-webkit-scrollbar-track{background:transparent}.sb::-webkit-scrollbar-thumb{background:rgba(128,128,128,0.2);border-radius:4px}
+    .mono{font-family:'JetBrains Mono',monospace}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,useCallback,createContext,useContext} = React;
+
+/* ═══════════════════════════════════════
+   THEME SYSTEM
+   ═══════════════════════════════════════ */
+const themes = {
+  dark: {
+    bg:"#0a0a0c", bg2:"#0f0f12",
+    surface:"#16161a", surfaceAlt:"#1c1c22",
+    border:"#26262e", borderHover:"#38384a",
+    text:"#ededef", textSec:"#9d9daa", textMut:"#5c5c6a",
+    accent:"#6366f1", accentSoft:"rgba(99,102,241,0.1)", accentMed:"rgba(99,102,241,0.2)",
+    accent2:"#8b5cf6", accent3:"#ec4899",
+    green:"#34d399", greenSoft:"rgba(52,211,153,0.1)",
+    amber:"#fbbf24", amberSoft:"rgba(251,191,36,0.1)",
+    red:"#f87171",
+    chatUser:"#6366f1", chatUserText:"#fff",
+    chatBot:"#16161a", chatBotBorder:"#26262e",
+    inputBg:"#16161a", inputBorder:"#26262e",
+    dot:"#5c5c6a",
+    modalOverlay:"rgba(0,0,0,0.85)",
+    glow:"rgba(99,102,241,0.06)",
+    shimmer:"linear-gradient(90deg,transparent 0%,rgba(99,102,241,0.04) 50%,transparent 100%)",
+  },
+  light: {
+    bg:"#fafafa", bg2:"#f4f4f5",
+    surface:"#ffffff", surfaceAlt:"#f9f9fb",
+    border:"#e4e4e7", borderHover:"#c4c4cc",
+    text:"#18181b", textSec:"#52525b", textMut:"#a1a1aa",
+    accent:"#4f46e5", accentSoft:"rgba(79,70,229,0.06)", accentMed:"rgba(79,70,229,0.12)",
+    accent2:"#7c3aed", accent3:"#db2777",
+    green:"#059669", greenSoft:"rgba(5,150,105,0.08)",
+    amber:"#d97706", amberSoft:"rgba(217,119,6,0.08)",
+    red:"#dc2626",
+    chatUser:"#4f46e5", chatUserText:"#fff",
+    chatBot:"#ffffff", chatBotBorder:"#e4e4e7",
+    inputBg:"#ffffff", inputBorder:"#d4d4d8",
+    dot:"#a1a1aa",
+    modalOverlay:"rgba(0,0,0,0.5)",
+    glow:"rgba(79,70,229,0.03)",
+    shimmer:"linear-gradient(90deg,transparent 0%,rgba(79,70,229,0.03) 50%,transparent 100%)",
+  },
+};
+
+const ThemeCtx = createContext();
+function useTheme(){return useContext(ThemeCtx)}
+
+/* ═══════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════ */
+const DJ = {
+  headline: "Business Development · AI/LLM · Full-Stack",
+  sub: "I build partnerships and ship products where strategy meets technology.",
+  metrics: [
+    {n:"12+",l:"Partnerships",accent:0},
+    {n:"4",l:"AI Products",accent:1},
+    {n:"$3M+",l:"Revenue",accent:2},
+    {n:"8+",l:"Years",accent:0},
+  ],
+  education: [
+    {school:"KAIST",degree:"M.S. Mechanical Engineering",period:"2015–2018",detail:"GPA 3.76/4.3 · National Scholarship · BK21 Scholarship",location:"Daejeon, Korea"},
+    {school:"KIT",degree:"M.S. Mechanical Engineering (Dual Degree)",period:"2016–2017",detail:"GPA 1.3 German scale (≈4.12/4.3) · 65 ECTS",location:"Karlsruhe, Germany"},
+    {school:"KAIST",degree:"B.S. Mechanical Engineering & Industrial Design",period:"2010–2015",detail:"Cum Laude · GPA 3.7/4.3 · Dean's List 2014 · 177 credits",location:"Daejeon, Korea"},
+  ],
+  skills: {
+    business:["Strategic Planning","Partnership Management","GTM Strategy","Business Development","Investor Relations","Product Strategy","Competitive Analysis","Market Intelligence"],
+    technical:["RAG Architecture","Gemini / LLMs","Stable Diffusion","Graph Neural Networks","SaaS/PaaS","Hadoop","Kubernetes","Unity","VisionOS","Photogrammetry"],
+    engineering:["Next.js","React","TypeScript","Node.js","Python","Tailwind CSS","Pinecone","Vercel AI SDK","AWS"],
+    languages:["Korean (Native)","English (Fluent)","German (Advanced — TestDAF 5/5/4/5)"],
+  },
+  sections: [
+    { id:"bd",title:"Business Development",tag:"BD",color:"#6366f1",
+      summary:"Built and closed strategic partnerships across gaming, fintech, and AI verticals. Deal sourcing through post-deal integration for cross-border partnerships.",
+      proofs:[
+        {claim:"Led $2M+ partnership pipeline at Devs United Games",detail:"Sourced, negotiated, and closed partnerships with major game publishers across APAC. Built the BD function from zero.",org:"Devs United Games",period:"2021–23",tags:["partnerships","gaming","APAC"]},
+        {claim:"Cross-border BD for AI-powered products",detail:"Managed enterprise relationships for AI/ML product integrations. Developed partnership playbooks and scalable frameworks.",org:"Multiple Ventures",period:"2019–24",tags:["AI","enterprise","strategy"]},
+      ],
+      starter:"Tell me about DJ's business development track record",
+    },
+    { id:"ai",title:"AI / LLMs",tag:"AI",color:"#8b5cf6",
+      summary:"Hands-on LLM-powered applications, RAG systems, and AI product strategies. Bridges technical implementation and business value.",
+      proofs:[
+        {claim:"Production RAG systems — Gemini + Pinecone",detail:"Designed and shipped retrieval-augmented generation pipelines using gemini-embedding-001, Pinecone, and streaming inference with gemini-2.5-flash.",org:"Personal / Startup",period:"2024–Now",tags:["RAG","Gemini","Pinecone"]},
+        {claim:"AI product strategy for enterprise",detail:"Translated complex ML concepts into business proposals. Helped non-technical stakeholders adopt LLM-based workflows.",org:"Consulting",period:"2023–24",tags:["product strategy","AI adoption"]},
+      ],
+      starter:"What AI and LLM projects has DJ built?",
+    },
+    { id:"leadership",title:"Leadership & Strategy",tag:"Lead",color:"#ec4899",
+      summary:"Led cross-functional teams at the intersection of product, engineering, and business. Operates in ambiguity and drives 0→1 initiatives.",
+      proofs:[
+        {claim:"Built BD team from zero at a gaming startup",detail:"Recruited, trained, and managed 4 BD professionals. Established processes, KPIs, and reporting structures from scratch.",org:"Devs United Games",period:"2021–23",tags:["team building","0→1"]},
+        {claim:"Product strategy across multiple verticals",detail:"Owned partnership-driven product roadmaps. Balanced technical feasibility with market opportunity.",org:"Multiple",period:"2020–24",tags:["product strategy","roadmap"]},
+      ],
+      starter:"How has DJ demonstrated leadership?",
+    },
+    { id:"fullstack",title:"Full-Stack Engineering",tag:"Eng",color:"#14b8a6",
+      summary:"Modern web stack — React, Next.js, Node.js, Python, cloud. Builds what he strategizes, strategizes what he builds.",
+      proofs:[
+        {claim:"Production apps with Next.js 16 + Vercel AI SDK",detail:"Full-stack applications using Next.js App Router, Server Components, Vercel AI SDK v6, Tailwind CSS 4.",org:"Personal / Startup",period:"2023–Now",tags:["Next.js","React","TypeScript"]},
+        {claim:"End-to-end across web and mobile",detail:"Shipped React Native, Node.js APIs, and cloud deployments (AWS, Vercel). Strong DevOps and CI/CD.",org:"Multiple",period:"2018–24",tags:["full-stack","Node.js","AWS"]},
+      ],
+      starter:"What is DJ's technical stack?",
+    },
+  ],
+};
+
+const PERSONAS = [
+  {id:"vc",label:"VC / Investor",desc:"Evaluating as founder or operator"},
+  {id:"strategy",label:"Corporate Strategy",desc:"Exploring collaboration or hire"},
+  {id:"bd",label:"BD / Partnerships",desc:"Looking for a partnership lead"},
+  {id:"hiring",label:"Hiring Manager",desc:"Evaluating for a specific role"},
+];
+const FOCUSES = [
+  {id:"bd",label:"Business Development"},
+  {id:"ai",label:"AI / LLMs"},
+  {id:"leadership",label:"Leadership & Strategy"},
+  {id:"fullstack",label:"Full-Stack Engineering"},
+];
+
+/* ═══════════════════════════════════════
+   ICONS
+   ═══════════════════════════════════════ */
+function Icon({name,size=16}){
+  const p = {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"1.8",strokeLinecap:"round",strokeLinejoin:"round"};
+  const paths = {
+    arrow:"M5 12h14M12 5l7 7-7 7",
+    back:"M19 12H5M12 19l-7-7 7-7",
+    down:"M6 9l6 6 6-6",
+    chat:"M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
+    sun:"M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 6a6 6 0 100 12 6 6 0 000-12z",
+    moon:"M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z",
+    send:"M22 2L11 13M22 2l-7 20-4-9-9-4z",
+    x:"M18 6L6 18M6 6l12 12",
+    sparkle:"M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z",
+    edu:"M12 3L1 9l11 6 9-4.91V17h2V9z M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z",
+    globe:"M12 2a10 10 0 100 20 10 10 0 000-20z M2 12h20 M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z",
+  };
+  return <svg {...p}><path d={paths[name]}/></svg>;
+}
+
+/* ═══════════════════════════════════════
+   GATEWAY MODAL
+   ═══════════════════════════════════════ */
+function Gateway({onComplete}){
+  const t = useTheme();
+  const [step,setStep]=useState(0);
+  const [persona,setPersona]=useState(null);
+  const [focus,setFocus]=useState(null);
+  const [hovered,setHovered]=useState(null);
+
+  return(
+    <div style={{position:"fixed",inset:0,background:t.modalOverlay,backdropFilter:"blur(24px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:"1.5rem"}}>
+      <div className="fade-up" style={{background:t.surface,border:`1px solid ${t.border}`,borderRadius:20,maxWidth:460,width:"100%",overflow:"hidden"}}>
+        {/* Header with animated gradient */}
+        <div style={{padding:"52px 40px 36px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",inset:0,background:`radial-gradient(ellipse at 50% 0%, ${t.accentSoft} 0%, transparent 70%)`,pointerEvents:"none"}}/>
+          <div style={{position:"relative",zIndex:1}}>
+            <div style={{width:64,height:64,margin:"0 auto 18px",borderRadius:16,background:`linear-gradient(135deg,${t.accent},${t.accent2})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,fontWeight:800,color:"#fff",letterSpacing:"-0.03em",boxShadow:`0 8px 32px ${t.accentSoft}`}}>DJ</div>
+            <h1 style={{fontSize:24,fontWeight:800,letterSpacing:"-0.04em",marginBottom:6}}><span className="gradient-text">Ask DJ</span></h1>
+            <p style={{fontSize:13,color:t.textMut,lineHeight:1.5}}>AI-powered professional knowledge base</p>
+          </div>
+        </div>
+
+        <div style={{padding:"4px 32px 36px",borderTop:`1px solid ${t.border}`}}>
+          {step===0?(
+            <div style={{paddingTop:24}}>
+              <p style={{fontSize:11,fontWeight:600,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:14}} className="mono">I am a...</p>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {PERSONAS.map((p,i)=>(
+                  <button key={p.id} onClick={()=>{setPersona(p);setStep(1)}}
+                    className={`fade-up d${i+1}`}
+                    onMouseEnter={()=>setHovered(p.id)} onMouseLeave={()=>setHovered(null)}
+                    style={{width:"100%",textAlign:"left",padding:"14px 18px",borderRadius:12,border:`1px solid ${hovered===p.id?t.accent:t.border}`,background:hovered===p.id?t.accentSoft:t.bg2,color:t.text,transition:"all 0.2s ease",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <div>
+                      <div style={{fontSize:14,fontWeight:600,letterSpacing:"-0.01em"}}>{p.label}</div>
+                      <div style={{fontSize:12,color:t.textMut,marginTop:2}}>{p.desc}</div>
+                    </div>
+                    <div style={{color:hovered===p.id?t.accent:t.textMut,transition:"color 0.2s"}}><Icon name="arrow" size={14}/></div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ):(
+            <div style={{paddingTop:20}}>
+              <button onClick={()=>setStep(0)} style={{fontSize:12,color:t.textMut,marginBottom:18,display:"flex",alignItems:"center",gap:4,transition:"color 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.color=t.text} onMouseLeave={e=>e.currentTarget.style.color=t.textMut}>
+                <Icon name="back" size={12}/> Back
+              </button>
+              <p style={{fontSize:11,fontWeight:600,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:14}} className="mono">Interested in...</p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:28}}>
+                {FOCUSES.map(f=>(
+                  <button key={f.id} onClick={()=>setFocus(f)}
+                    style={{padding:"15px 14px",borderRadius:12,border:`1px solid ${focus?.id===f.id?t.accent:t.border}`,background:focus?.id===f.id?t.accentSoft:t.bg2,color:focus?.id===f.id?t.accent:t.textSec,fontSize:13,fontWeight:600,transition:"all 0.2s ease",letterSpacing:"-0.01em"}}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <button onClick={()=>focus&&onComplete({persona,focus})} disabled={!focus}
+                style={{width:"100%",padding:"13px",borderRadius:12,background:focus?`linear-gradient(135deg,${t.accent},${t.accent2})`:"#333",color:focus?"#fff":t.textMut,fontSize:14,fontWeight:700,transition:"all 0.2s ease",boxShadow:focus?`0 4px 20px ${t.accentSoft}`:"none",letterSpacing:"-0.01em"}}>
+                Continue
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   SKILLS PANEL (focus-aware, collapsible)
+   ═══════════════════════════════════════ */
+const FOCUS_TO_SKILLS = {
+  bd: ["Business","Languages"],
+  ai: ["AI & Technical","Engineering"],
+  leadership: ["Business","AI & Technical"],
+  fullstack: ["Engineering","AI & Technical"],
+};
+
+function SkillsPanel({visitor}){
+  const t = useTheme();
+  const [showAll,setShowAll] = useState(false);
+  const CAP = 5;
+  const focusId = visitor.focus.id;
+  const highlighted = FOCUS_TO_SKILLS[focusId] || [];
+
+  const allCats = [
+    {label:"Business",items:DJ.skills.business,color:t.accent},
+    {label:"AI & Technical",items:DJ.skills.technical,color:t.accent2},
+    {label:"Engineering",items:DJ.skills.engineering,color:"#14b8a6"},
+    {label:"Languages",items:DJ.skills.languages,color:t.accent3},
+  ];
+
+  // Sort: highlighted categories first
+  const sorted = [...allCats].sort((a,b)=>{
+    const aH = highlighted.includes(a.label)?0:1;
+    const bH = highlighted.includes(b.label)?0:1;
+    return aH-bH;
+  });
+
+  const totalHidden = sorted.reduce((sum,c)=>sum+Math.max(0,c.items.length-CAP),0);
+
+  return(
+    <div style={{background:t.surface,borderRadius:14,border:`1px solid ${t.border}`,padding:"22px 24px",overflow:"hidden",position:"relative"}}>
+      <div style={{position:"absolute",top:0,left:0,width:"100%",height:2,background:`linear-gradient(90deg,${t.accent2},transparent)`,opacity:0.3}}/>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{color:t.accent2}}><Icon name="sparkle" size={16}/></div>
+          <h3 style={{fontSize:12,fontWeight:700,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.1em"}} className="mono">Skills</h3>
+        </div>
+        {totalHidden>0&&(
+          <button onClick={()=>setShowAll(p=>!p)}
+            style={{fontSize:11,color:t.accent,fontWeight:600,display:"flex",alignItems:"center",gap:3,transition:"opacity 0.15s"}} className="mono"
+            onMouseEnter={e=>e.currentTarget.style.opacity="0.7"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+            {showAll?`Show less`:`+${totalHidden} more`}
+          </button>
+        )}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        {sorted.map((cat,ci)=>{
+          const isHighlighted = highlighted.includes(cat.label);
+          const items = showAll ? cat.items : cat.items.slice(0,CAP);
+          const hasMore = !showAll && cat.items.length > CAP;
+          return(
+            <div key={ci}>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+                <div style={{fontSize:11,fontWeight:700,color:cat.color,letterSpacing:"0.04em"}} className="mono">{cat.label}</div>
+                {isHighlighted&&<span style={{fontSize:9,padding:"1px 6px",borderRadius:4,background:cat.color+"18",color:cat.color,fontWeight:700,letterSpacing:"0.03em"}} className="mono">RELEVANT</span>}
+              </div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                {items.map(sk=>(
+                  <span key={sk} style={{
+                    fontSize:11,padding:"3px 9px",borderRadius:6,fontWeight:500,transition:"all 0.15s ease",
+                    background: isHighlighted ? cat.color+"12" : t.bg2,
+                    border:`1px solid ${isHighlighted ? cat.color+"30" : t.border}`,
+                    color: isHighlighted ? t.text : t.textSec,
+                  }}
+                    onMouseEnter={e=>{e.currentTarget.style.borderColor=cat.color;e.currentTarget.style.color=t.text;e.currentTarget.style.background=cat.color+"20"}}
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor=isHighlighted?cat.color+"30":t.border;e.currentTarget.style.color=isHighlighted?t.text:t.textSec;e.currentTarget.style.background=isHighlighted?cat.color+"12":t.bg2}}>
+                    {sk}
+                  </span>
+                ))}
+                {hasMore&&<span style={{fontSize:11,padding:"3px 9px",borderRadius:6,color:t.textMut,fontWeight:500}} className="mono">+{cat.items.length-CAP}</span>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   BRIEF MODE
+   ═══════════════════════════════════════ */
+function BriefMode({visitor,onAskAbout}){
+  const t = useTheme();
+  const [expanded,setExpanded]=useState(null);
+  const accentColors = [t.accent, t.accent2, t.accent3];
+  const focusS = DJ.sections.find(s=>s.id===visitor.focus.id);
+  const others = DJ.sections.filter(s=>s.id!==visitor.focus.id);
+  const ordered = focusS?[focusS,...others]:DJ.sections;
+
+  return(
+    <div style={{maxWidth:780,margin:"0 auto",padding:"48px 28px 80px"}}>
+      {/* Hero */}
+      <div className="fade-up" style={{marginBottom:44,position:"relative"}}>
+        <div style={{position:"absolute",top:-60,left:-40,width:200,height:200,borderRadius:"50%",background:`radial-gradient(circle,${t.accentSoft},transparent)`,pointerEvents:"none",filter:"blur(40px)"}}/>
+        <div style={{position:"relative"}}>
+          <div style={{display:"inline-flex",alignItems:"center",gap:6,padding:"5px 12px",borderRadius:8,background:t.accentSoft,border:`1px solid ${t.accentMed}`,fontSize:11,fontWeight:600,marginBottom:18,color:t.accent,letterSpacing:"0.02em"}} className="mono">
+            {visitor.persona.label} · {visitor.focus.label}
+          </div>
+          <h1 style={{fontSize:32,fontWeight:800,color:t.text,letterSpacing:"-0.04em",lineHeight:1.15,marginBottom:12}}>
+            {DJ.headline.split("·").map((part,i)=>(
+              <span key={i}>{i>0&&<span style={{color:t.textMut,fontWeight:300}}> · </span>}{part.trim()}</span>
+            ))}
+          </h1>
+          <p style={{fontSize:16,color:t.textMut,lineHeight:1.6,maxWidth:540}}>{DJ.sub}</p>
+        </div>
+      </div>
+
+      {/* Metrics — with accent color pops */}
+      <div className="fade-up d1" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:2,borderRadius:14,overflow:"hidden",marginBottom:44}}>
+        {DJ.metrics.map((m,i)=>(
+          <div key={i} style={{background:t.surface,padding:"22px 16px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:0,left:"50%",transform:"translateX(-50%)",width:32,height:3,borderRadius:"0 0 4px 4px",background:accentColors[m.accent],opacity:0.6}}/>
+            <div style={{fontSize:26,fontWeight:800,color:t.text,letterSpacing:"-0.04em",fontVariantNumeric:"tabular-nums"}}>{m.n}</div>
+            <div style={{fontSize:11,color:t.textMut,marginTop:4,fontWeight:500,letterSpacing:"0.03em"}} className="mono">{m.l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Education + Skills */}
+      <div className="fade-up d2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:44}}>
+        {/* Education */}
+        <div style={{background:t.surface,borderRadius:14,border:`1px solid ${t.border}`,padding:"22px 24px",overflow:"hidden",position:"relative"}}>
+          <div style={{position:"absolute",top:0,left:0,width:"100%",height:2,background:`linear-gradient(90deg,${t.accent},transparent)`,opacity:0.3}}/>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+            <div style={{color:t.accent}}><Icon name="edu" size={16}/></div>
+            <h3 style={{fontSize:12,fontWeight:700,color:t.textMut,textTransform:"uppercase",letterSpacing:"0.1em"}} className="mono">Education</h3>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>
+            {DJ.education.map((ed,i)=>(
+              <div key={i} style={{position:"relative",paddingLeft:14}}>
+                <div style={{position:"absolute",left:0,top:6,width:6,height:6,borderRadius:"50%",background:i===0?t.accent:t.border}}/>
+                {i>0&&<div style={{position:"absolute",left:2.5,top:-8,width:1,height:14,background:t.border}}/>}
+                <div style={{fontSize:13,fontWeight:700,color:t.text,letterSpacing:"-0.01em"}}>{ed.school}</div>
+                <div style={{fontSize:12,color:t.textSec,marginTop:2,lineHeight:1.4}}>{ed.degree}</div>
+                <div style={{fontSize:11,color:t.textMut,marginTop:3,display:"flex",alignItems:"center",gap:6}} className="mono">
+                  <span>{ed.period}</span>
+                  <span style={{opacity:0.3}}>·</span>
+                  <span>{ed.location}</span>
+                </div>
+                <div style={{fontSize:11,color:t.textMut,marginTop:4,lineHeight:1.4}}>{ed.detail}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Skills */}
+        <SkillsPanel visitor={visitor}/>
+      </div>
+
+      {/* Sections */}
+      <div style={{display:"flex",flexDirection:"column",gap:3}}>
+        {ordered.map((section,idx)=>{
+          const isExp = expanded===section.id;
+          const isPri = idx===0;
+          return(
+            <div key={section.id} className={`fade-up d${Math.min(idx+2,4)}`}
+              style={{background:t.surface,border:`1px solid ${isExp?t.borderHover:isPri?t.accentMed:t.border}`,borderRadius:14,overflow:"hidden",transition:"all 0.25s ease"}}>
+              <button onClick={()=>setExpanded(isExp?null:section.id)}
+                style={{width:"100%",textAlign:"left",padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",color:t.text}}>
+                <div style={{display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:38,height:38,borderRadius:10,background:t.bg2,border:`1px solid ${t.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:section.color,letterSpacing:"0.02em",flexShrink:0}} className="mono">
+                    {section.tag}
+                  </div>
+                  <div>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{fontSize:15,fontWeight:700,letterSpacing:"-0.02em"}}>{section.title}</span>
+                      {isPri&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:6,background:t.accentSoft,border:`1px solid ${t.accentMed}`,color:t.accent,fontWeight:700,letterSpacing:"0.03em"}} className="mono">FOCUS</span>}
+                    </div>
+                    {!isExp&&<p style={{fontSize:13,color:t.textMut,marginTop:4,lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:480}}>{section.summary}</p>}
+                  </div>
+                </div>
+                <div style={{transform:isExp?"rotate(180deg)":"none",transition:"transform 0.25s cubic-bezier(0.16,1,0.3,1)",flexShrink:0,marginLeft:12,color:t.textMut}}>
+                  <Icon name="down" size={16}/>
+                </div>
+              </button>
+              {isExp&&(
+                <div className="fade-in" style={{padding:"0 24px 24px",borderTop:`1px solid ${t.border}`}}>
+                  <p style={{fontSize:14,color:t.textSec,lineHeight:1.75,margin:"20px 0 24px"}}>{section.summary}</p>
+                  <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                    {section.proofs.map((p,pi)=>(
+                      <div key={pi} style={{background:t.bg2,borderRadius:12,padding:"18px 20px",border:`1px solid ${t.border}`,position:"relative",overflow:"hidden"}}>
+                        <div style={{position:"absolute",top:0,left:0,width:3,height:"100%",background:section.color,borderRadius:"0 2px 2px 0",opacity:0.5}}/>
+                        <div style={{fontSize:14,fontWeight:700,color:t.text,letterSpacing:"-0.01em"}}>{p.claim}</div>
+                        <div style={{fontSize:12,color:t.textMut,marginTop:6}} className="mono">{p.org} · {p.period}</div>
+                        <p style={{fontSize:13,color:t.textSec,marginTop:10,lineHeight:1.65}}>{p.detail}</p>
+                        <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:12}}>
+                          {p.tags.map(tag=>(
+                            <span key={tag} style={{fontSize:10,padding:"3px 9px",borderRadius:6,background:t.surface,border:`1px solid ${t.border}`,color:t.textMut,fontWeight:600}} className="mono">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={()=>onAskAbout(section.starter)}
+                    style={{marginTop:16,width:"100%",padding:"12px",borderRadius:10,background:t.accentSoft,border:`1px solid ${t.accentMed}`,color:t.accent,fontSize:13,fontWeight:600,display:"flex",alignItems:"center",justifyContent:"center",gap:7,transition:"all 0.15s ease"}}
+                    onMouseEnter={e=>{e.currentTarget.style.background=t.accentMed}}
+                    onMouseLeave={e=>{e.currentTarget.style.background=t.accentSoft}}>
+                    <Icon name="chat" size={13}/> Ask about this
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   CHAT MODE
+   ═══════════════════════════════════════ */
+function ChatMode({visitor,initQ}){
+  const t = useTheme();
+  const [msgs,setMsgs]=useState([]);
+  const [input,setInput]=useState("");
+  const [typing,setTyping]=useState(false);
+  const [evidence,setEvidence]=useState([]);
+  const [showPanel,setShowPanel]=useState(true);
+  const endRef=useRef(null);
+  const [inputFocused,setInputFocused]=useState(false);
+
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:"smooth"})},[msgs]);
+  useEffect(()=>{if(initQ)send(initQ)},[]);
+
+  async function send(text){
+    const history = msgs.map(m=>({role:m.role,text:m.text}));
+    setMsgs(p=>[...p,{id:Date.now(),role:"user",text}]);
+    setTyping(true);
+    try{
+      const res = await fetch('/api/ui-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:text,personaId:visitor?.persona?.id||'hiring',focusId:visitor?.focus?.id||'fullstack',history})});
+      const data = await res.json();
+      setMsgs(p=>[...p,{id:Date.now()+1,role:"assistant",text:data.response||"Sorry, something went wrong."}]);
+    }catch(e){
+      setMsgs(p=>[...p,{id:Date.now()+1,role:"assistant",text:"Sorry, something went wrong. Please try again."}]);
+    }
+    setTyping(false);
+  }
+
+  return(
+    <div style={{display:"flex",height:"calc(100vh - 52px)"}}>
+      <div style={{flex:showPanel?"3":"1",display:"flex",flexDirection:"column",minWidth:0,transition:"flex 0.3s ease"}}>
+        <div className="sb" style={{flex:1,overflowY:"auto",padding:"32px 24px"}}>
+          {msgs.length===0?(
+            <div className="fade-up" style={{textAlign:"center",paddingTop:72}}>
+              <div style={{width:52,height:52,margin:"0 auto 18px",borderRadius:14,background:t.accentSoft,border:`1px solid ${t.accentMed}`,display:"flex",alignItems:"center",justifyContent:"center",color:t.accent}}>
+                <Icon name="chat" size={22}/>
+              </div>
+              <h3 style={{fontSize:18,fontWeight:700,color:t.text,marginBottom:8,letterSpacing:"-0.02em"}}>Start a conversation</h3>
+              <p style={{fontSize:13,color:t.textMut,marginBottom:32,maxWidth:380,margin:"0 auto 32px",lineHeight:1.5}}>Ask anything about DJ's experience. Evidence surfaces in real-time.</p>
+              <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:6,maxWidth:520,margin:"0 auto"}}>
+                {DJ.sections.map(s=>(
+                  <button key={s.id} onClick={()=>send(s.starter)}
+                    style={{padding:"9px 16px",borderRadius:10,border:`1px solid ${t.border}`,background:t.surface,color:t.textSec,fontSize:13,fontWeight:600,transition:"all 0.2s ease",letterSpacing:"-0.01em"}}
+                    onMouseEnter={e=>{e.currentTarget.style.borderColor=s.color;e.currentTarget.style.color=t.text}}
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textSec}}>
+                    <span className="mono" style={{color:s.color,marginRight:6,fontSize:11}}>{s.tag}</span>{s.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ):(
+            <div style={{maxWidth:660,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
+              {msgs.map(m=>(
+                <div key={m.id} className="fade-up" style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start"}}>
+                  <div style={{
+                    maxWidth:"82%",borderRadius:14,padding:"14px 18px",fontSize:14,lineHeight:1.7,letterSpacing:"-0.01em",
+                    ...(m.role==="user"
+                      ?{background:`linear-gradient(135deg,${t.chatUser},${t.accent2})`,color:t.chatUserText}
+                      :{background:t.chatBot,border:`1px solid ${t.chatBotBorder}`,color:t.textSec})
+                  }}>
+                    {m.text.split("\n").map((line,i)=>{
+                      const parts = line.split(/\*\*(.*?)\*\*/g);
+                      return <span key={i}>{parts.map((pt,j)=>j%2===1?<strong key={j} style={{color:m.role==="user"?"#fff":t.text,fontWeight:700}}>{pt}</strong>:<span key={j}>{pt}</span>)}{i<m.text.split("\n").length-1&&<br/>}</span>;
+                    })}
+                  </div>
+                </div>
+              ))}
+              {typing&&(
+                <div className="fade-up" style={{display:"flex"}}>
+                  <div style={{background:t.chatBot,border:`1px solid ${t.chatBotBorder}`,borderRadius:14,padding:"16px 20px",display:"flex",gap:5,alignItems:"center"}}>
+                    <div className="typing-dot" style={{background:t.dot}}/><div className="typing-dot" style={{background:t.dot,animationDelay:"0.2s"}}/><div className="typing-dot" style={{background:t.dot,animationDelay:"0.4s"}}/>
+                  </div>
+                </div>
+              )}
+              <div ref={endRef}/>
+            </div>
+          )}
+        </div>
+        {/* Input */}
+        <div style={{borderTop:`1px solid ${t.border}`,padding:"16px 24px",background:t.bg}}>
+          <form onSubmit={e=>{e.preventDefault();if(!input.trim()||typing)return;send(input.trim());setInput("")}}
+            style={{maxWidth:660,margin:"0 auto",display:"flex",gap:8}}>
+            <div style={{flex:1,position:"relative"}}>
+              <input value={input} onChange={e=>setInput(e.target.value)}
+                onFocus={()=>setInputFocused(true)} onBlur={()=>setInputFocused(false)}
+                placeholder="Ask about DJ's experience..."
+                style={{width:"100%",padding:"13px 18px",borderRadius:12,border:`1px solid ${inputFocused?t.accent:t.inputBorder}`,background:t.inputBg,color:t.text,fontSize:14,transition:"border-color 0.2s ease",boxShadow:inputFocused?`0 0 0 3px ${t.accentSoft}`:"none"}}/>
+            </div>
+            <button type="submit" disabled={!input.trim()||typing}
+              style={{padding:"13px 18px",borderRadius:12,background:input.trim()&&!typing?`linear-gradient(135deg,${t.accent},${t.accent2})`:"transparent",border:input.trim()&&!typing?"none":`1px solid ${t.border}`,color:input.trim()&&!typing?"#fff":t.textMut,transition:"all 0.2s ease",display:"flex",alignItems:"center",gap:6}}>
+              <Icon name="send" size={14}/>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Evidence panel */}
+      {showPanel&&(
+        <div style={{width:340,borderLeft:`1px solid ${t.border}`,background:t.surface,overflowY:"auto",flexShrink:0}} className="sb">
+          <div style={{padding:"16px 20px",borderBottom:`1px solid ${t.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,background:t.surface,zIndex:2}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:t.text,letterSpacing:"-0.01em"}}>Evidence</div>
+              <div style={{fontSize:11,color:t.textMut,marginTop:2}} className="mono">{evidence.length} proof point{evidence.length!==1?"s":""}</div>
+            </div>
+            <button onClick={()=>setShowPanel(false)} style={{color:t.textMut,transition:"color 0.15s"}}
+              onMouseEnter={e=>e.currentTarget.style.color=t.text} onMouseLeave={e=>e.currentTarget.style.color=t.textMut}>
+              <Icon name="x" size={16}/>
+            </button>
+          </div>
+          {evidence.length===0?(
+            <div style={{padding:"52px 20px",textAlign:"center"}}>
+              <div style={{color:t.textMut,marginBottom:8}}><Icon name="sparkle" size={24}/></div>
+              <p style={{fontSize:13,color:t.textMut,lineHeight:1.5}}>Proof points surface here as the conversation unfolds.</p>
+            </div>
+          ):(
+            <div style={{padding:10,display:"flex",flexDirection:"column",gap:6}}>
+              {evidence.map(c=>(
+                <div key={c.id} className="fade-up" style={{background:t.bg2,borderRadius:12,padding:"14px 16px",border:`1px solid ${t.border}`,position:"relative",overflow:"hidden"}}>
+                  <div style={{position:"absolute",top:0,left:0,width:3,height:"100%",background:c.color,borderRadius:"0 2px 2px 0",opacity:0.5}}/>
+                  <div style={{fontSize:13,fontWeight:700,color:t.text,lineHeight:1.4,letterSpacing:"-0.01em",paddingLeft:6}}>{c.claim}</div>
+                  <div style={{fontSize:11,color:t.textMut,marginTop:6,paddingLeft:6}} className="mono">{c.org} · {c.period}</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:10,paddingLeft:6}}>
+                    {c.tags.map(tg=><span key={tg} style={{fontSize:10,padding:"2px 7px",borderRadius:5,border:`1px solid ${t.border}`,color:t.textMut,fontWeight:600}} className="mono">{tg}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {!showPanel&&evidence.length>0&&(
+        <button onClick={()=>setShowPanel(true)}
+          style={{position:"fixed",right:16,bottom:80,background:t.surface,border:`1px solid ${t.border}`,color:t.textSec,padding:"8px 14px",borderRadius:10,fontSize:12,fontWeight:700,display:"flex",alignItems:"center",gap:6,zIndex:10,boxShadow:`0 4px 16px ${t.glow}`}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textSec}}>
+          <Icon name="sparkle" size={12}/> Evidence ({evidence.length})
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   FIT ANALYSIS MODE
+   ═══════════════════════════════════════ */
+function FitMode({visitor}){
+  const t = useTheme();
+  const [input,setInput]=useState("");
+  const [result,setResult]=useState(null);
+  const [loading,setLoading]=useState(false);
+  const [inputFocused,setInputFocused]=useState(false);
+
+  const presets={
+    vc:"Looking for an operator who can bridge technical AI products with business development, with cross-border partnership experience",
+    strategy:"Need someone to lead strategic AI/LLM adoption initiatives and build BD functions from scratch",
+    bd:"Seeking a partnerships lead with hands-on AI/ML experience who can close enterprise deals",
+    hiring:"Hiring for a senior role combining business development with technical AI/product expertise",
+  };
+
+  function analyze(){
+    setLoading(true);
+    setTimeout(()=>{
+      setResult({
+        score:87,verdict:"Strong Fit",
+        narrative:"DJ's combination of hands-on AI/LLM engineering with a proven BD track record (12+ partnerships, $3M+ pipeline) is uncommon. The profile maps strongly to your stated requirements.",
+        dims:[
+          {label:"Business Development",score:92,note:"Direct match — pipeline ownership, cross-border, 12+ closed partnerships",color:"#6366f1"},
+          {label:"AI / Technical Depth",score:85,note:"Production RAG systems and LLM applications — not ML research",color:"#8b5cf6"},
+          {label:"Leadership",score:80,note:"Built team from zero, cross-functional, 0→1 operator",color:"#ec4899"},
+          {label:"Strategic Thinking",score:88,note:"Operates natively across business and technical domains",color:"#14b8a6"},
+        ],
+        diff:"Most candidates are business-side or engineering-side. DJ builds production AI systems and closes enterprise partnerships — operating natively in both domains.",
+        gaps:"Limited fundraising experience, no public company background, team management capped at ~10 reports.",
+      });
+      setLoading(false);
+    },2200);
+  }
+
+  return(
+    <div style={{maxWidth:700,margin:"0 auto",padding:"48px 28px 80px"}}>
+      {!result?(
+        <div className="fade-up">
+          <div style={{textAlign:"center",marginBottom:36}}>
+            <div style={{width:48,height:48,margin:"0 auto 16px",borderRadius:14,background:t.accentSoft,border:`1px solid ${t.accentMed}`,display:"flex",alignItems:"center",justifyContent:"center",color:t.accent}}>
+              <Icon name="sparkle" size={22}/>
+            </div>
+            <h2 style={{fontSize:24,fontWeight:800,letterSpacing:"-0.04em",marginBottom:8}}><span className="gradient-text">Fit Analysis</span></h2>
+            <p style={{fontSize:14,color:t.textMut,lineHeight:1.6,maxWidth:460,margin:"0 auto"}}>Describe what you're looking for. I'll map DJ's profile against your requirements.</p>
+          </div>
+          <div style={{marginBottom:10}}>
+            <button onClick={()=>setInput(presets[visitor.persona.id]||presets.hiring)}
+              style={{fontSize:12,color:t.accent,fontWeight:600,display:"flex",alignItems:"center",gap:4}} className="mono">
+              <Icon name="sparkle" size={11}/> Suggested for {visitor.persona.label}
+            </button>
+          </div>
+          <div style={{background:t.surface,borderRadius:14,border:`1px solid ${t.border}`,padding:22}}>
+            <textarea value={input} onChange={e=>setInput(e.target.value)} rows={4}
+              onFocus={()=>setInputFocused(true)} onBlur={()=>setInputFocused(false)}
+              placeholder="e.g., Looking for a partnership lead with AI/LLM experience..."
+              style={{width:"100%",padding:"14px 16px",borderRadius:10,border:`1px solid ${inputFocused?t.accent:t.border}`,background:t.bg2,color:t.text,fontSize:14,resize:"none",lineHeight:1.65,transition:"border-color 0.2s",boxShadow:inputFocused?`0 0 0 3px ${t.accentSoft}`:"none"}}/>
+            <button onClick={()=>input.trim()&&analyze()} disabled={!input.trim()||loading}
+              style={{marginTop:14,width:"100%",padding:"13px",borderRadius:10,background:input.trim()&&!loading?`linear-gradient(135deg,${t.accent},${t.accent2})`:"transparent",border:input.trim()&&!loading?"none":`1px solid ${t.border}`,color:input.trim()&&!loading?"#fff":t.textMut,fontSize:14,fontWeight:700,transition:"all 0.2s ease"}}>
+              {loading?"Analyzing...":"Run Analysis"}
+            </button>
+          </div>
+          {loading&&(
+            <div style={{marginTop:28,textAlign:"center"}}>
+              <div style={{display:"inline-flex",alignItems:"center",gap:8,background:t.accentSoft,border:`1px solid ${t.accentMed}`,color:t.accent,padding:"10px 18px",borderRadius:10,fontSize:13,fontWeight:600}}>
+                <svg style={{animation:"spin 1s linear infinite"}} width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25"/><path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                Mapping profile against requirements...
+              </div>
+            </div>
+          )}
+        </div>
+      ):(
+        <div className="fade-up">
+          <button onClick={()=>{setResult(null);setInput("")}} style={{fontSize:12,color:t.textMut,marginBottom:28,display:"flex",alignItems:"center",gap:4}}
+            onMouseEnter={e=>e.currentTarget.style.color=t.text} onMouseLeave={e=>e.currentTarget.style.color=t.textMut}>
+            <Icon name="back" size={12}/> New analysis
+          </button>
+          {/* Score hero */}
+          <div style={{background:t.surface,borderRadius:16,border:`1px solid ${t.border}`,padding:"44px 32px",textAlign:"center",marginBottom:16,position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",inset:0,background:`radial-gradient(ellipse at 50% 30%,${t.accentSoft},transparent 70%)`,pointerEvents:"none"}}/>
+            <div style={{position:"relative"}}>
+              <div style={{fontSize:64,fontWeight:800,letterSpacing:"-0.06em",lineHeight:1}} className="gradient-text">{result.score}%</div>
+              <div style={{display:"inline-block",marginTop:12,padding:"5px 14px",borderRadius:8,background:t.greenSoft,border:`1px solid rgba(52,211,153,0.2)`,color:t.green,fontSize:12,fontWeight:700}} className="mono">{result.verdict}</div>
+              <p style={{fontSize:14,color:t.textMut,marginTop:18,lineHeight:1.7,maxWidth:480,margin:"18px auto 0"}}>{result.narrative}</p>
+            </div>
+          </div>
+
+          {/* Dimensions */}
+          <div style={{background:t.surface,borderRadius:14,border:`1px solid ${t.border}`,padding:"24px 28px",marginBottom:16}}>
+            <h3 style={{fontSize:12,fontWeight:700,color:t.textMut,marginBottom:22,textTransform:"uppercase",letterSpacing:"0.1em"}} className="mono">Breakdown</h3>
+            <div style={{display:"flex",flexDirection:"column",gap:20}}>
+              {result.dims.map((d,i)=>(
+                <div key={i}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+                    <span style={{fontSize:13,fontWeight:600,color:t.textSec}}>{d.label}</span>
+                    <span style={{fontSize:15,fontWeight:800,color:t.text,fontVariantNumeric:"tabular-nums"}} className="mono">{d.score}</span>
+                  </div>
+                  <div style={{width:"100%",height:5,background:t.bg2,borderRadius:3,overflow:"hidden"}}>
+                    <div className="bar-grow" style={{height:"100%",borderRadius:3,width:`${d.score}%`,background:`linear-gradient(90deg,${d.color},${d.color}aa)`}}/>
+                  </div>
+                  <p style={{fontSize:12,color:t.textMut,marginTop:8,lineHeight:1.5}}>{d.note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Diff + Gaps */}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+            <div style={{background:t.surface,borderRadius:14,border:`1px solid ${t.border}`,padding:"20px 22px",position:"relative",overflow:"hidden"}}>
+              <div style={{position:"absolute",top:0,left:0,width:"100%",height:3,background:`linear-gradient(90deg,${t.green},transparent)`,opacity:0.4}}/>
+              <div style={{fontSize:11,fontWeight:700,color:t.green,marginBottom:10,letterSpacing:"0.08em"}} className="mono">DIFFERENTIATOR</div>
+              <p style={{fontSize:13,color:t.textSec,lineHeight:1.65}}>{result.diff}</p>
+            </div>
+            <div style={{background:t.surface,borderRadius:14,border:`1px solid ${t.border}`,padding:"20px 22px",position:"relative",overflow:"hidden"}}>
+              <div style={{position:"absolute",top:0,left:0,width:"100%",height:3,background:`linear-gradient(90deg,${t.amber},transparent)`,opacity:0.4}}/>
+              <div style={{fontSize:11,fontWeight:700,color:t.amber,marginBottom:10,letterSpacing:"0.08em"}} className="mono">GAPS</div>
+              <p style={{fontSize:13,color:t.textSec,lineHeight:1.65}}>{result.gaps}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   THEME TOGGLE
+   ═══════════════════════════════════════ */
+function ThemeToggle({theme,toggle}){
+  const t = useTheme();
+  return(
+    <button onClick={toggle} title={theme==="dark"?"Switch to light":"Switch to dark"}
+      style={{width:32,height:32,borderRadius:8,border:`1px solid ${t.border}`,background:t.bg2,display:"flex",alignItems:"center",justifyContent:"center",color:t.textMut,transition:"all 0.2s ease"}}
+      onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+      onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textMut}}>
+      <Icon name={theme==="dark"?"sun":"moon"} size={14}/>
+    </button>
+  );
+}
+
+/* ═══════════════════════════════════════
+   MAIN APP
+   ═══════════════════════════════════════ */
+function App(){
+  const [theme,setTheme]=useState("dark");
+  const [visitor,setVisitor]=useState(null);
+  const [mode,setMode]=useState("brief");
+  const [chatInitQ,setChatInitQ]=useState(null);
+  const t = themes[theme];
+
+  const toggleTheme=useCallback(()=>setTheme(p=>p==="dark"?"light":"dark"),[]);
+  const toChat=useCallback(q=>{setChatInitQ(q);setMode("chat")},[]);
+
+  const modes=[{id:"brief",label:"Brief"},{id:"chat",label:"Chat"},{id:"fit",label:"Fit Analysis"}];
+
+  // Apply theme to body
+  useEffect(()=>{
+    document.body.style.background=t.bg;
+    document.body.style.color=t.text;
+  },[theme]);
+
+  if(!visitor) return(
+    <ThemeCtx.Provider value={t}>
+      <Gateway onComplete={setVisitor}/>
+    </ThemeCtx.Provider>
+  );
+
+  return(
+    <ThemeCtx.Provider value={t}>
+      <div style={{display:"flex",flexDirection:"column",height:"100vh",background:t.bg}}>
+        {/* Nav */}
+        <nav style={{height:52,borderBottom:`1px solid ${t.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",background:t.bg,flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:30,height:30,borderRadius:8,background:`linear-gradient(135deg,${t.accent},${t.accent2})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:"#fff"}}>DJ</div>
+            <span style={{fontSize:15,fontWeight:700,color:t.text,letterSpacing:"-0.03em"}}>Ask DJ</span>
+            <span style={{width:1,height:16,background:t.border,margin:"0 6px"}}/>
+            <span style={{fontSize:12,color:t.textMut}} className="mono">{visitor.persona.label}</span>
+          </div>
+
+          {/* Mode tabs */}
+          <div style={{display:"flex",background:t.surface,borderRadius:10,padding:3,border:`1px solid ${t.border}`}}>
+            {modes.map(m=>(
+              <button key={m.id} onClick={()=>{if(m.id!=="chat")setChatInitQ(null);setMode(m.id)}}
+                style={{padding:"6px 16px",borderRadius:7,fontSize:12,fontWeight:mode===m.id?700:500,color:mode===m.id?t.text:t.textMut,background:mode===m.id?t.bg2:"transparent",transition:"all 0.2s ease",letterSpacing:"-0.01em",position:"relative"}}>
+                {m.label}
+                {mode===m.id&&<div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:16,height:2,borderRadius:1,background:t.accent}}/>}
+              </button>
+            ))}
+          </div>
+
+          {/* Right controls */}
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <ThemeToggle theme={theme} toggle={toggleTheme}/>
+            <button onClick={()=>setVisitor(null)}
+              style={{fontSize:11,color:t.textMut,padding:"6px 12px",borderRadius:8,border:`1px solid ${t.border}`,fontWeight:600,transition:"all 0.2s ease"}} className="mono"
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textMut}}>
+              Reset
+            </button>
+          </div>
+        </nav>
+
+        {/* Content */}
+        <div style={{flex:1,overflowY:mode==="chat"?"hidden":"auto"}} className="sb">
+          {mode==="brief"&&<BriefMode visitor={visitor} onAskAbout={toChat}/>}
+          {mode==="chat"&&<ChatMode visitor={visitor} initQ={chatInitQ}/>}
+          {mode==="fit"&&<FitMode visitor={visitor}/>}
+        </div>
+      </div>
+    </ThemeCtx.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

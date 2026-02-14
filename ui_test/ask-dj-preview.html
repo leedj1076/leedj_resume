@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ask DJ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #09090b; color: #fafafa; -webkit-font-smoothing: antialiased; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    @keyframes barGrow { from{width:0} }
+    .fade-up { animation: fadeUp 0.4s ease-out both; }
+    .fade-up-1 { animation-delay: 0.05s; }
+    .fade-up-2 { animation-delay: 0.1s; }
+    .fade-up-3 { animation-delay: 0.15s; }
+    .fade-up-4 { animation-delay: 0.2s; }
+    .typing-dot { width:5px; height:5px; border-radius:50%; background:#52525b; animation: pulse 1s ease-in-out infinite; }
+    .bar-grow { animation: barGrow 0.8s ease-out both; }
+    input:focus, textarea:focus { outline: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    ::selection { background: rgba(59,130,246,0.3); }
+    .scrollbar-hide::-webkit-scrollbar { display:none; }
+    .scrollbar-hide { -ms-overflow-style:none; scrollbar-width:none; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+/* ── Color system ── */
+const C = {
+  bg: "#09090b",
+  surface: "#18181b",
+  surfaceHover: "#1f1f23",
+  border: "#27272a",
+  borderSubtle: "#1f1f23",
+  text: "#fafafa",
+  textSecondary: "#a1a1aa",
+  textMuted: "#71717a",
+  accent: "#3b82f6",
+  accentDim: "rgba(59,130,246,0.12)",
+  green: "#22c55e",
+  greenDim: "rgba(34,197,94,0.12)",
+  amber: "#f59e0b",
+  amberDim: "rgba(245,158,11,0.12)",
+};
+
+/* ── Profile data ── */
+const DJ = {
+  headline: "Business Development · AI/LLM · Full-Stack",
+  sub: "Partnerships and products at the intersection of strategy and technology.",
+  metrics: [
+    { n: "12+", l: "Partnerships" },
+    { n: "4", l: "AI Products" },
+    { n: "$3M+", l: "Revenue" },
+    { n: "8+", l: "Years" },
+  ],
+  sections: [
+    {
+      id:"bd", title:"Business Development", tag:"BD",
+      summary:"Built and closed strategic partnerships across gaming, fintech, and AI verticals. Deal sourcing, negotiation, and post-deal integration for cross-border partnerships.",
+      proofs:[
+        { claim:"Led $2M+ partnership pipeline at Devs United Games", detail:"Sourced, negotiated, and closed partnerships with major game publishers across APAC. Built the BD function from zero.", org:"Devs United Games", period:"2021–2023", tags:["partnerships","gaming","APAC"] },
+        { claim:"Cross-border BD for AI-powered products", detail:"Managed enterprise relationships for AI/ML product integrations. Developed partnership playbooks and scalable frameworks.", org:"Multiple Ventures", period:"2019–2024", tags:["AI","enterprise","strategy"] },
+      ],
+      starter:"Tell me about DJ's business development track record",
+    },
+    {
+      id:"ai", title:"AI / LLMs", tag:"AI",
+      summary:"Hands-on experience building LLM-powered applications, RAG systems, and AI product strategies. Bridges technical implementation and business value.",
+      proofs:[
+        { claim:"Production RAG systems — Gemini + Pinecone", detail:"Designed and shipped retrieval-augmented generation pipelines using gemini-embedding-001, Pinecone, and streaming inference with gemini-2.5-flash.", org:"Personal / Startup", period:"2024–Present", tags:["RAG","Gemini","Pinecone","LLM"] },
+        { claim:"AI product strategy for enterprise", detail:"Translated complex ML concepts into business proposals. Helped non-technical stakeholders understand and adopt LLM-based workflows.", org:"Consulting", period:"2023–2024", tags:["product strategy","AI adoption"] },
+      ],
+      starter:"What AI and LLM projects has DJ built?",
+    },
+    {
+      id:"leadership", title:"Leadership & Strategy", tag:"Lead",
+      summary:"Led cross-functional teams at the intersection of product, engineering, and business. Operates in ambiguity and drives 0→1 initiatives.",
+      proofs:[
+        { claim:"Built BD team from zero at a gaming startup", detail:"Recruited, trained, and managed 4 BD professionals. Established processes, KPIs, and reporting structures from scratch.", org:"Devs United Games", period:"2021–2023", tags:["team building","management","0→1"] },
+        { claim:"Product strategy across multiple verticals", detail:"Owned partnership-driven product roadmaps. Balanced technical feasibility with market opportunity and partner requirements.", org:"Multiple", period:"2020–2024", tags:["product strategy","roadmap"] },
+      ],
+      starter:"How has DJ demonstrated leadership?",
+    },
+    {
+      id:"fullstack", title:"Full-Stack Engineering", tag:"Eng",
+      summary:"Modern web stack — React, Next.js, Node.js, Python, cloud. Builds what he strategizes, strategizes what he builds.",
+      proofs:[
+        { claim:"Production apps with Next.js 16 + Vercel AI SDK", detail:"Full-stack applications using Next.js App Router, Server Components, Vercel AI SDK v6, and Tailwind CSS 4.", org:"Personal / Startup", period:"2023–Present", tags:["Next.js","React","TypeScript"] },
+        { claim:"End-to-end across web and mobile", detail:"Shipped across React Native, Node.js APIs, and cloud deployments (AWS, Vercel). Strong DevOps and CI/CD.", org:"Multiple", period:"2018–2024", tags:["full-stack","Node.js","AWS"] },
+      ],
+      starter:"What is DJ's technical stack?",
+    },
+  ],
+};
+
+const PERSONAS = [
+  { id:"vc", label:"VC / Investor", desc:"Evaluating as a founder or operator" },
+  { id:"strategy", label:"Corporate Strategy", desc:"Exploring collaboration or hire" },
+  { id:"bd", label:"BD / Partnerships", desc:"Looking for a partnership lead" },
+  { id:"hiring", label:"Hiring Manager", desc:"Evaluating for a specific role" },
+];
+const FOCUSES = [
+  { id:"bd", label:"Business Development" },
+  { id:"ai", label:"AI / LLMs" },
+  { id:"leadership", label:"Leadership & Strategy" },
+  { id:"fullstack", label:"Full-Stack Engineering" },
+];
+
+/* ── Shared icon components ── */
+function ArrowIcon({dir="right",size=14}) {
+  const paths = { right:"M5 12h14M12 5l7 7-7 7", left:"M19 12H5M12 19l-7-7 7-7", down:"M6 9l6 6 6-6" };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={paths[dir]}/></svg>;
+}
+function ChatIcon({size=14}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>;
+}
+
+/* ════════════════════════════════════
+   GATEWAY MODAL
+   ════════════════════════════════════ */
+function Gateway({ onComplete }) {
+  const [step, setStep] = useState(0);
+  const [persona, setPersona] = useState(null);
+  const [focus, setFocus] = useState(null);
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",backdropFilter:"blur(20px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:"1.5rem"}}>
+      <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:16,maxWidth:440,width:"100%",overflow:"hidden"}} className="fade-up">
+
+        {/* Header */}
+        <div style={{padding:"48px 40px 32px",textAlign:"center",borderBottom:`1px solid ${C.border}`}}>
+          <div style={{width:56,height:56,margin:"0 auto 16px",borderRadius:12,background:"linear-gradient(135deg,#3b82f6,#6366f1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:"#fff",letterSpacing:"-0.02em"}}>DJ</div>
+          <h1 style={{fontSize:22,fontWeight:700,color:C.text,letterSpacing:"-0.03em",marginBottom:6}}>Ask DJ</h1>
+          <p style={{fontSize:13,color:C.textMuted,lineHeight:1.5}}>AI-powered professional knowledge base</p>
+        </div>
+
+        <div style={{padding:"28px 32px 32px"}}>
+          {step === 0 ? (
+            <>
+              <p style={{fontSize:11,fontWeight:600,color:C.textMuted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>I am a...</p>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {PERSONAS.map((p,i) => (
+                  <button key={p.id} onClick={() => { setPersona(p); setStep(1); }}
+                    className={`fade-up fade-up-${i+1}`}
+                    style={{width:"100%",textAlign:"left",padding:"14px 16px",borderRadius:10,border:`1px solid ${C.border}`,background:C.bg,color:C.text,transition:"all 0.15s ease",display:"flex",alignItems:"center",justifyContent:"space-between"}}
+                    onMouseEnter={e=>{e.currentTarget.style.borderColor="#3b82f6";e.currentTarget.style.background=C.surfaceHover}}
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.background=C.bg}}>
+                    <div>
+                      <div style={{fontSize:14,fontWeight:500}}>{p.label}</div>
+                      <div style={{fontSize:12,color:C.textMuted,marginTop:2}}>{p.desc}</div>
+                    </div>
+                    <ArrowIcon/>
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setStep(0)} style={{fontSize:12,color:C.textMuted,marginBottom:16,display:"flex",alignItems:"center",gap:4}}
+                onMouseEnter={e=>e.currentTarget.style.color=C.text} onMouseLeave={e=>e.currentTarget.style.color=C.textMuted}>
+                <ArrowIcon dir="left" size={12}/> Back
+              </button>
+              <p style={{fontSize:11,fontWeight:600,color:C.textMuted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Interested in...</p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:24}}>
+                {FOCUSES.map(f => (
+                  <button key={f.id} onClick={() => setFocus(f)}
+                    style={{padding:"14px 12px",borderRadius:10,border:`1px solid ${focus?.id===f.id?"#3b82f6":C.border}`,background:focus?.id===f.id?C.accentDim:C.bg,color:focus?.id===f.id?"#93bbfc":C.textSecondary,fontSize:13,fontWeight:500,transition:"all 0.15s ease"}}
+                    onMouseEnter={e=>{if(focus?.id!==f.id){e.currentTarget.style.borderColor="#3b3b40";e.currentTarget.style.background=C.surfaceHover}}}
+                    onMouseLeave={e=>{if(focus?.id!==f.id){e.currentTarget.style.borderColor=C.border;e.currentTarget.style.background=C.bg}}}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => focus && onComplete({persona,focus})} disabled={!focus}
+                style={{width:"100%",padding:"12px",borderRadius:10,background:focus?"#3b82f6":"#27272a",color:focus?"#fff":"#52525b",fontSize:14,fontWeight:600,transition:"all 0.15s ease",letterSpacing:"-0.01em"}}>
+                Continue
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════
+   BRIEF MODE
+   ════════════════════════════════════ */
+function BriefMode({ visitor, onAskAbout }) {
+  const [expanded, setExpanded] = useState(null);
+  const focusS = DJ.sections.find(s => s.id === visitor.focus.id);
+  const others = DJ.sections.filter(s => s.id !== visitor.focus.id);
+  const ordered = focusS ? [focusS, ...others] : DJ.sections;
+
+  return (
+    <div style={{maxWidth:760,margin:"0 auto",padding:"40px 24px 64px"}}>
+      {/* Hero */}
+      <div className="fade-up" style={{marginBottom:40}}>
+        <div style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px",borderRadius:6,background:C.accentDim,color:"#93bbfc",fontSize:11,fontWeight:500,marginBottom:16,letterSpacing:"0.02em"}}>
+          {visitor.persona.label} · {visitor.focus.label}
+        </div>
+        <h1 style={{fontSize:28,fontWeight:700,color:C.text,letterSpacing:"-0.03em",lineHeight:1.2,marginBottom:10}}>{DJ.headline}</h1>
+        <p style={{fontSize:15,color:C.textMuted,lineHeight:1.6,maxWidth:560}}>{DJ.sub}</p>
+      </div>
+
+      {/* Metrics */}
+      <div className="fade-up fade-up-1" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:1,background:C.border,borderRadius:12,overflow:"hidden",marginBottom:40}}>
+        {DJ.metrics.map((m,i) => (
+          <div key={i} style={{background:C.surface,padding:"20px 16px",textAlign:"center"}}>
+            <div style={{fontSize:24,fontWeight:700,color:C.text,letterSpacing:"-0.03em"}}>{m.n}</div>
+            <div style={{fontSize:11,color:C.textMuted,marginTop:4,fontWeight:500,letterSpacing:"0.02em"}}>{m.l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Sections */}
+      <div style={{display:"flex",flexDirection:"column",gap:2}}>
+        {ordered.map((section, idx) => {
+          const isExp = expanded === section.id;
+          const isPri = idx === 0;
+          return (
+            <div key={section.id} className={`fade-up fade-up-${Math.min(idx+2,4)}`}
+              style={{background:C.surface,border:`1px solid ${isPri && !isExp?"#2563eb20":C.border}`,borderRadius:12,overflow:"hidden",transition:"border-color 0.2s ease"}}>
+              <button onClick={() => setExpanded(isExp ? null : section.id)}
+                style={{width:"100%",textAlign:"left",padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",color:C.text}}>
+                <div style={{display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:36,height:36,borderRadius:8,background:C.bg,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:C.textMuted,letterSpacing:"0.03em",flexShrink:0}}>
+                    {section.tag}
+                  </div>
+                  <div>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{fontSize:15,fontWeight:600,letterSpacing:"-0.01em"}}>{section.title}</span>
+                      {isPri && <span style={{fontSize:10,padding:"2px 8px",borderRadius:4,background:C.accentDim,color:"#93bbfc",fontWeight:600,letterSpacing:"0.02em"}}>FOCUS</span>}
+                    </div>
+                    {!isExp && <p style={{fontSize:13,color:C.textMuted,marginTop:3,lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:480}}>{section.summary}</p>}
+                  </div>
+                </div>
+                <div style={{transform:isExp?"rotate(180deg)":"rotate(0)",transition:"transform 0.2s ease",flexShrink:0,marginLeft:12}}>
+                  <ArrowIcon dir="down" size={16}/>
+                </div>
+              </button>
+
+              {isExp && (
+                <div style={{padding:"0 24px 24px",borderTop:`1px solid ${C.borderSubtle}`}}>
+                  <p style={{fontSize:14,color:C.textSecondary,lineHeight:1.7,margin:"20px 0 24px"}}>{section.summary}</p>
+                  <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                    {section.proofs.map((p,pi) => (
+                      <div key={pi} style={{background:C.bg,borderRadius:10,padding:"18px 20px",border:`1px solid ${C.borderSubtle}`}}>
+                        <div style={{fontSize:14,fontWeight:600,color:C.text,letterSpacing:"-0.01em"}}>{p.claim}</div>
+                        <div style={{fontSize:12,color:C.textMuted,marginTop:6}}>{p.org}<span style={{margin:"0 6px",opacity:0.4}}>·</span>{p.period}</div>
+                        <p style={{fontSize:13,color:C.textSecondary,marginTop:10,lineHeight:1.6}}>{p.detail}</p>
+                        <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:12}}>
+                          {p.tags.map(tag => (
+                            <span key={tag} style={{fontSize:11,padding:"3px 8px",borderRadius:4,background:C.surface,border:`1px solid ${C.border}`,color:C.textMuted,fontWeight:500}}>{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => onAskAbout(section.starter)}
+                    style={{marginTop:16,width:"100%",padding:"11px",borderRadius:8,background:C.accentDim,color:"#93bbfc",fontSize:13,fontWeight:500,display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"background 0.15s ease"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="rgba(59,130,246,0.18)"}
+                    onMouseLeave={e=>e.currentTarget.style.background=C.accentDim}>
+                    <ChatIcon size={13}/> Ask about this
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════
+   CHAT MODE
+   ════════════════════════════════════ */
+function ChatMode({ visitor, initQ }) {
+  const [msgs, setMsgs] = useState([]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [evidence, setEvidence] = useState([]);
+  const [showPanel, setShowPanel] = useState(true);
+  const endRef = useRef(null);
+
+  useEffect(() => { endRef.current?.scrollIntoView({behavior:"smooth"}); }, [msgs]);
+  useEffect(() => { if (initQ) send(initQ); }, []);
+
+  async function send(text) {
+    const history = msgs.map(m=>({role:m.role,text:m.text}));
+    setMsgs(p => [...p, { id:Date.now(), role:"user", text }]);
+    setTyping(true);
+    try {
+      const res = await fetch('/api/ui-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:text,personaId:visitor?.persona?.id||'hiring',focusId:visitor?.focus?.id||'fullstack',history})});
+      const data = await res.json();
+      setMsgs(p => [...p, {id:Date.now()+1, role:"assistant", text:data.response||"Sorry, something went wrong."}]);
+    } catch(e) {
+      setMsgs(p => [...p, {id:Date.now()+1, role:"assistant", text:"Sorry, something went wrong. Please try again."}]);
+    }
+    setTyping(false);
+  }
+
+  return (
+    <div style={{display:"flex",height:"calc(100vh - 49px)"}}>
+      {/* Chat area */}
+      <div style={{flex:showPanel?"3":"1",display:"flex",flexDirection:"column",minWidth:0,transition:"flex 0.3s ease"}}>
+        <div className="scrollbar-hide" style={{flex:1,overflowY:"auto",padding:"32px 24px"}}>
+          {msgs.length === 0 ? (
+            <div style={{textAlign:"center",paddingTop:80}}>
+              <div style={{width:48,height:48,margin:"0 auto 16px",borderRadius:10,background:C.surface,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center"}}><ChatIcon size={20}/></div>
+              <h3 style={{fontSize:16,fontWeight:600,color:C.text,marginBottom:6}}>Start a conversation</h3>
+              <p style={{fontSize:13,color:C.textMuted,marginBottom:28,maxWidth:360,margin:"0 auto 28px"}}>Ask anything about DJ's experience. Evidence will surface in the side panel.</p>
+              <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:6,maxWidth:500,margin:"0 auto"}}>
+                {DJ.sections.map(s => (
+                  <button key={s.id} onClick={() => send(s.starter)}
+                    style={{padding:"8px 14px",borderRadius:8,border:`1px solid ${C.border}`,background:C.surface,color:C.textSecondary,fontSize:13,fontWeight:500,transition:"all 0.15s ease"}}
+                    onMouseEnter={e=>{e.currentTarget.style.borderColor="#3b82f6";e.currentTarget.style.color=C.text}}
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.textSecondary}}>
+                    {s.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={{maxWidth:640,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
+              {msgs.map(m => (
+                <div key={m.id} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start"}} className="fade-up">
+                  <div style={{
+                    maxWidth:"82%",borderRadius:12,padding:"14px 18px",fontSize:14,lineHeight:1.65,letterSpacing:"-0.01em",
+                    ...(m.role === "user"
+                      ? {background:"#3b82f6",color:"#fff"}
+                      : {background:C.surface,border:`1px solid ${C.border}`,color:C.textSecondary})
+                  }}>
+                    {m.text.split("\n").map((line,i) => <span key={i}>{line}{i < m.text.split("\n").length-1 && <br/>}</span>)}
+                  </div>
+                </div>
+              ))}
+              {typing && (
+                <div className="fade-up" style={{display:"flex"}}>
+                  <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:12,padding:"14px 18px",display:"flex",gap:4,alignItems:"center"}}>
+                    <div className="typing-dot"/><div className="typing-dot" style={{animationDelay:"0.2s"}}/><div className="typing-dot" style={{animationDelay:"0.4s"}}/>
+                  </div>
+                </div>
+              )}
+              <div ref={endRef}/>
+            </div>
+          )}
+        </div>
+        {/* Input */}
+        <div style={{borderTop:`1px solid ${C.border}`,padding:"16px 24px",background:C.bg}}>
+          <form onSubmit={e=>{e.preventDefault();if(!input.trim()||typing)return;send(input.trim());setInput("")}}
+            style={{maxWidth:640,margin:"0 auto",display:"flex",gap:8}}>
+            <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Ask about DJ's experience..."
+              style={{flex:1,padding:"12px 16px",borderRadius:10,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:14}}/>
+            <button type="submit" disabled={!input.trim()||typing}
+              style={{padding:"12px 20px",borderRadius:10,background:input.trim()&&!typing?"#3b82f6":"#27272a",color:input.trim()&&!typing?"#fff":"#52525b",fontSize:14,fontWeight:600,transition:"all 0.15s ease"}}>
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Evidence panel */}
+      {showPanel && (
+        <div style={{width:340,borderLeft:`1px solid ${C.border}`,background:C.surface,overflowY:"auto",flexShrink:0}} className="scrollbar-hide">
+          <div style={{padding:"16px 20px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,background:C.surface,zIndex:2}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:600,color:C.text}}>Evidence</div>
+              <div style={{fontSize:11,color:C.textMuted,marginTop:2}}>{evidence.length} proof point{evidence.length!==1?"s":""}</div>
+            </div>
+            <button onClick={()=>setShowPanel(false)} style={{color:C.textMuted,fontSize:18,lineHeight:1}}
+              onMouseEnter={e=>e.currentTarget.style.color=C.text} onMouseLeave={e=>e.currentTarget.style.color=C.textMuted}>×</button>
+          </div>
+          {evidence.length === 0 ? (
+            <div style={{padding:"48px 20px",textAlign:"center"}}>
+              <p style={{fontSize:13,color:C.textMuted}}>Proof points will appear here as the conversation progresses.</p>
+            </div>
+          ) : (
+            <div style={{padding:12,display:"flex",flexDirection:"column",gap:6}}>
+              {evidence.map(c => (
+                <div key={c.id} className="fade-up" style={{background:C.bg,borderRadius:10,padding:"14px 16px",border:`1px solid ${C.borderSubtle}`}}>
+                  <div style={{fontSize:13,fontWeight:600,color:C.text,lineHeight:1.4,letterSpacing:"-0.01em"}}>{c.claim}</div>
+                  <div style={{fontSize:11,color:C.textMuted,marginTop:6}}>{c.org}<span style={{margin:"0 5px",opacity:0.4}}>·</span>{c.period}</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:10}}>
+                    {c.tags.map(t => <span key={t} style={{fontSize:10,padding:"2px 7px",borderRadius:4,border:`1px solid ${C.border}`,color:C.textMuted,fontWeight:500}}>{t}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Collapsed toggle */}
+      {!showPanel && evidence.length > 0 && (
+        <button onClick={()=>setShowPanel(true)}
+          style={{position:"fixed",right:16,bottom:80,background:C.surface,border:`1px solid ${C.border}`,color:C.textSecondary,padding:"8px 14px",borderRadius:8,fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:6,zIndex:10}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor="#3b82f6";e.currentTarget.style.color=C.text}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.textSecondary}}>
+          Evidence ({evidence.length})
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════
+   FIT ANALYSIS MODE
+   ════════════════════════════════════ */
+function FitMode({ visitor }) {
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const presets = {
+    vc: "Looking for an operator who can bridge technical AI products with business development, with cross-border partnership experience",
+    strategy: "Need someone to lead strategic AI/LLM adoption initiatives and build BD functions from scratch",
+    bd: "Seeking a partnerships lead with hands-on AI/ML experience who can close enterprise deals",
+    hiring: "Hiring for a senior role combining business development with technical AI/product expertise",
+  };
+
+  function analyze() {
+    setLoading(true);
+    setTimeout(() => {
+      setResult({
+        score: 87, verdict: "Strong Fit",
+        narrative: "DJ's combination of hands-on AI/LLM engineering with a proven BD track record (12+ partnerships, $3M+ pipeline) is uncommon in the market. The profile maps strongly to your stated requirements.",
+        dims: [
+          { label:"Business Development", score:92, note:"Direct match — pipeline ownership, cross-border, 12+ closed partnerships" },
+          { label:"AI / Technical Depth", score:85, note:"Production RAG systems and LLM applications — not ML research" },
+          { label:"Leadership", score:80, note:"Built team from zero, cross-functional, 0→1 operator" },
+          { label:"Strategic Thinking", score:88, note:"Operates natively across business and technical domains" },
+        ],
+        diff: "Most candidates are business-side or engineering-side. DJ builds production AI systems and closes enterprise partnerships — operating natively in both domains.",
+        gaps: "Limited fundraising experience, no public company background, team management capped at ~10 reports.",
+      });
+      setLoading(false);
+    }, 2200);
+  }
+
+  return (
+    <div style={{maxWidth:680,margin:"0 auto",padding:"40px 24px 64px"}}>
+      {!result ? (
+        <div className="fade-up">
+          <div style={{textAlign:"center",marginBottom:32}}>
+            <h2 style={{fontSize:22,fontWeight:700,color:C.text,letterSpacing:"-0.03em",marginBottom:8}}>Fit Analysis</h2>
+            <p style={{fontSize:14,color:C.textMuted,lineHeight:1.6,maxWidth:460,margin:"0 auto"}}>Describe what you're looking for. I'll map DJ's profile against your requirements.</p>
+          </div>
+          <div style={{marginBottom:8}}>
+            <button onClick={() => setInput(presets[visitor.persona.id]||presets.hiring)}
+              style={{fontSize:12,color:"#93bbfc",fontWeight:500}}
+              onMouseEnter={e=>e.currentTarget.style.opacity="0.8"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+              Use suggested prompt for {visitor.persona.label}
+            </button>
+          </div>
+          <div style={{background:C.surface,borderRadius:12,border:`1px solid ${C.border}`,padding:20}}>
+            <textarea value={input} onChange={e=>setInput(e.target.value)} rows={4}
+              placeholder="e.g., Looking for a partnership lead with AI/LLM experience..."
+              style={{width:"100%",padding:"12px 14px",borderRadius:8,border:`1px solid ${C.border}`,background:C.bg,color:C.text,fontSize:14,resize:"none",lineHeight:1.6}}/>
+            <button onClick={()=>input.trim()&&analyze()} disabled={!input.trim()||loading}
+              style={{marginTop:12,width:"100%",padding:"12px",borderRadius:8,background:input.trim()&&!loading?"#3b82f6":"#27272a",color:input.trim()&&!loading?"#fff":"#52525b",fontSize:14,fontWeight:600,transition:"all 0.15s ease"}}>
+              {loading ? "Analyzing..." : "Run Analysis"}
+            </button>
+          </div>
+          {loading && (
+            <div style={{marginTop:24,textAlign:"center"}}>
+              <div style={{display:"inline-flex",alignItems:"center",gap:8,background:C.accentDim,color:"#93bbfc",padding:"8px 16px",borderRadius:8,fontSize:13,fontWeight:500}}>
+                <svg style={{animation:"spin 1s linear infinite"}} width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25"/><path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                Mapping profile against requirements...
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="fade-up">
+          <button onClick={()=>{setResult(null);setInput("")}} style={{fontSize:12,color:C.textMuted,marginBottom:24,display:"flex",alignItems:"center",gap:4}}
+            onMouseEnter={e=>e.currentTarget.style.color=C.text} onMouseLeave={e=>e.currentTarget.style.color=C.textMuted}>
+            <ArrowIcon dir="left" size={12}/> New analysis
+          </button>
+
+          {/* Score */}
+          <div style={{background:C.surface,borderRadius:12,border:`1px solid ${C.border}`,padding:"40px 32px",textAlign:"center",marginBottom:16}}>
+            <div style={{fontSize:56,fontWeight:700,color:C.text,letterSpacing:"-0.04em",lineHeight:1}}>{result.score}<span style={{fontSize:24,color:C.textMuted,fontWeight:400}}>%</span></div>
+            <div style={{display:"inline-block",marginTop:10,padding:"4px 12px",borderRadius:6,background:C.greenDim,color:C.green,fontSize:12,fontWeight:600}}>{result.verdict}</div>
+            <p style={{fontSize:14,color:C.textMuted,marginTop:16,lineHeight:1.7,maxWidth:480,margin:"16px auto 0"}}>{result.narrative}</p>
+          </div>
+
+          {/* Dimensions */}
+          <div style={{background:C.surface,borderRadius:12,border:`1px solid ${C.border}`,padding:"24px 28px",marginBottom:16}}>
+            <h3 style={{fontSize:13,fontWeight:600,color:C.text,marginBottom:20,letterSpacing:"-0.01em"}}>Breakdown</h3>
+            <div style={{display:"flex",flexDirection:"column",gap:18}}>
+              {result.dims.map((d,i) => (
+                <div key={i}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
+                    <span style={{fontSize:13,fontWeight:500,color:C.textSecondary}}>{d.label}</span>
+                    <span style={{fontSize:14,fontWeight:700,color:C.text,fontVariantNumeric:"tabular-nums"}}>{d.score}</span>
+                  </div>
+                  <div style={{width:"100%",height:4,background:C.bg,borderRadius:2,overflow:"hidden"}}>
+                    <div className="bar-grow" style={{height:"100%",borderRadius:2,width:`${d.score}%`,background:d.score>=90?"#22c55e":d.score>=80?"#3b82f6":"#f59e0b"}}/>
+                  </div>
+                  <p style={{fontSize:12,color:C.textMuted,marginTop:6,lineHeight:1.5}}>{d.note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Diff + Gaps */}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+            <div style={{background:C.surface,borderRadius:12,border:`1px solid ${C.border}`,padding:"20px 22px"}}>
+              <div style={{fontSize:12,fontWeight:600,color:C.green,marginBottom:8,letterSpacing:"0.02em"}}>DIFFERENTIATOR</div>
+              <p style={{fontSize:13,color:C.textSecondary,lineHeight:1.6}}>{result.diff}</p>
+            </div>
+            <div style={{background:C.surface,borderRadius:12,border:`1px solid ${C.border}`,padding:"20px 22px"}}>
+              <div style={{fontSize:12,fontWeight:600,color:C.amber,marginBottom:8,letterSpacing:"0.02em"}}>GAPS</div>
+              <p style={{fontSize:13,color:C.textSecondary,lineHeight:1.6}}>{result.gaps}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════
+   MAIN
+   ════════════════════════════════════ */
+function App() {
+  const [visitor, setVisitor] = useState(null);
+  const [mode, setMode] = useState("brief");
+  const [chatInitQ, setChatInitQ] = useState(null);
+
+  const toChat = useCallback(q => { setChatInitQ(q); setMode("chat"); }, []);
+  const modes = [
+    { id:"brief", label:"Brief" },
+    { id:"chat", label:"Chat" },
+    { id:"fit", label:"Fit Analysis" },
+  ];
+
+  if (!visitor) return <Gateway onComplete={setVisitor}/>;
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:C.bg}}>
+      {/* Nav */}
+      <nav style={{height:49,borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",background:C.bg,flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:28,height:28,borderRadius:6,background:"linear-gradient(135deg,#3b82f6,#6366f1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#fff"}}>DJ</div>
+          <span style={{fontSize:14,fontWeight:600,color:C.text,letterSpacing:"-0.02em"}}>Ask DJ</span>
+          <span style={{width:1,height:16,background:C.border,margin:"0 4px"}}/>
+          <span style={{fontSize:12,color:C.textMuted}}>{visitor.persona.label}</span>
+        </div>
+
+        {/* Tab switcher */}
+        <div style={{display:"flex",background:C.surface,borderRadius:8,padding:2,border:`1px solid ${C.border}`}}>
+          {modes.map(m => (
+            <button key={m.id} onClick={() => { if(m.id!=="chat") setChatInitQ(null); setMode(m.id); }}
+              style={{padding:"5px 14px",borderRadius:6,fontSize:12,fontWeight:mode===m.id?600:500,color:mode===m.id?C.text:C.textMuted,background:mode===m.id?C.bg:"transparent",transition:"all 0.15s ease"}}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+
+        <button onClick={()=>setVisitor(null)}
+          style={{fontSize:11,color:C.textMuted,padding:"5px 10px",borderRadius:6,border:`1px solid ${C.border}`,fontWeight:500}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor="#3b82f6";e.currentTarget.style.color=C.text}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.textMuted}}>
+          Change
+        </button>
+      </nav>
+
+      {/* Content */}
+      <div style={{flex:1,overflowY:mode==="chat"?"hidden":"auto"}} className="scrollbar-hide">
+        {mode === "brief" && <BriefMode visitor={visitor} onAskAbout={toChat}/>}
+        {mode === "chat" && <ChatMode visitor={visitor} initQ={chatInitQ}/>}
+        {mode === "fit" && <FitMode visitor={visitor}/>}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

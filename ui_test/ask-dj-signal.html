@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ask DJ — Signal Deck</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+    body{font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideRight{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes barGrow{from{width:0}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    @keyframes borderPulse{0%,100%{border-color:rgba(99,102,241,0.2)}50%{border-color:rgba(99,102,241,0.5)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .fade-up{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both}
+    .fade-in{animation:fadeIn .5s ease both}
+    .slide-r{animation:slideRight .5s cubic-bezier(.16,1,.3,1) both}
+    .d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}
+    .gradient-text{background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300% 300%;animation:gradientShift 6s ease infinite}
+    .bar-grow{animation:barGrow .8s cubic-bezier(.16,1,.3,1) both}
+    .mono{font-family:'JetBrains Mono',monospace}
+    .serif{font-family:'Instrument Serif',serif}
+    button{cursor:pointer;border:none;background:none;font-family:inherit}
+    input:focus,textarea:focus{outline:none}
+    ::selection{background:rgba(99,102,241,.3)}
+    .sb::-webkit-scrollbar{width:4px}.sb::-webkit-scrollbar-track{background:transparent}.sb::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2);border-radius:4px}
+    .snap-section{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,useCallback,createContext,useContext} = React;
+
+/* ═══════════════════════════════════════
+   THEME SYSTEM
+   ═══════════════════════════════════════ */
+const themes = {
+  dark: {
+    bg:"#08080a", bg2:"#0e0e12", surface:"#141418", surfaceAlt:"#1a1a20",
+    border:"#222230", borderHover:"#333346",
+    text:"#ededef", textSec:"#9d9daa", textMut:"#5c5c6a",
+    accent:"#6366f1", accentSoft:"rgba(99,102,241,.08)", accentMed:"rgba(99,102,241,.16)",
+    accent2:"#8b5cf6", accent3:"#ec4899",
+    green:"#34d399", greenSoft:"rgba(52,211,153,.08)",
+    amber:"#fbbf24", amberSoft:"rgba(251,191,36,.08)",
+    red:"#f87171",
+    glow:"rgba(99,102,241,.04)", modalOverlay:"rgba(0,0,0,.9)",
+    cardGlow:"rgba(99,102,241,.03)",
+    sectionDivider:"#1a1a22",
+  },
+  light: {
+    bg:"#fafafa", bg2:"#f4f4f5", surface:"#ffffff", surfaceAlt:"#f9f9fb",
+    border:"#e4e4e7", borderHover:"#c4c4cc",
+    text:"#18181b", textSec:"#52525b", textMut:"#a1a1aa",
+    accent:"#4f46e5", accentSoft:"rgba(79,70,229,.05)", accentMed:"rgba(79,70,229,.1)",
+    accent2:"#7c3aed", accent3:"#db2777",
+    green:"#059669", greenSoft:"rgba(5,150,105,.06)",
+    amber:"#d97706", amberSoft:"rgba(217,119,6,.06)",
+    red:"#dc2626",
+    glow:"rgba(79,70,229,.02)", modalOverlay:"rgba(0,0,0,.5)",
+    cardGlow:"rgba(79,70,229,.02)",
+    sectionDivider:"#eeeeef",
+  },
+};
+const ThemeCtx = createContext();
+function useTheme(){return useContext(ThemeCtx)}
+
+/* ═══════════════════════════════════════
+   DATA — THE SIGNALS
+   ═══════════════════════════════════════ */
+
+// The "double-take" facts — things that break the pattern
+const SIGNAL_CHIPS = [
+  {icon:"🤝", text:"Closed partnerships with Apple, Meta & Google — from a 5-person studio", color:"#6366f1"},
+  {icon:"🧠", text:"Built production RAG systems, GNN engines & AI automation from scratch", color:"#8b5cf6"},
+  {icon:"🌍", text:"Trilingual (KR · EN · DE) · lived in 4 countries · KAIST + KIT degrees", color:"#ec4899"},
+];
+
+// The "rare combo" visualization
+const VENN_LABELS = [
+  {label:"Business\nDevelopment", x:30, y:30, color:"#6366f1"},
+  {label:"AI / ML\nEngineering", x:70, y:30, color:"#8b5cf6"},
+  {label:"Startup\nFounder", x:50, y:65, color:"#ec4899"},
+];
+
+const RARITY_LINES = [
+  {left:"Most BD candidates", right:"can't build a RAG pipeline end-to-end"},
+  {left:"Most engineers", right:"haven't closed deals with Apple & Google"},
+  {left:"Most founders", right:"don't have enterprise experience at Samsung & Hyundai scale"},
+  {left:"Most trilingual professionals", right:"don't combine it with deep tech + business"},
+];
+
+// Recruiter mental checklist — pre-answer everything
+const CHECKLIST = [
+  {q:"Years of experience?", a:"8+ years", detail:"Progressive: Engineer → Team Lead → Co-Founder/COO → Director", icon:"📅"},
+  {q:"Biggest deal impact?", a:"55% YoY revenue growth", detail:"Led Meta Quest+ entry strategy; also $450M KRW fundraise at Flint", icon:"📈"},
+  {q:"Management scope?", a:"Cross-functional teams", detail:"BD, engineering, product, CS — up to 15-person org at Flint", icon:"👥"},
+  {q:"Technical depth?", a:"Ships production code", detail:"Next.js, React, Python, RAG (Pinecone + Gemini), Unity, VisionOS", icon:"⚡"},
+  {q:"Culture / adaptability?", a:"4 countries, 3 languages", detail:"US → Austria → Korea → Germany. Startup + enterprise environments", icon:"🌐"},
+  {q:"Why is he available?", a:"Seeking next chapter", detail:"Completed Devs United Games director role (Feb 2024–Aug 2025). Ready for high-impact BD or AI role", icon:"🎯"},
+];
+
+// Achievement cards with "so what?" framing
+const ACHIEVEMENTS = [
+  {
+    headline:"Apple Vision Pro Featured Launch",
+    metric:"Featured on Day 1",
+    soWhat:"Navigated Apple's indirect partnership culture — no confirmations, no guarantees. Built trust through delivery until Apple gave them launch-day featuring.",
+    org:"Devs United Games", period:"2024",
+    tags:["Apple","Partnership","Spatial Computing"],
+    color:"#6366f1",
+  },
+  {
+    headline:"55% Revenue Growth via Platform Strategy",
+    metric:"+55.47% YoY",
+    soWhat:"Evaluated Meta Quest+ subscription cannibalization risk, determined upside > risk, negotiated entry. Revenue grew 55% in 6 months.",
+    org:"Devs United Games", period:"2024–25",
+    tags:["Meta","Revenue","Strategy"],
+    color:"#8b5cf6",
+  },
+  {
+    headline:"Co-Founded AI Startup → 860 Users, $450M KRW",
+    metric:"860 users · $0 marketing",
+    soWhat:"Built GNN-powered knowledge tool from zero. Secured seed + gov funding. Achieved organic traction with journalists, investors, content marketers.",
+    org:"Flint Technologies", period:"2021–24",
+    tags:["Startup","AI/GNN","Fundraising"],
+    color:"#ec4899",
+  },
+  {
+    headline:"Enterprise DB Migration for Samsung & Hyundai",
+    metric:"Tier-1 enterprise clients",
+    soWhat:"Three-way coordination: client stakeholders, product team, DB architecture team. Earned company Achievement Award.",
+    org:"TmaxTibero", period:"2019–21",
+    tags:["Enterprise","Samsung","Database"],
+    color:"#14b8a6",
+  },
+  {
+    headline:"Google Android XR Partnership",
+    metric:"New platform, first mover",
+    soWhat:"Leveraged Meta + Apple track record to open Google relationship. Negotiated dev kit access, timeline, and upfront-heavy funding structure.",
+    org:"Devs United Games", period:"2024–25",
+    tags:["Google","Partnership","XR"],
+    color:"#6366f1",
+  },
+  {
+    headline:"CS Response Time Cut 50% with AI",
+    metric:"-50% response time",
+    soWhat:"Built ChatGPT-powered CS automation by structuring all player Q&A into a retrieval database. Scaled community management for a global player base.",
+    org:"Devs United Games", period:"2024",
+    tags:["AI Automation","Operations","Scale"],
+    color:"#8b5cf6",
+  },
+];
+
+// Section navigation dots
+const SECTIONS = ["hook","rarity","checklist","evidence","chat"];
+const SECTION_LABELS = ["Signal","Rarity","Checklist","Evidence","Ask DJ"];
+
+/* ═══════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════ */
+
+/* --- Scroll progress indicator --- */
+function ScrollProgress(){
+  const t = useTheme();
+  const [progress, setProgress] = useState(0);
+  useEffect(()=>{
+    const h=()=>{
+      const d=document.documentElement;
+      const p=(d.scrollTop)/(d.scrollHeight-d.clientHeight);
+      setProgress(Math.min(1,Math.max(0,p)));
+    };
+    window.addEventListener('scroll',h,{passive:true});
+    return ()=>window.removeEventListener('scroll',h);
+  },[]);
+  return <div style={{position:'fixed',top:0,left:0,right:0,height:2,zIndex:100,background:t.border}}>
+    <div style={{height:'100%',width:`${progress*100}%`,background:`linear-gradient(90deg,${t.accent},${t.accent2},${t.accent3})`,transition:'width .1s'}}/>
+  </div>;
+}
+
+/* --- Section nav dots --- */
+function SectionNav({active}){
+  const t = useTheme();
+  return <div style={{position:'fixed',right:24,top:'50%',transform:'translateY(-50%)',zIndex:50,display:'flex',flexDirection:'column',gap:16,alignItems:'flex-end'}}>
+    {SECTIONS.map((s,i)=>{
+      const isActive = active===i;
+      return <button key={s} onClick={()=>document.getElementById(`section-${s}`)?.scrollIntoView({behavior:'smooth'})}
+        style={{display:'flex',alignItems:'center',gap:8,padding:'4px 0',transition:'all .3s'}}>
+        <span className="mono" style={{fontSize:10,color:isActive?t.accent:t.textMut,opacity:isActive?1:.5,transition:'all .3s',letterSpacing:'.02em'}}>
+          {SECTION_LABELS[i]}
+        </span>
+        <div style={{
+          width:isActive?12:6, height:isActive?12:6,
+          borderRadius:'50%', transition:'all .3s',
+          background:isActive?t.accent:'transparent',
+          border:`1.5px solid ${isActive?t.accent:t.textMut}`,
+          boxShadow:isActive?`0 0 12px ${t.accent}`:'none',
+        }}/>
+      </button>;
+    })}
+  </div>;
+}
+
+/* --- Theme toggle --- */
+function ThemeToggle({isDark,toggle}){
+  const t = useTheme();
+  return <button onClick={toggle} style={{
+    position:'fixed',top:20,right:24,zIndex:60,
+    width:36,height:36,borderRadius:'50%',
+    background:t.surface,border:`1px solid ${t.border}`,
+    display:'flex',alignItems:'center',justifyContent:'center',
+    color:t.textSec,fontSize:16,transition:'all .3s',
+  }}>
+    {isDark ? '☀' : '☽'}
+  </button>;
+}
+
+/* ═══════════════════════════════════════
+   SECTION 1: THE HOOK
+   "Here's why DJ is worth 15 minutes"
+   ═══════════════════════════════════════ */
+function HookSection(){
+  const t = useTheme();
+  const [visible, setVisible] = useState(false);
+  useEffect(()=>{ setTimeout(()=>setVisible(true), 200); },[]);
+
+  return <section id="section-hook" className="snap-section" style={{
+    background:t.bg, position:'relative', padding:'0 48px',
+    display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center',
+    minHeight:'100vh', overflow:'hidden',
+  }}>
+    {/* Subtle radial glow */}
+    <div style={{position:'absolute',top:'30%',left:'50%',transform:'translate(-50%,-50%)',
+      width:800,height:800,borderRadius:'50%',
+      background:`radial-gradient(circle,${t.accentSoft} 0%,transparent 70%)`,
+      pointerEvents:'none'}}/>
+
+    <div style={{maxWidth:720,width:'100%',textAlign:'center',position:'relative',zIndex:1}}>
+      {/* Tiny authority label */}
+      <div className={`mono fade-up ${visible?'':'fade-up'}`}
+        style={{fontSize:11,letterSpacing:'.12em',color:t.accent,marginBottom:24,textTransform:'uppercase'}}>
+        AI-Powered Candidate Brief
+      </div>
+
+      {/* Name — giant, gradient */}
+      <h1 className="fade-up d1" style={{
+        fontSize:56,fontWeight:900,letterSpacing:'-0.04em',lineHeight:1.05,
+        marginBottom:12,
+      }}>
+        <span className="gradient-text">DONG JAE (DJ) LEE</span>
+      </h1>
+
+      {/* One-line value prop */}
+      <p className="fade-up d2" style={{fontSize:18,color:t.textSec,lineHeight:1.6,maxWidth:560,margin:'0 auto 40px',fontWeight:300}}>
+        The rare profile that closes deals with Apple and builds the AI system behind it.
+      </p>
+
+      {/* Signal chips — the "double-take" moments */}
+      <div style={{display:'flex',flexDirection:'column',gap:12,alignItems:'center'}}>
+        {SIGNAL_CHIPS.map((chip,i)=>(
+          <div key={i} className={`fade-up d${i+3}`} style={{
+            display:'inline-flex',alignItems:'center',gap:12,
+            padding:'12px 20px',borderRadius:12,
+            background:t.surface,border:`1px solid ${t.border}`,
+            maxWidth:560,width:'100%',textAlign:'left',
+            transition:'all .3s',
+          }}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=chip.color;e.currentTarget.style.boxShadow=`0 0 20px ${chip.color}15`}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.boxShadow='none'}}
+          >
+            <span style={{fontSize:20,flexShrink:0}}>{chip.icon}</span>
+            <span style={{fontSize:13,color:t.text,lineHeight:1.5,fontWeight:400}}>{chip.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Scroll hint */}
+      <div className="fade-up d6" style={{marginTop:48,color:t.textMut,fontSize:12,letterSpacing:'.05em',
+        animation:'float 3s ease-in-out infinite'}}>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+          <span className="mono">scroll to learn more</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3v10m0 0l-3-3m3 3l3-3" stroke={t.textMut} strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>;
+}
+
+/* ═══════════════════════════════════════
+   SECTION 2: THE RARITY
+   "Why you haven't seen this profile before"
+   ═══════════════════════════════════════ */
+function RaritySection(){
+  const t = useTheme();
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(()=>{
+    const obs = new IntersectionObserver(([e])=>{if(e.isIntersecting)setVisible(true)},{threshold:0.3});
+    if(ref.current) obs.observe(ref.current);
+    return ()=>obs.disconnect();
+  },[]);
+
+  return <section id="section-rarity" ref={ref} className="snap-section" style={{
+    background:t.bg, padding:'80px 48px', minHeight:'100vh',
+    display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center',
+  }}>
+    <div style={{maxWidth:900,width:'100%'}}>
+      {/* Section title */}
+      <div className={visible?'fade-up':''} style={{opacity:visible?1:0,textAlign:'center',marginBottom:56}}>
+        <span className="mono" style={{fontSize:11,letterSpacing:'.12em',color:t.accent,textTransform:'uppercase'}}>Pattern Break</span>
+        <h2 className="serif" style={{fontSize:40,color:t.text,marginTop:8,fontWeight:400,fontStyle:'italic'}}>
+          Why you haven't seen this profile before
+        </h2>
+      </div>
+
+      {/* Two-column: Venn diagram + rarity lines */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:48,alignItems:'center'}}>
+
+        {/* Left — Venn-like visual */}
+        <div className={visible?'fade-up d1':''} style={{opacity:visible?1:0,position:'relative',height:320,
+          display:'flex',alignItems:'center',justifyContent:'center'}}>
+          {/* Three overlapping circles */}
+          <svg viewBox="0 0 300 260" style={{width:'100%',maxWidth:320,height:'auto'}}>
+            <defs>
+              <filter id="glow1"><feGaussianBlur stdDeviation="8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            {/* BD circle */}
+            <circle cx="120" cy="105" r="75" fill="rgba(99,102,241,.08)" stroke="rgba(99,102,241,.3)" strokeWidth="1"/>
+            <text x="85" y="70" fill={t.accent} fontSize="11" fontFamily="JetBrains Mono" fontWeight="500">Business</text>
+            <text x="85" y="84" fill={t.accent} fontSize="11" fontFamily="JetBrains Mono" fontWeight="500">Development</text>
+            {/* AI circle */}
+            <circle cx="180" cy="105" r="75" fill="rgba(139,92,246,.08)" stroke="rgba(139,92,246,.3)" strokeWidth="1"/>
+            <text x="190" y="70" fill={t.accent2} fontSize="11" fontFamily="JetBrains Mono" fontWeight="500">AI / ML</text>
+            <text x="190" y="84" fill={t.accent2} fontSize="11" fontFamily="JetBrains Mono" fontWeight="500">Engineering</text>
+            {/* Founder circle */}
+            <circle cx="150" cy="165" r="75" fill="rgba(236,72,153,.08)" stroke="rgba(236,72,153,.3)" strokeWidth="1"/>
+            <text x="122" y="210" fill={t.accent3} fontSize="11" fontFamily="JetBrains Mono" fontWeight="500">Startup</text>
+            <text x="122" y="224" fill={t.accent3} fontSize="11" fontFamily="JetBrains Mono" fontWeight="500">Founder</text>
+            {/* Center — DJ */}
+            <circle cx="150" cy="125" r="18" fill={t.accent} filter="url(#glow1)" opacity=".9"/>
+            <text x="150" y="129" fill="#fff" fontSize="11" fontWeight="700" textAnchor="middle" fontFamily="Inter">DJ</text>
+          </svg>
+        </div>
+
+        {/* Right — rarity lines */}
+        <div className={visible?'fade-up d2':''} style={{opacity:visible?1:0,display:'flex',flexDirection:'column',gap:20}}>
+          {RARITY_LINES.map((line,i)=>(
+            <div key={i} className={visible?`slide-r d${i+2}`:''} style={{opacity:visible?1:0}}>
+              <span style={{color:t.accent,fontWeight:600,fontSize:14}}>{line.left} </span>
+              <span style={{color:t.textSec,fontSize:14,fontWeight:300}}>{line.right}</span>
+            </div>
+          ))}
+          <div style={{marginTop:12,padding:'12px 16px',borderRadius:8,background:t.accentSoft,border:`1px solid ${t.accentMed}`}}>
+            <span className="mono" style={{fontSize:11,color:t.accent,letterSpacing:'.04em'}}>
+              DJ sits at the intersection of all three — and speaks three languages doing it.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>;
+}
+
+/* ═══════════════════════════════════════
+   SECTION 3: THE CHECKLIST
+   Pre-answer the recruiter's mental questions
+   ═══════════════════════════════════════ */
+function ChecklistSection(){
+  const t = useTheme();
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(null);
+  useEffect(()=>{
+    const obs = new IntersectionObserver(([e])=>{if(e.isIntersecting)setVisible(true)},{threshold:0.2});
+    if(ref.current) obs.observe(ref.current);
+    return ()=>obs.disconnect();
+  },[]);
+
+  return <section id="section-checklist" ref={ref} className="snap-section" style={{
+    background:t.bg2, padding:'80px 48px', minHeight:'100vh',
+    display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center',
+  }}>
+    <div style={{maxWidth:720,width:'100%'}}>
+      <div className={visible?'fade-up':''} style={{opacity:visible?1:0,textAlign:'center',marginBottom:48}}>
+        <span className="mono" style={{fontSize:11,letterSpacing:'.12em',color:t.accent,textTransform:'uppercase'}}>Recruiter Quick-Scan</span>
+        <h2 className="serif" style={{fontSize:40,color:t.text,marginTop:8,fontWeight:400,fontStyle:'italic'}}>
+          Your questions, already answered
+        </h2>
+        <p style={{fontSize:14,color:t.textMut,marginTop:8}}>The six things you check for every candidate — handled in 10 seconds.</p>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        {CHECKLIST.map((item,i)=>{
+          const isOpen = expanded===i;
+          return <div key={i}
+            className={visible?`fade-up d${Math.min(i+1,6)}`:''} style={{opacity:visible?1:0}}
+          >
+            <button onClick={()=>setExpanded(isOpen?null:i)} style={{
+              width:'100%',textAlign:'left',padding:'16px 18px',borderRadius:12,
+              background:isOpen?t.accentSoft:t.surface,
+              border:`1px solid ${isOpen?t.accent:t.border}`,
+              transition:'all .25s',
+            }}
+            onMouseEnter={e=>{if(!isOpen)e.currentTarget.style.borderColor=t.borderHover}}
+            onMouseLeave={e=>{if(!isOpen)e.currentTarget.style.borderColor=t.border}}
+            >
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+                <span style={{fontSize:16}}>{item.icon}</span>
+                <span style={{fontSize:12,color:t.textMut,fontWeight:400}}>{item.q}</span>
+              </div>
+              <div style={{fontSize:18,fontWeight:700,color:t.text,letterSpacing:'-0.02em'}}>{item.a}</div>
+              {isOpen && <div style={{
+                marginTop:10,paddingTop:10,borderTop:`1px solid ${t.border}`,
+                fontSize:13,color:t.textSec,lineHeight:1.6,
+                animation:'fadeIn .3s ease',
+              }}>{item.detail}</div>}
+            </button>
+          </div>;
+        })}
+      </div>
+    </div>
+  </section>;
+}
+
+/* ═══════════════════════════════════════
+   SECTION 4: THE EVIDENCE
+   Achievement cards with "so what?" framing
+   ═══════════════════════════════════════ */
+function EvidenceSection(){
+  const t = useTheme();
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [activeCard, setActiveCard] = useState(null);
+  useEffect(()=>{
+    const obs = new IntersectionObserver(([e])=>{if(e.isIntersecting)setVisible(true)},{threshold:0.15});
+    if(ref.current) obs.observe(ref.current);
+    return ()=>obs.disconnect();
+  },[]);
+
+  return <section id="section-evidence" ref={ref} style={{
+    background:t.bg, padding:'80px 48px 80px', minHeight:'100vh',
+    display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center',
+  }}>
+    <div style={{maxWidth:900,width:'100%'}}>
+      <div className={visible?'fade-up':''} style={{opacity:visible?1:0,textAlign:'center',marginBottom:48}}>
+        <span className="mono" style={{fontSize:11,letterSpacing:'.12em',color:t.accent,textTransform:'uppercase'}}>Proof Points</span>
+        <h2 className="serif" style={{fontSize:40,color:t.text,marginTop:8,fontWeight:400,fontStyle:'italic'}}>
+          Not claims — evidence
+        </h2>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
+        {ACHIEVEMENTS.map((a,i)=>{
+          const isOpen = activeCard===i;
+          return <div key={i}
+            className={visible?`fade-up d${Math.min(i+1,6)}`:''} style={{opacity:visible?1:0}}
+          >
+            <div
+              onClick={()=>setActiveCard(isOpen?null:i)}
+              style={{
+                padding:'20px 18px', borderRadius:14, cursor:'pointer',
+                background:t.surface, border:`1px solid ${isOpen?a.color:t.border}`,
+                transition:'all .3s', height:'100%',
+                borderTop:`3px solid ${a.color}`,
+                boxShadow:isOpen?`0 4px 24px ${a.color}10`:'none',
+              }}
+              onMouseEnter={e=>{if(!isOpen)e.currentTarget.style.borderColor=a.color+'60'}}
+              onMouseLeave={e=>{if(!isOpen)e.currentTarget.style.borderColor=t.border}}
+            >
+              {/* Metric badge */}
+              <div className="mono" style={{
+                display:'inline-block',fontSize:11,padding:'4px 10px',borderRadius:6,
+                background:`${a.color}12`,color:a.color,fontWeight:600,marginBottom:12,
+                letterSpacing:'.02em',
+              }}>{a.metric}</div>
+
+              {/* Headline */}
+              <h3 style={{fontSize:15,fontWeight:700,color:t.text,lineHeight:1.4,marginBottom:8,letterSpacing:'-0.01em'}}>
+                {a.headline}
+              </h3>
+
+              {/* Org + period */}
+              <div className="mono" style={{fontSize:10,color:t.textMut,marginBottom:isOpen?12:0}}>
+                {a.org} · {a.period}
+              </div>
+
+              {/* Expandable "so what?" */}
+              {isOpen && <div style={{animation:'fadeIn .3s ease'}}>
+                <div style={{marginTop:12,paddingTop:12,borderTop:`1px solid ${t.border}`}}>
+                  <div className="mono" style={{fontSize:9,letterSpacing:'.1em',color:a.color,marginBottom:6,textTransform:'uppercase'}}>So what?</div>
+                  <p style={{fontSize:13,color:t.textSec,lineHeight:1.65}}>{a.soWhat}</p>
+                </div>
+                <div style={{display:'flex',gap:6,flexWrap:'wrap',marginTop:10}}>
+                  {a.tags.map(tag=>(
+                    <span key={tag} className="mono" style={{fontSize:9,padding:'3px 8px',borderRadius:4,
+                      background:t.accentSoft,color:t.textMut}}>{tag}</span>
+                  ))}
+                </div>
+              </div>}
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>
+  </section>;
+}
+
+/* ═══════════════════════════════════════
+   SECTION 5: CHAT CTA
+   "Seen enough? Or want specifics?"
+   ═══════════════════════════════════════ */
+function ChatCTA(){
+  const t = useTheme();
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  useEffect(()=>{
+    const obs = new IntersectionObserver(([e])=>{if(e.isIntersecting)setVisible(true)},{threshold:0.3});
+    if(ref.current) obs.observe(ref.current);
+    return ()=>obs.disconnect();
+  },[]);
+
+  const suggestedQs = [
+    "How did DJ navigate Apple's indirect culture?",
+    "What was Flint's GNN recommendation system?",
+    "Walk me through the Meta Quest+ decision",
+    "What's DJ's negotiation philosophy?",
+  ];
+
+  const handleSend = async (text)=>{
+    const q = text || input;
+    if(!q.trim()) return;
+    const history = messages.map(m=>({role:m.role,text:m.text}));
+    setMessages(prev=>[...prev,{role:'user',text:q},{role:'bot',text:'Thinking...'}]);
+    setInput(''); setChatOpen(true);
+    try{
+      const res = await fetch('/api/ui-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,personaId:'hiring',focusId:'fullstack',history})});
+      const data = await res.json();
+      setMessages(prev=>[...prev.slice(0,-1),{role:'bot',text:data.response||'Sorry, something went wrong.'}]);
+    }catch(e){
+      setMessages(prev=>[...prev.slice(0,-1),{role:'bot',text:'Sorry, something went wrong. Please try again.'}]);
+    }
+  };
+
+  return <section id="section-chat" ref={ref} className="snap-section" style={{
+    background:t.bg2, padding:'80px 48px', minHeight:'100vh',
+    display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center',
+  }}>
+    <div style={{maxWidth:640,width:'100%'}}>
+      <div className={visible?'fade-up':''} style={{opacity:visible?1:0,textAlign:'center',marginBottom:40}}>
+        <span className="mono" style={{fontSize:11,letterSpacing:'.12em',color:t.accent,textTransform:'uppercase'}}>Go Deeper</span>
+        <h2 className="serif" style={{fontSize:40,color:t.text,marginTop:8,fontWeight:400,fontStyle:'italic'}}>
+          {chatOpen ? "Ask anything" : "Seen enough? Or dig deeper."}
+        </h2>
+        {!chatOpen && <p style={{fontSize:14,color:t.textMut,marginTop:8}}>
+          DJ's AI answers from a knowledge base of resume data, interview stories, and project details.
+        </p>}
+      </div>
+
+      {/* Suggested questions */}
+      {!chatOpen && <div className={visible?'fade-up d2':''} style={{opacity:visible?1:0,
+        display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center',marginBottom:32}}>
+        {suggestedQs.map((q,i)=>(
+          <button key={i} onClick={()=>handleSend(q)} style={{
+            padding:'10px 16px',borderRadius:10,fontSize:13,color:t.textSec,
+            background:t.surface,border:`1px solid ${t.border}`,transition:'all .2s',
+          }}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.text}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=t.border;e.currentTarget.style.color=t.textSec}}
+          >{q}</button>
+        ))}
+      </div>}
+
+      {/* Chat messages */}
+      {chatOpen && <div className="sb" style={{maxHeight:300,overflowY:'auto',marginBottom:16,display:'flex',flexDirection:'column',gap:12}}>
+        {messages.map((m,i)=>(
+          <div key={i} style={{
+            display:'flex',justifyContent:m.role==='user'?'flex-end':'flex-start',
+            animation:'fadeIn .3s ease',
+          }}>
+            <div style={{
+              maxWidth:'80%',padding:'12px 16px',borderRadius:12,fontSize:14,lineHeight:1.6,
+              background:m.role==='user'?t.accent:t.surface,
+              color:m.role==='user'?'#fff':t.text,
+              border:m.role==='bot'?`1px solid ${t.border}`:'none',
+            }}>{m.text}</div>
+          </div>
+        ))}
+      </div>}
+
+      {/* Input */}
+      <div className={visible?'fade-up d3':''} style={{opacity:visible?1:0,
+        display:'flex',gap:8,background:t.surface,padding:8,borderRadius:14,border:`1px solid ${t.border}`}}>
+        <input
+          value={input}
+          onChange={e=>setInput(e.target.value)}
+          onKeyDown={e=>{if(e.key==='Enter')handleSend()}}
+          placeholder="Ask about DJ's experience, skills, or stories…"
+          style={{flex:1,padding:'12px 16px',fontSize:14,background:'transparent',
+            border:'none',color:t.text,fontFamily:'Inter'}}
+        />
+        <button onClick={()=>handleSend()} style={{
+          padding:'10px 20px',borderRadius:10,fontSize:13,fontWeight:600,
+          background:t.accent,color:'#fff',transition:'all .2s',
+        }}
+        onMouseEnter={e=>e.currentTarget.style.opacity='.85'}
+        onMouseLeave={e=>e.currentTarget.style.opacity='1'}
+        >Ask</button>
+      </div>
+
+      {/* Bottom links */}
+      <div className={visible?'fade-up d4':''} style={{opacity:visible?1:0,
+        display:'flex',justifyContent:'center',gap:24,marginTop:32}}>
+        <a href="https://www.linkedin.com/in/dongjae-lee/" target="_blank" rel="noopener"
+          style={{fontSize:13,color:t.textMut,textDecoration:'none',transition:'color .2s'}}
+          onMouseEnter={e=>e.currentTarget.style.color=t.accent}
+          onMouseLeave={e=>e.currentTarget.style.color=t.textMut}
+        >LinkedIn →</a>
+        <span style={{color:t.border}}>|</span>
+        <a href="mailto:leedj.1076@gmail.com"
+          style={{fontSize:13,color:t.textMut,textDecoration:'none',transition:'color .2s'}}
+          onMouseEnter={e=>e.currentTarget.style.color=t.accent}
+          onMouseLeave={e=>e.currentTarget.style.color=t.textMut}
+        >Email →</a>
+      </div>
+    </div>
+  </section>;
+}
+
+/* ═══════════════════════════════════════
+   APP
+   ═══════════════════════════════════════ */
+function App(){
+  const [mode,setMode] = useState('dark');
+  const [activeSection,setActiveSection] = useState(0);
+  const t = themes[mode];
+
+  // Track active section via intersection observer
+  useEffect(()=>{
+    const observers = [];
+    SECTIONS.forEach((s,i)=>{
+      const el = document.getElementById(`section-${s}`);
+      if(!el) return;
+      const obs = new IntersectionObserver(([e])=>{
+        if(e.isIntersecting && e.intersectionRatio > 0.3) setActiveSection(i);
+      },{threshold:0.3});
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return ()=>observers.forEach(o=>o.disconnect());
+  },[]);
+
+  return <ThemeCtx.Provider value={t}>
+    <div style={{background:t.bg,color:t.text,minHeight:'100vh',transition:'background .4s,color .3s'}}>
+      <ScrollProgress/>
+      <SectionNav active={activeSection}/>
+      <ThemeToggle isDark={mode==='dark'} toggle={()=>setMode(m=>m==='dark'?'light':'dark')}/>
+      <HookSection/>
+      <div style={{height:1,background:t.sectionDivider}}/>
+      <RaritySection/>
+      <div style={{height:1,background:t.sectionDivider}}/>
+      <ChecklistSection/>
+      <div style={{height:1,background:t.sectionDivider}}/>
+      <EvidenceSection/>
+      <div style={{height:1,background:t.sectionDivider}}/>
+      <ChatCTA/>
+    </div>
+  </ThemeCtx.Provider>;
+}
+
+ReactDOM.render(<App/>,document.getElementById('root'));
+</script>
+</body>
+</html>
