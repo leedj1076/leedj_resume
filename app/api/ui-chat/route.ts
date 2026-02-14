@@ -8,6 +8,8 @@ import {
   FOCUS_SKILL_TERMS,
   CORE_STRENGTH_IDS,
 } from "@/lib/persona-config";
+import { getAnswerMode } from "@/lib/settings";
+import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
 import type { Persona, Focus } from "@/lib/types";
 
 // Map prototype persona/focus IDs → real IDs
@@ -172,27 +174,20 @@ export async function POST(req: Request) {
     }));
     messages.push({ role: "user" as const, content: truncatedQuery });
 
-    // 7. Generate response (non-streaming)
+    // 7. Load answer mode and generate response (non-streaming)
+    const answerMode = await getAnswerMode();
+    const modePrompt = ANSWER_MODE_PROMPTS[answerMode];
+
     const { text } = await generateText({
       model: google("gemini-2.5-flash"),
       temperature: 0.3,
       maxOutputTokens: 1024,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
-Be warm, conversational, and natural — like you're chatting with a recruiter over coffee.
-Use a friendly but professional tone. Stay grounded in the facts from your resume.
+Stay grounded in the facts from your resume.
 
-RESPONSE DEPTH — this is critical:
-- INITIAL or NEW TOPIC question: Give a **concise overview** (3-5 bullet points highlighting the most impressive achievements). Invite follow-up.
-- FOLLOW-UP question (same topic as previous exchange): Go **deeper** — share specific stories, metrics, and nuances.
-- When the user switches to an UNRELATED topic: **reset to overview level** again.
+${modePrompt}
 
 LANGUAGE: Detect the language of each user message and respond in the SAME language.
-
-FORMAT YOUR RESPONSES for easy scanning:
-- Use **bold** for company names, job titles, and key highlights
-- Use bullet points to list achievements, skills, or multiple items
-- Use short paragraphs — never a wall of text
-- Lead with the most relevant/impressive point first
 
 STRICT ACCURACY:
 - ONLY answer using information explicitly present in the resume context below.

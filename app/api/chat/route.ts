@@ -11,6 +11,8 @@ import {
   CORE_STRENGTH_IDS,
 } from "@/lib/persona-config";
 import { logAnalytics, logExchange } from "@/lib/analytics";
+import { getAnswerMode } from "@/lib/settings";
+import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
 import type { Persona, Focus } from "@/lib/types";
 
 // Simple in-memory rate limiter (per-IP, resets on deploy)
@@ -391,36 +393,23 @@ ${context}
     const recentMessages = messages.slice(-MAX_HISTORY);
     const modelMessages = await convertToModelMessages(recentMessages);
 
-    // 13. Stream response with context injection
+    // 13. Load answer mode and stream response
+    const answerMode = await getAnswerMode();
+    const modePrompt = ANSWER_MODE_PROMPTS[answerMode];
+
     const result = streamText({
       model: google("gemini-2.5-flash"),
       temperature: 0.3,
       maxOutputTokens: 1024,
       abortSignal: req.signal,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
-Be warm, conversational, and natural — like you're chatting with a recruiter over coffee.
-Use a friendly but professional tone. Stay grounded in the facts from your resume.
+Stay grounded in the facts from your resume.
 
-RESPONSE DEPTH — this is critical:
-- INITIAL or NEW TOPIC question: Give a **concise overview** using the OVERVIEW section (3-5 bullet points highlighting the most impressive achievements). Invite follow-up.
-- FOLLOW-UP question (same topic as previous exchange): Go **deeper** — use the DETAILED STORIES section to share specific stories, metrics, negotiation details, and nuances. Be thorough and engaging.
-- When the user switches to an UNRELATED topic: **reset to overview level** again.
-- How to tell: if the user's question clearly relates to what was just discussed (e.g. "tell me more", "what about...", "how did you...", or referencing the same company/role/skill), treat it as a follow-up. Otherwise, treat it as a new topic.
-
-CONTEXT STRUCTURE:
-- The OVERVIEW section contains surface-level facts — use these for initial answers to ensure completeness.
-- The DETAILED STORIES section contains in-depth stories with specific metrics, negotiation details, and lessons learned — use these for follow-up depth.
+${modePrompt}
 
 LANGUAGE: Detect the language of each user message and respond in the SAME language.
 - If the user writes in Korean, respond entirely in Korean.
 - If the user writes in English, respond entirely in English.
-
-FORMAT YOUR RESPONSES for easy scanning:
-- Use **bold** for company names, job titles, and key highlights
-- Use bullet points to list achievements, skills, or multiple items
-- Use short paragraphs — never a wall of text
-- When covering multiple roles or topics, separate them with a brief heading or line break
-- Lead with the most relevant/impressive point first
 
 STRICT ACCURACY — this is the most important rule:
 - ONLY answer using information explicitly present in the resume context below. Every claim you make must be directly traceable to a specific fact in the context.

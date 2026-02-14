@@ -10,6 +10,7 @@ const VERSIONS: Record<string, string> = {
   "v7-terminal": "ask-dj-terminal.html",
   "v8-memo": "ask-dj-memo.html",
   "v9-ic-dashboard": "ask-dj-ic-dashboard.html",
+  "v10-altos-memo-hub": "altos-memo-hub.html",
 };
 
 export async function GET(

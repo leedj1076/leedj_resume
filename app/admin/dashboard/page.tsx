@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   const [authError, setAuthError] = useState(false);
   const passwordRef = useRef("");
 
-  const [tab, setTab] = useState<"review" | "analytics">("review");
+  const [tab, setTab] = useState<"review" | "analytics" | "settings">("review");
 
   // Review state
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
@@ -69,6 +69,12 @@ export default function AdminDashboard() {
   // Analytics state
   const [stats, setStats] = useState<Stats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
+
+  // Settings state
+  const [answerMode, setAnswerMode] = useState<string>("default");
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [settingsSaved, setSettingsSaved] = useState(false);
 
   const handleAuth = async () => {
     try {
@@ -136,11 +142,54 @@ export default function AdminDashboard() {
     }
   }, []);
 
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passwordRef.current }),
+      });
+      const data = await res.json();
+      if (data.mode) setAnswerMode(data.mode);
+      setSettingsLoaded(true);
+    } catch {
+      setSettingsLoaded(true);
+    }
+  }, []);
+
+  const saveAnswerMode = useCallback(
+    async (mode: string) => {
+      setSettingsSaving(true);
+      setSettingsSaved(false);
+      try {
+        await fetch("/api/admin/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: passwordRef.current, mode }),
+        });
+        setAnswerMode(mode);
+        setSettingsSaved(true);
+        setTimeout(() => setSettingsSaved(false), 2000);
+      } catch {
+        /* ignore */
+      } finally {
+        setSettingsSaving(false);
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     if (authenticated && tab === "analytics" && !stats) {
       fetchStats();
     }
   }, [authenticated, tab, stats, fetchStats]);
+
+  useEffect(() => {
+    if (authenticated && tab === "settings" && !settingsLoaded) {
+      fetchSettings();
+    }
+  }, [authenticated, tab, settingsLoaded, fetchSettings]);
 
   const handleExpand = (ex: Exchange) => {
     if (expandedId === ex.id) {
@@ -245,6 +294,16 @@ export default function AdminDashboard() {
             >
               Analytics
             </button>
+            <button
+              onClick={() => setTab("settings")}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                tab === "settings"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Settings
+            </button>
           </div>
         </div>
       </header>
@@ -279,8 +338,15 @@ export default function AdminDashboard() {
             onImprovementChange={setReviewImprovement}
             onSubmitReview={handleReviewSubmit}
           />
-        ) : (
+        ) : tab === "analytics" ? (
           <AnalyticsTab stats={stats} loading={statsLoading} />
+        ) : (
+          <SettingsTab
+            answerMode={answerMode}
+            saving={settingsSaving}
+            saved={settingsSaved}
+            onModeChange={saveAnswerMode}
+          />
         )}
       </main>
     </div>
@@ -623,6 +689,116 @@ function AnalyticsTab({
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Settings Tab ─────────────────────────────────────────────
+
+const MODES = [
+  {
+    id: "default",
+    label: "Conversational",
+    description:
+      "Warm and natural — like chatting over coffee. Uses overview first, then goes deeper on follow-up questions.",
+    example:
+      "\"I've spent 15+ years bridging tech and business across Korea and the US...\n\n• **Samsung SDS** — Led a 40-person engineering team...\n• **Flint** — Co-founded and scaled to $2M ARR...\n\nWant me to dive deeper into any of these?\"",
+  },
+  {
+    id: "pyramid",
+    label: "Pyramid Principle",
+    description:
+      "Barbara Minto's framework — lead with the direct answer first, support with logically grouped arguments (MECE), back each with specific evidence.",
+    example:
+      "\"I bring 15+ years of cross-functional leadership across AI, BD, and venture capital.\n\n**Proven operator who scales revenue**\n• Built $2M ARR at Flint...\n• Drove $30M pipeline at Samsung...\n\n**Deep AI/LLM implementation experience**\n• Shipped 3 production AI systems...\n\n**Cross-cultural bridge between US and Korea**\n• Bilingual, led deals across both markets...\"",
+  },
+];
+
+function SettingsTab({
+  answerMode,
+  saving,
+  saved,
+  onModeChange,
+}: {
+  answerMode: string;
+  saving: boolean;
+  saved: boolean;
+  onModeChange: (mode: string) => void;
+}) {
+  return (
+    <div className="max-w-2xl">
+      <h2 className="text-lg font-semibold text-gray-900 mb-1">
+        Answer Mode
+      </h2>
+      <p className="text-sm text-gray-500 mb-6">
+        Controls how the RAG system structures its responses. Applies to all
+        chat endpoints (main app + UI prototypes).
+      </p>
+
+      <div className="space-y-3">
+        {MODES.map((mode) => {
+          const active = answerMode === mode.id;
+          return (
+            <button
+              key={mode.id}
+              onClick={() => {
+                if (!active && !saving) onModeChange(mode.id);
+              }}
+              disabled={saving}
+              className={`w-full text-left rounded-xl border-2 p-5 transition-all ${
+                active
+                  ? "border-blue-500 bg-blue-50/50 shadow-sm"
+                  : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+              } ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      active ? "border-blue-500" : "border-gray-300"
+                    }`}
+                  >
+                    {active && (
+                      <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    )}
+                  </div>
+                  <span className="font-semibold text-gray-900">
+                    {mode.label}
+                  </span>
+                </div>
+                {active && (
+                  <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                    Active
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-gray-600 ml-6.5 mb-3 ml-[26px]">
+                {mode.description}
+              </p>
+              <div className="ml-[26px] bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                  Example output
+                </p>
+                <p className="text-xs text-gray-600 whitespace-pre-line leading-relaxed font-mono">
+                  {mode.example}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Status indicator */}
+      <div className="mt-4 h-6 flex items-center">
+        {saving && (
+          <span className="text-sm text-gray-500">Saving...</span>
+        )}
+        {saved && (
+          <span className="text-sm text-green-600">
+            Saved — new conversations will use this mode
+          </span>
+        )}
       </div>
     </div>
   );

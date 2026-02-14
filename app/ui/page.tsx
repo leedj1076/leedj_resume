@@ -76,6 +76,14 @@ const VERSIONS = [
     tags: ["Deal SaaS", "Tabbed", "IC Debate"],
     accent: "#0ea5e9",
   },
+  {
+    slug: "v10-altos-memo-hub",
+    label: "V10",
+    title: "Altos Memo Hub",
+    desc: "Candidate memo data room for Altos Ventures — sidebar nav, competency map, case studies, bilingual (EN/KR), dark/light theme. RAG not connected.",
+    tags: ["Data Room", "Bilingual", "Sidebar Nav"],
+    accent: "#f97316",
+  },
 ];
 
 export default function UIIndex() {
