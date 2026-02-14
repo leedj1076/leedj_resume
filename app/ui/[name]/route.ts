@@ -6,6 +6,7 @@ const VERSIONS: Record<string, string> = {
   "v3-narrative": "ask-dj-narrative.html",
   "v4-signal-deck": "ask-dj-signal.html",
   "v5-merged": "ask-dj-merged-v2.html",
+  "v6-dd-room": "ask-dj-dd-room.html",
 };
 
 export async function GET(

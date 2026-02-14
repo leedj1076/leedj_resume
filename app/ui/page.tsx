@@ -44,6 +44,14 @@ const VERSIONS = [
     tags: ["No Gateway", "Accordions", "Ambient"],
     accent: "#ec4899",
   },
+  {
+    slug: "v6-dd-room",
+    label: "V6",
+    title: "DD Data Room",
+    desc: "VC due diligence data room — split-screen investment memo + DD copilot chat with citation cross-refs",
+    tags: ["Split-Screen", "Memo", "Citations"],
+    accent: "#ef4444",
+  },
 ];
 
 export default function UIIndex() {

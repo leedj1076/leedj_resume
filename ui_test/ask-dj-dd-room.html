@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DJL — DD Data Room</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+      },
+    },
+  };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #fff; }
+    .sb::-webkit-scrollbar { width: 4px; }
+    .sb::-webkit-scrollbar-track { background: transparent; }
+    .sb::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+    .sb::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+    @keyframes dot-bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-4px); }
+    }
+    .dot-1 { animation: dot-bounce 1.2s ease-in-out infinite; }
+    .dot-2 { animation: dot-bounce 1.2s ease-in-out 0.15s infinite; }
+    .dot-3 { animation: dot-bounce 1.2s ease-in-out 0.3s infinite; }
+    @keyframes pulse-ring {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+    .status-pulse { animation: pulse-ring 2s ease-in-out infinite; }
+    @keyframes flash-ref {
+      0% { background: #eff6ff; }
+      100% { background: transparent; }
+    }
+    .flash-highlight { animation: flash-ref 1.5s ease-out forwards; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useRef, useEffect, useCallback} = React;
+
+/* ═══════════════════════════════════════════
+   MARKDOWN RENDERER (minimal)
+   ═══════════════════════════════════════════ */
+function Md({text, className = ''}) {
+  if (!text) return null;
+  const html = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n- /g, '\n<br/>• ')
+    .replace(/\n\* /g, '\n<br/>• ')
+    .replace(/\n\n/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+  return <div className={className} dangerouslySetInnerHTML={{__html: html}}/>;
+}
+
+/* ═══════════════════════════════════════════
+   ICONS (inline SVG — no Lucide CDN needed)
+   ═══════════════════════════════════════════ */
+const Icon = {
+  ArrowUp: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>,
+  ExternalLink: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
+  Download: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+  FileText: () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  AlertTriangle: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+};
+
+/* ═══════════════════════════════════════════
+   CITATION PILL — scrolls left pane
+   ═══════════════════════════════════════════ */
+const SECTION_MAP = {
+  'flint': 'fail-context',
+  'post-mortem': 'fail-context',
+  'failure': 'fail-context',
+  'traction': 'traction',
+  'growth': 'traction',
+  'dug': 'traction',
+  'tmax': 'traction',
+  'summary': 'exec-summary',
+  'narrative': 'exec-summary',
+  'career': 'exec-summary',
+  'personal': 'exec-summary',
+  'thesis': 'thesis',
+  'investment': 'thesis',
+};
+
+function scrollToRef(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'start'});
+  el.classList.remove('flash-highlight');
+  void el.offsetWidth;
+  el.classList.add('flash-highlight');
+}
+
+function CitationPill({chunkId}) {
+  const short = chunkId.replace(/^(narrative-|personal-|experience-|skills?-)/, '').replace(/-/g,' ');
+  const label = short.length > 28 ? short.slice(0,26) + '...' : short;
+  let target = null;
+  for (const [kw, id] of Object.entries(SECTION_MAP)) {
+    if (chunkId.toLowerCase().includes(kw)) { target = id; break; }
+  }
+  return (
+    <button onClick={() => target && scrollToRef(target)}
+      className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-full transition-colors ${
+        target ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 cursor-pointer' : 'bg-zinc-100 text-zinc-400 cursor-default'
+      }`}>
+      <Icon.FileText/> {label}
+    </button>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   PROMPT CHIPS
+   ═══════════════════════════════════════════ */
+const CHIPS = [
+  "Interrogate the Flint failure",
+  "Break down the 55% YoY growth",
+  "AI bubble vs. Real utility?",
+  "Why VC from an operator background?",
+];
+
+/* ═══════════════════════════════════════════
+   MAIN APP
+   ═══════════════════════════════════════════ */
+function App() {
+  const [messages, setMessages] = useState([{
+    role:'assistant',
+    text:'Welcome to the DJL Data Room. I am his digital twin, powered by retrieval-augmented generation over his complete professional record. I do not hallucinate. Interrogate my data.',
+    chunks:[],
+  }]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const chatEndRef = useRef(null);
+
+  useEffect(() => { chatEndRef.current?.scrollIntoView({behavior:'smooth'}); }, [messages, sending]);
+
+  const handleSend = useCallback(async (text) => {
+    const q = (text || input || '').trim();
+    if (!q || sending) return;
+    const history = messages.map(m => ({role:m.role, text:m.text}));
+    setMessages(p => [...p, {role:'user', text:q, chunks:[]}]);
+    setInput('');
+    setSending(true);
+    try {
+      const res = await fetch('/api/ui-chat', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({query:q, personaId:'vc', focusId:'leadership', history}),
+      });
+      const data = await res.json();
+      setMessages(p => [...p, {
+        role:'assistant',
+        text: data.response || 'Unable to process query.',
+        chunks: data.chunksUsed || [],
+      }]);
+    } catch(e) {
+      setMessages(p => [...p, {role:'assistant', text:'Connection error. Please retry.', chunks:[]}]);
+    }
+    setSending(false);
+  }, [input, sending, messages]);
+
+  return (
+    <div className="h-screen flex flex-col overflow-hidden">
+
+      {/* ═══ GLOBAL HEADER ═══ */}
+      <header className="h-14 min-h-[56px] border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0">
+        <div className="flex items-center gap-4">
+          <span className="font-mono text-[11px] tracking-widest text-zinc-500 uppercase select-none">
+            Deal ID: Project DJL&nbsp;&nbsp;//&nbsp;&nbsp;DD Data Room
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="status-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"/>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"/>
+            </span>
+            <span className="text-[11px] font-medium text-emerald-600">AI Copilot Active</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href="https://linkedin.com/in/dongjaelee1076" target="_blank" rel="noopener"
+            className="flex items-center gap-1.5 text-[11px] text-zinc-500 hover:text-zinc-900 px-3 py-1.5 rounded-md border border-zinc-200 hover:border-zinc-400 transition-all font-medium">
+            <Icon.ExternalLink/> LinkedIn
+          </a>
+          <button className="flex items-center gap-1.5 text-[11px] text-white bg-zinc-900 hover:bg-zinc-800 px-3.5 py-1.5 rounded-md transition-colors font-medium">
+            <Icon.Download/> Download 1-Pager Memo
+          </button>
+        </div>
+      </header>
+
+      {/* ═══ SPLIT PANES ═══ */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* ─── LEFT PANE: INVESTMENT MEMO ─── */}
+        <div className="w-1/2 bg-white overflow-y-auto border-r border-zinc-200 sb">
+          <div className="px-10 py-10 max-w-[640px]">
+
+            <div className="font-mono text-[10px] text-zinc-400 uppercase tracking-[.15em] mb-1 select-none">
+              Confidential &middot; Investment Memorandum
+            </div>
+            <h1 className="text-[28px] font-bold text-zinc-900 tracking-tight leading-tight mb-2">
+              Target Asset: Dong Jae Lee
+            </h1>
+            <p className="text-xs text-zinc-400 mb-10 font-mono">Prepared for Altos Ventures DD Review</p>
+
+            {/* 01 — EXECUTIVE SUMMARY */}
+            <section id="exec-summary" className="mb-10 rounded-lg p-1 transition-colors">
+              <h2 className="font-mono text-[11px] font-bold text-zinc-400 uppercase tracking-[.12em] mb-4 flex items-center gap-2">
+                <span className="w-5 h-px bg-zinc-300"/>01 — Executive Summary
+              </h2>
+              <ul className="space-y-3">
+                {[
+                  ['Full-stack operator', 'spanning engineering, AI product, and business development across enterprise (TmaxTibero), startup (Flint Technologies), and FAANG (Meta / Apple). Rare blend of technical depth and commercial instinct.'],
+                  ['Builder-turned-strategist', 'shipped GNN recommendation engines, RAG pipelines, and autonomous database features — then closed enterprise deals worth hundreds of millions in KRW.'],
+                  ['Cross-cultural arbitrage', 'native bilingual (KR / EN) with deep networks across Silicon Valley and Korean enterprise ecosystems. Thesis: the next wave of AI infrastructure will be built at this intersection.'],
+                ].map(([bold, rest], i) => (
+                  <li key={i} className="flex gap-2.5 text-[13px] text-zinc-700 leading-relaxed">
+                    <span className="text-zinc-300 mt-0.5 shrink-0 select-none">▸</span>
+                    <span><strong className="text-zinc-900">{bold}</strong>: {rest}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* 02 — TRACTION */}
+            <section id="traction" className="mb-10 rounded-lg p-1 transition-colors">
+              <h2 className="font-mono text-[11px] font-bold text-zinc-400 uppercase tracking-[.12em] mb-4 flex items-center gap-2">
+                <span className="w-5 h-px bg-zinc-300"/>02 — Traction
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  {label:'DUG Database Growth', value:'55.47%', unit:'YoY', sub:'Enterprise pipeline at TmaxTibero'},
+                  {label:'Flint Seed Round', value:'₩450M', unit:'', sub:'Pre-seed raised as COO / Co-founder'},
+                  {label:'Enterprise Clients', value:'10+', unit:'', sub:'Samsung, Hyundai, KT, POSCO, etc.'},
+                  {label:'Career Trajectory', value:'7+', unit:'years', sub:'Engineering → Product → BD → Strategy'},
+                ].map((m, i) => (
+                  <div key={i} className="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
+                    <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1.5">{m.label}</div>
+                    <div className="text-[22px] font-mono font-bold text-zinc-900 leading-none">
+                      {m.value}{m.unit && <span className="text-[13px] font-normal text-zinc-400 ml-1">{m.unit}</span>}
+                    </div>
+                    <div className="text-[11px] text-zinc-400 mt-1.5">{m.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 03 — POST-MORTEM */}
+            <section id="fail-context" className="mb-10 rounded-lg p-1 transition-colors">
+              <h2 className="font-mono text-[11px] font-bold text-zinc-400 uppercase tracking-[.12em] mb-4 flex items-center gap-2">
+                <span className="w-5 h-px bg-zinc-300"/>03 — The Post-Mortem (Flint)
+              </h2>
+              <div className="bg-amber-50/80 border-l-4 border-amber-500 rounded-r-lg p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon.AlertTriangle/>
+                  <span className="font-mono text-[10px] font-bold text-amber-700 uppercase tracking-[.12em]">
+                    Intellectual Honesty Disclosure
+                  </span>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    ['The Bet', 'Built a GNN-powered knowledge management platform for enterprise teams. Strong technology — the graph neural network delivered genuinely novel content recommendations.'],
+                    ['The Miss', 'Optimized for algorithm performance over user experience. UX friction was too high for target users. Enterprise buyers appreciated the tech but end-users churned.'],
+                    ['The Lesson', 'Technical excellence ≠ market demand. DJL now evaluates every technology investment through the lens of "would a non-technical user actually adopt this?"'],
+                    ['The Takeaway', 'Flint was his most expensive MBA. The scar tissue informs every diligence question he now asks founders about distribution, UX, and PMF signals.'],
+                  ].map(([bold, rest], i) => (
+                    <li key={i} className="flex gap-2.5 text-[13px] text-amber-900 leading-relaxed">
+                      <span className="text-amber-400 mt-0.5 shrink-0 select-none">▸</span>
+                      <span><strong className="text-amber-800">{bold}:</strong> {rest}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+
+            {/* 04 — THESIS */}
+            <section id="thesis" className="mb-10 rounded-lg p-1 transition-colors">
+              <h2 className="font-mono text-[11px] font-bold text-zinc-400 uppercase tracking-[.12em] mb-4 flex items-center gap-2">
+                <span className="w-5 h-px bg-zinc-300"/>04 — Investment Thesis
+              </h2>
+              <div className="text-[13px] text-zinc-700 leading-relaxed space-y-3">
+                <p>DJL's thesis centers on the <strong className="text-zinc-900">AI infrastructure layer</strong> — specifically, companies building picks-and-shovels for the AI application wave rather than the applications themselves.</p>
+                <p>His operator background gives him <strong className="text-zinc-900">asymmetric pattern recognition</strong>: he has built the systems that AI startups are now selling, and sold enterprise software to the buyers they are targeting.</p>
+                <p>He believes category-defining companies will emerge from founders who understand both the <strong className="text-zinc-900">technical frontier</strong> and the <strong className="text-zinc-900">distribution mechanics</strong> of enterprise adoption — a conviction forged through his own failure at Flint.</p>
+              </div>
+            </section>
+
+            {/* Footer */}
+            <div className="border-t border-zinc-100 pt-6 pb-4">
+              <p className="text-[10px] font-mono text-zinc-300 uppercase tracking-wider text-center select-none">
+                End of Memorandum &middot; All data sourced from verified professional records
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── RIGHT PANE: DD COPILOT ─── */}
+        <div className="w-1/2 bg-zinc-50 flex flex-col">
+
+          {/* Chat header */}
+          <div className="px-6 py-3 border-b border-zinc-200 shrink-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-zinc-800">Virtual DD Assistant</div>
+                <div className="font-mono text-[10px] text-zinc-400 tracking-wider">[RAG-DJL-v2.0] &middot; Pinecone + Gemini 2.5 Flash</div>
+              </div>
+              <div className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"/>
+                ONLINE
+              </div>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 sb">
+
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[88%] ${m.role === 'user'
+                  ? 'bg-zinc-900 text-zinc-50 rounded-2xl rounded-br-sm px-4 py-3'
+                  : 'bg-white border border-zinc-200 text-zinc-800 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm'
+                }`}>
+                  <Md text={m.text} className="text-[13px] leading-relaxed"/>
+                  {/* Citation pills */}
+                  {m.chunks && m.chunks.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3 pt-2.5 border-t border-zinc-100">
+                      {m.chunks.slice(0, 5).map((c, j) => <CitationPill key={j} chunkId={c}/>)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {/* Prompt chips */}
+            {messages.length === 1 && !sending && (
+              <div className="flex flex-wrap gap-2 pt-2 pl-1">
+                {CHIPS.map((chip, i) => (
+                  <button key={i} onClick={() => handleSend(chip)}
+                    className="text-[11px] font-medium text-zinc-500 bg-white border border-zinc-200 hover:border-zinc-400 hover:text-zinc-900 hover:shadow-sm px-3 py-1.5 rounded-full transition-all cursor-pointer">
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Typing indicator */}
+            {sending && (
+              <div className="flex justify-start">
+                <div className="bg-white border border-zinc-200 rounded-2xl rounded-bl-sm px-5 py-3.5 shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-[5px] h-[5px] rounded-full bg-zinc-400 dot-1"/>
+                    <span className="w-[5px] h-[5px] rounded-full bg-zinc-400 dot-2"/>
+                    <span className="w-[5px] h-[5px] rounded-full bg-zinc-400 dot-3"/>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={chatEndRef}/>
+          </div>
+
+          {/* ─── INPUT BAR ─── */}
+          <div className="p-5 border-t border-zinc-200 bg-zinc-50 shrink-0">
+            <form onSubmit={e => { e.preventDefault(); handleSend(); }}
+              className="flex items-center gap-2 bg-white border border-zinc-200 rounded-xl px-4 py-2 shadow-sm focus-within:border-zinc-400 focus-within:shadow-md transition-all">
+              <input
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Ask a due diligence question..."
+                disabled={sending}
+                className="flex-1 text-[13px] text-zinc-800 placeholder:text-zinc-400 outline-none bg-transparent disabled:opacity-50"
+                autoFocus
+              />
+              <button type="submit" disabled={sending || !input.trim()}
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-zinc-700 disabled:bg-zinc-200 disabled:text-zinc-400 text-white transition-colors shrink-0 cursor-pointer disabled:cursor-default">
+                <Icon.ArrowUp/>
+              </button>
+            </form>
+            <div className="text-center mt-2.5">
+              <span className="font-mono text-[9px] text-zinc-300 uppercase tracking-widest select-none">
+                Responses grounded in verified resume data &middot; No hallucination
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
