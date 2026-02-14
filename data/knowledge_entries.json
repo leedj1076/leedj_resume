@@ -1,0 +1,234 @@
+[
+  {
+    "chunk_id": "summary-bridging-tech-and-business",
+    "question": "Can you provide a high-level summary of your career and expertise?",
+    "answer_summary": "Dong Jae Lee summarizes his career as bridging the gap between deep tech and real-world business. He combines technical understanding from his engineering background with business acumen to drive revenue and strategy, honed through startup and global expansion experiences.",
+    "text": "Dong Jae Lee summarizes his career as bridging the gap between deep tech and real-world business. He built a foundation at KAIST in Mechanical Engineering and Industrial Design, gaining the literacy to understand complex technology. His passion lies in finding market value within technology and turning it into a viable, growing business. He offers technical depth and business acumen, and is known for adaptability and reliability.",
+    "source_type": "qa_story",
+    "section": "summary",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "strategy",
+      "business development",
+      "engineering",
+      "product-market fit",
+      "investor relations"
+    ],
+    "keywords": [
+      "deep tech",
+      "business",
+      "engineering",
+      "product",
+      "market",
+      "startup",
+      "global expansion"
+    ],
+    "depth": "surface",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 109
+  },
+  {
+    "chunk_id": "experience-flint-technologies-zero-to-one",
+    "question": "Can you describe your experience at Flint Technologies?",
+    "answer_summary": "As COO at Flint Technologies, Dong Jae Lee experienced building a tech startup from the ground up. He defined the MVP, found product-market fit, secured seed funding, and handled investor relations, gaining grit and agility.",
+    "text": "As COO at Flint Technologies, Dong Jae Lee experienced the raw reality of building something from nothing. He didn't just strategize; he executed—from defining the MVP and finding Product-Market Fit to securing seed funding and handling investor relations. This experience taught him grit, agility, and how to make critical decisions with limited resources.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "strategy",
+      "product development",
+      "fundraising",
+      "investor relations",
+      "leadership"
+    ],
+    "keywords": [
+      "startup",
+      "zero to one",
+      "MVP",
+      "product-market fit",
+      "seed funding",
+      "COO"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 90
+  },
+  {
+    "chunk_id": "experience-devs-united-games-scaling",
+    "question": "Can you describe your experience at Devs United Games?",
+    "answer_summary": "As Director at Devs United Games, Dong Jae Lee focused on global expansion and monetization in the XR space. He led high-stakes partnerships with global platforms like Meta, Apple, and Google.",
+    "text": "As the Director at Devs United Games, Dong Jae Lee focused on global expansion and monetization in the XR space. He led high-stakes partnerships with global platforms like Meta, Apple, and Google.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "business development",
+      "global expansion",
+      "monetization",
+      "partnership",
+      "leadership"
+    ],
+    "keywords": [
+      "XR",
+      "Meta",
+      "Apple",
+      "Google",
+      "global expansion",
+      "monetization"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 49
+  },
+  {
+    "chunk_id": "narrative-embracing-challenges-and-learning",
+    "question": "What motivates you in your career?",
+    "answer_summary": "Dong Jae Lee is motivated by new challenges and embraces being a beginner to solve meaningful problems. He thrives on steep learning curves and values his reputation as someone who works with an owner's mindset.",
+    "text": "Dong Jae Lee is someone who runs toward new challenges, not away from them. His resume reflects a diverse path because he is not afraid of being a beginner again if it means solving a harder, more meaningful problem. He thrives on that steep learning curve. He takes great pride in the fact that his former colleagues are his strongest advocates and is known as someone who works with an owner's mindset.",
+    "source_type": "qa_story",
+    "section": "narrative",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "adaptability",
+      "problem-solving",
+      "leadership",
+      "ownership"
+    ],
+    "keywords": [
+      "challenges",
+      "learning",
+      "beginner",
+      "owner's mindset",
+      "reputation"
+    ],
+    "depth": "surface",
+    "focus_tags": [
+      "leadership_strategy"
+    ],
+    "is_core_strength": false,
+    "token_count": 101
+  },
+  {
+    "chunk_id": "story-flint-founder-equity-split",
+    "question": "What were the pros and cons of splitting equity equally between Flint founders?",
+    "answer_summary": "Dong Jae Lee describes the pros and cons of splitting equity equally among four founders at Flint. The pros were equal weight and responsibility, avoiding share disputes. The cons were difficult decision-making initially, requiring data-driven approaches and 'disagree but commit' mentality.",
+    "text": "Dong Jae Lee explains that splitting equity equally among four founders at Flint had both advantages and disadvantages. On the plus side, everyone felt they had the same weight and responsibility, and there were no arguments about shares, allowing the team to focus on their work. The downside was that decision-making was difficult at first, requiring numerous meetings and votes. To solve this, the team, being engineers, decided to trust data. They found ways to obtain objective data and agreed to follow it. For example, when deciding on product direction, they designed separate UIs and landing pages for each idea, released them publicly, measured reactions, and then followed the most validated idea. They also learned to 'disagree but commit,' meaning that even if your idea wasn't chosen, you still had to work just as hard.",
+    "source_type": "qa_story",
+    "section": "stories",
+    "company": "Flint",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "decision-making",
+      "data analysis",
+      "product development",
+      "leadership"
+    ],
+    "keywords": [
+      "equity split",
+      "founders",
+      "decision-making",
+      "data-driven",
+      "disagree but commit",
+      "product direction",
+      "validation"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "leadership_strategy",
+      "business_development"
+    ],
+    "is_core_strength": false,
+    "token_count": 209
+  },
+  {
+    "chunk_id": "flint-seed-round-details",
+    "question": "What were the details of the Seed fundraising round at Flint Technologies?",
+    "answer_summary": "Flint Technologies raised $212K in a Seed round from Strong Ventures and Fast Ventures at a $2.127M post-money valuation, giving investors a 10% equity stake. They also secured a KRW 200 million bank loan with a guarantee from KODIT.",
+    "text": "Flint Technologies successfully raised $212K in a Seed round from Strong Ventures and Fast Ventures. This investment was made at a $2.127M post-money valuation, which gave the investors a 10% equity stake in the company. In addition to venture capital, Flint Technologies also secured a KRW 200 million bank loan, which was guaranteed by KODIT.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "fundraising",
+      "venture capital",
+      "negotiation"
+    ],
+    "keywords": [
+      "Seed round",
+      "fundraising",
+      "valuation",
+      "equity",
+      "venture capital",
+      "bank loan",
+      "KODIT"
+    ],
+    "depth": "surface",
+    "focus_tags": [
+      "business_development"
+    ],
+    "is_core_strength": false,
+    "token_count": 86
+  },
+  {
+    "chunk_id": "flint-fundraising-challenges",
+    "question": "What were the biggest challenges Dong Jae Lee faced during fundraising for Flint Technologies?",
+    "answer_summary": "The hardest fundraising moment was convincing Korean VCs to invest despite US incorporation and an equal 25% equity split among four founders. DJ held firm on both due to strategic necessity and fairness.",
+    "text": "The most challenging aspect of fundraising for Flint Technologies was convincing Korean VCs to invest, given two unfavorable conditions. First, the company was incorporated in the US, which Korean VCs found bureaucratically challenging due to overseas investment reporting requirements. Second, the equity was split equally (25%) among all four founders, a structure that Korean VCs typically dislike. Dong Jae Lee and his cofounders stood firm on both points. US incorporation was strategically necessary, and an equal equity split was deemed fair since all founders were fully committed.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "fundraising",
+      "negotiation",
+      "leadership"
+    ],
+    "keywords": [
+      "fundraising",
+      "venture capital",
+      "negotiation",
+      "equity split",
+      "US incorporation",
+      "Korean VCs"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": false,
+    "token_count": 148
+  }
+]

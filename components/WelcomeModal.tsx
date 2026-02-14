@@ -25,12 +25,14 @@ const LABELS = {
     personaLabel: "I am a...",
     focusLabel: "I'm interested in...",
     submit: "Start Chat \u2192",
+    privacy: "Your questions help improve this AI. No personal data is collected.",
   },
   ko: {
     title: "환영합니다! 자기소개를 해주세요",
     personaLabel: "저는...",
     focusLabel: "관심 분야는...",
     submit: "대화 시작 \u2192",
+    privacy: "질문은 AI 개선에 활용됩니다. 개인정보는 수집하지 않습니다.",
   },
 } as const;
 
@@ -117,6 +119,7 @@ export default function WelcomeModal({ lang, onSubmit }: WelcomeModalProps) {
         >
           {t.submit}
         </button>
+        <p className="text-xs text-gray-400 text-center mt-3">{t.privacy}</p>
       </div>
     </div>
   );

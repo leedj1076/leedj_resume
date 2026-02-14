@@ -11,6 +11,9 @@ const VERSIONS: Record<string, string> = {
   "v8-memo": "ask-dj-memo.html",
   "v9-ic-dashboard": "ask-dj-ic-dashboard.html",
   "v10-altos-memo-hub": "altos-memo-hub.html",
+  "v11-altos-final": "ask-dj-altos-final.html",
+  "v12-auditable": "ask-dj-v12-auditable.html",
+  "v13-auditable-plus": "ask-dj-v13-auditable.html",
 };
 
 export async function GET(

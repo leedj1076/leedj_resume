@@ -84,6 +84,30 @@ const VERSIONS = [
     tags: ["Data Room", "Bilingual", "Sidebar Nav"],
     accent: "#f97316",
   },
+  {
+    slug: "v11-altos-final",
+    label: "V11",
+    title: "Altos Final",
+    desc: "Best-of merge per evaluation report — Source Serif 4 editorial memo, bilingual (EN/KR), inline AI threads, risk self-assessment, collapsible quick-scan sidebar",
+    tags: ["Memo", "Bilingual", "Quick-Scan", "Risks"],
+    accent: "#4f46e5",
+  },
+  {
+    slug: "v12-auditable",
+    label: "V12",
+    title: "Auditable Memo",
+    desc: "Evidence-first investment memo — 12 claim anchors with source popovers, 3 reading paths (90s/5min/Full DD), JD signal tags, section progress nav, streaming AI threads, default-open quick-scan",
+    tags: ["Evidence Ledger", "Reading Paths", "JD Signals", "Streaming AI"],
+    accent: "#7c3aed",
+  },
+  {
+    slug: "v13-auditable-plus",
+    label: "V13",
+    title: "Auditable+",
+    desc: "V12 + 6 improvements — JD coverage matrix, founder question framework (5 accordion cards), bull/bear IC synthesis, 90-day operating plan with failure triggers, upgraded evidence popovers (verification + confidence + invalidation), AI citation enforcement",
+    tags: ["JD Matrix", "Bull/Bear", "90-Day Plan", "Founder Questions", "Citation AI"],
+    accent: "#4f46e5",
+  },
 ];
 
 export default function UIIndex() {

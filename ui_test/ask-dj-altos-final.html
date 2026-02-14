@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Investment Memo — Dong Jae Lee</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;background:#fff;color:#27272a;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    ::selection{background:#e0e7ff}
+    .serif{font-family:'Source Serif 4',Georgia,serif}
+    .sb::-webkit-scrollbar{width:5px}
+    .sb::-webkit-scrollbar-track{background:transparent}
+    .sb::-webkit-scrollbar-thumb{background:#e4e4e7;border-radius:3px}
+    .sb::-webkit-scrollbar-thumb:hover{background:#d4d4d8}
+    @keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @media print{.no-print{display:none!important}}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useRef, useEffect, useCallback} = React;
+
+/* ═══════════════════════════════════════════════════════
+   BILINGUAL MEMO CONTENT
+   ═══════════════════════════════════════════════════════ */
+const SECTIONS = [
+  {
+    id: 'thesis',
+    heading: {en:'The Thesis', kr:'투자 테시스'},
+    body: {
+      en: `In 2024, Dong Jae Lee drove a 55.47% year-over-year revenue increase at Devs United Games — not through incremental sales tactics, but by architecting global distribution partnerships with Meta and Apple. He negotiated platform agreements that transformed a small Korean game studio into an internationally competitive publisher. This wasn't a one-time spike: the growth was structural, built on repeatable channel partnerships that compounded quarter over quarter.\n\nFor an investor evaluating operator talent, this is the signal — someone who understands that building great technology is necessary but insufficient. Distribution is the multiplier.`,
+      kr: `2024년, 이동재는 Devs United Games에서 55.47%의 YoY 매출 성장을 이끌었습니다 — 점진적인 영업 전술이 아닌, Meta와 Apple과의 글로벌 유통 파트너십을 설계함으로써. 플랫폼 계약을 협상하여 소규모 한국 게임 스튜디오를 국제 경쟁력을 갖춘 퍼블리셔로 전환했습니다. 이것은 일회성 급등이 아니었습니다: 분기마다 복리로 쌓이는 반복 가능한 채널 파트너십 위에 구축된 구조적 성장이었습니다.\n\n운영 인재를 평가하는 투자자에게 이것이 바로 신호입니다 — 훌륭한 기술을 만드는 것은 필요하지만 충분하지 않다는 것을 이해하는 사람. 유통이 배수기입니다.`,
+    },
+  },
+  {
+    id: 'operator',
+    heading: {en:'The Operator Profile', kr:'운영자 프로필'},
+    body: {
+      en: `Lee's career is an unusual stack: he has shipped production code (Python, TypeScript, React, Next.js), built and deployed ML systems (GNN recommendation engines, RAG pipelines with Pinecone and Gemini), closed enterprise deals worth hundreds of millions of KRW with Samsung, Hyundai, KT, and POSCO, and co-founded a venture-backed startup as COO.\n\nHe then went on to lead business development at a game studio, navigating the internal politics and indirect cultures of Apple, Meta, and Google — three very different platform organizations. This breadth is rare. Most candidates are either technical or commercial. Lee is both, and he has the scar tissue to prove it.`,
+      kr: `이동재의 경력은 독특한 스택입니다: 프로덕션 코드 배포 (Python, TypeScript, React, Next.js), ML 시스템 구축 및 배포 (GNN 추천 엔진, Pinecone과 Gemini를 활용한 RAG 파이프라인), 삼성, 현대, KT, POSCO와의 수억 원 규모 기업 계약 체결, 그리고 벤처 투자를 받은 스타트업의 COO로서 공동 창업.\n\n이후 게임 스튜디오에서 사업개발을 이끌며 Apple, Meta, Google이라는 세 가지 매우 다른 플랫폼 조직의 내부 정치와 간접적 문화를 탐색했습니다. 이러한 폭은 드뭅니다. 대부분의 후보자는 기술적이거나 상업적입니다. 이동재는 둘 다이며, 이를 증명할 경험의 흔적을 가지고 있습니다.`,
+    },
+  },
+  {
+    id: 'flint',
+    heading: {en:'The Failure — Flint Technologies', kr:'실패 — Flint Technologies'},
+    body: {
+      en: `Flint Technologies was Lee's most expensive education. As co-founder and COO, he raised ₩450M in pre-seed funding and built a GNN-powered knowledge management platform for enterprise teams. The technology was genuinely novel — the graph neural network delivered content recommendations that traditional systems couldn't match. Early pilot customers were impressed.\n\nBut the team made a critical error: they optimized for algorithmic sophistication over user experience. The onboarding friction was too high. Enterprise buyers signed pilots, but end-users didn't adopt. The gap between "technically validated" and "market-ready" proved fatal.\n\nLee considers this failure the foundation of his investment thesis — he now interrogates every founder about their UX friction, distribution strategy, and the difference between pilot interest and genuine product-market fit. The lesson: technical excellence is a necessary condition, never a sufficient one.`,
+      kr: `Flint Technologies는 이동재에게 가장 비싼 교육이었습니다. 공동 창업자이자 COO로서 프리시드 펀딩 4.5억원을 유치하고 기업 팀을 위한 GNN 기반 지식 관리 플랫폼을 구축했습니다. 기술은 진정으로 혁신적이었습니다 — 그래프 신경망이 전통적 시스템으로는 불가능한 콘텐츠 추천을 제공했습니다. 초기 파일럿 고객들은 감명받았습니다.\n\n하지만 팀은 치명적인 실수를 범했습니다: 사용자 경험보다 알고리즘의 정교함을 최적화했습니다. 온보딩 마찰이 너무 높았습니다. 기업 구매자들은 파일럿 계약을 체결했지만 최종 사용자들은 채택하지 않았습니다. "기술적으로 검증된 것"과 "시장 준비가 된 것" 사이의 격차가 치명적으로 드러났습니다.\n\n이동재는 이 실패를 자신의 투자 테시스의 기반으로 여깁니다 — 이제 모든 창업자에게 UX 마찰, 유통 전략, 파일럿 관심과 진정한 PMF의 차이에 대해 질문합니다. 교훈: 기술적 탁월함은 필요 조건이지, 충분 조건이 아닙니다.`,
+    },
+  },
+  {
+    id: 'cross-cultural',
+    heading: {en:'The Cross-Cultural Edge', kr:'크로스컬처 경쟁력'},
+    body: {
+      en: `Lee is a native bilingual in Korean and English, with professional-level German (TestDaF 5/5/4/5) and deep networks spanning both Silicon Valley and the Korean enterprise ecosystem. This is not a soft advantage — it is a structural one.\n\nKorean enterprise sales cycles are relationship-driven and hierarchical. Silicon Valley fundraising is narrative-driven and speed-optimized. Lee has operated natively in both, closing deals at Samsung's headquarters in Suwon and negotiating with Meta's partnerships team in the same quarter.\n\nFor Altos Ventures, which bridges US and Korean markets, this cultural fluency translates directly into deal sourcing, founder evaluation, and portfolio support capabilities that monolingual candidates simply cannot replicate.`,
+      kr: `이동재는 한국어와 영어의 네이티브 이중언어 구사자이며, 전문가 수준의 독일어 (TestDaF 5/5/4/5)와 실리콘밸리 및 한국 기업 생태계를 아우르는 깊은 네트워크를 보유하고 있습니다. 이것은 소프트 어드밴티지가 아닌 구조적 강점입니다.\n\n한국 기업 영업 사이클은 관계 중심이고 위계적입니다. 실리콘밸리 펀드레이징은 내러티브 중심이고 속도에 최적화되어 있습니다. 이동재는 같은 분기에 수원 삼성 본사에서 딜을 클로징하고 Meta 파트너십 팀과 협상하며 두 곳 모두에서 네이티브로 활동했습니다.\n\n미국과 한국 시장을 잇는 알토스벤처스에게 이러한 문화적 유창성은 딜 소싱, 창업자 평가, 포트폴리오 지원 역량으로 직접 전환되며, 단일 언어 후보자들은 이를 복제할 수 없습니다.`,
+    },
+  },
+  {
+    id: 'conviction',
+    heading: {en:'The Investment Conviction', kr:'투자 확신'},
+    body: {
+      en: `Lee's investment thesis centers on the AI infrastructure layer — the picks-and-shovels companies enabling the AI application wave, rather than the applications themselves. His conviction is forged from direct experience: he has built the backend systems that AI startups are now productizing, and he has sold enterprise software to the exact buyer personas these startups are targeting.\n\nHe believes the current AI wave will be merciless to "wrapper" startups — thin application layers over foundation model APIs with no defensible moat. But foundational B2B SaaS that reduces genuine workflow friction — the kind that produces measurable cost reductions, not just demos — will survive, consolidate, and scale.\n\nThis is not an academic thesis. It is pattern recognition from seven years of building, selling, failing, and rebuilding.`,
+      kr: `이동재의 투자 테시스는 AI 인프라 레이어에 집중합니다 — AI 애플리케이션 물결을 가능하게 하는 곡괭이와 삽 회사들, 애플리케이션 자체가 아닌. 그의 확신은 직접적인 경험에서 만들어졌습니다: AI 스타트업들이 현재 제품화하고 있는 백엔드 시스템을 구축했고, 이 스타트업들이 타겟으로 하는 정확한 기업 구매자 페르소나에게 엔터프라이즈 소프트웨어를 판매했습니다.\n\n현재 AI 물결은 "래퍼" 스타트업들에게 무자비할 것이라 믿습니다 — 방어 가능한 해자 없이 파운데이션 모델 API 위에 얇은 애플리케이션 레이어를 올린 것들. 하지만 진정한 워크플로우 마찰을 줄이는 기반 B2B SaaS — 데모가 아닌 측정 가능한 비용 절감을 만드는 종류 — 는 생존하고, 통합하고, 확장할 것입니다.\n\n이것은 학술적 테시스가 아닙니다. 7년간 구축하고, 판매하고, 실패하고, 재구축한 패턴 인식입니다.`,
+    },
+  },
+  {
+    id: 'why-altos',
+    heading: {en:'Why Altos Ventures', kr:'왜 알토스벤처스인가'},
+    body: {
+      en: `Lee's interest in Altos is specific, not generic. Altos operates at the intersection that defines his entire career: Korean-founded companies scaling into global markets, and global technologies being adapted for Korean enterprise adoption. The firm's patient capital approach and its deep founder relationships align with Lee's own conviction that the best companies are built by operators who understand both the technology and the market — a conviction he earned the hard way at Flint.\n\nHe doesn't want to be a VC who reads pitch decks. He wants to be the partner in the room who can pressure-test a founder's technical architecture, challenge their go-to-market assumptions, and then pick up the phone to make a warm introduction to a Korean enterprise CTO.\n\nThat is what an operator-turned-investor brings to the table.`,
+      kr: `이동재의 알토스 관심은 구체적이지, 일반적이지 않습니다. 알토스는 그의 전체 경력을 정의하는 교차점에서 운영됩니다: 글로벌 시장으로 확장하는 한국 창업 기업들, 그리고 한국 기업 도입을 위해 적용되는 글로벌 기술들. 회사의 인내자본 접근법과 깊은 창업자 관계는, 최고의 기업은 기술과 시장 모두를 이해하는 운영자에 의해 구축된다는 이동재 자신의 확신과 일치합니다 — Flint에서 어렵게 얻은 확신입니다.\n\n피치덱을 읽는 VC가 되고 싶지 않습니다. 창업자의 기술 아키텍처를 압박 테스트하고, GTM 가정에 도전하고, 전화기를 들어 한국 기업 CTO에게 따뜻한 소개를 할 수 있는 방 안의 파트너가 되고 싶습니다.\n\n그것이 운영자에서 투자자로 전환한 사람이 테이블에 가져오는 것입니다.`,
+    },
+  },
+  {
+    id: 'risks',
+    heading: {en:'Identified Risks & Growth Areas', kr:'식별된 리스크 & 성장 영역'},
+    body: {
+      en: null, // Special rendering for this section
+      kr: null,
+    },
+  },
+];
+
+/* Risk items — from ic-dashboard's self-awareness approach */
+const RISKS = [
+  {
+    risk: {
+      en: 'No direct VC or investment fund experience',
+      kr: '직접적인 VC 또는 투자 펀드 경험 없음',
+    },
+    mitigant: {
+      en: 'Has been on the founder side of fundraising (₩450M raised). Understands investor lens from the other direction. Partnership deal cycles are structurally similar to investment deal cycles — sourcing, evaluation, negotiation, ongoing management.',
+      kr: '펀드레이징의 창업자 측 경험 보유 (4.5억원 유치). 반대 방향에서 투자자 관점 이해. 파트너십 딜 사이클은 투자 딜 사이클과 구조적으로 유사 — 소싱, 평가, 협상, 지속적 관리.',
+    },
+    severity: 'MEDIUM',
+  },
+  {
+    risk: {
+      en: 'Career has been operator-heavy, not advisory',
+      kr: '경력이 운영 중심이지 자문이 아님',
+    },
+    mitigant: {
+      en: 'Operator experience gives authentic credibility with founders. Knows what "good" looks like from inside, not just from a slide deck. Altos\'s operating team model (HR, legal, finance, PR support for portfolio) specifically values operator judgment.',
+      kr: '운영 경험이 창업자와의 진정한 신뢰성 제공. 슬라이드 덱이 아닌 내부에서 \'좋은 것\'이 어떤 것인지 파악. 알토스의 운영팀 모델 (포트폴리오 HR, 법무, 재무, PR 지원)은 특히 운영자 판단력을 중시.',
+    },
+    severity: 'LOW',
+  },
+  {
+    risk: {
+      en: 'Financial modeling depth is developing, not expert-level',
+      kr: '재무 모델링 깊이가 발전 중이며 전문가 수준이 아님',
+    },
+    mitigant: {
+      en: 'Has performed revenue modeling (cannibalization analysis for Meta Quest+), cap table management at Flint, and financial due diligence on funding deals. Foundation is solid — depth will compound with exposure to Altos\'s deal flow.',
+      kr: '매출 모델링 (Meta Quest+ 자기잠식 분석), Flint 캡 테이블 관리, 펀딩 딜 재무 실사 수행. 기초가 탄탄 — 알토스의 딜 플로우 노출과 함께 깊이가 복리로 쌓일 것.',
+    },
+    severity: 'LOW',
+  },
+];
+
+/* Quick-scan facts — from signal's recruiter checklist concept */
+const QUICK_SCAN = {
+  en: [
+    {label:'Experience', value:'8+ years', detail:'Engineer → Team Lead → Co-Founder/COO → Director BD'},
+    {label:'Revenue Impact', value:'55% YoY', detail:'Led Meta Quest+ entry, Apple Vision Pro launch partnership'},
+    {label:'Fundraising', value:'₩450M', detail:'Pre-seed + government funding as co-founder'},
+    {label:'Tech Depth', value:'Ships code', detail:'RAG, GNN, Next.js, Python, Unity, VisionOS'},
+    {label:'Languages', value:'KR · EN · DE', detail:'Native bilingual + TestDaF 5/5/4/5'},
+    {label:'Education', value:'KAIST + KIT', detail:'M.S. dual degree, Cum Laude, Dean\'s List'},
+  ],
+  kr: [
+    {label:'경력', value:'8년+', detail:'엔지니어 → 팀 리드 → 공동창업자/COO → BD 디렉터'},
+    {label:'매출 임팩트', value:'55% YoY', detail:'Meta Quest+ 진입, Apple Vision Pro 런칭 파트너십'},
+    {label:'펀드레이징', value:'₩4.5억', detail:'공동 창업자로서 프리시드 + 정부 펀딩'},
+    {label:'기술 깊이', value:'코드 배포', detail:'RAG, GNN, Next.js, Python, Unity, VisionOS'},
+    {label:'언어', value:'한 · 영 · 독', detail:'네이티브 이중언어 + TestDaF 5/5/4/5'},
+    {label:'학력', value:'KAIST + KIT', detail:'석사 복수학위, 우등졸업, 학장 리스트'},
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════
+   INLINE AI THREAD
+   ═══════════════════════════════════════════════════════ */
+function InlineThread({sectionId, contextText, onClose, lang}) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const inputRef = useRef(null);
+  const endRef = useRef(null);
+  const en = lang === 'en';
+
+  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { endRef.current?.scrollIntoView({behavior:'smooth'}); }, [messages]);
+
+  const handleSend = async () => {
+    const q = input.trim();
+    if (!q || sending) return;
+
+    const contextPrompt = `Context from the memo: "${contextText.slice(0,500)}..." \n\nUser question: ${q}`;
+    const history = messages.map(m => ({role: m.role, text: m.text}));
+
+    setMessages(p => [...p, {role:'user', text:q}]);
+    setInput('');
+    setSending(true);
+
+    try {
+      const res = await fetch('/api/ui-chat', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          query: contextPrompt,
+          personaId:'vc',
+          focusId:'leadership',
+          history,
+        }),
+      });
+      const data = await res.json();
+      setMessages(p => [...p, {role:'assistant', text: data.response || (en ? 'Unable to generate a response.' : '응답을 생성할 수 없습니다.')}]);
+    } catch {
+      setMessages(p => [...p, {role:'assistant', text: en ? 'Connection error.' : '연결 오류.'}]);
+    }
+    setSending(false);
+  };
+
+  return (
+    <div style={{borderLeft:'2px solid #a5b4fc', paddingLeft:20, marginLeft:4, marginTop:20, marginBottom:8, animation:'fadeSlideIn .3s ease-out'}}>
+      <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12}}>
+        <span style={{fontSize:11, fontWeight:600, color:'#6366f1', textTransform:'uppercase', letterSpacing:'.1em'}}>AI Thread</span>
+        <button onClick={onClose} style={{fontSize:12, color:'#a1a1aa', cursor:'pointer', padding:'2px 6px', borderRadius:4, border:'1px solid #e4e4e7', background:'#fff', fontFamily:'Inter,sans-serif'}}
+          onMouseEnter={e => e.target.style.background='#f4f4f5'}
+          onMouseLeave={e => e.target.style.background='#fff'}>
+          {en ? 'Close' : '닫기'}
+        </button>
+      </div>
+
+      {messages.map((m,i) => (
+        <div key={i} style={{marginBottom:10}}>
+          {m.role === 'user' ? (
+            <div style={{fontSize:13, color:'#52525b', fontWeight:500}}>
+              <span style={{color:'#818cf8', marginRight:6}}>Q:</span>{m.text}
+            </div>
+          ) : (
+            <div style={{background:'#eef2ff', border:'1px solid #e0e7ff', padding:14, borderRadius:8, fontSize:13, color:'#3f3f46', lineHeight:1.7, animation:'fadeSlideIn .25s ease-out'}}>
+              <MemoMd text={m.text}/>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {sending && (
+        <div style={{background:'#eef2ff', border:'1px solid #e0e7ff', padding:14, borderRadius:8}}>
+          <div style={{display:'flex', gap:5}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'#a5b4fc',animation:'pulse 1.2s infinite'}}/>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'#a5b4fc',animation:'pulse 1.2s .15s infinite'}}/>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'#a5b4fc',animation:'pulse 1.2s .3s infinite'}}/>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={e => { e.preventDefault(); handleSend(); }} style={{display:'flex', gap:8, marginTop:10}}>
+        <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} disabled={sending}
+          placeholder={en ? 'Ask a follow-up...' : '추가 질문...'}
+          style={{flex:1, fontSize:13, padding:'8px 12px', border:'1px solid #e4e4e7', borderRadius:8, fontFamily:'Inter,sans-serif', color:'#27272a', background:'#fff'}}
+        />
+        <button type="submit" disabled={sending || !input.trim()}
+          style={{fontSize:12, fontWeight:500, color:'#fff', background: (sending || !input.trim()) ? '#d4d4d8' : '#6366f1', padding:'8px 14px', borderRadius:8, fontFamily:'Inter,sans-serif', cursor: (sending || !input.trim()) ? 'default' : 'pointer', border:'none'}}>
+          {en ? 'Send' : '전송'}
+        </button>
+      </form>
+      <div ref={endRef}/>
+    </div>
+  );
+}
+
+function MemoMd({text}) {
+  if (!text) return null;
+  const html = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n- /g, '<br/>&#8226; ')
+    .replace(/\n\* /g, '<br/>&#8226; ')
+    .replace(/\n\n/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+  return <span dangerouslySetInnerHTML={{__html: html}}/>;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MEMO PARAGRAPH BLOCK — hover to ask AI
+   ═══════════════════════════════════════════════════════ */
+function MemoBlock({section, lang}) {
+  const [hovered, setHovered] = useState(false);
+  const [threadOpen, setThreadOpen] = useState(false);
+  const en = lang === 'en';
+  const heading = section.heading[lang];
+  const body = section.body[lang];
+
+  return (
+    <section
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { if (!threadOpen) setHovered(false); }}
+    >
+      <h2 className="serif" style={{fontSize:22, fontWeight:600, color:'#18181b', marginBottom:16, letterSpacing:'-0.01em'}}>
+        {heading}
+      </h2>
+
+      <div style={{
+        position:'relative', borderRadius:10, padding:'16px 20px', margin:'0 -20px',
+        transition:'background .3s',
+        background: (hovered || threadOpen) ? '#fafafa' : 'transparent',
+      }}>
+        <p style={{fontSize:15.5, color:'#52525b', lineHeight:1.9, fontWeight:300, whiteSpace:'pre-line'}}>
+          {body}
+        </p>
+
+        {/* Ask AI pill */}
+        <div style={{
+          position:'absolute', right:-8, top:16,
+          transition:'all .2s',
+          opacity: (hovered && !threadOpen) ? 1 : 0,
+          transform: (hovered && !threadOpen) ? 'translateX(0)' : 'translateX(8px)',
+          pointerEvents: (hovered && !threadOpen) ? 'auto' : 'none',
+        }}>
+          <button onClick={() => { setThreadOpen(true); setHovered(true); }}
+            style={{
+              display:'flex', alignItems:'center', gap:4,
+              background:'#fff', boxShadow:'0 1px 3px rgba(0,0,0,.08)', border:'1px solid #e4e4e7',
+              color:'#52525b', fontSize:11, fontWeight:500, padding:'6px 10px', borderRadius:20,
+              cursor:'pointer', fontFamily:'Inter,sans-serif', whiteSpace:'nowrap',
+            }}
+            onMouseEnter={e => { e.target.style.borderColor='#a5b4fc'; e.target.style.color='#4f46e5'; }}
+            onMouseLeave={e => { e.target.style.borderColor='#e4e4e7'; e.target.style.color='#52525b'; }}
+          >
+            &#10024; Ask AI
+          </button>
+        </div>
+      </div>
+
+      {threadOpen && (
+        <InlineThread
+          sectionId={section.id}
+          contextText={body}
+          onClose={() => { setThreadOpen(false); setHovered(false); }}
+          lang={lang}
+        />
+      )}
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   RISKS SECTION — special rendering
+   ═══════════════════════════════════════════════════════ */
+function RisksSection({lang}) {
+  const en = lang === 'en';
+  const severityColors = {
+    MEDIUM: {bg:'#fffbeb', border:'#fde68a', text:'#92400e'},
+    LOW: {bg:'#f0fdf4', border:'#bbf7d0', text:'#166534'},
+  };
+
+  return (
+    <section>
+      <h2 className="serif" style={{fontSize:22, fontWeight:600, color:'#18181b', marginBottom:16, letterSpacing:'-0.01em'}}>
+        {en ? 'Identified Risks & Growth Areas' : '식별된 리스크 & 성장 영역'}
+      </h2>
+      <p style={{fontSize:14, color:'#71717a', marginBottom:24, lineHeight:1.7}}>
+        {en
+          ? 'Honest assessment of gaps. Every risk has a mitigant — but the gaps are real and worth naming.'
+          : '갭에 대한 솔직한 평가. 모든 리스크에는 완화 요인이 있지만, 갭은 실재하며 명명할 가치가 있습니다.'}
+      </p>
+
+      <div style={{display:'flex', flexDirection:'column', gap:16}}>
+        {RISKS.map((r, i) => {
+          const sc = severityColors[r.severity];
+          return (
+            <div key={i} style={{border:'1px solid #e4e4e7', borderRadius:10, overflow:'hidden'}}>
+              <div style={{display:'flex', alignItems:'center', gap:10, padding:'12px 16px', borderBottom:'1px solid #f4f4f5'}}>
+                <span style={{
+                  fontSize:10, fontWeight:600, letterSpacing:'.08em',
+                  padding:'3px 8px', borderRadius:4,
+                  background:sc.bg, border:`1px solid ${sc.border}`, color:sc.text,
+                }}>{r.severity}</span>
+                <span style={{fontSize:14, fontWeight:500, color:'#27272a'}}>{r.risk[lang]}</span>
+              </div>
+              <div style={{padding:'12px 16px', background:'#fafafa'}}>
+                <span style={{fontSize:11, fontWeight:600, color:'#a1a1aa', textTransform:'uppercase', letterSpacing:'.06em'}}>
+                  {en ? 'Mitigant' : '완화'}
+                </span>
+                <p style={{fontSize:13.5, color:'#52525b', lineHeight:1.7, marginTop:4}}>
+                  {r.mitigant[lang]}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUICK-SCAN SIDEBAR
+   ═══════════════════════════════════════════════════════ */
+function QuickScan({lang, open, onToggle}) {
+  const en = lang === 'en';
+  const items = QUICK_SCAN[lang];
+
+  return (
+    <>
+      {/* Toggle button — fixed */}
+      <button onClick={onToggle}
+        className="no-print"
+        style={{
+          position:'fixed', right: open ? 296 : 0, top:'50%', transform:'translateY(-50%)',
+          zIndex:60,
+          background:'#fff', border:'1px solid #e4e4e7', borderRight: open ? 'none' : '1px solid #e4e4e7',
+          borderRadius: open ? '8px 0 0 8px' : '8px 0 0 8px',
+          padding:'12px 8px', cursor:'pointer',
+          boxShadow:'-2px 0 8px rgba(0,0,0,.04)',
+          writingMode:'vertical-rl', textOrientation:'mixed',
+          fontSize:11, fontWeight:600, color:'#71717a', letterSpacing:'.06em',
+          fontFamily:'Inter,sans-serif',
+          transition:'right .3s ease',
+        }}
+        onMouseEnter={e => e.target.style.color='#18181b'}
+        onMouseLeave={e => e.target.style.color='#71717a'}
+      >
+        {en ? 'QUICK SCAN' : '빠른 스캔'}
+      </button>
+
+      {/* Panel */}
+      <div className="no-print" style={{
+        position:'fixed', right: open ? 0 : -296, top:0, bottom:0, width:296,
+        background:'#fff', borderLeft:'1px solid #e4e4e7',
+        zIndex:55, transition:'right .3s ease',
+        overflowY:'auto', padding:'24px 20px',
+      }}>
+        <div style={{marginBottom:20}}>
+          <span style={{fontSize:10, fontWeight:600, color:'#a1a1aa', textTransform:'uppercase', letterSpacing:'.1em'}}>
+            {en ? 'At a Glance' : '한눈에 보기'}
+          </span>
+        </div>
+
+        {items.map((item, i) => (
+          <div key={i} style={{marginBottom:20, paddingBottom:16, borderBottom: i < items.length - 1 ? '1px solid #f4f4f5' : 'none'}}>
+            <div style={{fontSize:11, color:'#a1a1aa', fontWeight:500, marginBottom:4}}>{item.label}</div>
+            <div style={{fontSize:18, fontWeight:600, color:'#18181b', letterSpacing:'-0.02em', marginBottom:2}}>{item.value}</div>
+            <div style={{fontSize:12, color:'#71717a', lineHeight:1.5}}>{item.detail}</div>
+          </div>
+        ))}
+
+        <div style={{marginTop:24, padding:'12px 14px', background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:8}}>
+          <div style={{fontSize:11, fontWeight:600, color:'#166534', marginBottom:2}}>
+            {en ? 'Verdict' : '결론'}
+          </div>
+          <div style={{fontSize:12.5, color:'#15803d', lineHeight:1.6}}>
+            {en
+              ? 'Strong fit — Operator-investor hybrid with platform partnership track record and founder empathy.'
+              : '적합 — 플랫폼 파트너십 실적과 창업자 공감력을 가진 운영자-투자자 하이브리드.'}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN APP
+   ═══════════════════════════════════════════════════════ */
+function App() {
+  const [lang, setLang] = useState('en');
+  const [scanOpen, setScanOpen] = useState(false);
+  const en = lang === 'en';
+
+  return (
+    <div style={{minHeight:'100vh', background:'#fff'}} className="sb">
+
+      {/* ═══ TOP NAV ═══ */}
+      <nav className="no-print" style={{
+        position:'sticky', top:0, zIndex:50,
+        background:'rgba(255,255,255,.85)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)',
+        borderBottom:'1px solid #f4f4f5',
+      }}>
+        <div style={{maxWidth:720, margin:'0 auto', padding:'12px 32px', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+          <span style={{fontSize:11, fontWeight:600, color:'#a1a1aa', textTransform:'uppercase', letterSpacing:'.12em'}}>
+            {en ? 'Investment Memorandum' : '투자 메모'}
+          </span>
+          <div style={{display:'flex', alignItems:'center', gap:16}}>
+            {/* Language toggle */}
+            <div style={{display:'inline-flex', border:'1px solid #e4e4e7', borderRadius:6, overflow:'hidden'}}>
+              <button onClick={() => setLang('en')}
+                style={{
+                  padding:'4px 10px', fontSize:11, fontWeight:lang==='en'?600:400, border:'none',
+                  background:lang==='en'?'#18181b':'#fff', color:lang==='en'?'#fff':'#71717a',
+                  cursor:'pointer', fontFamily:"'Inter',sans-serif", transition:'all .15s',
+                }}>EN</button>
+              <button onClick={() => setLang('kr')}
+                style={{
+                  padding:'4px 10px', fontSize:11, fontWeight:lang==='kr'?600:400, border:'none',
+                  background:lang==='kr'?'#18181b':'#fff', color:lang==='kr'?'#fff':'#71717a',
+                  cursor:'pointer', fontFamily:"'Inter',sans-serif", transition:'all .15s',
+                }}>KR</button>
+            </div>
+            <a href="https://linkedin.com/in/dongjaelee1076" target="_blank" rel="noopener"
+              style={{fontSize:11, color:'#a1a1aa', fontWeight:500, textDecoration:'none'}}
+              onMouseEnter={e => e.target.style.color='#52525b'}
+              onMouseLeave={e => e.target.style.color='#a1a1aa'}>
+              LinkedIn &rarr;
+            </a>
+            <div style={{display:'flex', alignItems:'center', gap:5, fontSize:11, color:'#059669', fontWeight:500}}>
+              <span style={{width:5,height:5,borderRadius:'50%',background:'#10b981',animation:'pulse 2s infinite'}}/>
+              {en ? 'AI Active' : 'AI 활성'}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* ═══ MEMO BODY ═══ */}
+      <article style={{maxWidth:720, margin:'0 auto', padding:'80px 32px 120px'}}>
+
+        {/* Title block */}
+        <header style={{marginBottom:80}}>
+          <h1 className="serif" style={{fontSize:42, fontWeight:700, color:'#18181b', lineHeight:1.15, letterSpacing:'-0.02em', marginBottom:20}}>
+            {en ? 'Investment Memo:' : '투자 메모:'}<br/>
+            <span style={{color:'#52525b'}}>Dong Jae Lee</span>
+          </h1>
+          <div style={{display:'flex', flexWrap:'wrap', alignItems:'center', gap:12, fontSize:13, color:'#a1a1aa'}}>
+            <span>{en ? 'February 2026' : '2026년 2월'}</span>
+            <span style={{color:'#e4e4e7'}}>|</span>
+            <span>{en ? 'Deep Tech / Operator' : '딥테크 / 운영자'}</span>
+            <span style={{color:'#e4e4e7'}}>|</span>
+            <span style={{color:'#059669', fontWeight:500}}>{en ? 'Open to Altos Ventures' : '알토스벤처스 지원'}</span>
+          </div>
+          <div style={{marginTop:28, height:1, background:'linear-gradient(90deg, #e4e4e7, #f4f4f5, transparent)'}}/>
+        </header>
+
+        {/* AI hint */}
+        <div style={{
+          marginBottom:48, display:'flex', alignItems:'center', gap:10,
+          background:'#eef2ff', border:'1px solid #e0e7ff', borderRadius:8, padding:'12px 16px',
+          animation:'fadeSlideIn .5s ease-out .3s both',
+        }}>
+          <span style={{fontSize:14}}>&#10024;</span>
+          <p style={{fontSize:13, color:'rgba(79,70,229,.7)'}}>
+            <span style={{fontWeight:600, color:'#4338ca'}}>{en ? 'Hover any paragraph' : '아무 문단에 마우스를 올리면'}</span>
+            {en
+              ? ' to ask the AI questions about that specific section. Every answer is grounded in verified resume data.'
+              : ' 해당 섹션에 대해 AI에게 질문할 수 있습니다. 모든 답변은 검증된 이력서 데이터에 기반합니다.'}
+          </p>
+        </div>
+
+        {/* Memo sections */}
+        <div style={{display:'flex', flexDirection:'column', gap:56}}>
+          {SECTIONS.map((s) => {
+            if (s.id === 'risks') {
+              return <RisksSection key={s.id} lang={lang}/>;
+            }
+            return <MemoBlock key={s.id} section={s} lang={lang}/>;
+          })}
+        </div>
+
+        {/* Footer */}
+        <footer style={{marginTop:80, paddingTop:32, borderTop:'1px solid #f4f4f5'}}>
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end'}}>
+            <div>
+              <p style={{fontSize:13, color:'#a1a1aa'}}>
+                {en ? 'Prepared for Altos Ventures DD Review' : '알토스벤처스 DD 검토용 준비'}
+              </p>
+              <p style={{fontSize:11, color:'#d4d4d8', marginTop:4}}>
+                {en
+                  ? 'All data sourced from verified professional records. AI responses grounded via RAG.'
+                  : '모든 데이터는 검증된 전문 기록에서 출처. AI 응답은 RAG를 통해 근거화.'}
+              </p>
+            </div>
+            <div style={{textAlign:'right'}}>
+              <p style={{fontSize:13, color:'#52525b', fontWeight:500}}>Dong Jae Lee</p>
+              <p style={{fontSize:11, color:'#a1a1aa'}}>leedj.1076@gmail.com</p>
+            </div>
+          </div>
+        </footer>
+      </article>
+
+      {/* Quick-Scan sidebar */}
+      <QuickScan lang={lang} open={scanOpen} onToggle={() => setScanOpen(!scanOpen)}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
