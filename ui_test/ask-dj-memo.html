@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Investment Memo — Dong Jae Lee</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet"/>
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Inter', '-apple-system', 'sans-serif'],
+        },
+      },
+    },
+  };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #fff; color: #27272a; -webkit-font-smoothing: antialiased; }
+    ::selection { background: #e0e7ff; }
+    .sb::-webkit-scrollbar { width: 6px; }
+    .sb::-webkit-scrollbar-track { background: transparent; }
+    .sb::-webkit-scrollbar-thumb { background: #e4e4e7; border-radius: 3px; }
+    .sb::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useRef, useEffect, useCallback} = React;
+
+/* ═══════════════════════════════════════════
+   MEMO SECTIONS — each paragraph is a block
+   that can be hovered to reveal "Ask AI"
+   ═══════════════════════════════════════════ */
+const SECTIONS = [
+  {
+    id: 'hook',
+    heading: 'The Thesis',
+    body: `In 2023, Dong Jae Lee drove a 55.47% year-over-year revenue increase for TmaxTibero's DUG database platform — not through incremental sales tactics, but by architecting global distribution partnerships with Meta and Apple. He negotiated enterprise licensing agreements that transformed a domestic database product into an internationally competitive platform. This wasn't a one-time spike: the growth was structural, built on repeatable channel partnerships that compounded quarter over quarter. For an investor evaluating operator talent, this is the signal — someone who understands that building great technology is necessary but insufficient. Distribution is the multiplier.`,
+  },
+  {
+    id: 'operator',
+    heading: 'The Operator Profile',
+    body: `Lee's career is an unusual stack: he has shipped production code (Python, TypeScript, React, Next.js), built and deployed ML systems (GNN recommendation engines, RAG pipelines), closed enterprise deals worth hundreds of millions of KRW with Samsung, Hyundai, KT, and POSCO, and co-founded a venture-backed startup as COO. He then went on to work at both Meta and Apple in business development and strategy roles, navigating the internal politics and indirect cultures of two very different FAANG organizations. This breadth is rare. Most candidates are either technical or commercial. Lee is both, and he has the scar tissue to prove it.`,
+  },
+  {
+    id: 'flint',
+    heading: 'The Failure — Flint Technologies',
+    body: `Flint Technologies was Lee's most expensive education. As co-founder and COO, he raised ₩450M in pre-seed funding and built a GNN-powered knowledge management platform for enterprise teams. The technology was genuinely novel — the graph neural network delivered content recommendations that traditional systems couldn't match. Early pilot customers were impressed. But the team made a critical error: they optimized for algorithmic sophistication over user experience. The onboarding friction was too high. Enterprise buyers signed pilots, but end-users didn't adopt. The gap between "technically validated" and "market-ready" proved fatal. Lee considers this failure the foundation of his investment thesis — he now interrogates every founder about their UX friction, distribution strategy, and the difference between pilot interest and genuine product-market fit. The lesson: technical excellence is a necessary condition, never a sufficient one.`,
+  },
+  {
+    id: 'cross-cultural',
+    heading: 'The Cross-Cultural Edge',
+    body: `Lee is a native bilingual in Korean and English, with deep professional networks spanning both Silicon Valley and the Korean enterprise ecosystem. This is not a soft advantage — it is a structural one. Korean enterprise sales cycles are relationship-driven and hierarchical. Silicon Valley fundraising is narrative-driven and speed-optimized. Lee has operated natively in both, closing deals at Samsung's headquarters in Suwon and pitching at Meta's Menlo Park campus in the same quarter. For Altos Ventures, which bridges US and Korean markets, this cultural fluency translates directly into deal sourcing, founder evaluation, and portfolio support capabilities that monolingual candidates simply cannot replicate.`,
+  },
+  {
+    id: 'thesis',
+    heading: 'The Investment Conviction',
+    body: `Lee's investment thesis centers on the AI infrastructure layer — the picks-and-shovels companies enabling the AI application wave, rather than the applications themselves. His conviction is forged from direct experience: he has built the backend systems that AI startups are now productizing, and he has sold enterprise software to the exact buyer personas these startups are targeting. He believes the current AI bubble will be merciless to "wrapper" startups — thin application layers over foundation model APIs with no defensible moat. But foundational B2B SaaS that reduces genuine workflow friction — the kind that produces measurable cost reductions, not just demos — will survive, consolidate, and scale. This is not an academic thesis. It is pattern recognition from seven years of building, selling, failing, and rebuilding.`,
+  },
+  {
+    id: 'why-altos',
+    heading: 'Why Altos Ventures',
+    body: `Lee's interest in Altos is specific, not generic. Altos operates at the intersection that defines his entire career: Korean-founded companies scaling into global markets, and global technologies being adapted for Korean enterprise adoption. The firm's patient capital approach and its deep founder relationships align with Lee's own conviction that the best companies are built by operators who understand both the technology and the market — a conviction he earned the hard way at Flint. He doesn't want to be a VC who reads pitch decks. He wants to be the partner in the room who can pressure-test a founder's technical architecture, challenge their go-to-market assumptions, and then pick up the phone to make a warm introduction to a Korean enterprise CTO. That is what an operator-turned-investor brings to the table.`,
+  },
+];
+
+/* ═══════════════════════════════════════════
+   INLINE AI THREAD COMPONENT
+   ═══════════════════════════════════════════ */
+function InlineThread({sectionId, sectionBody, onClose}) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const inputRef = useRef(null);
+  const endRef = useRef(null);
+
+  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { endRef.current?.scrollIntoView({behavior:'smooth'}); }, [messages]);
+
+  const placeholders = {
+    hook: 'Ask about the 55% growth...',
+    operator: 'Ask about his operator background...',
+    flint: 'Ask about this failure...',
+    'cross-cultural': 'Ask about the cross-cultural edge...',
+    thesis: 'Ask about his investment thesis...',
+    'why-altos': 'Ask about his fit with Altos...',
+  };
+
+  const handleSend = async () => {
+    const q = input.trim();
+    if (!q || sending) return;
+
+    const contextPrompt = `Context from the memo paragraph: "${sectionBody.slice(0, 500)}..." \n\nUser question: ${q}`;
+    const history = messages.map(m => ({role: m.role, text: m.text}));
+
+    setMessages(p => [...p, {role: 'user', text: q}]);
+    setInput('');
+    setSending(true);
+
+    try {
+      const res = await fetch('/api/ui-chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          query: contextPrompt,
+          personaId: 'vc',
+          focusId: 'leadership',
+          history,
+        }),
+      });
+      const data = await res.json();
+      setMessages(p => [...p, {
+        role: 'assistant',
+        text: data.response || 'Unable to generate a response.',
+      }]);
+    } catch(e) {
+      setMessages(p => [...p, {
+        role: 'assistant',
+        text: 'Connection error. Please try again.',
+      }]);
+    }
+    setSending(false);
+  };
+
+  return (
+    <div className="border-l-2 border-indigo-400 pl-5 ml-1 mt-5 mb-2 space-y-3"
+      style={{animation: 'fadeSlideIn 0.3s ease-out'}}>
+
+      {/* Thread header */}
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-medium text-indigo-500 uppercase tracking-wider">
+          AI Thread
+        </span>
+        <button onClick={onClose}
+          className="text-zinc-400 hover:text-zinc-600 transition-colors text-xs px-1.5 py-0.5 rounded hover:bg-zinc-100">
+          Close
+        </button>
+      </div>
+
+      {/* Messages */}
+      {messages.map((m, i) => (
+        <div key={i}>
+          {m.role === 'user' ? (
+            <div className="text-[13px] text-zinc-600 font-medium">
+              <span className="text-indigo-400 mr-1.5">Q:</span>{m.text}
+            </div>
+          ) : (
+            <div className="bg-indigo-50/60 border border-indigo-100 p-3.5 rounded-lg text-[13px] text-zinc-700 leading-relaxed"
+              style={{animation: 'fadeSlideIn 0.25s ease-out'}}>
+              <MemoMd text={m.text}/>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Typing indicator */}
+      {sending && (
+        <div className="bg-indigo-50/60 border border-indigo-100 p-3.5 rounded-lg">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-300" style={{animation:'pulse 1.2s ease-in-out infinite'}}/>
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-300" style={{animation:'pulse 1.2s ease-in-out 0.15s infinite'}}/>
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-300" style={{animation:'pulse 1.2s ease-in-out 0.3s infinite'}}/>
+          </div>
+        </div>
+      )}
+
+      {/* Input */}
+      <form onSubmit={e => { e.preventDefault(); handleSend(); }}
+        className="flex items-center gap-2">
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          disabled={sending}
+          placeholder={placeholders[sectionId] || 'Ask a follow-up...'}
+          className="flex-1 text-[13px] text-zinc-800 placeholder:text-zinc-400 bg-white border border-zinc-200 rounded-lg px-3 py-2 outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-100 transition-all disabled:opacity-50"
+        />
+        <button type="submit" disabled={sending || !input.trim()}
+          className="text-[12px] font-medium text-white bg-indigo-500 hover:bg-indigo-600 disabled:bg-zinc-200 disabled:text-zinc-400 px-3 py-2 rounded-lg transition-colors">
+          Send
+        </button>
+      </form>
+
+      <div ref={endRef}/>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   SIMPLE MARKDOWN FOR AI RESPONSES
+   ═══════════════════════════════════════════ */
+function MemoMd({text}) {
+  if (!text) return null;
+  const html = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n- /g, '<br/>&#8226; ')
+    .replace(/\n\* /g, '<br/>&#8226; ')
+    .replace(/\n\n/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+  return <span dangerouslySetInnerHTML={{__html: html}}/>;
+}
+
+/* ═══════════════════════════════════════════
+   MEMO PARAGRAPH BLOCK
+   ═══════════════════════════════════════════ */
+function MemoBlock({section, index}) {
+  const [hovered, setHovered] = useState(false);
+  const [threadOpen, setThreadOpen] = useState(false);
+
+  return (
+    <section
+      className="relative group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { if (!threadOpen) setHovered(false); }}
+    >
+      {/* Section heading */}
+      <h2 className="font-serif text-[22px] font-semibold text-zinc-900 mb-4 tracking-tight"
+        style={{fontFeatureSettings: '"liga" 1'}}>
+        {section.heading}
+      </h2>
+
+      {/* Paragraph with hover highlight */}
+      <div className={`relative rounded-xl px-5 py-4 -mx-5 transition-all duration-300 ${
+        hovered || threadOpen ? 'bg-zinc-50/80' : 'bg-transparent'
+      }`}>
+        <p className="text-[15.5px] text-zinc-700 leading-[1.85] font-light">
+          {section.body}
+        </p>
+
+        {/* Ask AI pill */}
+        <div className={`absolute -right-2 top-4 transition-all duration-200 ${
+          hovered && !threadOpen
+            ? 'opacity-100 translate-x-0'
+            : 'opacity-0 translate-x-2 pointer-events-none'
+        }`}>
+          <button
+            onClick={() => { setThreadOpen(true); setHovered(true); }}
+            className="flex items-center gap-1 bg-white shadow-sm border border-zinc-200 hover:border-indigo-300 hover:shadow-md text-zinc-600 hover:text-indigo-600 text-[11px] font-medium px-2.5 py-1.5 rounded-full transition-all whitespace-nowrap"
+          >
+            <span className="text-[13px]">&#10024;</span> Ask AI
+          </button>
+        </div>
+      </div>
+
+      {/* Inline thread */}
+      {threadOpen && (
+        <InlineThread
+          sectionId={section.id}
+          sectionBody={section.body}
+          onClose={() => { setThreadOpen(false); setHovered(false); }}
+        />
+      )}
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   MAIN APP
+   ═══════════════════════════════════════════ */
+function App() {
+  return (
+    <div className="min-h-screen bg-white overflow-y-auto sb">
+
+      <style>{`
+        @keyframes fadeSlideIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
+
+      {/* ═══ TOP NAV ═══ */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-100">
+        <div className="max-w-3xl mx-auto px-8 py-3 flex items-center justify-between">
+          <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-[.15em]">
+            Investment Memorandum
+          </span>
+          <div className="flex items-center gap-4">
+            <a href="https://linkedin.com/in/dongjaelee1076" target="_blank" rel="noopener"
+              className="text-[11px] text-zinc-400 hover:text-zinc-700 transition-colors font-medium">
+              LinkedIn &rarr;
+            </a>
+            <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" style={{animation:'pulse 2s ease-in-out infinite'}}/>
+              AI Active
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* ═══ MEMO CONTENT ═══ */}
+      <article className="max-w-3xl mx-auto px-8 pt-20 pb-32">
+
+        {/* Title */}
+        <header className="mb-16">
+          <h1 className="font-serif text-[44px] font-bold text-zinc-900 leading-[1.15] tracking-tight mb-5"
+            style={{fontFeatureSettings: '"liga" 1'}}>
+            Investment Memo:<br/>
+            <span className="text-zinc-600">Dong Jae Lee</span>
+          </h1>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-zinc-400">
+            <span>February 2026</span>
+            <span className="text-zinc-200">|</span>
+            <span>Deep Tech / Operator</span>
+            <span className="text-zinc-200">|</span>
+            <span className="text-emerald-600 font-medium">Open to Altos Ventures</span>
+          </div>
+          <div className="mt-6 h-px bg-gradient-to-r from-zinc-200 via-zinc-100 to-transparent"/>
+        </header>
+
+        {/* Hover instruction */}
+        <div className="mb-12 flex items-center gap-2.5 bg-indigo-50/50 border border-indigo-100 rounded-lg px-4 py-3"
+          style={{animation: 'fadeSlideIn 0.5s ease-out 0.3s both'}}>
+          <span className="text-[15px]">&#10024;</span>
+          <p className="text-[13px] text-indigo-600/80">
+            <span className="font-medium text-indigo-700">Hover any paragraph</span> to ask the AI questions about that specific section. Every answer is grounded in verified resume data.
+          </p>
+        </div>
+
+        {/* Memo sections */}
+        <div className="space-y-14">
+          {SECTIONS.map((s, i) => (
+            <MemoBlock key={s.id} section={s} index={i}/>
+          ))}
+        </div>
+
+        {/* Closing */}
+        <footer className="mt-20 pt-8 border-t border-zinc-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[13px] text-zinc-400">
+                Prepared for Altos Ventures DD Review
+              </p>
+              <p className="text-[11px] text-zinc-300 mt-1">
+                All data sourced from verified professional records. AI responses grounded via RAG — no hallucination.
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-[13px] text-zinc-500 font-medium">Dong Jae Lee</p>
+              <p className="text-[11px] text-zinc-400">dongjaelee1076@gmail.com</p>
+            </div>
+          </div>
+        </footer>
+      </article>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

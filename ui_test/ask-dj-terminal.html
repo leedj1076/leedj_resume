@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DJL_OS — DD Terminal</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script>
+  tailwind.config = { theme: { extend: { fontFamily: { mono: ['JetBrains Mono', 'monospace'] } } } };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: #09090b; color: #a1a1aa; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    ::selection { background: #34d399; color: #09090b; }
+
+    /* CRT scanline overlay */
+    .crt::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+    }
+
+    /* Subtle screen glow */
+    .crt::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0.015) 0%, transparent 70%);
+    }
+
+    @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+    .cursor-blink { animation: blink 1s step-end infinite; }
+    @keyframes flicker { 0%,97% { opacity: 1; } 98% { opacity: 0.8; } 100% { opacity: 1; } }
+    .screen-flicker { animation: flicker 8s linear infinite; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useRef, useEffect, useCallback} = React;
+
+/* ═══════════════════════════════════════════
+   ASCII HEADER
+   ═══════════════════════════════════════════ */
+const ASCII_HEADER = `
+ ██████╗      ██╗██╗
+ ██╔══██╗     ██║██║
+ ██║  ██║     ██║██║
+ ██║  ██║██   ██║██║
+ ██████╔╝╚█████╔╝███████╗
+ ╚═════╝  ╚════╝ ╚══════╝`.trim();
+
+/* ═══════════════════════════════════════════
+   BOOT SEQUENCE
+   ═══════════════════════════════════════════ */
+const BOOT = [
+  {t:'[BOOT] Initializing DJL_OS v2.0.26...', c:'text-zinc-600', d:200},
+  {t:'[BOOT] Loading Pinecone vector index... ████████████ OK', c:'text-zinc-600', d:500},
+  {t:'[BOOT] Gemini 2.5 Flash model bound... OK', c:'text-zinc-600', d:300},
+  {t:'[BOOT] Resume corpus: 47 chunks indexed, 1024-dim embeddings', c:'text-zinc-600', d:250},
+  {t:'[AUTH] Altos_Ventures access level: FULL_DD', c:'text-emerald-500', d:400},
+  {t:'', c:'', d:100},
+  {t:'DJL_OS v2.0.26 initialized. RAG Vector DB connected. Altos_Access_Granted.', c:'text-emerald-400', d:300},
+  {t:'', c:'', d:50},
+  {t:'Type "help" to see available DD commands, or "ask [query]" to interrogate the AI.', c:'text-zinc-500', d:200},
+  {t:'', c:'', d:50},
+];
+
+/* ═══════════════════════════════════════════
+   STATIC COMMAND OUTPUTS
+   ═══════════════════════════════════════════ */
+const HELP_OUTPUT = [
+  {t:'AVAILABLE COMMANDS', c:'text-zinc-300'},
+  {t:'─────────────────────────────────────────────────────────────────', c:'text-zinc-800'},
+  {t:'  ask <query>              Interrogate the RAG knowledge base', c:'text-emerald-400'},
+  {t:'  run ./fetch_metrics      Display traction & key metrics', c:'text-emerald-400'},
+  {t:'  cat exec_summary.md      Executive summary', c:'text-emerald-400'},
+  {t:'  cat post_mortem.md       Flint post-mortem (failure analysis)', c:'text-emerald-400'},
+  {t:'  cat thesis.md            Investment thesis', c:'text-emerald-400'},
+  {t:'  cat skills.md            Technical & business skills', c:'text-emerald-400'},
+  {t:'  ls                       List available files', c:'text-emerald-400'},
+  {t:'  whoami                   Target asset profile', c:'text-emerald-400'},
+  {t:'  status                   System status', c:'text-emerald-400'},
+  {t:'  clear                    Clear terminal', c:'text-emerald-400'},
+  {t:'─────────────────────────────────────────────────────────────────', c:'text-zinc-800'},
+];
+
+const METRICS_OUTPUT = [
+  {t:'[SYS] Fetching from verified records...', c:'text-zinc-600'},
+  {t:'', c:''},
+  {t:'┌────────────────────────┬─────────────┬───────────────────────────────┐', c:'text-zinc-700'},
+  {t:'│ Metric                 │ Value       │ Source                        │', c:'text-zinc-500'},
+  {t:'├────────────────────────┼─────────────┼───────────────────────────────┤', c:'text-zinc-700'},
+  {t:'│ YoY Revenue Growth     │ 55.47%      │ DUG Platform · TmaxTibero     │', c:'text-emerald-400'},
+  {t:'│ Seed Round Raised      │ ₩450M       │ Flint Technologies            │', c:'text-emerald-400'},
+  {t:'│ Enterprise Clients     │ 10+         │ Samsung, Hyundai, KT, POSCO   │', c:'text-emerald-400'},
+  {t:'│ Career Span            │ 7+ yrs      │ Eng → Product → BD → Strategy │', c:'text-emerald-400'},
+  {t:'│ FAANG Experience       │ Meta, Apple │ Quest+ BD, Services Strategy  │', c:'text-emerald-400'},
+  {t:'│ Languages              │ KR/EN       │ Native bilingual              │', c:'text-emerald-400'},
+  {t:'└────────────────────────┴─────────────┴───────────────────────────────┘', c:'text-zinc-700'},
+];
+
+const EXEC_SUMMARY = [
+  {t:'# exec_summary.md', c:'text-zinc-500'},
+  {t:'', c:''},
+  {t:'EXECUTIVE SUMMARY — Target Asset: Dong Jae Lee (DJL)', c:'text-zinc-300'},
+  {t:'═══════════════════════════════════════════════════════', c:'text-zinc-700'},
+  {t:'', c:''},
+  {t:'▸ Full-stack operator spanning engineering, AI product, and business', c:'text-zinc-400'},
+  {t:'  development across enterprise (TmaxTibero), startup (Flint), and', c:'text-zinc-400'},
+  {t:'  FAANG (Meta/Apple). Rare blend of technical depth + commercial instinct.', c:'text-zinc-400'},
+  {t:'', c:''},
+  {t:'▸ Builder-turned-strategist: shipped GNN recommendation engines, RAG', c:'text-zinc-400'},
+  {t:'  pipelines, and autonomous database features — then closed enterprise', c:'text-zinc-400'},
+  {t:'  deals worth hundreds of millions in KRW.', c:'text-zinc-400'},
+  {t:'', c:''},
+  {t:'▸ Cross-cultural arbitrage: native bilingual (KR/EN) with deep networks', c:'text-zinc-400'},
+  {t:'  in both Silicon Valley and Korean enterprise ecosystems.', c:'text-zinc-400'},
+];
+
+const POST_MORTEM = [
+  {t:'# post_mortem.md', c:'text-zinc-500'},
+  {t:'', c:''},
+  {t:'⚠  WARNING: Startup Failure Detected — Flint Technologies', c:'text-amber-400'},
+  {t:'═══════════════════════════════════════════════════════════', c:'text-amber-900'},
+  {t:'', c:''},
+  {t:'[ROOT CAUSE]', c:'text-amber-500'},
+  {t:'  Superior GNN technology failed to overcome manual UX friction.', c:'text-amber-400'},
+  {t:'  Enterprise buyers appreciated the tech. End-users churned.', c:'text-amber-400'},
+  {t:'', c:''},
+  {t:'[THE BET]    Built GNN-powered knowledge management for enterprise.', c:'text-amber-400'},
+  {t:'[THE MISS]   Optimized for algorithm performance over user experience.', c:'text-amber-400'},
+  {t:'[THE LESSON] Technical excellence ≠ Market demand.', c:'text-amber-400'},
+  {t:'[TAKEAWAY]   Flint was his most expensive MBA. The scar tissue informs', c:'text-amber-400'},
+  {t:'             every DD question he now asks founders about PMF signals.', c:'text-amber-400'},
+  {t:'', c:''},
+  {t:'  Market timing and UX > Pure Tech Architecture.', c:'text-amber-300'},
+];
+
+const THESIS_OUTPUT = [
+  {t:'# thesis.md', c:'text-zinc-500'},
+  {t:'', c:''},
+  {t:'INVESTMENT THESIS — DJL', c:'text-zinc-300'},
+  {t:'═══════════════════════', c:'text-zinc-700'},
+  {t:'', c:''},
+  {t:'Focus: AI Infrastructure Layer — picks-and-shovels for the AI', c:'text-zinc-400'},
+  {t:'application wave, not the applications themselves.', c:'text-zinc-400'},
+  {t:'', c:''},
+  {t:'Edge: Operator background gives asymmetric pattern recognition.', c:'text-zinc-400'},
+  {t:'Has built the systems AI startups sell. Has sold enterprise', c:'text-zinc-400'},
+  {t:'software to the buyers AI startups target.', c:'text-zinc-400'},
+  {t:'', c:''},
+  {t:'Conviction: Category-defining companies will emerge from founders', c:'text-zinc-400'},
+  {t:'who understand BOTH the technical frontier AND the distribution', c:'text-zinc-400'},
+  {t:'mechanics of enterprise adoption. Forged through Flint failure.', c:'text-zinc-400'},
+];
+
+const SKILLS_OUTPUT = [
+  {t:'# skills.md', c:'text-zinc-500'},
+  {t:'', c:''},
+  {t:'TECHNICAL                    BUSINESS                    LANGUAGES', c:'text-zinc-500'},
+  {t:'─────────────────────        ─────────────────────       ──────────', c:'text-zinc-800'},
+  {t:'Python, TypeScript           Enterprise Sales            Korean (native)', c:'text-emerald-400'},
+  {t:'React, Next.js               BD & Partnerships           English (native)', c:'text-emerald-400'},
+  {t:'RAG, LLM Pipelines           Startup Operations          Japanese (basic)', c:'text-emerald-400'},
+  {t:'GNN, ML Systems              Product Strategy                            ', c:'text-emerald-400'},
+  {t:'PostgreSQL, Pinecone         VC Due Diligence                            ', c:'text-emerald-400'},
+  {t:'AWS, Vercel                  Cross-cultural Negotiation                  ', c:'text-emerald-400'},
+];
+
+const LS_OUTPUT = [
+  {t:'total 6', c:'text-zinc-600'},
+  {t:'-rw-r--r--  1 djl  altos  2.4K  exec_summary.md', c:'text-zinc-400'},
+  {t:'-rw-r--r--  1 djl  altos  1.8K  post_mortem.md', c:'text-amber-400'},
+  {t:'-rw-r--r--  1 djl  altos  1.2K  thesis.md', c:'text-zinc-400'},
+  {t:'-rw-r--r--  1 djl  altos  0.9K  skills.md', c:'text-zinc-400'},
+  {t:'-rwxr-xr-x  1 djl  altos  4.1K  fetch_metrics', c:'text-emerald-400'},
+  {t:'-rw-r--r--  1 djl  altos   47   .rag_index (47 vectors)', c:'text-zinc-600'},
+];
+
+const WHOAMI_OUTPUT = [
+  {t:'uid=1076(djl) gid=100(altos_candidates)', c:'text-zinc-400'},
+  {t:'', c:''},
+  {t:'  Name:     Dong Jae Lee (이동재)', c:'text-zinc-300'},
+  {t:'  Role:     VC Associate Candidate', c:'text-zinc-400'},
+  {t:'  Target:   Altos Ventures', c:'text-zinc-400'},
+  {t:'  Email:    dongjaelee1076@gmail.com', c:'text-zinc-400'},
+  {t:'  LinkedIn: linkedin.com/in/dongjaelee1076', c:'text-emerald-400'},
+  {t:'  Track:    Engineer → Builder → Operator → Investor', c:'text-zinc-400'},
+];
+
+const STATUS_OUTPUT = [
+  {t:'SYSTEM STATUS', c:'text-zinc-300'},
+  {t:'─────────────────────────────────────', c:'text-zinc-800'},
+  {t:'  DJL_OS          v2.0.26    [  OK  ]', c:'text-emerald-400'},
+  {t:'  Pinecone DB     connected  [  OK  ]', c:'text-emerald-400'},
+  {t:'  Gemini 2.5      bound      [  OK  ]', c:'text-emerald-400'},
+  {t:'  Resume Chunks   47 / 47    [  OK  ]', c:'text-emerald-400'},
+  {t:'  Embedding Dim   1024       [  OK  ]', c:'text-emerald-400'},
+  {t:'  Auth Level      FULL_DD    [  OK  ]', c:'text-emerald-400'},
+  {t:'─────────────────────────────────────', c:'text-zinc-800'},
+  {t:'  Uptime: ' + Math.floor(Math.random()*48+2) + 'h ' + Math.floor(Math.random()*59) + 'm', c:'text-zinc-500'},
+];
+
+/* ═══════════════════════════════════════════
+   AUTOCOMPLETE SUGGESTIONS
+   ═══════════════════════════════════════════ */
+const SUGGESTIONS = [
+  'ask "Why did Flint fail?"',
+  'ask "What is his view on the AI bubble?"',
+  'ask "Break down the 55% YoY growth"',
+  'ask "Why VC from an operator background?"',
+  'ask "What makes him unique for Altos?"',
+  'run ./fetch_metrics',
+  'cat exec_summary.md',
+  'cat post_mortem.md',
+  'cat thesis.md',
+  'cat skills.md',
+  'help',
+  'ls',
+  'whoami',
+  'status',
+  'clear',
+];
+
+function getSuggestion(input) {
+  if (!input) return SUGGESTIONS[0];
+  const lower = input.toLowerCase();
+  return SUGGESTIONS.find(s => s.toLowerCase().startsWith(lower) && s.toLowerCase() !== lower) || '';
+}
+
+/* ═══════════════════════════════════════════
+   STREAMING TEXT HOOK
+   ═══════════════════════════════════════════ */
+function useStreamText(text, speed = 12) {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    if (!text) { setDisplayed(''); setDone(true); return; }
+    setDisplayed('');
+    setDone(false);
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1 + Math.floor(Math.random() * 2);
+      if (i >= text.length) { setDisplayed(text); setDone(true); clearInterval(id); }
+      else setDisplayed(text.slice(0, i));
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+  return [displayed, done];
+}
+
+/* ═══════════════════════════════════════════
+   TERMINAL LINE COMPONENT
+   ═══════════════════════════════════════════ */
+function Line({text, color = 'text-zinc-400'}) {
+  if (!text) return <div className="h-3"/>;
+  return <div className={`${color} text-[13px] leading-relaxed whitespace-pre font-mono`}>{text}</div>;
+}
+
+/* ═══════════════════════════════════════════
+   STREAMING RAG RESPONSE
+   ═══════════════════════════════════════════ */
+function StreamLine({text}) {
+  const [displayed, done] = useStreamText(text, 8);
+  return (
+    <div className="text-emerald-400 text-[13px] leading-relaxed whitespace-pre-wrap font-mono">
+      {displayed}{!done && <span className="cursor-blink text-emerald-500">▊</span>}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   MAIN APP
+   ═══════════════════════════════════════════ */
+function App() {
+  const [lines, setLines] = useState([]);
+  const [input, setInput] = useState('');
+  const [booted, setBooted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [histIdx, setHistIdx] = useState(-1);
+  const [ragResponse, setRagResponse] = useState(null);
+  const [chatHistory, setChatHistory] = useState([]);
+  const endRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Auto-scroll
+  useEffect(() => { endRef.current?.scrollIntoView({behavior:'smooth'}); }, [lines, ragResponse]);
+
+  // Focus input on click anywhere
+  useEffect(() => {
+    const handler = () => inputRef.current?.focus();
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, []);
+
+  // Boot sequence
+  useEffect(() => {
+    let timeouts = [];
+    let cumDelay = 0;
+    BOOT.forEach((b, i) => {
+      cumDelay += b.d;
+      timeouts.push(setTimeout(() => {
+        setLines(p => [...p, {t: b.t, c: b.c}]);
+        if (i === BOOT.length - 1) {
+          setBooted(true);
+          inputRef.current?.focus();
+        }
+      }, cumDelay));
+    });
+    return () => timeouts.forEach(clearTimeout);
+  }, []);
+
+  // Add static lines helper
+  const addLines = useCallback((newLines) => {
+    setLines(p => [...p, ...newLines]);
+  }, []);
+
+  // Execute command
+  const exec = useCallback(async (raw) => {
+    const cmd = raw.trim();
+    if (!cmd) return;
+
+    // Add command to history
+    setHistory(p => [cmd, ...p.slice(0, 49)]);
+    setHistIdx(-1);
+
+    // Echo command
+    addLines([{t: `altos_partner@djl-dd-room:~$ ${cmd}`, c: 'text-zinc-300'}]);
+
+    const lower = cmd.toLowerCase();
+
+    // Clear
+    if (lower === 'clear') {
+      setLines([]);
+      setRagResponse(null);
+      return;
+    }
+
+    // Help
+    if (lower === 'help') { addLines(HELP_OUTPUT); return; }
+
+    // Metrics
+    if (lower === 'run ./fetch_metrics' || lower === 'run ./fetch_metrics --target=dug') {
+      addLines(METRICS_OUTPUT); return;
+    }
+
+    // Cat files
+    if (lower === 'cat exec_summary.md') { addLines(EXEC_SUMMARY); return; }
+    if (lower === 'cat post_mortem.md' || lower === 'cat post_mortem_flint.md') { addLines(POST_MORTEM); return; }
+    if (lower === 'cat thesis.md') { addLines(THESIS_OUTPUT); return; }
+    if (lower === 'cat skills.md') { addLines(SKILLS_OUTPUT); return; }
+
+    // ls
+    if (lower === 'ls' || lower === 'ls -la' || lower === 'ls -l') { addLines(LS_OUTPUT); return; }
+
+    // whoami
+    if (lower === 'whoami') { addLines(WHOAMI_OUTPUT); return; }
+
+    // status
+    if (lower === 'status') { addLines(STATUS_OUTPUT); return; }
+
+    // Easter eggs
+    if (lower.startsWith('sudo')) {
+      addLines([{t:'[AUTH] Nice try. DJL has nothing to hide. Use "ask" for full transparency.', c:'text-amber-400'}]);
+      return;
+    }
+    if (lower === 'rm -rf /' || lower === 'rm -rf /*') {
+      addLines([{t:'[SYS] Permission denied. This data room is read-only. Try "ask" instead.', c:'text-amber-400'}]);
+      return;
+    }
+    if (lower === 'exit' || lower === 'quit') {
+      addLines([{t:'[SYS] You can check out any time you like, but you can never leave. Try "ask" instead.', c:'text-zinc-500'}]);
+      return;
+    }
+
+    // ASK — RAG query
+    const askMatch = cmd.match(/^ask\s+["']?(.+?)["']?\s*$/i);
+    if (askMatch) {
+      const query = askMatch[1];
+      setBusy(true);
+      addLines([{t:'[RAG] Initializing query...', c:'text-zinc-600'}]);
+      addLines([{t:`[RAG] Embedding: "${query.slice(0,60)}${query.length>60?'...':''}"`, c:'text-zinc-600'}]);
+      addLines([{t:'[RAG] Searching Pinecone index... retrieving top-k chunks...', c:'text-zinc-600'}]);
+
+      try {
+        const res = await fetch('/api/ui-chat', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            query,
+            personaId: 'vc',
+            focusId: 'leadership',
+            history: chatHistory,
+          }),
+        });
+        const data = await res.json();
+        const responseText = data.response || 'ERROR: No response generated.';
+
+        // Update chat history for multi-turn
+        setChatHistory(p => [...p, {role:'user', text:query}, {role:'assistant', text:responseText}]);
+
+        // Show chunks used
+        if (data.chunksUsed && data.chunksUsed.length > 0) {
+          addLines([{t:`[RAG] Sources: ${data.chunksUsed.slice(0,5).join(', ')}`, c:'text-zinc-600'}]);
+        }
+        addLines([{t:'', c:''}]);
+
+        // Stream the response
+        setRagResponse(responseText);
+      } catch(e) {
+        addLines([{t:'[ERROR] Connection failed. Check network and retry.', c:'text-red-400'}]);
+      }
+      setBusy(false);
+      return;
+    }
+
+    // Unknown command
+    addLines([{t:`djl-sh: command not found: ${cmd.split(' ')[0]}`, c:'text-red-400'},
+              {t:'Type "help" for available commands.', c:'text-zinc-600'}]);
+  }, [addLines, chatHistory]);
+
+  // Handle submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!input.trim() || busy) return;
+    // If there's a streaming response pending, commit it to lines first
+    if (ragResponse) {
+      setLines(p => [...p, {t: ragResponse, c: 'text-emerald-400', raw: true}, {t:'', c:''}]);
+      setRagResponse(null);
+    }
+    exec(input);
+    setInput('');
+  };
+
+  // Handle keydown for history + tab autocomplete
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (history.length > 0) {
+        const next = Math.min(histIdx + 1, history.length - 1);
+        setHistIdx(next);
+        setInput(history[next]);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histIdx > 0) {
+        const next = histIdx - 1;
+        setHistIdx(next);
+        setInput(history[next]);
+      } else {
+        setHistIdx(-1);
+        setInput('');
+      }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      const suggestion = getSuggestion(input);
+      if (suggestion) setInput(suggestion);
+    }
+  };
+
+  const suggestion = !busy && booted ? getSuggestion(input) : '';
+
+  return (
+    <div className="crt screen-flicker h-screen w-full bg-zinc-950 flex flex-col p-6 md:p-8 overflow-hidden font-mono">
+
+      {/* ═══ ASCII HEADER ═══ */}
+      <div className="shrink-0 mb-4">
+        <pre className="text-emerald-500/70 text-[10px] leading-[1.15] select-none">{ASCII_HEADER}</pre>
+      </div>
+
+      {/* ═══ TERMINAL OUTPUT ═══ */}
+      <div className="flex-1 overflow-y-auto space-y-0.5 pb-4" onClick={() => inputRef.current?.focus()}>
+
+        {lines.map((l, i) => (
+          l.raw
+            ? <div key={i} className={`${l.c} text-[13px] leading-relaxed whitespace-pre-wrap font-mono`}>{l.t}</div>
+            : <Line key={i} text={l.t} color={l.c}/>
+        ))}
+
+        {/* Streaming RAG response */}
+        {ragResponse && <StreamLine text={ragResponse} key={ragResponse}/>}
+
+        {/* Busy indicator */}
+        {busy && !ragResponse && (
+          <div className="text-zinc-600 text-[13px]">
+            <span className="cursor-blink">▊</span> Processing...
+          </div>
+        )}
+
+        <div ref={endRef}/>
+      </div>
+
+      {/* ═══ COMMAND INPUT ═══ */}
+      <div className="shrink-0 border-t border-zinc-800/50 pt-4">
+        <form onSubmit={handleSubmit} className="flex items-center">
+          <span className="text-emerald-500 text-[13px] shrink-0 select-none">
+            altos_partner@djl-dd-room:~$&nbsp;
+          </span>
+          <div className="relative flex-1">
+            {/* Ghost autocomplete */}
+            {suggestion && (
+              <div className="absolute inset-0 text-zinc-700 text-[13px] pointer-events-none whitespace-nowrap overflow-hidden">
+                {suggestion}
+              </div>
+            )}
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={e => { setInput(e.target.value); setHistIdx(-1); }}
+              onKeyDown={handleKeyDown}
+              disabled={!booted || busy}
+              autoFocus
+              spellCheck={false}
+              autoComplete="off"
+              className="w-full bg-transparent text-zinc-100 text-[13px] outline-none caret-emerald-400 relative z-10 disabled:opacity-30"
+              style={{caretColor: '#34d399'}}
+            />
+          </div>
+        </form>
+        <div className="mt-2 text-[10px] text-zinc-800 select-none">
+          TAB to autocomplete &middot; ↑↓ command history &middot; "help" for commands
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

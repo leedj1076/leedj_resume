@@ -52,6 +52,30 @@ const VERSIONS = [
     tags: ["Split-Screen", "Memo", "Citations"],
     accent: "#ef4444",
   },
+  {
+    slug: "v7-terminal",
+    label: "V7",
+    title: "Hacker Terminal",
+    desc: "CLI data room — terminal commands, streaming RAG, CRT scanlines, command history, tab autocomplete",
+    tags: ["CLI", "Monospace", "CRT"],
+    accent: "#34d399",
+  },
+  {
+    slug: "v8-memo",
+    label: "V8",
+    title: "Living Memo",
+    desc: "Editorial investment memo — hover any paragraph to summon inline AI threads, Playfair serif, no chat window",
+    tags: ["Editorial", "Inline AI", "Serif"],
+    accent: "#6366f1",
+  },
+  {
+    slug: "v9-ic-dashboard",
+    label: "V9",
+    title: "IC Dashboard",
+    desc: "VC deal management SaaS — tabbed deal review (thesis, metrics, risks, skills) + IC debate thread with deal sponsor AI",
+    tags: ["Deal SaaS", "Tabbed", "IC Debate"],
+    accent: "#0ea5e9",
+  },
 ];
 
 export default function UIIndex() {

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IC Dashboard — Project DJL</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script>
+  tailwind.config = {
+    theme: { extend: { fontFamily: {
+      sans: ['Inter', '-apple-system', 'sans-serif'],
+      mono: ['JetBrains Mono', 'monospace'],
+    }}}
+  };
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;background:#fafafa;-webkit-font-smoothing:antialiased}
+    ::selection{background:#dbeafe}
+    .sb::-webkit-scrollbar{width:4px}
+    .sb::-webkit-scrollbar-track{background:transparent}
+    .sb::-webkit-scrollbar-thumb{background:#e4e4e7;border-radius:4px}
+    .sb::-webkit-scrollbar-thumb:hover{background:#d4d4d8}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,useCallback} = React;
+
+/* ═══ ICONS (inline SVG) ═══ */
+const I = {
+  Arrow: ()=><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>,
+  AlertTri: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+  Check: ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+  TrendUp: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+  FileRef: ()=><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  Briefcase: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>,
+  Shield: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  Code: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+};
+
+/* ═══ MARKDOWN RENDERER ═══ */
+function Md({text,className=''}){
+  if(!text)return null;
+  const html=text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n- /g,'<br/>&#8226; ')
+    .replace(/\n\* /g,'<br/>&#8226; ')
+    .replace(/\n\n/g,'<br/><br/>')
+    .replace(/\n/g,'<br/>');
+  return <span className={className} dangerouslySetInnerHTML={{__html:html}}/>;
+}
+
+/* ═══ CITATION PILL ═══ */
+const SCROLL_MAP = {
+  'flint':'risk-flint','failure':'risk-flint','post-mortem':'risk-flint',
+  'traction':'metrics-section','growth':'metrics-section','dug':'metrics-section',
+  'thesis':'tab-thesis','summary':'tab-thesis',
+  'skill':'tab-skills','cap':'tab-skills',
+};
+function scrollRef(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.style.transition='box-shadow 0.3s';
+  el.style.boxShadow='0 0 0 2px #3b82f6';
+  setTimeout(()=>{el.style.boxShadow='none'},1500);
+}
+function CitPill({chunkId}){
+  const short=chunkId.replace(/^(narrative-|personal-|experience-|skills?-)/,'').replace(/-/g,' ');
+  const label=short.length>24?short.slice(0,22)+'...':short;
+  let target=null;
+  for(const[kw,id]of Object.entries(SCROLL_MAP)){if(chunkId.toLowerCase().includes(kw)){target=id;break;}}
+  return(
+    <button onClick={()=>target&&scrollRef(target)}
+      className={`inline-flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md border transition-colors ${
+        target?'bg-white border-zinc-300 text-zinc-600 hover:bg-zinc-50 hover:border-zinc-400 shadow-sm cursor-pointer':'bg-zinc-50 border-zinc-200 text-zinc-400 cursor-default'}`}>
+      <I.FileRef/>{label}
+    </button>
+  );
+}
+
+/* ═══ TAB DATA ═══ */
+const TABS = [
+  {id:'thesis', label:'1. Investment Thesis'},
+  {id:'traction', label:'2. Traction & Metrics'},
+  {id:'risks', label:'3. Identified Risks'},
+  {id:'skills', label:'4. Cap Table (Skills)'},
+];
+
+/* ═══ THESIS CONTENT ═══ */
+function ThesisTab(){
+  return(
+    <div id="tab-thesis" className="space-y-6 mt-6">
+      <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
+        <h3 className="text-sm font-semibold text-zinc-900 mb-3">Core Thesis</h3>
+        <p className="text-[13px] text-zinc-600 leading-relaxed">
+          DJL is a <strong className="text-zinc-800">full-stack operator</strong> with rare coverage across engineering, AI product, and enterprise business development. His career spans TmaxTibero (enterprise DB), Flint Technologies (AI startup, COO), Meta (Quest+ BD), and Apple (Services Strategy). He is a native bilingual (KR/EN) with deep networks in both Silicon Valley and Korean enterprise ecosystems.
+        </p>
+        <p className="text-[13px] text-zinc-600 leading-relaxed mt-3">
+          <strong className="text-zinc-800">Investment edge:</strong> He has built the systems that AI startups are selling, and sold enterprise software to the buyers they target. This gives him asymmetric pattern recognition for evaluating deep tech deals at the intersection of US and Korean markets — Altos' core mandate.
+        </p>
+      </div>
+      <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
+        <h3 className="text-sm font-semibold text-zinc-900 mb-3">Comparable Operators</h3>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            {role:'Engineer',where:'TmaxTibero',y:'2017–2021'},
+            {role:'COO / Co-founder',where:'Flint Technologies',y:'2021–2023'},
+            {role:'BD & Strategy',where:'Meta → Apple',y:'2023–2025'},
+          ].map((c,i)=>(
+            <div key={i} className="bg-zinc-50 border border-zinc-100 rounded-md p-3">
+              <div className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider">{c.y}</div>
+              <div className="text-[13px] font-medium text-zinc-800 mt-1">{c.role}</div>
+              <div className="text-[11px] text-zinc-500 mt-0.5">{c.where}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ TRACTION CONTENT ═══ */
+function TractionTab(){
+  return(
+    <div id="metrics-section" className="space-y-6 mt-6">
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          {label:'DUG Revenue Growth',value:'55.47%',unit:'YoY',sub:'Enterprise platform sales at TmaxTibero',icon:<I.TrendUp/>,color:'text-emerald-600'},
+          {label:'Flint Seed Raised',value:'₩450M',unit:'',sub:'Pre-seed as COO / Co-founder',icon:<I.Briefcase/>,color:'text-blue-600'},
+          {label:'Enterprise Portfolio',value:'10+',unit:'clients',sub:'Samsung, Hyundai, KT, POSCO, etc.',icon:<I.Shield/>,color:'text-violet-600'},
+          {label:'Technical Stack',value:'6+',unit:'domains',sub:'Python, TS, React, ML, RAG, GNN',icon:<I.Code/>,color:'text-amber-600'},
+        ].map((m,i)=>(
+          <div key={i} className="bg-white border border-zinc-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-3">
+              <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider">{m.label}</span>
+              <span className={`${m.color} opacity-60`}>{m.icon}</span>
+            </div>
+            <div className="font-mono text-[28px] font-bold text-zinc-900 leading-none">
+              {m.value}
+              {m.unit && <span className="text-[14px] font-normal text-zinc-400 ml-1.5">{m.unit}</span>}
+            </div>
+            <div className="text-[11px] text-zinc-400 mt-2">{m.sub}</div>
+          </div>
+        ))}
+      </div>
+      {/* Deal timeline */}
+      <div className="bg-white border border-zinc-200 rounded-lg p-5 shadow-sm">
+        <h3 className="text-sm font-semibold text-zinc-900 mb-4">Deal Timeline</h3>
+        <div className="flex items-center gap-0">
+          {[
+            {y:'2017',e:'TmaxTibero (Eng)'},
+            {y:'2019',e:'Team Lead'},
+            {y:'2021',e:'Flint (COO)'},
+            {y:'2023',e:'Meta (BD)'},
+            {y:'2024',e:'Apple (Strategy)'},
+            {y:'2026',e:'Altos?'},
+          ].map((t,i,arr)=>(
+            <div key={i} className="flex-1 relative">
+              <div className={`h-1 ${i===arr.length-1?'bg-emerald-200':'bg-zinc-200'} rounded-full`}/>
+              <div className={`absolute -top-1.5 left-0 w-4 h-4 rounded-full border-2 ${
+                i===arr.length-1?'bg-emerald-500 border-emerald-300':'bg-white border-zinc-300'
+              }`}/>
+              <div className="mt-3">
+                <div className="font-mono text-[10px] text-zinc-400">{t.y}</div>
+                <div className="text-[10px] text-zinc-600 font-medium mt-0.5 leading-tight">{t.e}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ RISKS CONTENT ═══ */
+function RisksTab(){
+  return(
+    <div className="space-y-6 mt-6">
+      <div id="risk-flint" className="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-5 transition-all">
+        <div className="flex items-center gap-2 mb-3">
+          <I.AlertTri/>
+          <h3 className="text-sm font-semibold text-red-800">Identified Risk: Flint UX Failure</h3>
+          <span className="font-mono text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded ml-auto">SEVERITY: MEDIUM</span>
+        </div>
+        <ul className="space-y-2">
+          {[
+            ['Root Cause','Built a GNN-powered knowledge management platform with genuinely novel technology. Optimized for algorithmic performance over user experience.'],
+            ['Impact','Enterprise buyers signed pilots but end-users did not adopt. The gap between "technically validated" and "market-ready" proved fatal.'],
+            ['Burn Analysis','₩450M seed consumed over ~18 months. Pivoted too late — should have prioritized UX research in months 3–6, not month 12.'],
+            ['Mitigation (Post-Failure)','DJL now evaluates every technology through the lens of "would a non-technical user adopt this?" Applied this lesson at DUG to secure Meta/Apple partnerships.'],
+          ].map(([b,r],i)=>(
+            <li key={i} className="flex gap-2 text-[13px] text-red-900 leading-relaxed">
+              <span className="text-red-400 mt-0.5 shrink-0">▸</span>
+              <span><strong className="text-red-800">{b}:</strong> {r}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <I.AlertTri/>
+          <h3 className="text-sm font-semibold text-amber-800">Watch Item: Non-Traditional VC Path</h3>
+          <span className="font-mono text-[10px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded ml-auto">SEVERITY: LOW</span>
+        </div>
+        <ul className="space-y-2">
+          {[
+            ['Observation','No prior VC fund experience. Career path is operator → investor, not analyst → associate.'],
+            ['Counter-Argument','Operator background provides asymmetric sourcing edge and founder credibility. Can pressure-test technical architecture AND go-to-market in real-time.'],
+          ].map(([b,r],i)=>(
+            <li key={i} className="flex gap-2 text-[13px] text-amber-900 leading-relaxed">
+              <span className="text-amber-400 mt-0.5 shrink-0">▸</span>
+              <span><strong className="text-amber-800">{b}:</strong> {r}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ SKILLS / CAP TABLE CONTENT ═══ */
+function SkillsTab(){
+  const cats = [
+    {name:'Technical Engineering',pct:85,items:['Python','TypeScript','React / Next.js','PostgreSQL','AWS / Vercel']},
+    {name:'AI / ML Systems',pct:80,items:['RAG Pipelines','GNN Architecture','LLM Integration','Pinecone / Embeddings','Prompt Engineering']},
+    {name:'Business & BD',pct:90,items:['Enterprise Sales','Partnership Negotiation','Channel Strategy','Revenue Operations','Cross-cultural BD']},
+    {name:'Leadership & Strategy',pct:75,items:['Team Management (10+)','Product Strategy','Startup Operations','Investor Relations','M&A Due Diligence']},
+  ];
+  return(
+    <div id="tab-skills" className="space-y-4 mt-6">
+      {cats.map((c,i)=>(
+        <div key={i} className="bg-white border border-zinc-200 rounded-lg p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-[13px] font-semibold text-zinc-800">{c.name}</h3>
+            <span className="font-mono text-[11px] text-zinc-500">{c.pct}%</span>
+          </div>
+          <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden mb-3">
+            <div className="h-full bg-zinc-900 rounded-full transition-all duration-700"
+              style={{width:`${c.pct}%`}}/>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {c.items.map((s,j)=>(
+              <span key={j} className="font-mono text-[10px] bg-zinc-50 border border-zinc-200 text-zinc-600 px-2 py-0.5 rounded">
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ═══ PROMPT CHIPS ═══ */
+const CHIPS = [
+  "Isn't the Flint failure a fatal red flag?",
+  "Break down the 55% YoY growth",
+  "Why should we hire an operator, not an analyst?",
+  "What's his edge for Korean deal sourcing?",
+];
+
+/* ═══ MAIN APP ═══ */
+function App(){
+  const [tab,setTab]=useState('traction');
+  const [messages,setMessages]=useState([{
+    role:'assistant',
+    text:"Partners, I've brought **Project DJL** to the table. He has explosive 55% YoY growth experience at DUG, deep AI architecture skills from building GNN systems, and native bilingual fluency across US/KR markets.\n\nLet's rigorously DD this asset. What are your concerns?",
+    chunks:[],
+  }]);
+  const [input,setInput]=useState('');
+  const [sending,setSending]=useState(false);
+  const chatEndRef=useRef(null);
+
+  useEffect(()=>{chatEndRef.current?.scrollIntoView({behavior:'smooth'})},[messages,sending]);
+
+  const handleSend=useCallback(async(text)=>{
+    const q=(text||input||'').trim();
+    if(!q||sending)return;
+    const history=messages.map(m=>({role:m.role,text:m.text}));
+    setMessages(p=>[...p,{role:'user',text:q,chunks:[]}]);
+    setInput('');
+    setSending(true);
+    try{
+      const res=await fetch('/api/ui-chat',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({query:q,personaId:'vc',focusId:'leadership',history}),
+      });
+      const data=await res.json();
+      setMessages(p=>[...p,{role:'assistant',text:data.response||'Unable to process.',chunks:data.chunksUsed||[]}]);
+    }catch(e){
+      setMessages(p=>[...p,{role:'assistant',text:'Connection error. Retry.',chunks:[]}]);
+    }
+    setSending(false);
+  },[input,sending,messages]);
+
+  return(
+    <div className="h-screen flex flex-col overflow-hidden">
+
+      {/* ═══ GLOBAL NAV ═══ */}
+      <nav className="h-14 min-h-[56px] border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0">
+        <div className="flex items-center gap-1.5 text-[13px] text-zinc-500">
+          <span className="text-zinc-400">Deal Pipeline</span>
+          <span className="text-zinc-300">/</span>
+          <span className="text-zinc-400">2026 Q1 Hires</span>
+          <span className="text-zinc-300">/</span>
+          <span className="text-zinc-800 font-medium">Project DJL</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[11px] bg-blue-50 text-blue-700 px-2.5 py-1 rounded font-medium">
+            Status: In IC Review
+          </span>
+        </div>
+      </nav>
+
+      {/* ═══ SPLIT PANES ═══ */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* ─── LEFT: DEAL DASHBOARD ─── */}
+        <div className="w-[60%] bg-zinc-50 overflow-y-auto sb">
+          <div className="p-8 max-w-[720px]">
+            {/* Title */}
+            <div className="mb-1">
+              <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-[.12em]">Deal Review</span>
+            </div>
+            <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight mb-1">
+              Target Asset: Dong Jae Lee
+            </h1>
+            <p className="text-[12px] text-zinc-400 mb-6">Operator / Deep Tech &middot; VC Associate Candidate &middot; Altos Ventures</p>
+
+            {/* Tabs */}
+            <div className="flex border-b border-zinc-200 gap-0">
+              {TABS.map(t=>(
+                <button key={t.id} onClick={()=>setTab(t.id)}
+                  className={`text-[12px] font-medium px-4 py-2.5 transition-colors relative ${
+                    tab===t.id
+                      ? 'text-zinc-900'
+                      : 'text-zinc-400 hover:text-zinc-600'
+                  }`}>
+                  {t.label}
+                  {tab===t.id && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 rounded-t"/>}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab content */}
+            {tab==='thesis' && <ThesisTab/>}
+            {tab==='traction' && <TractionTab/>}
+            {tab==='risks' && <RisksTab/>}
+            {tab==='skills' && <SkillsTab/>}
+          </div>
+        </div>
+
+        {/* ─── RIGHT: IC COMMITTEE CHAT ─── */}
+        <div className="w-[40%] bg-white border-l border-zinc-200 flex flex-col">
+
+          {/* Chat header */}
+          <div className="px-5 py-3.5 border-b border-zinc-200 shrink-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-[14px] font-semibold text-zinc-900">IC Debate Thread</h2>
+                <p className="text-[11px] text-zinc-400 mt-0.5">Interrogate the Deal Sponsor</p>
+              </div>
+              <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-600">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" style={{animation:'pulse 2s ease-in-out infinite'}}/>
+                SPONSOR ONLINE
+              </div>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 sb">
+            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}} @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}`}</style>
+
+            {messages.map((m,i)=>(
+              <div key={i} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}
+                style={{animation:'fadeIn .25s ease-out'}}>
+                <div className={`max-w-[90%] ${m.role==='user'
+                  ? 'bg-zinc-900 text-white rounded-2xl rounded-br-sm px-4 py-3'
+                  : 'bg-zinc-100 text-zinc-900 rounded-2xl rounded-bl-sm px-4 py-3'
+                }`}>
+                  <div className="text-[13px] leading-relaxed">
+                    <Md text={m.text}/>
+                  </div>
+                  {m.chunks&&m.chunks.length>0&&(
+                    <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2 border-t border-zinc-200/50">
+                      {m.chunks.slice(0,4).map((c,j)=><CitPill key={j} chunkId={c}/>)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {/* Chips */}
+            {messages.length===1&&!sending&&(
+              <div className="flex flex-wrap gap-2 pt-1">
+                {CHIPS.map((c,i)=>(
+                  <button key={i} onClick={()=>handleSend(c)}
+                    className="text-[11px] text-zinc-500 bg-white border border-zinc-200 hover:border-zinc-400 hover:text-zinc-800 hover:shadow-sm px-3 py-1.5 rounded-full transition-all cursor-pointer font-medium">
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Typing */}
+            {sending&&(
+              <div className="flex justify-start" style={{animation:'fadeIn .2s ease-out'}}>
+                <div className="bg-zinc-100 rounded-2xl rounded-bl-sm px-5 py-3.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-[5px] h-[5px] rounded-full bg-zinc-400" style={{animation:'pulse 1.2s ease-in-out infinite'}}/>
+                    <span className="w-[5px] h-[5px] rounded-full bg-zinc-400" style={{animation:'pulse 1.2s ease-in-out .15s infinite'}}/>
+                    <span className="w-[5px] h-[5px] rounded-full bg-zinc-400" style={{animation:'pulse 1.2s ease-in-out .3s infinite'}}/>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={chatEndRef}/>
+          </div>
+
+          {/* ─── INPUT ─── */}
+          <div className="p-4 border-t border-zinc-100 bg-white shrink-0">
+            <form onSubmit={e=>{e.preventDefault();handleSend()}}
+              className="flex items-center gap-2 bg-zinc-100 rounded-full px-4 py-2 focus-within:ring-1 focus-within:ring-zinc-300 transition-all">
+              <input
+                value={input}
+                onChange={e=>setInput(e.target.value)}
+                disabled={sending}
+                placeholder="Challenge the Deal Sponsor..."
+                className="flex-1 text-[13px] text-zinc-800 placeholder:text-zinc-400 bg-transparent outline-none disabled:opacity-50"
+                autoFocus
+              />
+              <button type="submit" disabled={sending||!input.trim()}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-900 hover:bg-zinc-700 disabled:bg-zinc-300 text-white transition-colors shrink-0">
+                <I.Arrow/>
+              </button>
+            </form>
+            <div className="text-center mt-2">
+              <span className="font-mono text-[9px] text-zinc-300 uppercase tracking-widest">
+                RAG-powered &middot; Grounded in verified records &middot; No hallucination
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
