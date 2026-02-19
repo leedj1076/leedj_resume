@@ -14,6 +14,7 @@ const VERSIONS: Record<string, string> = {
   "v11-altos-final": "ask-dj-altos-final.html",
   "v12-auditable": "ask-dj-v12-auditable.html",
   "v13-auditable-plus": "ask-dj-v13-auditable.html",
+  "v14-profile": "ask-dj-v14-profile.html",
 };
 
 export async function GET(

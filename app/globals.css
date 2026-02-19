@@ -1,2 +1,18 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* V14 profile scrollbar */
+.profile-scroll::-webkit-scrollbar { width: 4px; }
+.profile-scroll::-webkit-scrollbar-track { background: transparent; }
+.profile-scroll::-webkit-scrollbar-thumb { background: #d6d6d6; border-radius: 2px; }
+.profile-scroll::-webkit-scrollbar-thumb:hover { background: #979797; }

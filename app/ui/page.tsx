@@ -10,7 +10,7 @@ const VERSIONS = [
     desc: "Production app — streaming chat, gateway modal, persona-aware RAG",
     tags: ["Streaming", "Gateway", "RAG"],
     accent: "#3b82f6",
-    href: "/",
+    href: "/v1",
   },
   {
     slug: "v2-full-suite",
@@ -107,6 +107,15 @@ const VERSIONS = [
     desc: "V12 + 6 improvements — JD coverage matrix, founder question framework (5 accordion cards), bull/bear IC synthesis, 90-day operating plan with failure triggers, upgraded evidence popovers (verification + confidence + invalidation), AI citation enforcement",
     tags: ["JD Matrix", "Bull/Bear", "90-Day Plan", "Founder Questions", "Citation AI"],
     accent: "#4f46e5",
+  },
+  {
+    slug: "v14-profile",
+    label: "V14",
+    title: "Interactive Profile",
+    desc: "Split-screen profile + chat — Altos-inspired neutral palette, career timeline, stats grid, streaming AI chat with starter questions. Audience-neutral, no VC framing.",
+    tags: ["Split-Screen", "Profile", "Chat", "Bilingual"],
+    accent: "#22c55e",
+    href: "/",
   },
 ];
 

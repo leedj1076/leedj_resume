@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   outputFileTracingIncludes: {
+    "/": ["./ui_test/**/*"],
     "/ui/[name]": ["./ui_test/**/*"],
   },
 };

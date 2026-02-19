@@ -1,16 +1,17 @@
 {
   "session_metadata": {
-    "session_id": "2026-02-14_session4",
-    "date": "2026-02-14",
+    "session_id": "2026-02-19_session5",
+    "date": "2026-02-19",
     "language": "English",
     "interview_style": "Phase 1A — Deep Knowledge Capture",
     "status": "in_progress",
-    "last_question_asked": "Q1.1 (completed with follow-ups)",
+    "last_question_asked": "Q2.1",
     "last_question_status": "completed",
-    "next_action": "Ask Q1.2: Where do you see yourself 10 years from now?",
-    "questions_completed": 1,
-    "questions_in_progress": 0,
-    "bookmark_position": "Q1.2"
+    "next_action": "Ask Q2.2: Why Altos Ventures specifically?",
+    "questions_completed": 2,
+    "questions_skipped": 3,
+    "skipped_questions": ["Q1.2", "Q1.3", "Q1.4"],
+    "bookmark_position": "Q2.2"
   },
   "interview_log": [
     {
@@ -32,8 +33,7 @@
           "TmaxTibero experience missing from narrative — important for completeness",
           "Should mention international background (4 countries) more naturally",
           "Mentioned KAIST Mechanical Engineering & Industrial Design — but answer direction suggests KAIST AI MS should be highlighted"
-        ],
-        "follow_up_question": "You said you 'secured seed funding and handled investor relations' at Flint. How much did you raise, from whom, and what was the hardest moment in that fundraising process? Give me a number and a story."
+        ]
       },
       "follow_up_exchanges": [
         {
@@ -43,11 +43,10 @@
             "strengths": [
               "Specific numbers: $212K, $2.127M post-money, 10% equity, KRW 200M KODIT loan",
               "Named actual investors (Strong Ventures, Fast Ventures)",
-              "Showed conviction — pushed back on VCs on two structural issues",
-              "Concrete examples of friction points"
+              "Showed conviction — pushed back on VCs on two structural issues"
             ],
             "areas_to_improve": [
-              "Could add: why was US incorporation strategically necessary? (one sentence would strengthen)",
+              "Could add: why was US incorporation strategically necessary?",
               "The 'fair thing to do' framing is honest but could be more strategic in real interview"
             ]
           }
@@ -59,35 +58,58 @@
             "strengths": [
               "Moved from structural problem to concrete methodology (landing page tests)",
               "Shows data-driven decision culture",
-              "'Disagree but commit' principle — maps directly to VC investment committee dynamics",
-              "Honest about the cons, not defensive"
+              "'Disagree but commit' principle — maps directly to VC IC process"
             ],
             "areas_to_improve": [
-              "In real interview: explicitly connect this to VC IC process — 'I've already lived the model'"
+              "In real interview: explicitly connect this to VC IC process"
             ],
-            "interviewer_note": "Strong answer. The equal-equity → data-driven resolution → disagree-but-commit arc is a compelling narrative that demonstrates maturity. Recommended to use this story in actual interview."
+            "interviewer_note": "Strong answer. The equal-equity → data-driven resolution → disagree-but-commit arc is interview gold."
           }
         }
       ]
+    },
+    {
+      "question_id": "Q2.1",
+      "question_text": "Why VC? You could have started another company or joined big tech.",
+      "section": "2. Why VC / Why Altos (Motivation)",
+      "status": "completed",
+      "dj_answer": "Bottom line: I chose VC because it's the role where my highest-leverage edge shows up. I'm not at my best when I'm optimizing one system. I'm at my best when I'm pattern-matching across founders, markets, and products, then turning those insights into clear decisions and faster execution for other people. VC is where that multiplier effect is the most real.\n\nI seriously considered all three paths — big tech, founding again, and VC.\n\nBig tech: great if your edge is being world-class at one narrow domain. But I'm naturally breadth-driven — motivated by understanding how different systems connect. Corporate velocity is slower than my operating rhythm. One domain would underuse my strongest skill: synthesis.\n\nStarting another company: Flint taught me founding is not just building, it's carrying — the uncertainty, the emotional load, the long feedback cycles. I have the scars, and they're useful data. At this stage, the expected downside is not optimal for me. I've realized I'm often better at helping teams navigate hard problems than solving them alone inside one company. Not 'never again' — just 'not the most rational deployment of my strengths right now.'\n\nVC is attractive for two reasons: leverage and compounding learning. I can be a multiplier for founders — diagnosing what's real vs. narrative, asking questions that change outcomes, helping founders make higher-quality decisions faster. And founders listen because I've built a company, seen it fail, shipped at scale, and understand both the product reality and the go-to-market reality.\n\nThe compounding learning excites me most. At a startup, knowledge is deep but locked in one domain. In VC, you see dozens of parallel experiments — different founders, market cycles, distribution paths, failure modes. That creates a pattern library that becomes durable and transferable. That's not abstract learning — it directly translates into better sourcing, better underwriting, and better support.\n\nThis is comparative advantage, not risk aversion.",
+      "interviewer_feedback": {
+        "strengths": [
+          "Excellent 'three paths considered' framework — shows deliberate thinking",
+          "Strong distinction between leverage and compounding learning",
+          "'I'm often better at helping teams navigate hard problems than solving them alone' — powerful, vulnerable, mature",
+          "Pattern library concept is exactly how senior VCs describe their edge",
+          "'Comparative advantage, not risk aversion' — strong close",
+          "Self-awareness about breadth vs depth as a personal trait"
+        ],
+        "areas_to_improve": [
+          "WAY too long — reads 6-7 minutes, needs to be 90-120 seconds. Cut by ~75%",
+          "Too much justification for paths NOT taken. Flip ratio — lead with the positive case for VC",
+          "Missing the Flint investor story — the most powerful 'why VC' evidence is: 'At Flint, I experienced firsthand how the right investor changed everything.' You lived the founder side — use that specific moment",
+          "No Altos connection — should drop a breadcrumb to 'why Altos specifically'",
+          "Coaching: In real interview, imagine 90 seconds. Open with Flint realization → 'multiplier vs builder' insight → pattern library idea. Everything else is follow-up fodder."
+        ]
+      }
     }
   ],
   "session_notes": {
     "overall_observations": [
       "DJ speaks confidently and structures answers well",
-      "Needs to tighten delivery for Altos's conciseness standard",
-      "Should lean more into specific numbers and stories, less into category labels",
-      "Bilingual delivery is natural and strong",
-      "When pushed for specifics, DJ delivers strong concrete stories (fundraising, equity structure)",
-      "The Flint equal-equity → data-driven culture story is interview gold — recommend using proactively"
+      "Persistent pattern: answers are 2-3x too long for Altos's conciseness standard",
+      "Excellent at frameworks and structured thinking — needs to compress into punchier delivery",
+      "When pushed for specifics, DJ delivers strong concrete stories",
+      "The Flint equal-equity → data-driven culture story is interview gold",
+      "Q2.1 showed strong self-awareness about comparative advantage — but needs to lead with the positive case, not the elimination of alternatives"
     ],
     "topics_covered": [
       "Self-introduction",
       "Career narrative overview",
       "Flint fundraising specifics ($212K seed, Strong/Fast Ventures, KODIT loan)",
       "Founder equity structure and decision-making methodology",
-      "Disagree-but-commit principle"
+      "Disagree-but-commit principle",
+      "Why VC over big tech and re-founding"
     ],
-    "topics_remaining": "Q1.2 onwards — all sections 1-24 + Appendix (133 questions remaining)",
-    "suggested_next_session_start": "Q1.2: Where do you see yourself 10 years from now?"
+    "topics_remaining": "Q2.2 onwards — sections 2-24 + Appendix"
   }
 }

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Ask DJ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body,#root{height:100%;overflow:hidden}
+    body{font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+    @keyframes msgIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes typing{0%,80%,100%{opacity:.25}40%{opacity:1}}
+    @keyframes breathe{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+    @keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
+    @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+    @keyframes orbFloat1{0%,100%{transform:translate(0,0)}25%{transform:translate(40px,-20px)}50%{transform:translate(-15px,-40px)}75%{transform:translate(-30px,15px)}}
+    @keyframes orbFloat2{0%,100%{transform:translate(0,0)}33%{transform:translate(-30px,30px)}66%{transform:translate(40px,-10px)}}
+    @keyframes cardSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+    .serif{font-family:'Source Serif 4',Georgia,serif}
+    button{cursor:pointer;border:none;background:none;font-family:inherit}
+    input:focus{outline:none}
+    ::selection{background:rgba(99,102,241,.2)}
+
+    .sb::-webkit-scrollbar{width:4px}
+    .sb::-webkit-scrollbar-track{background:transparent}
+    .sb::-webkit-scrollbar-thumb{background:rgba(128,128,128,.1);border-radius:4px}
+
+    /* Noise overlay */
+    .noise::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.015;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat:repeat;background-size:256px;
+    }
+
+    /* Name gradient */
+    .name-grad-dark{
+      background:linear-gradient(135deg,#c8c8f0,#818cf8,#a78bfa,#c4b5fd);
+      background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      animation:gradientFlow 8s ease infinite;
+    }
+    .name-grad-light{
+      background:linear-gradient(135deg,#2a2a3e,#4f46e5,#7c3aed,#6d28d9);
+      background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      animation:gradientFlow 8s ease infinite;
+    }
+
+    /* Glow input */
+    .input-glow{transition:box-shadow .3s,border-color .3s}
+    .input-glow:focus-within{
+      border-color:rgba(124,130,248,.4)!important;
+      box-shadow:0 0 0 4px rgba(124,130,248,.08),0 0 20px rgba(124,130,248,.06)!important;
+    }
+
+    @media(max-width:768px){
+      .profile-sidebar{display:none!important}
+      .chat-area{max-width:100%!important}
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,createContext,useContext,useCallback} = React;
+
+/* ═══════════════════════════════════════
+   THEMES
+   ═══════════════════════════════════════ */
+const themes = {
+  dark:{
+    bg:"#09090b", chatBg:"#09090b",
+    surface:"#131316", surfaceAlt:"#18181c", surfaceHover:"#1e1e24",
+    border:"#222228", borderSoft:"#1a1a1f",
+    text:"#e8e8ec", textSec:"#9898a6", textMut:"#5a5a66",
+    accent:"#818cf8", accent2:"#a78bfa", accent3:"#f472b6",
+    accentSoft:"rgba(129,140,248,.06)", accentMed:"rgba(129,140,248,.14)",
+    inputBg:"#111114", shadow:"rgba(0,0,0,.6)",
+    djBubble:"#15151a", djBubbleBorder:"#222228",
+    userBubble:"linear-gradient(135deg,#818cf8,#a78bfa)",
+    nameClass:"name-grad-dark",
+    orb1:"rgba(129,140,248,.06)", orb2:"rgba(167,139,250,.04)",
+    profileBg:"#0e0e11",
+    chipBg:"rgba(129,140,248,.07)", chipBorder:"rgba(129,140,248,.14)",
+    trustColor:"#4a4a56",
+  },
+  light:{
+    bg:"#f6f6f4", chatBg:"#f6f6f4",
+    surface:"#ffffff", surfaceAlt:"#f9f9f7", surfaceHover:"#eeeeec",
+    border:"#d8d8d4", borderSoft:"#e4e4e0",
+    text:"#141418", textSec:"#44444c", textMut:"#78787e",
+    accent:"#4f46e5", accent2:"#6d28d9", accent3:"#be185d",
+    accentSoft:"rgba(79,70,229,.05)", accentMed:"rgba(79,70,229,.12)",
+    inputBg:"#ffffff", shadow:"rgba(0,0,0,.06)",
+    djBubble:"#ffffff", djBubbleBorder:"#e0e0dc",
+    userBubble:"linear-gradient(135deg,#4f46e5,#6d28d9)",
+    nameClass:"name-grad-light",
+    orb1:"rgba(79,70,229,.04)", orb2:"rgba(109,40,217,.03)",
+    profileBg:"#fafaf8",
+    chipBg:"rgba(79,70,229,.05)", chipBorder:"rgba(79,70,229,.12)",
+    trustColor:"#b0b0b8",
+  },
+};
+const ThemeCtx = createContext();
+const useTheme = ()=>useContext(ThemeCtx);
+
+/* ═══════════════════════════════════════
+   DJ'S INTRO — the "pre-loaded" conversation
+   These messages appear one by one when you land,
+   like DJ sent them before you arrived.
+   ═══════════════════════════════════════ */
+const INTRO_MESSAGES = [
+  {
+    type:"text",
+    text:"Hey — thanks for checking this out. I'm DJ.",
+    delay:400,
+  },
+  {
+    type:"text",
+    text:"I'm a business development lead who still writes code. I've spent the last 8 years somewhere between strategy and engineering — closing partnerships with Apple, Meta, and Google, co-founding an AI startup, and building things with my own hands.",
+    delay:1200,
+  },
+  {
+    type:"card",
+    delay:2200,
+    card:{
+      items:[
+        {label:"Latest role", value:"Director, BD & Publishing", sub:"Devs United Games · XR gaming"},
+        {label:"Before that", value:"Co-Founder & COO", sub:"Flint Technologies · AI/GNN startup"},
+        {label:"Education", value:"KAIST + KIT (Germany)", sub:"Mechanical Engineering & Industrial Design"},
+      ]
+    }
+  },
+  {
+    type:"text",
+    text:"I learn the most from what didn't work. At Flint, we built an elegant GNN system that nobody wanted to use — that taught me more about product than any success did.",
+    delay:3200,
+  },
+  {
+    type:"text",
+    text:"Ask me anything — about deals I've closed, code I've written, or mistakes I've made. I'll give you honest answers.",
+    delay:4200,
+  },
+  {
+    type:"prompts",
+    delay:5000,
+    prompts:[
+      "What was the hardest deal you walked away from?",
+      "How did Apple's partnership actually work?",
+      "What would you do differently at Flint?",
+      "Tell me about a time you failed.",
+      "What's your technical stack?",
+      "Why should I care about your profile?",
+    ],
+  },
+];
+
+/* ═══════════════════════════════════════
+   PROFILE SIDEBAR DATA
+   ═══════════════════════════════════════ */
+const PROFILE_STATS = [
+  {n:"8+", l:"Years"},
+  {n:"+55%", l:"YoY Revenue"},
+  {n:"450M", l:"KRW Raised"},
+  {n:"3", l:"Languages"},
+];
+const TRUST_NAMES = ["Apple","Meta","Google","Samsung","KAIST"];
+const SKILLS_SHORT = ["Next.js","React","Python","RAG/LLMs","Unity","VisionOS","TypeScript","Pinecone","AWS"];
+
+/* ═══════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════ */
+
+function FloatingOrbs(){
+  const t = useTheme();
+  return <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:0,overflow:'hidden'}}>
+    <div style={{position:'absolute',top:'15%',left:'20%',width:350,height:350,borderRadius:'50%',filter:'blur(80px)',background:t.orb1,animation:'orbFloat1 20s ease-in-out infinite'}}/>
+    <div style={{position:'absolute',top:'50%',right:'15%',width:300,height:300,borderRadius:'50%',filter:'blur(80px)',background:t.orb2,animation:'orbFloat2 25s ease-in-out infinite'}}/>
+  </div>;
+}
+
+/* Typing indicator */
+function TypingDots(){
+  const t = useTheme();
+  return <div style={{
+    display:'inline-flex',gap:4,padding:'14px 18px',
+    background:t.djBubble,border:`1px solid ${t.djBubbleBorder}`,
+    borderRadius:'18px 18px 18px 4px',
+    animation:'msgIn .3s cubic-bezier(.22,1,.36,1)',
+  }}>
+    {[0,1,2].map(i=><div key={i} style={{
+      width:6,height:6,borderRadius:'50%',background:t.textMut,
+      animation:`typing 1.2s ease-in-out ${i*.2}s infinite`,
+    }}/>)}
+  </div>;
+}
+
+/* DJ's avatar */
+function DJAvatar({size=36}){
+  const t = useTheme();
+  return <div style={{
+    width:size,height:size,borderRadius:size*.35,flexShrink:0,
+    background:`linear-gradient(135deg,${t.accent},${t.accent2})`,
+    display:'flex',alignItems:'center',justifyContent:'center',
+    fontSize:size*.33,fontWeight:600,color:'#fff',letterSpacing:'-0.02em',
+    boxShadow:`0 2px 12px ${t.accent}25`,
+  }}>DJ</div>;
+}
+
+/* A single DJ message bubble */
+function DJBubble({children,style={}}){
+  const t = useTheme();
+  return <div style={{
+    padding:'14px 18px',
+    background:t.djBubble,border:`1px solid ${t.djBubbleBorder}`,
+    borderRadius:'18px 18px 18px 4px',
+    color:t.textSec,fontSize:14.5,lineHeight:1.75,fontWeight:300,
+    maxWidth:480,
+    boxShadow:`0 1px 4px ${t.shadow}`,
+    ...style,
+  }}>{children}</div>;
+}
+
+/* Inline info card (appears in the chat) */
+function InfoCard({card}){
+  const t = useTheme();
+  return <div style={{
+    padding:'4px',borderRadius:16,
+    background:t.surface,border:`1px solid ${t.border}`,
+    maxWidth:420,
+    boxShadow:`0 2px 16px ${t.shadow}`,
+    overflow:'hidden',
+  }}>
+    {card.items.map((item,i)=>(
+      <div key={i} style={{
+        padding:'13px 16px',
+        borderBottom:i<card.items.length-1?`1px solid ${t.borderSoft}`:'none',
+        display:'flex',flexDirection:'column',gap:2,
+      }}>
+        <span style={{fontSize:11,color:t.textMut,fontWeight:400,letterSpacing:'.02em'}}>{item.label}</span>
+        <span style={{fontSize:14,color:t.text,fontWeight:500,letterSpacing:'-0.01em'}}>{item.value}</span>
+        <span style={{fontSize:12,color:t.textMut,fontWeight:300}}>{item.sub}</span>
+      </div>
+    ))}
+  </div>;
+}
+
+/* Suggested prompts — appear as tappable chips */
+function PromptChips({prompts,onSelect}){
+  const t = useTheme();
+  return <div style={{display:'flex',flexWrap:'wrap',gap:6,maxWidth:500}}>
+    {prompts.map((p,i)=>{
+      const [h,setH] = useState(false);
+      return <button key={i} onClick={()=>onSelect(p)}
+        onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+        style={{
+          padding:'9px 16px',borderRadius:20,
+          fontSize:13,fontWeight:400,letterSpacing:'-0.005em',
+          color:h?t.text:t.textSec,
+          background:h?t.accentSoft:'transparent',
+          border:`1px solid ${h?t.accent+'30':t.border}`,
+          transition:'all .2s cubic-bezier(.22,1,.36,1)',
+          textAlign:'left',lineHeight:1.4,
+        }}>{p}</button>;
+    })}
+  </div>;
+}
+
+/* Profile sidebar — floating card on the right */
+function ProfileSidebar({onClose}){
+  const t = useTheme();
+  return <div className="profile-sidebar" style={{
+    width:280,flexShrink:0,
+    background:t.profileBg,
+    borderLeft:`1px solid ${t.border}`,
+    display:'flex',flexDirection:'column',
+    animation:'cardSlide .4s cubic-bezier(.22,1,.36,1)',
+    overflow:'hidden',
+  }}>
+    <div className="sb" style={{flex:1,overflowY:'auto',padding:'28px 22px'}}>
+      {/* Header */}
+      <div style={{textAlign:'center',marginBottom:28}}>
+        <DJAvatar size={56}/>
+        <h2 className={`serif ${t.nameClass}`} style={{fontSize:22,fontWeight:400,letterSpacing:'-0.02em',marginTop:14,lineHeight:1.2}}>
+          DJ Lee
+        </h2>
+        <p style={{fontSize:12,color:t.textMut,marginTop:6,fontWeight:300}}>
+          BD Lead · Builder · Seoul
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6,marginBottom:24}}>
+        {PROFILE_STATS.map((s,i)=>(
+          <div key={i} style={{
+            padding:'12px',borderRadius:10,background:t.surface,
+            border:`1px solid ${t.borderSoft}`,textAlign:'center',
+          }}>
+            <div style={{fontSize:17,fontWeight:600,color:t.text,letterSpacing:'-0.02em'}}>{s.n}</div>
+            <div style={{fontSize:10,color:t.textMut,fontWeight:400,marginTop:2,letterSpacing:'.02em'}}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Worked with */}
+      <div style={{marginBottom:24}}>
+        <p style={{fontSize:10,color:t.textMut,letterSpacing:'.06em',textTransform:'uppercase',fontWeight:500,marginBottom:10}}>Worked with</p>
+        <div style={{display:'flex',flexWrap:'wrap',gap:5}}>
+          {TRUST_NAMES.map(n=>(
+            <span key={n} style={{
+              fontSize:11,padding:'4px 10px',borderRadius:7,
+              background:t.chipBg,border:`1px solid ${t.chipBorder}`,
+              color:t.textSec,fontWeight:400,
+            }}>{n}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Skills */}
+      <div style={{marginBottom:24}}>
+        <p style={{fontSize:10,color:t.textMut,letterSpacing:'.06em',textTransform:'uppercase',fontWeight:500,marginBottom:10}}>Technical</p>
+        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
+          {SKILLS_SHORT.map(s=>(
+            <span key={s} style={{
+              fontSize:11,padding:'3px 9px',borderRadius:6,
+              background:t.chipBg,border:`1px solid ${t.chipBorder}`,
+              color:t.textMut,fontWeight:400,
+            }}>{s}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Links */}
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        {[
+          {label:"LinkedIn",href:"https://www.linkedin.com/in/dongjae-lee/"},
+          {label:"Email",href:"mailto:leedj.1076@gmail.com"},
+        ].map(link=>(
+          <a key={link.label} href={link.href} target={link.href.startsWith('http')?'_blank':undefined}
+            rel="noopener" style={{
+              display:'flex',alignItems:'center',justifyContent:'space-between',
+              padding:'10px 14px',borderRadius:10,
+              background:t.surface,border:`1px solid ${t.borderSoft}`,
+              fontSize:13,color:t.textSec,fontWeight:400,
+              transition:'all .2s',textDecoration:'none',
+            }}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent+'40';e.currentTarget.style.color=t.text}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor=t.borderSoft;e.currentTarget.style.color=t.textSec}}
+          >
+            <span>{link.label}</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.5 8h9m0 0L9 4.5M12.5 8L9 11.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>;
+}
+
+/* ═══════════════════════════════════════
+   MAIN APP — the conversation IS the page
+   ═══════════════════════════════════════ */
+function App(){
+  const [mode,setMode] = useState('dark');
+  const [visibleMsgs,setVisibleMsgs] = useState([]);
+  const [isTyping,setIsTyping] = useState(true);
+  const [userMessages,setUserMessages] = useState([]);
+  const [input,setInput] = useState('');
+  const [showProfile,setShowProfile] = useState(true);
+  const [introComplete,setIntroComplete] = useState(false);
+  const scrollRef = useRef(null);
+  const inputRef = useRef(null);
+  const t = themes[mode];
+
+  // Sequentially reveal DJ's intro messages
+  useEffect(()=>{
+    let timeouts = [];
+    INTRO_MESSAGES.forEach((msg,i)=>{
+      // Show typing before each message
+      timeouts.push(setTimeout(()=>setIsTyping(true), msg.delay - 600));
+      timeouts.push(setTimeout(()=>{
+        setIsTyping(false);
+        setVisibleMsgs(prev=>[...prev, msg]);
+        if(i === INTRO_MESSAGES.length - 1) setIntroComplete(true);
+      }, msg.delay));
+    });
+    return ()=>timeouts.forEach(clearTimeout);
+  },[]);
+
+  // Auto-scroll
+  useEffect(()=>{
+    if(scrollRef.current){
+      scrollRef.current.scrollTo({top:scrollRef.current.scrollHeight,behavior:'smooth'});
+    }
+  },[visibleMsgs,userMessages,isTyping]);
+
+  const handleSend = (text)=>{
+    const q = text || input;
+    if(!q.trim()) return;
+    setUserMessages(prev=>[...prev,
+      {role:'user', text:q, id:Date.now()},
+    ]);
+    setInput('');
+    setIsTyping(true);
+    // Simulate DJ's response
+    setTimeout(()=>{
+      setIsTyping(false);
+      setUserMessages(prev=>[...prev,{
+        role:'dj', text:`That's a great question. In the live version, this connects to my knowledge base — resume data, interview stories, project details — and gives you a sourced answer about "${q.slice(0,60)}${q.length>60?'…':''}". For now, explore the intro above or try another question.`,
+        id:Date.now()+1,
+      }]);
+    }, 1500);
+    inputRef.current?.focus();
+  };
+
+  // Build the full message stream (intro + user conversation)
+  const allMessages = [...visibleMsgs.map((m,i)=>({...m, key:'intro-'+i}))];
+  const userStream = userMessages.map((m,i)=>({...m, key:'user-'+m.id, type:m.role==='user'?'user-msg':'dj-reply'}));
+
+  return <ThemeCtx.Provider value={t}>
+    <div className="noise" style={{height:'100%',display:'flex',flexDirection:'column',background:t.bg,color:t.text,transition:'background .4s'}}>
+      <FloatingOrbs/>
+
+      {/* ═══ TOP BAR ═══ */}
+      <div style={{
+        height:56,flexShrink:0,
+        display:'flex',alignItems:'center',justifyContent:'space-between',
+        padding:'0 20px',
+        borderBottom:`1px solid ${t.border}`,
+        background:t.bg+'e8',
+        backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',
+        position:'relative',zIndex:10,
+      }}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <DJAvatar size={32}/>
+          <div>
+            <div style={{fontSize:14,fontWeight:500,color:t.text,letterSpacing:'-0.01em'}}>DJ Lee</div>
+            <div style={{display:'flex',alignItems:'center',gap:5}}>
+              <div style={{width:5,height:5,borderRadius:'50%',background:t.accent,animation:'breathe 3s ease-in-out infinite'}}/>
+              <span style={{fontSize:11,color:t.textMut,fontWeight:400}}>AI-powered brief</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          {/* Profile toggle */}
+          <button onClick={()=>setShowProfile(p=>!p)} style={{
+            padding:'6px 14px',borderRadius:9,fontSize:12,fontWeight:500,
+            color:showProfile?t.accent:t.textMut,
+            background:showProfile?t.accentSoft:'transparent',
+            border:`1px solid ${showProfile?t.accentMed:t.border}`,
+            transition:'all .2s',letterSpacing:'-0.005em',
+          }}>Profile</button>
+
+          {/* Theme toggle */}
+          <button onClick={()=>setMode(m=>m==='dark'?'light':'dark')} style={{
+            width:34,height:34,borderRadius:10,
+            background:t.surface,border:`1px solid ${t.border}`,
+            display:'flex',alignItems:'center',justifyContent:'center',
+            transition:'all .2s',
+          }}
+          onMouseEnter={e=>e.currentTarget.style.borderColor=t.accent+'50'}
+          onMouseLeave={e=>e.currentTarget.style.borderColor=t.border}
+          >
+            {mode==='dark'
+              ? <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="3" stroke={t.textMut} strokeWidth="1.2"/><path d="M7.5 1.5v1.5m0 9v1.5m-4.24-10.74l1.06 1.06m6.36 6.36l1.06 1.06M1.5 7.5H3m9 0h1.5m-10.74 4.24l1.06-1.06m6.36-6.36l1.06-1.06" stroke={t.textMut} strokeWidth="1.2" strokeLinecap="round"/></svg>
+              : <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M13.5 8.5a6 6 0 01-7-7 6 6 0 107 7z" stroke={t.textMut} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      {/* ═══ MAIN AREA ═══ */}
+      <div style={{flex:1,display:'flex',overflow:'hidden',position:'relative',zIndex:2}}>
+
+        {/* Chat stream */}
+        <div ref={scrollRef} className="sb" style={{
+          flex:1,overflowY:'auto',
+          padding:'32px 24px 24px',
+          display:'flex',flexDirection:'column',
+        }}>
+          <div style={{maxWidth:560,width:'100%',margin:'0 auto',display:'flex',flexDirection:'column',gap:20}}>
+
+            {/* Intro messages */}
+            {visibleMsgs.map((msg,i)=>(
+              <div key={'intro-'+i} style={{animation:'msgIn .4s cubic-bezier(.22,1,.36,1)'}}>
+                {msg.type === 'text' && (
+                  <div style={{display:'flex',gap:10,alignItems:'flex-end'}}>
+                    {(i===0) && <DJAvatar size={30}/>}
+                    {(i!==0) && <div style={{width:30,flexShrink:0}}/>}
+                    <DJBubble>{msg.text}</DJBubble>
+                  </div>
+                )}
+                {msg.type === 'card' && (
+                  <div style={{display:'flex',gap:10,alignItems:'flex-end'}}>
+                    <div style={{width:30,flexShrink:0}}/>
+                    <InfoCard card={msg.card}/>
+                  </div>
+                )}
+                {msg.type === 'prompts' && (
+                  <div style={{display:'flex',gap:10}}>
+                    <div style={{width:30,flexShrink:0}}/>
+                    <PromptChips prompts={msg.prompts} onSelect={handleSend}/>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* User conversation */}
+            {userMessages.map((msg,i)=>(
+              <div key={msg.id} style={{animation:'msgIn .35s cubic-bezier(.22,1,.36,1)'}}>
+                {msg.role === 'user' ? (
+                  <div style={{display:'flex',justifyContent:'flex-end'}}>
+                    <div style={{
+                      padding:'12px 18px',borderRadius:'18px 18px 4px 18px',
+                      background:t.userBubble,color:'#fff',
+                      fontSize:14.5,lineHeight:1.7,fontWeight:400,
+                      maxWidth:440,
+                      boxShadow:`0 4px 20px ${t.accent}25`,
+                    }}>{msg.text}</div>
+                  </div>
+                ) : (
+                  <div style={{display:'flex',gap:10,alignItems:'flex-end'}}>
+                    <DJAvatar size={30}/>
+                    <DJBubble>{msg.text}</DJBubble>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* Typing indicator */}
+            {isTyping && (
+              <div style={{display:'flex',gap:10,alignItems:'flex-end'}}>
+                {visibleMsgs.length===0 && <DJAvatar size={30}/>}
+                {visibleMsgs.length>0 && <div style={{width:30,flexShrink:0}}/>}
+                <TypingDots/>
+              </div>
+            )}
+
+          </div>
+
+          {/* Bottom spacer */}
+          <div style={{flexShrink:0,height:20}}/>
+        </div>
+
+        {/* Profile sidebar */}
+        {showProfile && <ProfileSidebar/>}
+      </div>
+
+      {/* ═══ INPUT BAR ═══ */}
+      <div style={{
+        flexShrink:0,padding:'12px 20px 16px',
+        borderTop:`1px solid ${t.border}`,
+        background:t.bg+'e8',
+        backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',
+        position:'relative',zIndex:10,
+      }}>
+        <div style={{maxWidth:560,margin:'0 auto'}}>
+          <div className="input-glow" style={{
+            display:'flex',alignItems:'center',gap:8,
+            padding:'5px 5px 5px 18px',
+            background:t.inputBg,borderRadius:16,
+            border:`1px solid ${t.border}`,
+            boxShadow:`0 -2px 12px ${t.shadow}`,
+          }}>
+            <input ref={inputRef}
+              value={input}
+              onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey)handleSend()}}
+              placeholder={introComplete ? "Ask anything…" : "DJ is typing…"}
+              disabled={!introComplete}
+              style={{
+                flex:1,padding:'12px 0',fontSize:14,
+                background:'transparent',border:'none',color:t.text,
+                fontFamily:'Inter',fontWeight:300,letterSpacing:'-0.005em',
+                opacity:introComplete?1:.5,
+              }}
+            />
+            <button onClick={()=>handleSend()} disabled={!input.trim()} style={{
+              padding:'10px 18px',borderRadius:12,
+              fontSize:13,fontWeight:500,
+              background:input.trim()?t.userBubble:t.surfaceAlt,
+              color:input.trim()?'#fff':t.textMut,
+              transition:'all .2s cubic-bezier(.22,1,.36,1)',
+              border:input.trim()?'none':`1px solid ${t.borderSoft}`,
+              boxShadow:input.trim()?`0 4px 16px ${t.accent}20`:'none',
+            }}
+            onMouseEnter={e=>{if(input.trim())e.currentTarget.style.transform='scale(1.03)'}}
+            onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}
+            >Ask</button>
+          </div>
+          <div style={{textAlign:'center',marginTop:8}}>
+            <span style={{fontSize:10.5,color:t.textMut,fontWeight:300,letterSpacing:'.01em'}}>
+              Answers powered by AI · sourced from resume & interview data
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ThemeCtx.Provider>;
+}
+
+ReactDOM.render(<App/>,document.getElementById('root'));
+</script>
+</body>
+</html>
