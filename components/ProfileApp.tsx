@@ -9,6 +9,8 @@ import V14WelcomeModal from "./V14WelcomeModal";
 import type { Lang } from "@/lib/profile-data";
 import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, V14_PERSONA_OPTIONS } from "@/lib/profile-data";
 import type { ChatUIMessage } from "@/lib/types";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 function shuffleIndices(length: number, pick: number): number[] {
   const indices = Array.from({ length }, (_, i) => i);
@@ -130,17 +132,19 @@ export default function ProfileApp() {
         {/* Persona pills — desktop */}
         <div className="hidden sm:flex items-center gap-1">
           {V14_PERSONA_OPTIONS.map((opt) => (
-            <button
+            <Button
               key={opt.value}
+              variant="outline"
+              size="sm"
               onClick={() => setPersona(opt.value)}
-              className={`px-2.5 py-1 text-[11px] rounded-full border transition-colors cursor-pointer ${
+              className={`rounded-full text-[11px] px-2.5 py-1 h-auto ${
                 persona === opt.value
-                  ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium"
+                  ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
                   : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] border-[var(--color-border-secondary)] hover:border-[var(--color-hover-border)]"
               }`}
             >
               {en ? opt.en : opt.kr}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -161,10 +165,12 @@ export default function ProfileApp() {
           </a>
           <span className="text-[11px] text-[var(--color-separator-light)] hidden sm:inline">|</span>
           {/* Dark mode toggle */}
-          <button
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={toggleDarkMode}
             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            className="p-1 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors cursor-pointer"
+            className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
           >
             {darkMode ? (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -183,7 +189,7 @@ export default function ProfileApp() {
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>
             )}
-          </button>
+          </Button>
           {/* Lang toggle */}
           <div className="inline-flex border border-[var(--color-border-secondary)] rounded-[5px] overflow-hidden">
             <button
@@ -213,43 +219,46 @@ export default function ProfileApp() {
       {/* Mobile persona selector */}
       <div className="sm:hidden flex items-center gap-1 px-4 py-2 border-b border-[var(--color-border-primary)] overflow-x-auto">
         {V14_PERSONA_OPTIONS.map((opt) => (
-          <button
+          <Button
             key={opt.value}
+            variant="outline"
+            size="sm"
             onClick={() => setPersona(opt.value)}
-            className={`px-2.5 py-1 text-[11px] rounded-full border transition-colors cursor-pointer whitespace-nowrap ${
+            className={`rounded-full text-[11px] px-2.5 py-1 h-auto whitespace-nowrap ${
               persona === opt.value
-                ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium"
+                ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
                 : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] border-[var(--color-border-secondary)]"
             }`}
           >
             {en ? opt.en : opt.kr}
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Mobile tab bar */}
-      <div className="lg:hidden flex border-b border-[var(--color-border-primary)] shrink-0">
-        <button
-          onClick={() => setMobileTab("profile")}
-          className={`flex-1 py-2.5 text-[12px] font-medium text-center transition-colors cursor-pointer ${
-            mobileTab === "profile"
-              ? "text-[var(--color-text-primary)] border-b-2 border-[var(--color-text-primary)]"
-              : "text-[var(--color-text-tertiary)]"
-          }`}
+      <Tabs
+        value={mobileTab}
+        onValueChange={(v) => setMobileTab(v as "profile" | "chat")}
+        className="lg:hidden shrink-0 gap-0"
+      >
+        <TabsList
+          variant="line"
+          className="w-full rounded-none border-b border-[var(--color-border-primary)] bg-transparent p-0 h-auto"
         >
-          {en ? "Profile" : "프로필"}
-        </button>
-        <button
-          onClick={() => setMobileTab("chat")}
-          className={`flex-1 py-2.5 text-[12px] font-medium text-center transition-colors cursor-pointer ${
-            mobileTab === "chat"
-              ? "text-[var(--color-text-primary)] border-b-2 border-[var(--color-text-primary)]"
-              : "text-[var(--color-text-tertiary)]"
-          }`}
-        >
-          {en ? "Chat" : "채팅"}
-        </button>
-      </div>
+          <TabsTrigger
+            value="profile"
+            className="flex-1 py-2.5 text-[12px] font-medium rounded-none border-none data-[state=active]:text-[var(--color-text-primary)] data-[state=active]:shadow-none data-[state=active]:after:bg-[var(--color-text-primary)] text-[var(--color-text-tertiary)]"
+          >
+            {en ? "Profile" : "프로필"}
+          </TabsTrigger>
+          <TabsTrigger
+            value="chat"
+            className="flex-1 py-2.5 text-[12px] font-medium rounded-none border-none data-[state=active]:text-[var(--color-text-primary)] data-[state=active]:shadow-none data-[state=active]:after:bg-[var(--color-text-primary)] text-[var(--color-text-tertiary)]"
+          >
+            {en ? "Chat" : "채팅"}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Two-column layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">

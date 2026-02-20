@@ -192,8 +192,8 @@ export const TIMELINE: TimelineEntry[] = [
 export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
   { value: "hiring_manager", en: "Hiring Manager", kr: "채용 담당자" },
   { value: "vc_investor", en: "Investor", kr: "투자자" },
-  { value: "bd_partnerships", en: "BD / Partnerships", kr: "BD / 파트너십" },
-  { value: "corporate_strategy", en: "Strategy", kr: "전략" },
+  { value: "bd_partnerships", en: "Partner", kr: "파트너" },
+  { value: "curious_visitor", en: "Curious Visitor", kr: "방문자" },
 ];
 
 export const STARTER_QUESTIONS: Record<Lang, string[]> = {

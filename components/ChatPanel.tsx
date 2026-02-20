@@ -5,6 +5,10 @@ import Markdown from "react-markdown";
 import FeedbackButtons from "./FeedbackButtons";
 import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, type Lang } from "@/lib/profile-data";
 import type { ChatUIMessage } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ChatPanelProps {
   lang: Lang;
@@ -248,20 +252,24 @@ export default function ChatPanel({
             — {en ? "AI-powered" : "AI 기반"}
           </span>
           <div className="ml-auto flex items-center gap-2">
-            <button
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={exportConversation}
               disabled={messages.length === 0}
-              className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
             >
               {en ? "Export" : "내보내기"}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={onReset}
               disabled={messages.length === 0}
-              className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
             >
               {en ? "Reset" : "초기화"}
-            </button>
+            </Button>
           </div>
         </div>
         <p className="text-xs text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
@@ -278,9 +286,11 @@ export default function ChatPanel({
           <div className="animate-[fadeIn_0.4s_ease-out]">
             {/* Welcome message */}
             <div className="flex items-start gap-2 mb-5">
-              <div className="w-6 h-6 rounded-full bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold flex items-center justify-center shrink-0 mt-0.5">
-                DJ
-              </div>
+              <Avatar size="sm" className="mt-0.5">
+                <AvatarFallback className="bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold">
+                  DJ
+                </AvatarFallback>
+              </Avatar>
               <div className="px-3.5 py-2.5 rounded-[14px_14px_14px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)] text-[13px] text-[var(--color-text-primary)] leading-relaxed">
                 {en
                   ? "Hi! I'm DJ's AI assistant. Ask me anything about his experience, skills, or career — I'll give you grounded, specific answers."
@@ -321,28 +331,32 @@ export default function ChatPanel({
                   <div className="max-w-[80%] px-3.5 py-2.5 rounded-[14px_14px_4px_14px] bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[13px] leading-relaxed">
                     {text}
                   </div>
-                  <div className="w-6 h-6 rounded-full bg-[var(--color-avatar-user-bg)] text-[var(--color-avatar-user-text)] flex items-center justify-center shrink-0 mt-0.5">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                  </div>
+                  <Avatar size="sm" className="mt-0.5">
+                    <AvatarFallback className="bg-[var(--color-avatar-user-bg)] text-[var(--color-avatar-user-text)]">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
               ) : (
                 <>
                   <div className="flex justify-start items-start gap-2">
-                    <div className="w-6 h-6 rounded-full bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold flex items-center justify-center shrink-0 mt-0.5">
-                      DJ
-                    </div>
+                    <Avatar size="sm" className="mt-0.5">
+                      <AvatarFallback className="bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold">
+                        DJ
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="max-w-[85%] px-4 py-3 rounded-[14px_14px_14px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)]">
                       <div className="prose prose-sm max-w-none text-[13px] text-[var(--color-text-primary)] leading-[1.7] prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-strong:text-[var(--color-text-primary)]">
                         <Markdown>{text}</Markdown>
@@ -362,12 +376,13 @@ export default function ChatPanel({
                     {m.metadata?.sourceTags && m.metadata.sourceTags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {m.metadata.sourceTags.map((tag, ti) => (
-                          <span
+                          <Badge
                             key={ti}
-                            className="text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--color-surface-secondary)] text-[var(--color-text-muted)] border border-[var(--color-border-primary)]"
+                            variant="secondary"
+                            className="text-[9px] px-1.5 py-0.5 bg-[var(--color-surface-secondary)] text-[var(--color-text-muted)] border border-[var(--color-border-primary)]"
                           >
                             {tag}
-                          </span>
+                          </Badge>
                         ))}
                       </div>
                     )}
@@ -398,9 +413,11 @@ export default function ChatPanel({
           messages.length > 0 &&
           messages[messages.length - 1]?.role === "user" && (
             <div className="flex items-start gap-2 p-1">
-              <div className="w-6 h-6 rounded-full bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold flex items-center justify-center shrink-0">
-                DJ
-              </div>
+              <Avatar size="sm">
+                <AvatarFallback className="bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold">
+                  DJ
+                </AvatarFallback>
+              </Avatar>
               <div className="flex items-center gap-2 py-2">
                 <div className="flex gap-1">
                   <span className="w-[5px] h-[5px] rounded-full bg-green-500 animate-pulse" />
@@ -425,12 +442,13 @@ export default function ChatPanel({
           <div className="flex justify-start">
             <div className="bg-[var(--color-error-bg)] border border-[var(--color-error-border)] rounded-2xl px-4 py-3">
               <p className="text-sm text-red-600 dark:text-red-400">{getErrorMessage()}</p>
-              <button
+              <Button
+                variant="link"
                 onClick={onReset}
-                className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 underline mt-1 cursor-pointer"
+                className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-0 h-auto mt-1"
               >
                 {en ? "Reset conversation" : "대화 초기화"}
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -443,7 +461,7 @@ export default function ChatPanel({
         onSubmit={handleSubmit}
         className="px-6 py-3 pb-5 border-t border-[var(--color-border-primary)] flex gap-2 items-end shrink-0"
       >
-        <textarea
+        <Textarea
           ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -451,25 +469,26 @@ export default function ChatPanel({
           disabled={isLoading}
           rows={1}
           placeholder={en ? "Ask me anything..." : "무엇이든 물어보세요..."}
-          className="flex-1 text-[13px] px-3.5 py-2.5 border border-[var(--color-border-secondary)] rounded-lg text-[var(--color-text-primary)] bg-[var(--color-page-bg)] outline-none transition-colors duration-150 focus:border-green-500 disabled:opacity-50 resize-none"
-          style={{ maxHeight: 120, overflowY: "hidden" }}
+          className="flex-1 text-[13px] px-3.5 py-2.5 min-h-0 border-[var(--color-border-secondary)] rounded-lg text-[var(--color-text-primary)] bg-[var(--color-page-bg)] focus-visible:border-green-500 focus-visible:ring-green-500/20 resize-none shadow-none"
+          style={{ maxHeight: 120, overflowY: "hidden", fieldSizing: "fixed" }}
         />
         {isLoading ? (
-          <button
+          <Button
             type="button"
+            variant="destructive"
             onClick={onStop}
-            className="text-xs font-medium text-white px-4 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 transition-colors cursor-pointer shrink-0"
+            className="text-xs font-medium px-4 py-2.5 h-auto rounded-lg shrink-0"
           >
             Stop
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
             type="submit"
             disabled={!input.trim()}
-            className="text-xs font-medium text-[var(--color-text-inverted)] px-4 py-2.5 rounded-lg transition-colors cursor-pointer bg-[var(--color-surface-inverted)] hover:bg-[var(--color-button-send-hover)] disabled:bg-[var(--color-button-send-disabled)] disabled:cursor-default shrink-0"
+            className="text-xs font-medium px-4 py-2.5 h-auto rounded-lg shrink-0 bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] hover:bg-[var(--color-button-send-hover)] disabled:bg-[var(--color-button-send-disabled)] disabled:opacity-100"
           >
             {en ? "Send" : "전송"}
-          </button>
+          </Button>
         )}
       </form>
     </div>

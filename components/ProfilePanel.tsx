@@ -9,6 +9,8 @@ import {
   type Lang,
 } from "@/lib/profile-data";
 import HighlightCard from "./HighlightCard";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface ProfilePanelProps {
   lang: Lang;
@@ -60,28 +62,32 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 gap-px bg-[var(--color-border-primary)] rounded-[10px] overflow-hidden mb-8">
-          {STATS.map((s, i) => (
-            <button
-              key={i}
-              onClick={() => onAskChat(s.chatQ[lang])}
-              className="bg-[var(--color-page-bg)] px-4 py-3.5 text-left hover:bg-[var(--color-hover-green-bg)] transition-colors duration-150 cursor-pointer group"
-            >
-              <div className="text-[10px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1">
-                {localize(s.label, lang)}
-              </div>
-              <div className="text-[17px] font-semibold text-[var(--color-text-primary)] tracking-[-0.02em]">
-                {localize(s.value, lang)}
-              </div>
-              <div className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5 leading-snug">
-                {localize(s.detail, lang)}
-              </div>
-              <div className="text-[10px] text-green-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {en ? "Ask about this →" : "이것에 대해 질문 →"}
-              </div>
-            </button>
-          ))}
-        </div>
+        <Card className="p-0 gap-0 rounded-[10px] overflow-hidden mb-8 shadow-none">
+          <CardContent className="p-0">
+            <div className="grid grid-cols-2 gap-px bg-[var(--color-border-primary)]">
+              {STATS.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => onAskChat(s.chatQ[lang])}
+                  className="bg-[var(--color-page-bg)] px-4 py-3.5 text-left hover:bg-[var(--color-hover-green-bg)] transition-colors duration-150 cursor-pointer group"
+                >
+                  <div className="text-[10px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1">
+                    {localize(s.label, lang)}
+                  </div>
+                  <div className="text-[17px] font-semibold text-[var(--color-text-primary)] tracking-[-0.02em]">
+                    {localize(s.value, lang)}
+                  </div>
+                  <div className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5 leading-snug">
+                    {localize(s.detail, lang)}
+                  </div>
+                  <div className="text-[10px] text-green-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {en ? "Ask about this →" : "이것에 대해 질문 →"}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Highlights — narrative depth */}
         <div className="mb-8">
@@ -194,9 +200,11 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
 
       {/* Back to top */}
       {showBackToTop && (
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           onClick={scrollToTop}
-          className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] shadow-sm flex items-center justify-center text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-hover-border)] transition-colors cursor-pointer"
+          className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-[var(--color-page-bg)] border-[var(--color-border-secondary)] shadow-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-hover-border)]"
           title={en ? "Back to top" : "맨 위로"}
         >
           <svg
@@ -211,7 +219,7 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
           >
             <path d="M18 15l-6-6-6 6" />
           </svg>
-        </button>
+        </Button>
       )}
     </div>
   );
