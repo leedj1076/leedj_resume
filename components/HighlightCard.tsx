@@ -25,11 +25,11 @@ export default function HighlightCard({ title, text }: HighlightCardProps) {
         }`}
       >
         <CollapsibleTrigger className="w-full flex items-center justify-between px-3.5 py-2.5 text-left cursor-pointer">
-          <span className="text-[13px] font-medium text-[var(--color-text-primary)]">
+          <span className="text-[14px] font-medium text-[var(--color-text-primary)]">
             {title}
           </span>
           <span
-            className={`text-[11px] text-[var(--color-text-tertiary)] transition-transform duration-200 ${
+            className={`text-[12px] text-[var(--color-text-tertiary)] transition-transform duration-200 ${
               open ? "rotate-180" : ""
             }`}
           >
@@ -37,7 +37,7 @@ export default function HighlightCard({ title, text }: HighlightCardProps) {
           </span>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="px-3.5 pb-3.5 text-[12.5px] text-[var(--color-text-secondary)] leading-[1.7] animate-[fadeIn_0.25s_ease-out]">
+          <div className="px-3.5 pb-3.5 text-[14px] text-[var(--color-text-secondary)] leading-[1.7] animate-[fadeIn_0.25s_ease-out]">
             {text}
           </div>
         </CollapsibleContent>

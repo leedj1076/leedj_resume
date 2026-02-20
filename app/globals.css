@@ -77,6 +77,9 @@
   --color-avatar-user-bg: #e5e5e5;
   --color-avatar-user-text: #737373;
 
+  /* Key accent (toned-down Claude terracotta) */
+  --color-key: #C4725C;
+
   /* Separator */
   --color-separator: #d6d6d6;
   --color-separator-light: #e5e5e5;
@@ -146,6 +149,8 @@
 
   --color-avatar-user-bg: #2a2a2a;
   --color-avatar-user-text: #9a9a9a;
+
+  --color-key: #D4836E;
 
   --color-separator: #3a3a3a;
   --color-separator-light: #2a2a2a;

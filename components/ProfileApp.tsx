@@ -139,7 +139,7 @@ export default function ProfileApp() {
               onClick={() => setPersona(opt.value)}
               className={`rounded-full text-[11px] px-2.5 py-1 h-auto ${
                 persona === opt.value
-                  ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
+                  ? "bg-[var(--color-key)] text-white border-[var(--color-key)] font-medium hover:bg-[var(--color-key)] hover:text-white"
                   : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] border-[var(--color-border-secondary)] hover:border-[var(--color-hover-border)]"
               }`}
             >
@@ -226,7 +226,7 @@ export default function ProfileApp() {
             onClick={() => setPersona(opt.value)}
             className={`rounded-full text-[11px] px-2.5 py-1 h-auto whitespace-nowrap ${
               persona === opt.value
-                ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
+                ? "bg-[var(--color-key)] text-white border-[var(--color-key)] font-medium hover:bg-[var(--color-key)] hover:text-white"
                 : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] border-[var(--color-border-secondary)]"
             }`}
           >
@@ -266,7 +266,7 @@ export default function ProfileApp() {
         <div
           className={`${
             mobileTab === "profile" ? "flex" : "hidden"
-          } lg:flex h-full lg:h-auto lg:w-[42%] lg:min-w-[360px] lg:max-w-[480px] lg:border-r border-[var(--color-border-primary)] shrink-0 flex-col`}
+          } lg:flex h-full lg:h-auto lg:w-[46%] lg:min-w-[390px] lg:max-w-[520px] lg:border-r border-[var(--color-border-primary)] shrink-0 flex-col`}
         >
           <ProfilePanel lang={lang} onAskChat={askChat} />
         </div>

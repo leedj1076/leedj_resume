@@ -245,10 +245,10 @@ export default function ChatPanel({
       <div className="px-6 pt-5 pb-4 border-b border-[var(--color-border-primary)] shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-[7px] h-[7px] rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[13px] font-medium text-[var(--color-text-primary)]">
+          <span className="text-[14px] font-medium text-[var(--color-text-primary)]">
             Ask DJ
           </span>
-          <span className="text-[11px] text-[var(--color-text-tertiary)] ml-1">
+          <span className="text-[13px] text-[var(--color-text-tertiary)] ml-1">
             — {en ? "AI-powered" : "AI 기반"}
           </span>
           <div className="ml-auto flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function ChatPanel({
               size="xs"
               onClick={exportConversation}
               disabled={messages.length === 0}
-              className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+              className="text-[12px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
             >
               {en ? "Export" : "내보내기"}
             </Button>
@@ -266,13 +266,13 @@ export default function ChatPanel({
               size="xs"
               onClick={onReset}
               disabled={messages.length === 0}
-              className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+              className="text-[12px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
             >
               {en ? "Reset" : "초기화"}
             </Button>
           </div>
         </div>
-        <p className="text-xs text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
+        <p className="text-[13px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
           {en
             ? "Ask anything about my experience, skills, or career. Answers are grounded in verified professional data."
             : "경력, 기술, 커리어에 대해 무엇이든 물어보세요. 검증된 전문 데이터에 기반한 답변입니다."}
@@ -291,14 +291,14 @@ export default function ChatPanel({
                   DJ
                 </AvatarFallback>
               </Avatar>
-              <div className="px-3.5 py-2.5 rounded-[14px_14px_14px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)] text-[13px] text-[var(--color-text-primary)] leading-relaxed">
+              <div className="px-3.5 py-2.5 rounded-[12px_12px_12px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)] text-[14px] text-[var(--color-text-primary)] leading-relaxed">
                 {en
                   ? "Hi! I'm DJ's AI assistant. Ask me anything about his experience, skills, or career — I'll give you grounded, specific answers."
                   : "안녕하세요! DJ의 AI 어시스턴트입니다. 경력, 기술, 커리어에 대해 무엇이든 물어보세요 — 근거 있는 구체적인 답변을 드리겠습니다."}
               </div>
             </div>
 
-            <p className="text-[13px] text-[var(--color-text-tertiary)] mb-4">
+            <p className="text-[14px] text-[var(--color-text-tertiary)] mb-4">
               {en ? "Try one of these:" : "다음 중 하나를 시도해보세요:"}
             </p>
             <div className="flex flex-col gap-2">
@@ -309,7 +309,7 @@ export default function ChatPanel({
                   style={{
                     animation: `fadeInUp 0.4s ease-out ${i * 0.08}s both`,
                   }}
-                  className="text-left px-3.5 py-2.5 text-[13px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] transition-colors"
+                  className="text-left px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] transition-colors"
                 >
                   {q}
                 </button>
@@ -328,7 +328,7 @@ export default function ChatPanel({
             >
               {m.role === "user" ? (
                 <div className="flex justify-end items-start gap-2">
-                  <div className="max-w-[80%] px-3.5 py-2.5 rounded-[14px_14px_4px_14px] bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[13px] leading-relaxed">
+                  <div className="max-w-[80%] px-3.5 py-2.5 rounded-[12px_12px_4px_12px] bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[14px] leading-relaxed">
                     {text}
                   </div>
                   <Avatar size="sm" className="mt-0.5">
@@ -357,8 +357,8 @@ export default function ChatPanel({
                         DJ
                       </AvatarFallback>
                     </Avatar>
-                    <div className="max-w-[85%] px-4 py-3 rounded-[14px_14px_14px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)]">
-                      <div className="prose prose-sm max-w-none text-[13px] text-[var(--color-text-primary)] leading-[1.7] prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-strong:text-[var(--color-text-primary)]">
+                    <div className="max-w-[85%] px-4 py-3 rounded-[12px_12px_12px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)]">
+                      <div className="prose prose-sm max-w-none text-[14px] text-[var(--color-text-primary)] leading-[1.7] prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-strong:text-[var(--color-text-primary)]">
                         <Markdown>{text}</Markdown>
                       </div>
                       {status === "streaming" &&
@@ -379,7 +379,7 @@ export default function ChatPanel({
                           <Badge
                             key={ti}
                             variant="secondary"
-                            className="text-[9px] px-1.5 py-0.5 bg-[var(--color-surface-secondary)] text-[var(--color-text-muted)] border border-[var(--color-border-primary)]"
+                            className="text-[11px] px-1.5 py-0.5 bg-[var(--color-surface-secondary)] text-[var(--color-text-muted)] border border-[var(--color-border-primary)]"
                           >
                             {tag}
                           </Badge>
@@ -400,7 +400,7 @@ export default function ChatPanel({
               <button
                 key={i}
                 onClick={() => onSend(q)}
-                className="px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
+                className="px-3 py-1.5 text-[13px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 {q}
               </button>
@@ -420,17 +420,17 @@ export default function ChatPanel({
               </Avatar>
               <div className="flex items-center gap-2 py-2">
                 <div className="flex gap-1">
-                  <span className="w-[5px] h-[5px] rounded-full bg-green-500 animate-pulse" />
+                  <span className="w-[5px] h-[5px] rounded-full bg-[var(--color-key)] animate-pulse" />
                   <span
-                    className="w-[5px] h-[5px] rounded-full bg-green-500 animate-pulse"
+                    className="w-[5px] h-[5px] rounded-full bg-[var(--color-key)] animate-pulse"
                     style={{ animationDelay: "0.15s" }}
                   />
                   <span
-                    className="w-[5px] h-[5px] rounded-full bg-green-500 animate-pulse"
+                    className="w-[5px] h-[5px] rounded-full bg-[var(--color-key)] animate-pulse"
                     style={{ animationDelay: "0.3s" }}
                   />
                 </div>
-                <span className="text-[11px] text-[var(--color-text-tertiary)]">
+                <span className="text-[12px] text-[var(--color-text-tertiary)]">
                   {en ? "DJ is thinking..." : "DJ가 생각 중..."}
                 </span>
               </div>
@@ -469,7 +469,7 @@ export default function ChatPanel({
           disabled={isLoading}
           rows={1}
           placeholder={en ? "Ask me anything..." : "무엇이든 물어보세요..."}
-          className="flex-1 text-[13px] px-3.5 py-2.5 min-h-0 border-[var(--color-border-secondary)] rounded-lg text-[var(--color-text-primary)] bg-[var(--color-page-bg)] focus-visible:border-green-500 focus-visible:ring-green-500/20 resize-none shadow-none"
+          className="flex-1 text-[14px] px-3.5 py-2.5 min-h-0 border-[var(--color-border-secondary)] rounded-lg text-[var(--color-text-primary)] bg-[var(--color-page-bg)] focus-visible:border-[var(--color-key)] focus-visible:ring-[var(--color-key)]/20 resize-none shadow-none"
           style={{ maxHeight: 120, overflowY: "hidden", fieldSizing: "fixed" }}
         />
         {isLoading ? (
