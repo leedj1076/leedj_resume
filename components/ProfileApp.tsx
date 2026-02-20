@@ -5,8 +5,10 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import ProfilePanel from "./ProfilePanel";
 import ChatPanel from "./ChatPanel";
+import V14WelcomeModal from "./V14WelcomeModal";
 import type { Lang } from "@/lib/profile-data";
-import { STARTER_QUESTIONS, V14_PERSONA_OPTIONS } from "@/lib/profile-data";
+import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, V14_PERSONA_OPTIONS } from "@/lib/profile-data";
+import type { ChatUIMessage } from "@/lib/types";
 
 function shuffleIndices(length: number, pick: number): number[] {
   const indices = Array.from({ length }, (_, i) => i);
@@ -23,10 +25,21 @@ export default function ProfileApp() {
   const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
   const [sessionId] = useState(() => crypto.randomUUID());
   const [darkMode, setDarkMode] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
-  // Sync dark mode state with DOM on mount
+  // Sync dark mode state with DOM on mount; check if welcome modal should show
   useEffect(() => {
     setDarkMode(document.documentElement.classList.contains("dark"));
+    if (!sessionStorage.getItem("v14-welcomed")) {
+      setShowWelcome(true);
+    }
+  }, []);
+
+  const handleWelcomeStart = useCallback((selectedLang: Lang, selectedPersona: string) => {
+    setLang(selectedLang);
+    setPersona(selectedPersona);
+    setShowWelcome(false);
+    sessionStorage.setItem("v14-welcomed", "1");
   }, []);
 
   const toggleDarkMode = useCallback(() => {
@@ -36,11 +49,12 @@ export default function ProfileApp() {
     localStorage.setItem("theme", next ? "dark" : "light");
   }, [darkMode]);
 
-  // Deterministic default to avoid hydration mismatch; randomize after mount
+  // Deterministic default to avoid hydration mismatch; randomize after mount and on persona change
   const [starterIndices, setStarterIndices] = useState<number[]>([0, 1, 2]);
   useEffect(() => {
-    setStarterIndices(shuffleIndices(STARTER_QUESTIONS.en.length, 3));
-  }, []);
+    const questions = PERSONA_STARTER_QUESTIONS[persona]?.en ?? STARTER_QUESTIONS.en;
+    setStarterIndices(shuffleIndices(questions.length, 3));
+  }, [persona]);
 
   const langRef = useRef<Lang>(lang);
   useEffect(() => {
@@ -63,7 +77,7 @@ export default function ProfileApp() {
     })
   );
 
-  const { messages, sendMessage, stop, setMessages, status, error } = useChat({
+  const { messages, sendMessage, stop, setMessages, status, error } = useChat<ChatUIMessage>({
     transport: transportRef.current,
     onError: (err) => console.error("Chat error:", err),
   });
@@ -256,6 +270,7 @@ export default function ProfileApp() {
         >
           <ChatPanel
             lang={lang}
+            persona={persona}
             messages={messages}
             status={status as "ready" | "submitted" | "streaming" | "error"}
             error={error}
@@ -267,6 +282,11 @@ export default function ProfileApp() {
           />
         </div>
       </div>
+
+      {/* Welcome modal */}
+      {showWelcome && (
+        <V14WelcomeModal onStart={handleWelcomeStart} />
+      )}
     </div>
   );
 }

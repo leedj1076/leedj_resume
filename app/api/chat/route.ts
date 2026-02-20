@@ -13,7 +13,7 @@ import {
 import { logAnalytics, logExchange } from "@/lib/analytics";
 import { getAnswerMode } from "@/lib/settings";
 import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
-import type { Persona, Focus } from "@/lib/types";
+import type { Persona, Focus, ChatUIMessage } from "@/lib/types";
 
 // Simple in-memory rate limiter (per-IP, resets on deploy)
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
@@ -38,6 +38,60 @@ const BASE_PINNED_IDS = [
 ];
 
 const MAX_HISTORY = 10; // Keep last 5 exchanges (user + assistant)
+
+// Human-readable labels for specific chunk IDs
+const CHUNK_LABELS: Record<string, string> = {
+  "exp-dug-overview": "Devs United Games",
+  "exp-dug-partnerships": "DUG Partnerships",
+  "exp-dug-revenue": "DUG Revenue",
+  "exp-dug-apple-spatial": "Apple Spatial Computing",
+  "exp-dug-ai-ops": "DUG AI Ops",
+  "experience-devs-united-games-scaling": "DUG Scaling",
+  "exp-flint-overview": "Flint Technologies",
+  "exp-flint-product-gtm": "Flint Product & GTM",
+  "exp-flint-fundraising": "Flint Fundraising",
+  "experience-flint-technologies-zero-to-one": "Flint Zero-to-One",
+  "exp-tmax-team-lead": "Tmax Team Lead",
+  "exp-tmax-enterprise-clients": "Enterprise Clients",
+  "exp-tmax-software-engineer": "Tmax Engineering",
+  "exp-kit-research": "KIT Research",
+  "edu-kaist-bachelors": "KAIST B.S.",
+  "edu-kaist-masters": "KAIST M.S.",
+  "edu-kit-dual-degree": "KIT Dual Degree",
+  "story-meta-quest-plus-revenue": "Meta Quest+ Revenue",
+  "story-apple-partnership-negotiation": "Apple Partnership",
+  "story-meta-funding-negotiation": "Meta Negotiation",
+  "story-meta-game-concepts": "Meta Game Concepts",
+  "story-google-android-xr-partnership": "Google Android XR",
+  "story-partnership-negotiation-philosophy": "Partnership Philosophy",
+  "story-dug-cs-automation": "CS Automation",
+  "story-flint-problem-statement": "Flint Problem",
+  "story-flint-product-concept": "Flint Product",
+  "story-flint-validation-traction": "Flint Traction",
+  "story-flint-business-model-growth": "Flint Business Model",
+  "story-flint-gnn-technical": "GNN Technical",
+  "story-flint-founder-equity-split": "Founder Equity",
+  "story-tmax-database-tuning": "Database Tuning",
+  "story-tmax-samsung-dbms-monitoring": "Samsung DBMS",
+  "project-whiskey-rag": "RAG Project",
+  "story-whiskey-rag-personal": "RAG Personal Story",
+  "flint-seed-round-details": "Seed Round",
+  "flint-fundraising-challenges": "Fundraising Challenges",
+  "narrative-partnership-expertise": "Partnership Expertise",
+  "narrative-embracing-challenges-and-learning": "Challenges & Learning",
+  "summary-bridging-tech-and-business": "Tech × Business",
+  "skills-expertise": "Skills & Expertise",
+  "languages-international": "Languages",
+  "extracurricular-atrium": "Leadership",
+  "honors-awards": "Awards",
+  "contact-info": "Contact",
+};
+
+// Chunks that are always pinned — exclude from source tags to avoid noise
+const ALWAYS_PINNED = new Set([
+  ...BASE_PINNED_IDS,
+  "contact-info",
+]);
 
 interface ChunkRecord {
   id: string;
@@ -444,7 +498,26 @@ ${context}`,
       },
     });
 
-    return result.toUIMessageStreamResponse();
+    // Build deduplicated, human-readable source tags from ranked chunks
+    // Exclude always-pinned chunks (they appear in every response = noise)
+    // Derive labels from chunk IDs for specificity, cap at 3
+    const sourceTags = [
+      ...new Set(
+        rankedChunks
+          .filter((c) => !ALWAYS_PINNED.has(c.id))
+          .map((c) => CHUNK_LABELS[c.id])
+          .filter(Boolean)
+      ),
+    ].slice(0, 3);
+
+    return result.toUIMessageStreamResponse<ChatUIMessage>({
+      messageMetadata: ({ part }) => {
+        if (part.type === "finish") {
+          return { sourceTags };
+        }
+        return undefined;
+      },
+    });
   } catch (error) {
     console.error("[RAG] Error:", error);
     return new Response(

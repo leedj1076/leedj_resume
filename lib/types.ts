@@ -1,3 +1,5 @@
+import type { UIMessage } from "ai";
+
 export type Persona =
   | "vc_investor"
   | "corporate_strategy"
@@ -14,3 +16,9 @@ export interface VisitorData {
   persona: Persona;
   focus: Focus;
 }
+
+export type MessageMetadata = {
+  sourceTags?: string[];
+};
+
+export type ChatUIMessage = UIMessage<MessageMetadata>;

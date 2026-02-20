@@ -214,3 +214,24 @@ export const STARTER_QUESTIONS: Record<Lang, string[]> = {
     "Flint Technologies에서의 역할은 무엇이었나요?",
   ],
 };
+
+export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, string[]>>> = {
+  vc_investor: {
+    en: [
+      "Why is DJ transitioning from operator to VC?",
+      "How would DJ support portfolio companies?",
+      "How does DJ evaluate early-stage startups?",
+      "What did founding a startup teach DJ about investing?",
+      "How did DJ build the Apple and Meta partnerships?",
+      "What was DJ's fundraising experience at Flint?",
+    ],
+    kr: [
+      "DJ는 왜 오퍼레이터에서 VC로 전환하려는 건가요?",
+      "DJ는 포트폴리오 기업을 어떻게 지원할 수 있나요?",
+      "DJ는 초기 스타트업을 어떻게 평가하나요?",
+      "창업 경험이 투자에 대해 무엇을 가르쳐줬나요?",
+      "Apple과 Meta 파트너십을 어떻게 구축했나요?",
+      "Flint에서의 투자유치 경험에 대해 알려주세요.",
+    ],
+  },
+};
