@@ -14,19 +14,19 @@ export default function HighlightCard({ title, text }: HighlightCardProps) {
     <div
       className={`border rounded-lg overflow-hidden transition-colors duration-200 ${
         open
-          ? "border-[#e5e5e5] bg-[#fafafa]"
-          : "border-[#f0f0f0] hover:border-[#e5e5e5]"
+          ? "border-[var(--color-border-secondary)] bg-[var(--color-surface-secondary)]"
+          : "border-[var(--color-border-primary)] hover:border-[var(--color-border-secondary)]"
       }`}
     >
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-3.5 py-2.5 text-left cursor-pointer"
       >
-        <span className="text-[13px] font-medium text-[#1a1a1a]">
+        <span className="text-[13px] font-medium text-[var(--color-text-primary)]">
           {title}
         </span>
         <span
-          className={`text-[11px] text-[#737373] transition-transform duration-200 ${
+          className={`text-[11px] text-[var(--color-text-tertiary)] transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
         >
@@ -34,7 +34,7 @@ export default function HighlightCard({ title, text }: HighlightCardProps) {
         </span>
       </button>
       {open && (
-        <div className="px-3.5 pb-3.5 text-[12.5px] text-[#676767] leading-[1.7] animate-[fadeIn_0.25s_ease-out]">
+        <div className="px-3.5 pb-3.5 text-[12.5px] text-[var(--color-text-secondary)] leading-[1.7] animate-[fadeIn_0.25s_ease-out]">
           {text}
         </div>
       )}

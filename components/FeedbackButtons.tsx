@@ -24,10 +24,10 @@ export default function FeedbackButtons({ messageId, onFeedback }: FeedbackButto
         aria-label="Thumbs up"
         className={`p-1 rounded transition-colors ${
           selected === "up"
-            ? "text-green-600"
+            ? "text-green-600 dark:text-green-400"
             : selected === null
-            ? "text-gray-400 hover:text-gray-600"
-            : "text-gray-300"
+            ? "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+            : "text-gray-300 dark:text-gray-600"
         }`}
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -41,10 +41,10 @@ export default function FeedbackButtons({ messageId, onFeedback }: FeedbackButto
         aria-label="Thumbs down"
         className={`p-1 rounded transition-colors ${
           selected === "down"
-            ? "text-red-600"
+            ? "text-red-600 dark:text-red-400"
             : selected === null
-            ? "text-gray-400 hover:text-gray-600"
-            : "text-gray-300"
+            ? "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+            : "text-gray-300 dark:text-gray-600"
         }`}
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

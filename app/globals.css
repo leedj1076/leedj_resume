@@ -1,5 +1,77 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Light tokens (default) ── */
+:root {
+  --color-page-bg: #ffffff;
+  --color-surface-secondary: #fafafa;
+  --color-surface-tertiary: #f8f8f8;
+  --color-surface-inverted: #1a1a1a;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #676767;
+  --color-text-tertiary: #737373;
+  --color-text-muted: #8a8a8a;
+  --color-text-inverted: #ffffff;
+  --color-border-primary: #f0f0f0;
+  --color-border-secondary: #e5e5e5;
+  --color-border-tertiary: #d6d6d6;
+  --color-selection: #d1fae5;
+
+  /* Hover / accent surfaces */
+  --color-hover-green-bg: #f0fdf4;
+  --color-hover-green-border: #bbf7d0;
+  --color-hover-border: #c0c0c0;
+
+  /* Error */
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fecaca;
+
+  /* Send button */
+  --color-button-send-hover: #333333;
+  --color-button-send-disabled: #d6d6d6;
+
+  /* Avatar */
+  --color-avatar-user-bg: #e5e5e5;
+  --color-avatar-user-text: #737373;
+
+  /* Separator */
+  --color-separator: #d6d6d6;
+  --color-separator-light: #e5e5e5;
+}
+
+/* ── Dark overrides ── */
+.dark {
+  --color-page-bg: #0a0a0a;
+  --color-surface-secondary: #141414;
+  --color-surface-tertiary: #1e1e1e;
+  --color-surface-inverted: #e5e5e5;
+  --color-text-primary: #e5e5e5;
+  --color-text-secondary: #a3a3a3;
+  --color-text-tertiary: #8a8a8a;
+  --color-text-muted: #737373;
+  --color-text-inverted: #0a0a0a;
+  --color-border-primary: #1f1f1f;
+  --color-border-secondary: #2a2a2a;
+  --color-border-tertiary: #3a3a3a;
+  --color-selection: #064e3b;
+
+  --color-hover-green-bg: #052e16;
+  --color-hover-green-border: #166534;
+  --color-hover-border: #555555;
+
+  --color-error-bg: #1c0a0a;
+  --color-error-border: #7f1d1d;
+
+  --color-button-send-hover: #d4d4d4;
+  --color-button-send-disabled: #333333;
+
+  --color-avatar-user-bg: #2a2a2a;
+  --color-avatar-user-text: #8a8a8a;
+
+  --color-separator: #3a3a3a;
+  --color-separator-light: #2a2a2a;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
@@ -24,5 +96,5 @@
 /* V14 profile scrollbar */
 .profile-scroll::-webkit-scrollbar { width: 4px; }
 .profile-scroll::-webkit-scrollbar-track { background: transparent; }
-.profile-scroll::-webkit-scrollbar-thumb { background: #d6d6d6; border-radius: 2px; }
-.profile-scroll::-webkit-scrollbar-thumb:hover { background: #737373; }
+.profile-scroll::-webkit-scrollbar-thumb { background: var(--color-border-tertiary); border-radius: 2px; }
+.profile-scroll::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
