@@ -21,7 +21,7 @@ export default function HighlightCard({ title, text }: HighlightCardProps) {
         className={`border rounded-lg overflow-hidden transition-colors duration-200 ${
           open
             ? "border-[var(--color-border-secondary)] bg-[var(--color-surface-secondary)]"
-            : "border-[var(--color-border-primary)] hover:border-[var(--color-border-secondary)]"
+            : "border-[var(--color-border-primary)] hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)]"
         }`}
       >
         <CollapsibleTrigger className="w-full flex items-center justify-between px-3.5 py-2.5 text-left cursor-pointer">

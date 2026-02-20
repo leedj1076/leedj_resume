@@ -309,7 +309,7 @@ export default function ChatPanel({
                   style={{
                     animation: `fadeInUp 0.4s ease-out ${i * 0.08}s both`,
                   }}
-                  className="text-left px-3.5 py-2.5 text-[13px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-green-bg)] hover:border-[var(--color-hover-green-border)] transition-colors"
+                  className="text-left px-3.5 py-2.5 text-[13px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] transition-colors"
                 >
                   {q}
                 </button>
@@ -400,7 +400,7 @@ export default function ChatPanel({
               <button
                 key={i}
                 onClick={() => onSend(q)}
-                className="px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-green-bg)] hover:border-[var(--color-hover-green-border)] hover:text-[var(--color-text-primary)] transition-colors"
+                className="px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 {q}
               </button>

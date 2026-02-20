@@ -61,8 +61,8 @@
   --color-selection: #d1fae5;
 
   /* Hover / accent surfaces */
-  --color-hover-green-bg: #f0fdf4;
-  --color-hover-green-border: #bbf7d0;
+  --color-hover-accent-bg: #f5f3ef;
+  --color-hover-accent-border: #e0dbd3;
   --color-hover-border: #c0c0c0;
 
   /* Error */
@@ -134,8 +134,8 @@
   --color-border-tertiary: #3a3a3a;
   --color-selection: #064e3b;
 
-  --color-hover-green-bg: #052e16;
-  --color-hover-green-border: #166534;
+  --color-hover-accent-bg: #1c1b18;
+  --color-hover-accent-border: #33302a;
   --color-hover-border: #555555;
 
   --color-error-bg: #1c0a0a;
