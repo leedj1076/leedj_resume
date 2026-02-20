@@ -149,21 +149,6 @@ export default function ProfileApp() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <a
-            href="/v1"
-            className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors no-underline hidden sm:inline"
-          >
-            Classic
-          </a>
-          <a
-            href="/ui"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors no-underline hidden sm:inline"
-          >
-            UI Lab
-          </a>
-          <span className="text-[11px] text-[var(--color-separator-light)] hidden sm:inline">|</span>
           {/* Dark mode toggle */}
           <Button
             variant="ghost"
@@ -173,6 +158,10 @@ export default function ProfileApp() {
             className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
           >
             {darkMode ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            ) : (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="5" />
                 <line x1="12" y1="1" x2="12" y2="3" />
@@ -184,35 +173,18 @@ export default function ProfileApp() {
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
                 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
               </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
             )}
           </Button>
           {/* Lang toggle */}
-          <div className="inline-flex border border-[var(--color-border-secondary)] rounded-[5px] overflow-hidden">
-            <button
-              onClick={() => setLang("en")}
-              className={`px-2.5 py-0.5 text-[11px] border-none cursor-pointer transition-colors duration-150 ${
-                lang === "en"
-                  ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] font-semibold"
-                  : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] font-normal"
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLang("kr")}
-              className={`px-2.5 py-0.5 text-[11px] border-none cursor-pointer transition-colors duration-150 ${
-                lang === "kr"
-                  ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] font-semibold"
-                  : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] font-normal"
-              }`}
-            >
-              KO
-            </button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => setLang(lang === "en" ? "kr" : "en")}
+            aria-label={lang === "en" ? "Switch to Korean" : "Switch to English"}
+            className="text-[11px] font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
+          >
+            {lang === "en" ? "EN" : "KO"}
+          </Button>
         </div>
       </nav>
 

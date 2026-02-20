@@ -167,23 +167,14 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
           >
             Email
           </a>
-          <a
-            href="/ui"
-            target="_blank"
-            rel="noopener noreferrer"
-            title={en ? "Explore UI prototypes" : "UI 프로토타입 탐색"}
-            className="text-[13px] text-[var(--color-text-tertiary)] border border-[var(--color-border-primary)] rounded-md px-3 py-1.5 hover:border-[var(--color-border-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors no-underline"
-          >
-            {en ? "UI Lab" : "UI 랩"}
-          </a>
         </div>
 
         {/* Footer */}
         <div className="mt-10 pt-5 border-t border-[var(--color-border-primary)]">
           <p className="text-[13px] text-[var(--color-text-muted)] leading-relaxed">
             {en
-              ? "This profile is a live RAG application — built by DJ with Next.js, Pinecone, and Gemini. The AI answers are grounded in verified professional data, not generated from thin air."
-              : "이 프로필은 DJ가 Next.js, Pinecone, Gemini로 직접 구축한 라이브 RAG 애플리케이션입니다. AI 답변은 허공에서 생성된 것이 아닌 검증된 전문 데이터에 기반합니다."}
+              ? "Designed and vibe-coded by DJ with Claude Code, Next.js, Pinecone & Gemini. AI answers grounded in DJ's own Q&A database."
+              : "해당 페이지는 Claude Code, Next.js, Pinecone & Gemini로 직접 설계하고 구현되었습니다. AI 답변은 DJ가 구축한 Q&A 데이터베이스에 기반합니다."}
           </p>
         </div>
       </div>
