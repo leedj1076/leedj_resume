@@ -11,8 +11,18 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* V14 profile scrollbar */
 .profile-scroll::-webkit-scrollbar { width: 4px; }
 .profile-scroll::-webkit-scrollbar-track { background: transparent; }
 .profile-scroll::-webkit-scrollbar-thumb { background: #d6d6d6; border-radius: 2px; }
-.profile-scroll::-webkit-scrollbar-thumb:hover { background: #979797; }
+.profile-scroll::-webkit-scrollbar-thumb:hover { background: #737373; }

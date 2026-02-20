@@ -26,7 +26,7 @@ export default function HighlightCard({ title, text }: HighlightCardProps) {
           {title}
         </span>
         <span
-          className={`text-[11px] text-[#979797] transition-transform duration-200 ${
+          className={`text-[11px] text-[#737373] transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
         >

@@ -203,6 +203,13 @@ export default function Home() {
           <p className="text-sm text-gray-500">{t.subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Profile View link */}
+          <a
+            href="/"
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors no-underline"
+          >
+            Profile View
+          </a>
           {/* Settings reset button */}
           {!showModal && (
             <button

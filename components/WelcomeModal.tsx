@@ -49,8 +49,8 @@ export default function WelcomeModal({ lang, onSubmit }: WelcomeModalProps) {
   const canSubmit = persona !== null && focus !== null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 p-6 animate-[scaleIn_0.3s_ease-out]">
         <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
           {t.title}
         </h2>

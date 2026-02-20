@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { Inter } from "next/font/google";
 import ProfilePanel from "./ProfilePanel";
 import ChatPanel from "./ChatPanel";
 import type { Lang } from "@/lib/profile-data";
-import { STARTER_QUESTIONS } from "@/lib/profile-data";
-
-const inter = Inter({ subsets: ["latin"] });
+import { STARTER_QUESTIONS, V14_PERSONA_OPTIONS } from "@/lib/profile-data";
 
 function shuffleIndices(length: number, pick: number): number[] {
   const indices = Array.from({ length }, (_, i) => i);
@@ -22,23 +19,31 @@ function shuffleIndices(length: number, pick: number): number[] {
 
 export default function ProfileApp() {
   const [lang, setLang] = useState<Lang>("en");
+  const [persona, setPersona] = useState("hiring_manager");
+  const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
   const [sessionId] = useState(() => crypto.randomUUID());
 
-  // Stable random starter indices (survive lang switches)
-  const [starterIndices] = useState(() =>
-    shuffleIndices(STARTER_QUESTIONS.en.length, 3)
-  );
+  // Deterministic default to avoid hydration mismatch; randomize after mount
+  const [starterIndices, setStarterIndices] = useState<number[]>([0, 1, 2]);
+  useEffect(() => {
+    setStarterIndices(shuffleIndices(STARTER_QUESTIONS.en.length, 3));
+  }, []);
 
   const langRef = useRef<Lang>(lang);
   useEffect(() => {
     langRef.current = lang;
   }, [lang]);
 
+  const personaRef = useRef(persona);
+  useEffect(() => {
+    personaRef.current = persona;
+  }, [persona]);
+
   const transportRef = useRef(
     new DefaultChatTransport({
       api: "/api/chat",
       body: () => ({
-        visitorData: { persona: "hiring_manager" as const, focus: "full_stack" as const },
+        visitorData: { persona: personaRef.current, focus: "full_stack" as const },
         sessionId,
         lang: langRef.current === "kr" ? "ko" : "en",
       }),
@@ -53,6 +58,7 @@ export default function ProfileApp() {
   const askChat = useCallback(
     (question: string) => {
       sendMessage({ text: question });
+      setMobileTab("chat");
     },
     [sendMessage]
   );
@@ -69,7 +75,7 @@ export default function ProfileApp() {
         body: JSON.stringify({
           messageId,
           value,
-          persona: "hiring_manager",
+          persona: personaRef.current,
           focus: "full_stack",
           sessionId,
         }),
@@ -81,53 +87,136 @@ export default function ProfileApp() {
   const en = lang === "en";
 
   return (
-    <div
-      className={`${inter.className} h-screen flex flex-col bg-white text-[#1a1a1a] selection:bg-[#d1fae5]`}
-    >
+    <div className="h-screen flex flex-col bg-white text-[#1a1a1a] font-[family-name:var(--font-geist-sans)] selection:bg-[#d1fae5]">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 py-3 border-b border-[#f0f0f0] shrink-0">
-        <div className="flex items-center gap-2.5">
+      <nav className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-[#f0f0f0] shrink-0 gap-2">
+        <div className="flex items-center gap-2.5 shrink-0">
           <span className="text-[13px] font-semibold text-[#1a1a1a] tracking-tight">
             DJ Lee
           </span>
-          <span className="text-[11px] text-[#d6d6d6]">|</span>
-          <span className="text-[11px] text-[#979797]">
+          <span className="text-[11px] text-[#d6d6d6] hidden sm:inline">|</span>
+          <span className="text-[11px] text-[#737373] hidden sm:inline">
             {en ? "Interactive Profile" : "인터랙티브 프로필"}
           </span>
         </div>
-        <div className="inline-flex border border-[#e5e5e5] rounded-[5px] overflow-hidden">
-          <button
-            onClick={() => setLang("en")}
-            className={`px-2.5 py-0.5 text-[11px] border-none cursor-pointer transition-colors duration-150 ${
-              lang === "en"
-                ? "bg-[#1a1a1a] text-white font-semibold"
-                : "bg-white text-[#979797] font-normal"
-            }`}
+
+        {/* Persona pills — desktop */}
+        <div className="hidden sm:flex items-center gap-1">
+          {V14_PERSONA_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setPersona(opt.value)}
+              className={`px-2.5 py-1 text-[11px] rounded-full border transition-colors cursor-pointer ${
+                persona === opt.value
+                  ? "bg-[#1a1a1a] text-white border-[#1a1a1a] font-medium"
+                  : "bg-white text-[#737373] border-[#e5e5e5] hover:border-[#c0c0c0]"
+              }`}
+            >
+              {en ? opt.en : opt.kr}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <a
+            href="/v1"
+            className="text-[11px] text-[#737373] hover:text-[#1a1a1a] transition-colors no-underline hidden sm:inline"
           >
-            EN
-          </button>
-          <button
-            onClick={() => setLang("kr")}
-            className={`px-2.5 py-0.5 text-[11px] border-none cursor-pointer transition-colors duration-150 ${
-              lang === "kr"
-                ? "bg-[#1a1a1a] text-white font-semibold"
-                : "bg-white text-[#979797] font-normal"
-            }`}
+            Classic
+          </a>
+          <a
+            href="/ui"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] text-[#737373] hover:text-[#1a1a1a] transition-colors no-underline hidden sm:inline"
           >
-            KR
-          </button>
+            UI Lab
+          </a>
+          <span className="text-[11px] text-[#e5e5e5] hidden sm:inline">|</span>
+          {/* Lang toggle */}
+          <div className="inline-flex border border-[#e5e5e5] rounded-[5px] overflow-hidden">
+            <button
+              onClick={() => setLang("en")}
+              className={`px-2.5 py-0.5 text-[11px] border-none cursor-pointer transition-colors duration-150 ${
+                lang === "en"
+                  ? "bg-[#1a1a1a] text-white font-semibold"
+                  : "bg-white text-[#737373] font-normal"
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLang("kr")}
+              className={`px-2.5 py-0.5 text-[11px] border-none cursor-pointer transition-colors duration-150 ${
+                lang === "kr"
+                  ? "bg-[#1a1a1a] text-white font-semibold"
+                  : "bg-white text-[#737373] font-normal"
+              }`}
+            >
+              KO
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Two-column layout — stacks on mobile */}
+      {/* Mobile persona selector */}
+      <div className="sm:hidden flex items-center gap-1 px-4 py-2 border-b border-[#f0f0f0] overflow-x-auto">
+        {V14_PERSONA_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => setPersona(opt.value)}
+            className={`px-2.5 py-1 text-[11px] rounded-full border transition-colors cursor-pointer whitespace-nowrap ${
+              persona === opt.value
+                ? "bg-[#1a1a1a] text-white border-[#1a1a1a] font-medium"
+                : "bg-white text-[#737373] border-[#e5e5e5]"
+            }`}
+          >
+            {en ? opt.en : opt.kr}
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile tab bar */}
+      <div className="lg:hidden flex border-b border-[#f0f0f0] shrink-0">
+        <button
+          onClick={() => setMobileTab("profile")}
+          className={`flex-1 py-2.5 text-[12px] font-medium text-center transition-colors cursor-pointer ${
+            mobileTab === "profile"
+              ? "text-[#1a1a1a] border-b-2 border-[#1a1a1a]"
+              : "text-[#737373]"
+          }`}
+        >
+          {en ? "Profile" : "프로필"}
+        </button>
+        <button
+          onClick={() => setMobileTab("chat")}
+          className={`flex-1 py-2.5 text-[12px] font-medium text-center transition-colors cursor-pointer ${
+            mobileTab === "chat"
+              ? "text-[#1a1a1a] border-b-2 border-[#1a1a1a]"
+              : "text-[#737373]"
+          }`}
+        >
+          {en ? "Chat" : "채팅"}
+        </button>
+      </div>
+
+      {/* Two-column layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Left: Profile */}
-        <div className="h-[40vh] lg:h-auto lg:w-[42%] lg:min-w-[360px] lg:max-w-[480px] border-b lg:border-b-0 lg:border-r border-[#f0f0f0] shrink-0">
+        <div
+          className={`${
+            mobileTab === "profile" ? "flex" : "hidden"
+          } lg:flex h-full lg:h-auto lg:w-[42%] lg:min-w-[360px] lg:max-w-[480px] lg:border-r border-[#f0f0f0] shrink-0 flex-col`}
+        >
           <ProfilePanel lang={lang} onAskChat={askChat} />
         </div>
 
         {/* Right: Chat */}
-        <div className="flex-1 min-w-0 min-h-0">
+        <div
+          className={`${
+            mobileTab === "chat" ? "flex" : "hidden"
+          } lg:flex flex-1 min-w-0 min-h-0 flex-col`}
+        >
           <ChatPanel
             lang={lang}
             messages={messages}

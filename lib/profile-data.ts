@@ -32,10 +32,10 @@ export interface TimelineEntry {
 export const STATS: Stat[] = [
   {
     label: "Experience",
-    value: "8+ years",
+    value: "7+ years",
     detail: {
-      en: "Engineering → Co-Founder/COO → Director BD",
-      kr: "엔지니어 → 공동창업자/COO → BD 디렉터",
+      en: "Engineer → Team Lead → Co-Founder/COO → Director B&P",
+      kr: "엔지니어 → 팀리드 → 공동창업자/COO → B&P 디렉터",
     },
     chatQ: {
       en: "Walk me through DJ's career progression.",
@@ -46,8 +46,8 @@ export const STATS: Stat[] = [
     label: { en: "Revenue Impact", kr: "매출 임팩트" },
     value: "55.47% YoY",
     detail: {
-      en: "Grew Devs United by building Meta Quest+ and Apple Vision Pro distribution from zero",
-      kr: "Meta Quest+, Apple Vision Pro 유통을 제로에서 구축하여 Devs United 성장",
+      en: "Drove platform promotions, DLC strategy, and premium subscription programs at Devs United",
+      kr: "Devs United에서 플랫폼 프로모션, DLC 전략, 프리미엄 구독 프로그램 주도",
     },
     chatQ: {
       en: "How did DJ achieve 55% revenue growth?",
@@ -58,8 +58,8 @@ export const STATS: Stat[] = [
     label: { en: "Fundraising", kr: "펀드레이징" },
     value: "₩450M",
     detail: {
-      en: "Raised pre-seed from Strong Ventures & Fast Ventures as co-founder",
-      kr: "공동창업자로서 Strong Ventures & Fast Ventures에서 프리시드 유치",
+      en: "Seed + gov't funding from Strong Ventures & Fast Ventures as co-founder",
+      kr: "공동창업자로서 Strong Ventures & Fast Ventures에서 시드 + 정부 자금 유치",
     },
     chatQ: {
       en: "Tell me about DJ's fundraising experience.",
@@ -70,8 +70,8 @@ export const STATS: Stat[] = [
     label: { en: "Technical", kr: "기술" },
     value: { en: "Ships code", kr: "코드 배포" },
     detail: {
-      en: "Built RAG pipeline (this app), GNN engine, Next.js, Python, Unity",
-      kr: "RAG 파이프라인(이 앱), GNN 엔진, Next.js, Python, Unity 구축",
+      en: "Built RAG pipeline (this app), Next.js, Python, Unity, VisionOS, Hadoop/K8s",
+      kr: "RAG 파이프라인(이 앱), Next.js, Python, Unity, VisionOS, Hadoop/K8s 구축",
     },
     chatQ: {
       en: "What's DJ's technical stack?",
@@ -94,8 +94,8 @@ export const STATS: Stat[] = [
     label: { en: "Education", kr: "학력" },
     value: "KAIST + KIT",
     detail: {
-      en: "M.S. dual degree, Cum Laude, Dean's List",
-      kr: "석사 복수학위, 우등졸업, 학장 리스트",
+      en: "B.S. Mech. Eng. + Industrial Design (Cum Laude), M.S. dual degree with KIT",
+      kr: "기계공학 + 산업디자인 학사 (우등졸업), KIT 석사 복수학위",
     },
     chatQ: {
       en: "Tell me about DJ's education.",
@@ -109,36 +109,36 @@ export const HIGHLIGHTS: Highlight[] = [
     id: "platforms",
     title: { en: "Platform Partnerships", kr: "플랫폼 파트너십" },
     text: {
-      en: 'At Devs United Games, I didn\'t just "do BD." I built the company\'s entire global distribution channel. Meta Quest+, Apple Vision Pro, Google Play — each required navigating different platform politics, different negotiation cultures, and different technical requirements. The 55% YoY revenue growth wasn\'t from one big deal. It was from building repeatable partnership playbooks across three very different ecosystems.',
-      kr: 'Devs United Games에서 단순히 "BD를 했다"가 아닙니다. 회사의 전체 글로벌 유통 채널을 구축했습니다. Meta Quest+, Apple Vision Pro, Google Play — 각각 다른 플랫폼 정치, 다른 협상 문화, 다른 기술 요구사항을 탐색해야 했습니다. 55% YoY 매출 성장은 하나의 큰 딜이 아닌, 세 가지 매우 다른 생태계에서 반복 가능한 파트너십 플레이북을 구축한 결과입니다.',
+      en: 'At Devs United Games, I didn\'t just "do BD." I built the company\'s entire global distribution channel. Meta Quest+, Apple Vision Pro, Google Android XR — each required navigating different platform politics, different negotiation cultures, and different technical requirements. The 55% YoY revenue growth wasn\'t from one big deal. It was from building repeatable partnership playbooks across three very different ecosystems.',
+      kr: 'Devs United Games에서 단순히 "BD를 했다"가 아닙니다. 회사의 전체 글로벌 유통 채널을 구축했습니다. Meta Quest+, Apple Vision Pro, Google Android XR — 각각 다른 플랫폼 정치, 다른 협상 문화, 다른 기술 요구사항을 탐색해야 했습니다. 55% YoY 매출 성장은 하나의 큰 딜이 아닌, 세 가지 매우 다른 생태계에서 반복 가능한 파트너십 플레이북을 구축한 결과입니다.',
     },
   },
   {
     id: "failure",
     title: { en: "What I Learned from Failure", kr: "실패에서 배운 것" },
     text: {
-      en: 'Flint Technologies was my most expensive education. We raised ₩450M, built a genuinely novel GNN-powered knowledge platform, and got enterprise pilots with real excitement from buyers. Then it died. Not because the tech was bad — it was ahead of its time. It died because we optimized for algorithmic sophistication over user experience. Onboarding friction was too high. Pilots signed, but end-users didn\'t adopt. I learned the difference between "technically validated" and "market-ready" the hard way. That lesson now shapes every product and partnership decision I make.',
-      kr: 'Flint Technologies는 가장 비싼 교육이었습니다. 4.5억원을 유치하고, 진정으로 혁신적인 GNN 기반 지식 플랫폼을 구축하고, 구매자들의 실제 관심으로 기업 파일럿을 확보했습니다. 그리고 실패했습니다. 기술이 나빠서가 아닙니다 — 시대를 앞섰습니다. 사용자 경험보다 알고리즘 정교함을 최적화했기 때문입니다. 온보딩 마찰이 너무 높았습니다. 파일럿은 체결됐지만 최종 사용자가 채택하지 않았습니다. "기술적으로 검증된 것"과 "시장 준비가 된 것"의 차이를 어렵게 배웠습니다. 그 교훈이 이제 모든 제품과 파트너십 결정을 형성합니다.',
+      en: 'Flint Technologies was my most expensive education. We raised ₩450M in seed and government funding, built a genuinely novel GNN-powered knowledge platform, and grew to 860+ users with zero marketing spend. Then it died. Not because the tech was bad — it was ahead of its time. It died because we optimized for algorithmic sophistication over user experience. The GNN required users to manually connect notes as nodes — that manual friction killed adoption even with AI assistance. I learned the difference between "technically validated" and "market-ready" the hard way. That lesson now shapes every product and partnership decision I make.',
+      kr: 'Flint Technologies는 가장 비싼 교육이었습니다. 시드 및 정부 자금으로 4.5억원을 유치하고, 진정으로 혁신적인 GNN 기반 지식 플랫폼을 구축하고, 마케팅 비용 없이 860명 이상의 사용자를 확보했습니다. 그리고 실패했습니다. 기술이 나빠서가 아닙니다 — 시대를 앞섰습니다. 사용자 경험보다 알고리즘 정교함을 최적화했기 때문입니다. GNN은 사용자가 수동으로 노트를 노드로 연결해야 했고, 그 수동 마찰이 AI 지원에도 불구하고 채택을 저해했습니다. "기술적으로 검증된 것"과 "시장 준비가 된 것"의 차이를 어렵게 배웠습니다. 그 교훈이 이제 모든 제품과 파트너십 결정을 형성합니다.',
     },
   },
   {
     id: "enterprise",
     title: { en: "Enterprise Sales DNA", kr: "엔터프라이즈 영업 DNA" },
     text: {
-      en: "Before startups, I spent two years at TmaxSoft closing enterprise deals with Samsung, Hyundai, KT, and POSCO. Korean enterprise sales is relationship-driven and hierarchical — you don't just pitch a product, you navigate internal politics across multiple stakeholders over months. That experience gave me a muscle that most technical founders lack: the ability to sit in a room with enterprise executives, earn their trust, and turn a technical conversation into a commercial outcome.",
-      kr: "스타트업 이전, TmaxSoft에서 2년간 삼성, 현대, KT, POSCO와 기업 딜을 클로징했습니다. 한국 기업 영업은 관계 중심이고 위계적입니다 — 단순히 제품을 피칭하는 것이 아니라, 수개월에 걸쳐 여러 이해관계자의 내부 정치를 탐색합니다. 그 경험은 대부분의 기술 창업자에게 없는 근육을 만들었습니다: 기업 임원과 한 방에 앉아 신뢰를 얻고, 기술 대화를 상업적 결과로 전환하는 능력.",
+      en: "Before startups, I spent three years at TmaxTibero — first as a Software Engineer building Big Data and autonomous database systems, then promoted to Team Lead managing enterprise DBMS migrations for Samsung Electronics and Hyundai. Korean enterprise sales is relationship-driven and hierarchical — you don't just pitch a product, you navigate internal politics across multiple stakeholders over months. That experience gave me a muscle that most technical founders lack: the ability to sit in a room with enterprise executives, earn their trust, and turn a technical conversation into a commercial outcome.",
+      kr: "스타트업 이전, TmaxTibero에서 3년간 — 먼저 소프트웨어 엔지니어로 빅데이터와 자율 데이터베이스 시스템을 구축하고, 이후 팀리드로 승진하여 삼성전자와 현대의 기업 DBMS 마이그레이션을 관리했습니다. 한국 기업 영업은 관계 중심이고 위계적입니다 — 단순히 제품을 피칭하는 것이 아니라, 수개월에 걸쳐 여러 이해관계자의 내부 정치를 탐색합니다. 그 경험은 대부분의 기술 창업자에게 없는 근육을 만들었습니다: 기업 임원과 한 방에 앉아 신뢰를 얻고, 기술 대화를 상업적 결과로 전환하는 능력.",
     },
   },
 ];
 
 export const TIMELINE: TimelineEntry[] = [
   {
-    period: { en: "2023 – Present", kr: "2023 – 현재" },
-    role: { en: "Director, Business Development", kr: "사업개발 디렉터" },
+    period: "2024 – 2025",
+    role: { en: "Director, Business & Publishing", kr: "사업 및 퍼블리싱 디렉터" },
     company: "Devs United Games",
     highlight: {
-      en: "55% YoY revenue growth via Meta, Apple, Google partnerships",
-      kr: "Meta, Apple, Google 파트너십으로 55% YoY 매출 성장",
+      en: "55.47% YoY revenue growth; Meta, Apple, Google partnerships",
+      kr: "55.47% YoY 매출 성장; Meta, Apple, Google 파트너십",
     },
     chatQ: {
       en: "Tell me about the Meta Quest+ partnership.",
@@ -146,12 +146,12 @@ export const TIMELINE: TimelineEntry[] = [
     },
   },
   {
-    period: "2020 – 2023",
+    period: "2021 – 2024",
     role: { en: "Co-Founder & COO", kr: "공동창업자 & COO" },
     company: "Flint Technologies",
     highlight: {
-      en: "Built GNN recommendation platform, raised ₩450M, enterprise pilots",
-      kr: "GNN 추천 플랫폼 구축, 4.5억 유치, 기업 파일럿",
+      en: "GNN knowledge platform, ₩450M seed + gov't funding, 860+ users",
+      kr: "GNN 지식 플랫폼, 4.5억 시드 + 정부 자금, 860+ 사용자",
     },
     chatQ: {
       en: "What did DJ learn from his startup failure?",
@@ -159,12 +159,12 @@ export const TIMELINE: TimelineEntry[] = [
     },
   },
   {
-    period: "2018 – 2020",
-    role: { en: "Team Lead, Business Development", kr: "사업개발 팀리드" },
-    company: { en: "TmaxSoft (TmaxTibero)", kr: "티맥스소프트 (TmaxTibero)" },
+    period: "2018 – 2021",
+    role: { en: "Software Engineer → Team Lead", kr: "소프트웨어 엔지니어 → 팀리드" },
+    company: "TmaxTibero",
     highlight: {
-      en: "Enterprise deals with Samsung, Hyundai, KT, POSCO",
-      kr: "삼성, 현대, KT, POSCO 기업 딜",
+      en: "Enterprise DBMS migrations for Samsung, Hyundai; Big Data & Cloud R&D",
+      kr: "삼성, 현대 기업 DBMS 마이그레이션; 빅데이터 & 클라우드 R&D",
     },
     chatQ: {
       en: "How does DJ approach enterprise sales?",
@@ -172,21 +172,28 @@ export const TIMELINE: TimelineEntry[] = [
     },
   },
   {
-    period: "2015 – 2018",
+    period: "2010 – 2018",
     role: {
-      en: "M.S. Industrial & Systems Engineering",
-      kr: "산업 및 시스템 공학 석사",
+      en: "B.S. + M.S. Mechanical Engineering",
+      kr: "기계공학 학사 + 석사",
     },
     company: { en: "KAIST + KIT (Germany)", kr: "KAIST + KIT (독일)" },
     highlight: {
-      en: "Dual degree, Cum Laude, Dean's List",
-      kr: "복수학위, 우등졸업, 학장 리스트",
+      en: "Double major w/ Industrial Design, Cum Laude, Dean's List, KIT dual degree",
+      kr: "산업디자인 복수전공, 우등졸업, 학장 리스트, KIT 복수학위",
     },
     chatQ: {
       en: "Tell me about DJ's education.",
       kr: "DJ의 학력에 대해 알려주세요.",
     },
   },
+];
+
+export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
+  { value: "hiring_manager", en: "Hiring Manager", kr: "채용 담당자" },
+  { value: "vc_investor", en: "Investor", kr: "투자자" },
+  { value: "bd_partnerships", en: "BD / Partnerships", kr: "BD / 파트너십" },
+  { value: "corporate_strategy", en: "Strategy", kr: "전략" },
 ];
 
 export const STARTER_QUESTIONS: Record<Lang, string[]> = {
