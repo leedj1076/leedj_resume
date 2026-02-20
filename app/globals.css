@@ -47,6 +47,7 @@
 :root {
   /* Existing app tokens */
   --color-page-bg: #ffffff;
+  --color-profile-bg: #faf9f7;
   --color-surface-secondary: #fafafa;
   --color-surface-tertiary: #f8f8f8;
   --color-surface-inverted: #1a1a1a;
@@ -124,6 +125,7 @@
 .dark {
   /* Existing app tokens */
   --color-page-bg: #0a0a0a;
+  --color-profile-bg: #0f0e0d;
   --color-surface-secondary: #141414;
   --color-surface-tertiary: #1e1e1e;
   --color-surface-inverted: #f0f0f0;

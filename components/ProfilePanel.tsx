@@ -66,7 +66,7 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
             <button
               key={i}
               onClick={() => onAskChat(s.chatQ[lang])}
-              className="flex flex-col items-start bg-[var(--color-page-bg)] px-5 py-[18px] text-left hover:bg-[var(--color-hover-accent-bg)] transition-colors duration-150 cursor-pointer group"
+              className="flex flex-col items-start bg-[var(--color-profile-bg)] px-5 py-[18px] text-left hover:bg-[var(--color-hover-accent-bg)] transition-colors duration-150 cursor-pointer group"
             >
               <div className="text-[12px] font-normal text-[var(--color-text-tertiary)] uppercase tracking-[0.15em] mb-1">
                 {localize(s.label, lang)}
@@ -199,7 +199,7 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
           variant="outline"
           size="icon"
           onClick={scrollToTop}
-          className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-[var(--color-page-bg)] border-[var(--color-border-secondary)] shadow-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-hover-border)]"
+          className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-[var(--color-profile-bg)] border-[var(--color-border-secondary)] shadow-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-hover-border)]"
           title={en ? "Back to top" : "맨 위로"}
         >
           <svg

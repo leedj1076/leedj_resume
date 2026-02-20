@@ -266,7 +266,7 @@ export default function ProfileApp() {
         <div
           className={`${
             mobileTab === "profile" ? "flex" : "hidden"
-          } lg:flex h-full lg:h-auto lg:w-[46%] lg:min-w-[390px] lg:max-w-[520px] lg:border-r border-[var(--color-border-primary)] shrink-0 flex-col`}
+          } lg:flex h-full lg:h-auto lg:w-[46%] lg:min-w-[390px] lg:max-w-[520px] lg:border-r border-[var(--color-border-primary)] shrink-0 flex-col bg-[var(--color-profile-bg)]`}
         >
           <ProfilePanel lang={lang} onAskChat={askChat} />
         </div>
