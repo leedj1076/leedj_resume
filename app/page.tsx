@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ProfileApp from "@/components/ProfileApp";
+import ProfileAppLoader from "@/components/ProfileAppLoader";
 
 export const metadata: Metadata = {
   title: "Dong Jae Lee — Ask DJ",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <ProfileApp />;
+  return <ProfileAppLoader />;
 }
