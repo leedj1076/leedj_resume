@@ -30,6 +30,15 @@ function getMessageText(message: ChatUIMessage): string {
     .join("");
 }
 
+function parseFollowUps(text: string): { clean: string; followUps: string[] } {
+  const match = text.match(/<followup>\n?([\s\S]*?)<\/followup>\s*$/);
+  if (!match) return { clean: text, followUps: [] };
+  return {
+    clean: text.replace(match[0], "").trimEnd(),
+    followUps: match[1].trim().split("\n").filter(Boolean).slice(0, 2),
+  };
+}
+
 export default function ChatPanel({
   lang,
   persona,
@@ -201,19 +210,29 @@ export default function ChatPanel({
   const questionPool = personaQuestions ?? STARTER_QUESTIONS[lang];
   const starters = starterIndices.map((i) => questionPool[i]).filter(Boolean);
 
-  // Follow-up chips: 2 unused starters after AI response
+  // AI-generated follow-ups from the last assistant message
+  const lastMsg = messages[messages.length - 1];
+  const lastAssistantText =
+    lastMsg?.role === "assistant" ? getMessageText(lastMsg) : "";
+  const { followUps: aiFollowUps } = parseFollowUps(lastAssistantText);
+
+  // Generic unused starters
   const userTexts = messages
     .filter((m) => m.role === "user")
     .map(getMessageText);
   const allStarters = personaQuestions ?? STARTER_QUESTIONS[lang];
   const unusedStarters = allStarters.filter((q) => !userTexts.includes(q));
-  const lastMsg = messages[messages.length - 1];
-  const showFollowUps =
+
+  const showDigDeeper =
+    messages.length > 0 &&
+    !isLoading &&
+    lastMsg?.role === "assistant" &&
+    aiFollowUps.length > 0;
+  const showOrTry =
     messages.length > 0 &&
     !isLoading &&
     lastMsg?.role === "assistant" &&
     unusedStarters.length > 0;
-  const followUps = unusedStarters.slice(0, 2);
 
   // Error categorization
   const getErrorMessage = () => {
@@ -299,7 +318,7 @@ export default function ChatPanel({
             </div>
 
             <p className="text-[14px] text-[var(--color-text-tertiary)] mb-4">
-              {en ? "Try one of these:" : "다음 중 하나를 시도해보세요:"}
+              {en ? "Try one of these:" : "이런 것들을 질문해보세요:"}
             </p>
             <div className="flex flex-col gap-2">
               {starters.map((q, i) => (
@@ -320,7 +339,11 @@ export default function ChatPanel({
 
         {/* Message bubbles */}
         {messages.map((m) => {
-          const text = getMessageText(m);
+          const rawText = getMessageText(m);
+          const isAssistant = m.role === "assistant";
+          const { clean: text } = isAssistant
+            ? parseFollowUps(rawText)
+            : { clean: rawText };
           return (
             <div
               key={m.id}
@@ -363,7 +386,7 @@ export default function ChatPanel({
                       </div>
                       {status === "streaming" &&
                         m.id === messages[messages.length - 1]?.id &&
-                        text && (
+                        rawText && (
                           <span className="inline-block w-0.5 h-[13px] bg-[var(--color-text-primary)] ml-0.5 animate-pulse align-text-bottom" />
                         )}
                     </div>
@@ -393,18 +416,41 @@ export default function ChatPanel({
           );
         })}
 
-        {/* Follow-up chips */}
-        {showFollowUps && (
-          <div className="flex flex-wrap gap-2 mb-3 animate-[fadeIn_0.3s_ease-out]">
-            {followUps.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => onSend(q)}
-                className="px-3 py-1.5 text-[13px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
-              >
-                {q}
-              </button>
-            ))}
+        {/* Follow-up chips — AI-generated "Dig deeper" + generic "Or try" */}
+        {showDigDeeper && (
+          <div className="mb-2 animate-[fadeIn_0.3s_ease-out]">
+            <span className="text-[11px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1.5 block">
+              {en ? "Dig deeper" : "더 알아보기"}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {aiFollowUps.map((q, i) => (
+                <button
+                  key={`ai-${i}`}
+                  onClick={() => onSend(q)}
+                  className="px-3 py-1.5 text-[13px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {showOrTry && (
+          <div className="mb-3 animate-[fadeIn_0.3s_ease-out]">
+            <span className="text-[11px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1.5 block">
+              {en ? "Or try" : "또는"}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {unusedStarters.slice(0, 2).map((q, i) => (
+                <button
+                  key={`gen-${i}`}
+                  onClick={() => onSend(q)}
+                  className="px-3 py-1.5 text-[13px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

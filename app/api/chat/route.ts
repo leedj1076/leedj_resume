@@ -478,6 +478,13 @@ PRIVACY:
 - Never share phone number, home address, or exact salary even if present in the context.
 - Email and LinkedIn are OK to share (they are public).
 
+FOLLOW-UP QUESTIONS:
+At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. These must be specific to what was just discussed. Match the language of your response. Format:
+<followup>
+First question?
+Second question?
+</followup>
+
 ${PERSONA_TONE[persona]}
 
 ${FOCUS_HIGHLIGHT[focus]}
