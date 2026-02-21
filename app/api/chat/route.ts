@@ -85,6 +85,15 @@ const CHUNK_LABELS: Record<string, string> = {
   "extracurricular-atrium": "Leadership",
   "honors-awards": "Awards",
   "contact-info": "Contact",
+  "interview-q1.1-self-introduction": "Self-Introduction",
+  "interview-q2.1-why-vc": "Why VC",
+  "interview-q2.3-five-year-vision-altos": "5-Year Vision",
+  "interview-q2.4-altos-receive": "What From Altos",
+  "interview-q3.1-engineer-to-business": "Engineer → Business",
+  "interview-q3.2-tmaxtibero-lessons": "Tmax Lessons",
+  "interview-q3.3-flint-shutdown": "Flint Shutdown",
+  "interview-q3.4-dug-departure": "Why Left DUG",
+  "interview-q3.5-breadth-strength-weakness": "Breadth vs Depth",
 };
 
 // Chunks that are always pinned — exclude from source tags to avoid noise
@@ -454,7 +463,7 @@ ${context}
     const result = streamText({
       model: google("gemini-2.5-flash"),
       temperature: 0.3,
-      maxOutputTokens: 1024,
+      maxOutputTokens: 2048,
       abortSignal: req.signal,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.

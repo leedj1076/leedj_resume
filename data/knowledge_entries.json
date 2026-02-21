@@ -230,5 +230,356 @@
     ],
     "is_core_strength": false,
     "token_count": 148
+  },
+  {
+    "chunk_id": "interview-q2.4-altos-receive",
+    "question": "What do you want to receive from Altos?",
+    "answer_summary": "DJ seeks apprenticeship in judgment through exposure to Altos' decision-making processes, access to diverse portfolio (Baemin, Toss, Furiosa, Anthropic), and hands-on founder support beyond capital.",
+    "text": "First, apprenticeship in judgment. Altos has decades of reps through real cycles. I want to learn how your partners build conviction — how you read founders, separate what's structural from what's noise, and stay calm when markets move. Not from a playbook — by being in the room. The conversations, the memos, the actual trade-offs.\n\nSecond, the portfolio. Very few funds touch consumer platforms like Baemin and Toss, deep tech like Furiosa and Anthropic, and Korea-US cross-border — all under one roof. That range is the fastest way to build real pattern recognition, because the cases are so different. I want that exposure.\n\nThird, the unglamorous work. Altos is unusual in how it shows up beyond capital. Hiring calibration, GTM sequencing, hard strategic calls — not just writing checks. I want to grow inside a team where helping founders means doing the actual work, with trust and mutual respect.\n\nAnd I think the fit goes both ways — I bring a founder-operator lens that makes that support real, not theoretical.",
+    "source_type": "qa_story",
+    "section": "motivation",
+    "company": "Altos",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "investor judgment",
+      "founder support",
+      "pattern recognition",
+      "decision-making"
+    ],
+    "keywords": [
+      "Altos",
+      "apprenticeship",
+      "judgment",
+      "founder support",
+      "portfolio",
+      "Baemin",
+      "Toss",
+      "Furiosa",
+      "Anthropic",
+      "Korea-US cross-border"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "vc_motivation",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 209
+  },
+  {
+    "chunk_id": "interview-q3.1-engineer-to-business",
+    "question": "You started as an engineer — what made you cross over to the business side?",
+    "answer_summary": "DJ's transition from engineering to business was deliberate, driven by recognizing that bringing technology to market requires fundamentally different skills than building it. TmaxTibero was the turning point where he learned that technical quality matters less than market fit.",
+    "text": "My ultimate goal was always to bring technology to market. I've never been interested in technology in isolation—I've been interested in how technology creates real impact in society and in the market.\n\nThat's why I intentionally built range early. I studied mechanical engineering to understand real-world systems—mechanics, production processes, manufacturing constraints. At the same time, I studied industrial design to understand the adoption side—design, UI/UX, and why users actually choose a product.\n\nThen I moved into software at TmaxTibero because I believed software would be an essential layer behind almost any modern startup. And that's where the shift really crystallized. Up until then—university and research—technology was something you study and perfect. At Tmax, I saw how technology actually gets deployed into the market. I was the dedicated engineer for Samsung's database migration, and I realized technical quality mattered far less than whether the solution fit the customer's reality—their timeline, risk tolerance, and internal decision-making. That was the first time I understood that bringing technology to market is a fundamentally different skill from building it.\n\nAfter Tmax, I knew the missing piece in my toolkit was business. I was choosing between two structured paths—joining a strategy consulting firm like McKinsey/BCG/Bain or going into VC—because I wanted to learn market analysis, positioning, and decision-making at scale. But while I was preparing, former colleagues convinced me to start a company with them, and I agreed because there's really nothing better than learning the business side than doing it yourself.\n\nSo the transition wasn't a drift away from engineering. It was a deliberate expansion—from building technology to bringing it to market, and owning the full set of decisions that determine whether a product actually wins.",
+    "source_type": "qa_story",
+    "section": "career_transition",
+    "company": "TmaxTibero",
+    "role": "Engineer",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "engineering",
+      "business strategy",
+      "market analysis",
+      "positioning",
+      "decision-making",
+      "technical understanding"
+    ],
+    "keywords": [
+      "engineer to business",
+      "career transition",
+      "intentional range building",
+      "TmaxTibero",
+      "market fit",
+      "customer reality",
+      "Samsung",
+      "database migration"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "career_transition",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 315
+  },
+  {
+    "chunk_id": "interview-q3.2-tmaxtibero-lessons",
+    "question": "What did you learn at TmaxTibero?",
+    "answer_summary": "At TmaxTibero, DJ learned the gap between research and industry, enterprise dynamics and risk aversion, the value of bridge-building across stakeholders, and critical lessons on leadership, retention, and technical execution in B2B contexts.",
+    "text": "I'd group my learning into three personal takeaways, plus one thing I admired and one lesson on leadership.\n\nThe gap between research and industry — technology has to earn its existence. Before Tmax, in school and grad research, technology was about proving something can work — one successful experiment out of a hundred is still considered progress. In industry, that mindset flips. At Tmax, I learned technology is judged by purpose and adoption: Why does this exist? Who will pay for it? What pain does it remove? What risk does it reduce? The best implementation doesn't matter if the value isn't clear and the deployment reality doesn't fit the customer.\n\nEnterprise dynamics — buyers optimize for risk, not elegance. Working with large enterprise customers, I learned the decision drivers are rarely \"best architecture.\" They're stability, migration risk, support commitments, security and compliance, and accountability when something breaks. That gave me a lasting filter for evaluating B2B startups: if you can't answer how you de-risk adoption, handle long sales cycles, and survive real-world constraints, the product won't land — no matter how strong the tech is.\n\nOperating as a bridge across three parties. My day-to-day required coordinating a triangle: customer expectations and timelines, internal delivery priorities, and core DB engineering roadmap and API needs. You can't win that with technical skill alone — you win by translating, making trade-offs explicit, and aligning incentives. That bridge capability became the foundation for everything I did later in startups and partnerships.\n\nWhat I admired. The CTO's level of dedication genuinely impressed me. The company was his life. He ran weekly meetings with every product division — what they were building, where they were stuck — and gave concrete guidance. It was demanding to prepare for, but it raised everyone's bar and helped the whole org level up.\n\nA lesson on leadership and retention. I also learned how critical it is to retain long-tenured product owners — people are the system. When experienced people start leaving, there's always a reason: misalignment on vision, better external opportunities, or incentives that aren't working. And when senior people who hold product context leave — especially with a big senior-junior gap and poor handover — maintenance becomes fragile fast. That taught me something I carry into how I evaluate startups now: I always look at whether the org can retain the people who hold the knowledge, because without that, execution breaks down no matter how good the strategy is.\n\nOverall: Tmax taught me how technology actually earns its place, how enterprises really buy, how to bridge stakeholders — and it gave me a clear view of how leadership intensity and talent retention can make or break execution.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Engineer",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "enterprise sales",
+      "stakeholder management",
+      "bridge building",
+      "risk assessment",
+      "technical leadership",
+      "team retention"
+    ],
+    "keywords": [
+      "TmaxTibero",
+      "enterprise dynamics",
+      "research vs industry",
+      "risk optimization",
+      "GTM",
+      "stakeholder alignment",
+      "talent retention",
+      "B2B",
+      "Samsung"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "leadership_strategy",
+      "business_development",
+      "enterprise_expertise"
+    ],
+    "is_core_strength": true,
+    "token_count": 432
+  },
+  {
+    "chunk_id": "interview-q3.3-flint-shutdown",
+    "question": "What happened to Flint Technologies? Why did you leave?",
+    "answer_summary": "Flint shut down after two failed pivots. The core lesson: powerful technology doesn't matter without solving behavioral friction. The failure taught DJ a disciplined problem-first approach that later defined his work at DUG.",
+    "text": "Flint shut down, and I take responsibility for my part in that. The clean truth is: we made one of the most common mistakes technical founders make — starting from the technology instead of starting from a painful, specific problem. And what's humbling is: I knew startups are supposed to start with the problem. I believed that intellectually. But when you have a powerful technology in your hands, it's surprisingly easy to fall into \"we'll find the best use case\" mode — and we did.\n\nOur first product was a GNN-based knowledge graph. Technically it was strong, and we saw real early traction — hundreds of users and meaningful usage without marketing. But the core workflow required users to do too much manual work to create and connect information. In demos it looked powerful; in real life it felt like homework. We underestimated the behavior-change barrier, and we didn't remove that friction fast enough. That was a judgment failure, not a technology failure.\n\nAfter realizing that, we pivoted — but we overcorrected. We went in the opposite direction: a US mobile gifting product inspired by how gifting behavior changed in Korea. We built an MVP on iMessage so users could send small gifts like coffee or dessert. We even based ourselves in New York because it superficially resembled Seoul — dense, walkable, lots of cafes.\n\nBut we underestimated market reality: cultural habits were different, merchant infrastructure wasn't standardized, and pricing was messy due to inconsistent menus and taxes. It required too much education and operational coordination to scale, and we couldn't find a path where the economics and rollout became obviously viable within our runway.\n\nAt that point, we discussed bootstrapping — but we didn't have a next idea that all of us had real conviction in and were willing to risk years on. So we made the responsible call to shut down, and we agreed we'd reconnect immediately if one of us found a thesis we truly believed in.\n\nThe biggest lesson I carried forward is specific: knowing \"start from the problem\" isn't enough — you have to force that discipline when the tech is tempting. Validate the behavior loop early, and if adoption friction is core, either solve it decisively or stop — because great technology doesn't matter if the behavior doesn't stick.\n\nThat's what changed everything at DUG. Every feature, every decision was grounded in user needs — obvious or hidden. I really dove deep into a discipline: What is the problem right now — is it a vitamin or a painkiller? What are people currently doing to remedy that pain — what are the workarounds? If a solution existed, would people actually use it? And most importantly — would they buy it, and for how much? That framework came directly from Flint's failure, and it became how I approached every product decision at DUG.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "product-market fit",
+      "user behavior analysis",
+      "problem validation",
+      "pivoting",
+      "decision-making"
+    ],
+    "keywords": [
+      "Flint Technologies",
+      "shutdown",
+      "failure",
+      "problem-first",
+      "behavioral friction",
+      "GNN",
+      "knowledge graph",
+      "gifting",
+      "user validation",
+      "learning"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "failure_learning",
+      "product_strategy",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 407
+  },
+  {
+    "chunk_id": "interview-q3.4-dug-departure",
+    "question": "Why did you leave DUG? It's only been a year and a half.",
+    "answer_summary": "DJ left DUG after 18 months of delivering strong results to pursue VC, recognizing that pattern-matching across multiple companies compounds better than depth in one vertical. The move reflects clarity about his strengths, not instability.",
+    "text": "That's a fair question. The honest answer is: leaving was an intentional career choice, not an escape. DUG clarified what kind of work I want to compound long-term.\n\nFirst, the output speaks for itself. In 18 months, starting from zero process as essentially a one-person operation, I delivered 55.47% year-over-year revenue growth in the first half of 2025, got featured on the Vision Pro App Store, secured Meta Quest+ entry, and built the Google Android XR partnership. I'm not someone who leaves before the work is done — I left after delivering real results.\n\nSecond, it confirmed my direction. I've always been strongest when I learn fast and connect patterns across domains — double-majoring across disciplines, moving from hardware and design into software, then into startups. At DUG, I ramped quickly in XR and delivered outcomes across platforms. The pattern is consistent: I'm fast at entering new spaces, synthesizing what matters, and turning it into strategy and execution. VC is the role where that strength compounds across many companies, rather than being locked into one.\n\nThird, I want to accelerate by learning alongside people with decades of investment judgment. Flint and DUG taught me a lot through doing, but I want to grow in an environment where I'm working closely with great investors and learning how they evaluate founders and markets in real time. Altos is compelling because it's a small, high-bar team where that kind of learning happens naturally.\n\nFourth, there was a fit reality. I originally joined to help build and scale the business side, but I'm not a game person at heart. Over time I realized I'm more energized by supporting founders and companies across categories than being tied to one product vertical long-term.\n\nSo the short tenure reflects clarity, not instability: DUG helped me see that the next chapter I want is VC — especially at Altos — where I can compound learning and impact across many founders.",
+    "source_type": "qa_story",
+    "section": "career_transition",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "business development",
+      "revenue growth",
+      "partnership",
+      "platform expansion",
+      "XR expertise"
+    ],
+    "keywords": [
+      "DUG",
+      "departure",
+      "short tenure",
+      "intentional",
+      "XR",
+      "Vision Pro",
+      "Meta",
+      "Google",
+      "revenue growth",
+      "career clarity"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "career_transition",
+      "vc_motivation",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 332
+  },
+  {
+    "chunk_id": "interview-q3.5-breadth-strength-weakness",
+    "question": "You've experienced many different fields. Is that a strength or weakness for VC?",
+    "answer_summary": "Breadth is both strength and weakness. Weakness: lacks 10+ years in single domain. Strength: has repeatable evaluation framework across contexts and depth in technical products, enterprise reality, and platform ecosystems.",
+    "text": "It's both — and I think the key is being honest about the trade-off, while showing how I manage it.\n\nOn the weakness side: I don't have 10+ years in one single domain, so I won't pretend I'm the world's deepest expert in DBMS, AI, or XR. That kind of depth can matter, especially for highly specialized deals. And there's a narrative risk with breadth: if you move too often, people can assume you're unfocused. I'm aware of that, and I'll need to earn trust through consistency and high-quality work at Altos.\n\nOn the strength side: In VC, you often have to form conviction in unfamiliar areas quickly. My breadth isn't \"I tried a lot of things\" — it's that I've repeatedly built a repeatable evaluation framework across very different contexts:\n\n1. Understand the technical architecture — what's actually hard, what's commodity, and what breaks at scale.\n2. Map the competitive landscape — who can replicate, who can bundle, and what the true alternative is, including \"build in-house.\"\n3. Identify the real user pain and adoption friction — what behavior must change, and why will users stick with it.\n4. Pressure-test the business model and GTM — sales cycle, unit economics, dependencies, and what must be true for the company to win.\n\nThat framework comes from lived experience: enterprise dynamics at Samsung-level accounts, building products as a founder, and operating in platform-driven ecosystems like Apple, Meta, and Google. It also lets me be a credible conversation partner to founders across multiple categories.\n\nAnd to be clear, I'm not only broad — I do have depth where it matters for Altos. I'm strongest at the intersection of technical products, enterprise reality, and platform ecosystems — and that's a durable lens for evaluating a lot of modern software and deep-tech startups.\n\nSo I'd summarize it like this: breadth is a weakness if it's just curiosity. Breadth is a strength in VC if it's paired with a consistent framework and a few real depth anchors. My goal at Altos is to prove the latter — starting with the areas where my depth is already real: technical products, enterprise dynamics, and platform ecosystems.",
+    "source_type": "qa_story",
+    "section": "self_assessment",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "technical evaluation",
+      "competitive analysis",
+      "investor judgment",
+      "market assessment",
+      "pattern recognition"
+    ],
+    "keywords": [
+      "breadth vs depth",
+      "multi-domain experience",
+      "evaluation framework",
+      "technical architecture",
+      "competitive landscape",
+      "user adoption",
+      "business model",
+      "GTM",
+      "enterprise expertise",
+      "platform ecosystems"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "self_awareness",
+      "investor_thesis",
+      "business_development"
+    ],
+    "is_core_strength": true,
+    "token_count": 386
+  },
+  {
+    "chunk_id": "interview-q1.1-self-introduction",
+    "question": "Please tell me about yourself. Who are you, in your own words?",
+    "answer_summary": "DJ summarizes his career as bridging deep tech and real-world business. He combines technical depth earned at KAIST with business acumen, having progressed through Zero-to-One founding at Flint and Scaling at DUG. Known for adaptability and reliability with owner's mindset.",
+    "text": "Hello, I'm Dong Jae Lee. Career-wise, if I were to summarize my career in one sentence, it would be 'bridging the gap between deep tech and real-world business.' I built my foundation at KAIST, majoring in Mechanical Engineering and Industrial Design. This gave me the literacy to understand complex technology, but my real passion has always been finding the market value within that technology and turning it into a viable, growing business.\n\nMy career has been defined by two distinct phases:\nFirst is the 'Zero to One' phase. I co-founded a tech startup called Flint Technologies. As the COO, I experienced the raw reality of building something from nothing. I didn't just strategize; I executed—from defining the MVP and finding Product-Market Fit to securing seed funding and handling investor relations. This experience taught me grit, agility, and how to make critical decisions with limited resources.\n\nSecond is the 'Scaling' phase. As the Director at Devs United Games, I focused on global expansion and monetization in the XR space. I led high-stakes partnerships with global platforms like Meta, Apple, and Google.\n\nIn short, I offer the best of both worlds: the technical depth to earn the respect of engineering teams, and the business acumen to drive revenue and strategy. I'm looking forward to bringing that versatility to your team.\n\nOn a personal level, I am someone who runs toward new challenges, not away from them. My resume reflects a diverse path—from engineering to founding a startup, and then to scaling a gaming business. This isn't because I lack focus, but because I am not afraid of being a beginner again if it means solving a harder, more meaningful problem. I thrive on that steep learning curve.\n\nBut no matter where I go, one thing remains constant: my reputation. I take great pride in the fact that my former colleagues—leaders, peers, and engineers alike—are my strongest advocates. They know me as someone who works with an owner's mindset: I don't just 'clock in'; I own the problem until it's solved.\n\nI believe this combination of adaptability and reliability is why people always want to work with me again.",
+    "source_type": "qa_story",
+    "section": "introduction",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "strategy",
+      "business development",
+      "engineering",
+      "product-market fit",
+      "investor relations",
+      "leadership",
+      "adaptability"
+    ],
+    "keywords": [
+      "Dong Jae Lee",
+      "self-introduction",
+      "KAIST",
+      "Mechanical Engineering",
+      "Industrial Design",
+      "deep tech",
+      "business",
+      "Zero to One",
+      "Scaling",
+      "Flint Technologies",
+      "Devs United Games",
+      "XR",
+      "owner's mindset"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "introduction",
+      "leadership_strategy",
+      "business_development"
+    ],
+    "is_core_strength": true,
+    "token_count": 374
+  },
+  {
+    "chunk_id": "interview-q2.1-why-vc",
+    "question": "Why VC? You could have started another company or joined big tech.",
+    "answer_summary": "DJ chose VC for leverage and compounding learning, where his pattern-matching strength creates multiplier effects across founders and markets. Comparative advantage, not risk aversion, drives the decision.",
+    "text": "Bottom line: I chose VC because it's the role where my highest-leverage edge shows up. I'm not at my best when I'm optimizing one system. I'm at my best when I'm pattern-matching across founders, markets, and products, then turning those insights into clear decisions and faster execution for other people. VC is where that multiplier effect is the most real.\n\nI seriously considered all three paths — big tech, founding again, and VC.\n\nBig tech: great if your edge is being world-class at one narrow domain. But I'm naturally breadth-driven — motivated by understanding how different systems connect. Corporate velocity is slower than my operating rhythm. One domain would underuse my strongest skill: synthesis.\n\nStarting another company: Flint taught me founding is not just building, it's carrying — the uncertainty, the emotional load, the long feedback cycles. I have the scars, and they're useful data. At this stage, the expected downside is not optimal for me. I've realized I'm often better at helping teams navigate hard problems than solving them alone inside one company. Not 'never again' — just 'not the most rational deployment of my strengths right now.'\n\nVC is attractive for two reasons: leverage and compounding learning. I can be a multiplier for founders — diagnosing what's real vs. narrative, asking questions that change outcomes, helping founders make higher-quality decisions faster. And founders listen because I've built a company, seen it fail, shipped at scale, and understand both the product reality and the go-to-market reality.\n\nThe compounding learning excites me most. At a startup, knowledge is deep but locked in one domain. In VC, you see dozens of parallel experiments — different founders, market cycles, distribution paths, failure modes. That creates a pattern library that becomes durable and transferable. That's not abstract learning — it directly translates into better sourcing, better underwriting, and better support.\n\nThis is comparative advantage, not risk aversion.",
+    "source_type": "qa_story",
+    "section": "motivation",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "pattern recognition",
+      "investor judgment",
+      "founder support",
+      "decision-making",
+      "synthesis"
+    ],
+    "keywords": [
+      "Why VC",
+      "leverage",
+      "compounding learning",
+      "pattern library",
+      "founder support",
+      "multiplier effect",
+      "breadth",
+      "big tech",
+      "starting another company",
+      "comparative advantage"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "vc_motivation",
+      "self_awareness",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 319
+  },
+  {
+    "chunk_id": "interview-q2.3-five-year-vision-altos",
+    "question": "What role do you want to play at Altos over the next 5 years?",
+    "answer_summary": "Two-phase vision: Years 1-2 earn trust through output and execution; Years 3-5 lead with conviction. Developed technical DD framework for pre-revenue startups focusing on moat, proprietary compounding, and falsification.",
+    "text": "Two-phase vision over the next 5 years at Altos. Years 1-2: my focus is on earning trust through output. I will work to understand Altos' investment thesis deeply, develop strong pattern recognition across the portfolio, and demonstrate consistent high-quality work in sourcing, diligence, and founder support. Years 3-5: once I've built credibility, I want to lead with conviction on areas where I can add unique value.\n\nOne specific area I want to develop is a technical diligence framework for pre-revenue startups. For early-stage deep tech or platform companies, traditional due diligence frameworks often fall short. I want to build a framework with three core blocks:\n\n1. The moat claim — what does the founder believe creates defensibility? Is it technical, regulatory, network, or something else? And is that claim actually falsifiable, or is it narrative?\n\n2. Proprietary compounding — if the moat is real, what feedback loops and advantages compound over time? What does the winner look like at 10x scale?\n\n3. Proof and falsification — what evidence would change my mind? What experiments or signals do we need within the next 12-24 months to increase confidence? This is the discipline I learned at Flint: disagree but commit, but back it with data.\n\nThis framework comes from my experience building at Flint, learning enterprise dynamics at Tmax, and operating in large platform ecosystems at DUG. I believe this is a differentiating capability for Altos in the pre-revenue space, and it's something I can develop and refine over the next few years.",
+    "source_type": "qa_story",
+    "section": "motivation",
+    "company": "Altos",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "technical due diligence",
+      "investor judgment",
+      "framework development",
+      "founder evaluation",
+      "pattern recognition"
+    ],
+    "keywords": [
+      "five-year vision",
+      "Altos",
+      "technical DD",
+      "pre-revenue startups",
+      "moat",
+      "proprietary compounding",
+      "falsification",
+      "leadership with conviction",
+      "data-driven"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "vc_motivation",
+      "investor_thesis",
+      "business_development"
+    ],
+    "is_core_strength": true,
+    "token_count": 312
   }
 ]

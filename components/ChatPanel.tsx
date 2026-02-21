@@ -438,7 +438,9 @@ export default function ChatPanel({
         {showOrTry && (
           <div className="mb-3 animate-[fadeIn_0.3s_ease-out]">
             <span className="text-[11px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1.5 block">
-              {en ? "Or try" : "또는"}
+              {showDigDeeper
+                ? (en ? "Or try" : "또는")
+                : (en ? "Ask about" : "질문해보기")}
             </span>
             <div className="flex flex-wrap gap-2">
               {unusedStarters.slice(0, 2).map((q, i) => (
