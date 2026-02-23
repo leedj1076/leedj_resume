@@ -470,7 +470,7 @@ ${context}
     const result = streamText({
       model: google("gemini-2.5-flash"),
       temperature: 0.3,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 1024,
       abortSignal: req.signal,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.
