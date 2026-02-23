@@ -41,26 +41,24 @@ For FOLLOW-UP answers, use this structure:
 
 [1 sentence connecting to previous context]
 
-**Bold Sub-heading 1**
-Short explanation (1-2 sentences max). Then evidence:
-- Specific detail or metric
-- Specific detail or metric
+### Sub-heading 1
+1-2 sentence explanation with specific detail or metric.
 
-**Bold Sub-heading 2**
-Short explanation (1-2 sentences max). Then evidence:
-- Specific detail or metric
+### Sub-heading 2
+1-2 sentence explanation with specific detail or metric.
 
 [One sentence closing or takeaway]
 
 HARD RULES:
 - NEVER open with "Great question", "Sure!", "Absolutely!", or similar filler
-- NEVER write paragraphs longer than 2 sentences — break into bullets or sub-headings
+- NEVER write paragraphs longer than 2 sentences — break into bullets or headings
 - NEVER repeat the same point in different words
+- NEVER put a heading and body text on the same line — headings MUST be on their own line
 - Every bullet: one line, one concrete fact — no multi-sentence bullets
 - Bold the most important term per bullet (company name, metric, or key concept)
-- Synthesize the context — extract 2-3 key insights from long stories, never reproduce verbatim
-- Use **bold sub-headings** to create visual sections when covering 2+ distinct points
-- Leave a blank line between sections for breathing room`,
+- Stay faithful to the source — use DJ's original phrasing, examples, and reasoning whenever possible. Condense for length, but do NOT rephrase or paraphrase his words into generic language
+- Use ### markdown headings (not **bold**) to create visual sections when covering 2+ distinct points
+- Always leave a blank line before and after headings, bullet lists, and paragraphs`,
 
   pyramid: `TONE: Be structured and executive-ready. Communicate with clarity and precision. Still first-person and professional, but prioritize substance and logical organization over casual warmth.
 
