@@ -101,6 +101,9 @@ const CHUNK_LABELS: Record<string, string> = {
   "interview-q4.5-shutting-down-flint-emotions": "Shutdown Emotions",
   "interview-q4.6-founding-again": "Founding Again?",
   "interview-q4.7-confidence-after-failure": "Confidence & Failure",
+  "interview-q5.1-ace-evidence": "Ace Evidence",
+  "interview-q5.2-beyond-expectations-example": "Beyond Expectations",
+  "interview-q5.3-colleague-evaluation": "Colleague Evaluation",
 };
 
 // Chunks that are always pinned — exclude from source tags to avoid noise
@@ -470,7 +473,7 @@ ${context}
     const result = streamText({
       model: google("gemini-2.5-flash"),
       temperature: 0.3,
-      maxOutputTokens: 1536,
+      maxOutputTokens: 2048,
       abortSignal: req.signal,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.

@@ -5,13 +5,13 @@
     "language": "English",
     "interview_style": "Phase 1A — Deep Knowledge Capture + Polish Mode",
     "status": "in_progress",
-    "last_question_asked": "Q4.7",
+    "last_question_asked": "Q5.3",
     "last_question_status": "completed",
-    "next_action": "Q5.1",
-    "questions_completed": 16,
+    "next_action": "Q6.1",
+    "questions_completed": 19,
     "questions_skipped": 5,
     "skipped_questions": ["Q1.2", "Q1.3", "Q1.4", "Q2.2", "Q2.5"],
-    "bookmark_position": "Q5.1",
+    "bookmark_position": "Q6.1",
     "mode_note": "From Q2.4 onward: iterative polish mode — draft → feedback → revise → lock in with DJ confirmation"
   },
   "interview_log": [
@@ -249,5 +249,29 @@
     "status": "completed",
     "polish_rounds": 0,
     "final_answer": "Yes — it did. And I say that carefully, because it would actually be strange if it hadn't been shaken at all.\n\n1) The Comparison Trap\n\nThe hardest part wasn't the work — it was looking around. While friends were getting promoted at big companies or progressing on very clear career tracks, I felt like I had taken a three-year detour to nowhere. I caught myself thinking: \"Did I just waste my prime years?\"\n\nIt wasn't that I hadn't worked hard. It was realizing that the market doesn't reward effort by default — it rewards value. That gap hit my ego.\n\n2) How My Confidence Changed\n\nBut as the dust settled, I realized I didn't lose confidence — it changed shape.\n\nI lost the arrogance of \"I know what works.\" Before Flint, I believed that if I was smart enough and worked hard enough, I could force a product to succeed. Flint humbled me. I learned you can't outwork a market, and you can't brute-force adoption if you're solving the wrong problem.\n\nAnd I gained the confidence of \"I can handle it when it breaks.\" Even when the worst thing happened — shutting down — I survived. I could look my team in the eye, admit failure, and move forward. I stopped fearing being wrong.\n\n3) Why This Matters for VC\n\nIn investing, that's actually an advantage.\n\nBecause my ego has been tested, I don't confuse conviction with truth. I'm more skeptical of my initial excitement. I assume I'll be wrong sometimes, and I build processes to find out quickly and correct course.\n\nSo yes, it shook me — but it replaced fragile, naïve confidence with quiet, tested confidence. I know I can be wrong, admit it fast, and move forward. And I think that makes me a safer, healthier partner for founders and capital."
+  },
+  "q5_1_final_answer": {
+    "question_id": "Q5.1",
+    "question_text": "Can you provide concrete evidence that you were the 'ace' at your previous workplaces?",
+    "section": "5. 압도적인 평판 — 에이스 검증 (The Ace Test)",
+    "status": "completed",
+    "polish_rounds": 0,
+    "final_answer": "I wouldn't call myself an \"ace\" — that's for references to decide. But I can answer in two evidence-based ways:\n\n1. I deliver beyond what the role requires.\n2. People choose to work with me again.\n\n\n1) \"I deliver beyond expectations.\"\n\nDUG (Director) — outcomes from near zero\nIn ~18 months, we secured an Apple Vision Pro App Store feature, entered Meta Quest+, and closed a Google Android XR partnership. These weren't inherited wins. We had no prior Apple relationship; I started from cold outreach and ran partnerships end-to-end — research → outreach → positioning → negotiation → contract closure → execution — while building the internal process essentially from scratch.\nOur game Fishing Haven also became a finalist for the 2025 Apple App Store Awards (Games).\n\nTmaxTibero — high-stakes enterprise delivery + fast promotion\nAt TmaxTibero, I ramped quickly and was promoted faster than typical because I became a reliable owner for high-stakes work. I was on the Samsung DBMS migration task force, where I developed DBMS management tooling and coordinated across Samsung (client), internal delivery, and the core DB team — three groups with conflicting incentives. The work was recognized internally (including an achievement award). The core capability I demonstrated was translating technical requirements into stakeholder decisions and outcomes under pressure.\n\nFlint (co-founder) — full-stack execution under uncertainty\nAs a co-founder, I led major parts of execution and fundraising. We raised ~KRW 450M and secured government grants while building a technically ambitious product (GNN-based knowledge graph). Even though the company shut down, it shows I can operate in founder mode — framing, fundraising, shipping, making hard calls in ambiguity — and then reflect clearly on what failed and why.\n\nChangjo Architecture — new business groundwork (smart farms)\nAfter Flint, I was brought in by the CEO of Changjo Architecture to explore a new business initiative in smart farms — a domain where neither the company nor I had prior experience. I built early prototypes and hands-on validation (rack systems, cultivation method testing). That became the foundation for an internal smart farm effort that continued as a dedicated initiative/division.\n\n\n2) \"People want to work with me again.\"\n\nA signal I trust is being pulled back in by people who have seen me operate.\n\n* DUG recruiting: I met Mark Choi (CEO of DUG) while I was at Flint, and he later recruited me into DUG as I was winding Flint down.\n* Flint cofounders: My cofounders (Daeheon Jeong and Sanggyun An) reached out to start Flint because they had seen my work ethic and execution firsthand during our undergrad projects.\n* Repeat engagement at Changjo: The CEO of Changjo Architecture re-engaged me for additional new-business work after the initial smart farm prototype effort.\n\nI don't claim \"ace\" as a label. But repeated pull signals are external evidence that people trust me with ambiguous, high-ownership work — and want to collaborate again.\n\nSo the evidence is: outcomes delivered from near zero, repeated ownership in high-stakes settings, and repeat \"pull\" signals. That's the closest objective proof I can offer that I consistently delivered at an \"ace\" level."
+  },
+  "q5_2_final_answer": {
+    "question_id": "Q5.2",
+    "question_text": "Can you give one specific example where you delivered beyond expectations?",
+    "section": "5. 압도적인 평판 — 에이스 검증 (The Ace Test)",
+    "status": "completed",
+    "polish_rounds": 0,
+    "final_answer": "One clear example is the Apple Vision Pro partnership at Devs United Games. In under nine months, I took us from zero presence on Apple's platform to becoming an App Store Award finalist.\n\nWhen I joined DUG in February 2025, Vision Pro had just launched. We were strong on Meta Quest, but on Apple we had no relationships, no product in flight, and no clear path in — and early traction with Apple mattered strategically.\n\nI took ownership of changing that.\n\nI didn't wait for a warm intro. I cold-outreached Apple stakeholders on LinkedIn with a specific case: we had a proven, high-retention title on Quest, and we wanted to bring it to Vision Pro. That led to a connection to Apple Developer Relations in Korea, and from the first meeting I drove a concrete plan — what we'd ship, the timeline, what Apple needed to see, and how we'd execute.\n\nOn the product side, it wasn't a simple port — it was a new platform and stack. But we built Fishing Haven for Vision Pro, launched alongside the Korea Vision Pro rollout in November, earned marketing support from Apple, and in 2025 the title became a finalist for the Apple App Store Awards (Games).\n\nWhat made this beyond expectations is the starting point: there was no existing pipeline. I initiated the relationship cold, built the internal process, aligned the right stakeholders, and delivered a platform-level outcome.\n\nAnd we didn't treat it as a one-off — we continued into follow-on discussions for future Vision Pro titles and adjacent opportunities around Apple Immersive Video and the emerging ecosystem, including workflows like the Blackmagic URSA Cine Immersive camera.\n\nThat's the before-and-after: cold start → shipped product → Apple marketing support → App Store Awards finalist → ongoing strategic relationship."
+  },
+  "q5_3_final_answer": {
+    "question_id": "Q5.3",
+    "question_text": "How would colleagues or bosses you've worked with evaluate you?",
+    "section": "5. 압도적인 평판 — 에이스 검증 (The Ace Test)",
+    "status": "completed",
+    "polish_rounds": 0,
+    "final_answer": "This question isn't for me to answer — it's for references to confirm. I'm happy to provide reference contacts if you'd like to hear directly from people I've worked with."
   }
 }

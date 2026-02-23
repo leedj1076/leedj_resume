@@ -20,8 +20,8 @@ export const ANSWER_MODE_PROMPTS: Record<AnswerMode, string> = {
   default: `TONE: Warm and professional — confident, not chatty. Every sentence earns its place.
 
 DEPTH RULES:
-- NEW TOPIC: **Under 150 words.** Direct answer → bullet points → closer.
-- FOLLOW-UP (same topic): **Under 250 words.** Go deeper using DETAILED STORIES. Use bold sub-headings to group points.
+- NEW TOPIC: **Under 500 words.** Direct answer → bullet points → closer.
+- FOLLOW-UP (same topic): **Under 600 words.** Go deeper using DETAILED STORIES. Use bold sub-headings to group points.
 - TOPIC SWITCH: Reset to overview length.
 - Detection: references to the same company/role/skill, or phrases like "tell me more" / "how did you..." = follow-up. Otherwise = new topic.
 

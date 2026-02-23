@@ -846,5 +846,102 @@
     ],
     "is_core_strength": true,
     "token_count": 397
+  },
+  {
+    "chunk_id": "interview-q5.1-ace-evidence",
+    "question": "Can you provide concrete evidence that you were the 'ace' at your previous workplaces?",
+    "answer_summary": "Two evidence frames: (1) Deliver beyond expectations — DUG (Apple Vision Pro feature, Meta Quest+, Google Android XR from near zero in 18 months, Fishing Haven Apple App Store Awards finalist), TmaxTibero (fast promotion, Samsung DBMS task force, achievement award), Flint (full-stack founder execution, KRW 450M raised), Changjo Architecture (smart farm prototype from zero domain knowledge). (2) People choose to work with me again — DUG CEO recruited from Flint, cofounders reached out first, Changjo CEO re-engaged.",
+    "text": "I wouldn't call myself an \"ace\" — that's for references to decide. But I can answer in two evidence-based ways:\n\n1. I deliver beyond what the role requires.\n2. People choose to work with me again.\n\n\n1) \"I deliver beyond expectations.\"\n\nDUG (Director) — outcomes from near zero\nIn ~18 months, we secured an Apple Vision Pro App Store feature, entered Meta Quest+, and closed a Google Android XR partnership. These weren't inherited wins. We had no prior Apple relationship; I started from cold outreach and ran partnerships end-to-end — research → outreach → positioning → negotiation → contract closure → execution — while building the internal process essentially from scratch.\nOur game Fishing Haven also became a finalist for the 2025 Apple App Store Awards (Games).\n\nTmaxTibero — high-stakes enterprise delivery + fast promotion\nAt TmaxTibero, I ramped quickly and was promoted faster than typical because I became a reliable owner for high-stakes work. I was on the Samsung DBMS migration task force, where I developed DBMS management tooling and coordinated across Samsung (client), internal delivery, and the core DB team — three groups with conflicting incentives. The work was recognized internally (including an achievement award). The core capability I demonstrated was translating technical requirements into stakeholder decisions and outcomes under pressure.\n\nFlint (co-founder) — full-stack execution under uncertainty\nAs a co-founder, I led major parts of execution and fundraising. We raised ~KRW 450M and secured government grants while building a technically ambitious product (GNN-based knowledge graph). Even though the company shut down, it shows I can operate in founder mode — framing, fundraising, shipping, making hard calls in ambiguity — and then reflect clearly on what failed and why.\n\nChangjo Architecture — new business groundwork (smart farms)\nAfter Flint, I was brought in by the CEO of Changjo Architecture to explore a new business initiative in smart farms — a domain where neither the company nor I had prior experience. I built early prototypes and hands-on validation (rack systems, cultivation method testing). That became the foundation for an internal smart farm effort that continued as a dedicated initiative/division.\n\n\n2) \"People want to work with me again.\"\n\nA signal I trust is being pulled back in by people who have seen me operate.\n\n* DUG recruiting: I met Mark Choi (CEO of DUG) while I was at Flint, and he later recruited me into DUG as I was winding Flint down.\n* Flint cofounders: My cofounders (Daeheon Jeong and Sanggyun An) reached out to start Flint because they had seen my work ethic and execution firsthand during our undergrad projects.\n* Repeat engagement at Changjo: The CEO of Changjo Architecture re-engaged me for additional new-business work after the initial smart farm prototype effort.\n\nI don't claim \"ace\" as a label. But repeated pull signals are external evidence that people trust me with ambiguous, high-ownership work — and want to collaborate again.\n\nSo the evidence is: outcomes delivered from near zero, repeated ownership in high-stakes settings, and repeat \"pull\" signals. That's the closest objective proof I can offer that I consistently delivered at an \"ace\" level.",
+    "source_type": "qa_story",
+    "section": "ace_reputation",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "partnership development",
+      "business development",
+      "enterprise delivery",
+      "fundraising",
+      "stakeholder management",
+      "new business development"
+    ],
+    "keywords": [
+      "ace evidence",
+      "pull signals",
+      "deliver beyond expectations",
+      "Apple Vision Pro",
+      "Meta Quest+",
+      "Google Android XR",
+      "Samsung DBMS",
+      "Changjo Architecture",
+      "smart farms",
+      "repeat collaboration",
+      "Fishing Haven"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ace_reputation",
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 520
+  },
+  {
+    "chunk_id": "interview-q5.2-beyond-expectations-example",
+    "question": "Can you give one specific example where you delivered beyond expectations?",
+    "answer_summary": "Apple Vision Pro partnership at DUG: zero Apple presence to App Store Awards finalist in under 9 months. Cold outreach on LinkedIn, built relationship with Apple Developer Relations Korea, shipped Fishing Haven for Vision Pro alongside Korea launch, earned Apple marketing support. Expanded into ongoing strategic relationship (future titles, Apple Immersive Video, Blackmagic URSA Cine).",
+    "text": "One clear example is the Apple Vision Pro partnership at Devs United Games. In under nine months, I took us from zero presence on Apple's platform to becoming an App Store Award finalist.\n\nWhen I joined DUG in February 2025, Vision Pro had just launched. We were strong on Meta Quest, but on Apple we had no relationships, no product in flight, and no clear path in — and early traction with Apple mattered strategically.\n\nI took ownership of changing that.\n\nI didn't wait for a warm intro. I cold-outreached Apple stakeholders on LinkedIn with a specific case: we had a proven, high-retention title on Quest, and we wanted to bring it to Vision Pro. That led to a connection to Apple Developer Relations in Korea, and from the first meeting I drove a concrete plan — what we'd ship, the timeline, what Apple needed to see, and how we'd execute.\n\nOn the product side, it wasn't a simple port — it was a new platform and stack. But we built Fishing Haven for Vision Pro, launched alongside the Korea Vision Pro rollout in November, earned marketing support from Apple, and in 2025 the title became a finalist for the Apple App Store Awards (Games).\n\nWhat made this beyond expectations is the starting point: there was no existing pipeline. I initiated the relationship cold, built the internal process, aligned the right stakeholders, and delivered a platform-level outcome.\n\nAnd we didn't treat it as a one-off — we continued into follow-on discussions for future Vision Pro titles and adjacent opportunities around Apple Immersive Video and the emerging ecosystem, including workflows like the Blackmagic URSA Cine Immersive camera.\n\nThat's the before-and-after: cold start → shipped product → Apple marketing support → App Store Awards finalist → ongoing strategic relationship.",
+    "source_type": "qa_story",
+    "section": "ace_reputation",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "partnership development",
+      "cold outreach",
+      "platform strategy",
+      "stakeholder alignment",
+      "business development"
+    ],
+    "keywords": [
+      "Apple Vision Pro",
+      "App Store Awards finalist",
+      "Fishing Haven",
+      "cold outreach",
+      "Apple Developer Relations",
+      "beyond expectations",
+      "zero to outcome",
+      "Apple Immersive Video",
+      "Blackmagic URSA Cine"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ace_reputation",
+      "business_development",
+      "platform_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 380
+  },
+  {
+    "chunk_id": "interview-q5.3-colleague-evaluation",
+    "question": "How would colleagues or bosses you've worked with evaluate you?",
+    "answer_summary": "Defers to references. Offers to provide reference contacts directly.",
+    "text": "This question isn't for me to answer — it's for references to confirm. I'm happy to provide reference contacts if you'd like to hear directly from people I've worked with.",
+    "source_type": "qa_story",
+    "section": "ace_reputation",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [],
+    "keywords": ["reference check", "colleague evaluation", "defers to references"],
+    "depth": "surface",
+    "focus_tags": ["ace_reputation"],
+    "is_core_strength": false,
+    "token_count": 35
   }
 ]
