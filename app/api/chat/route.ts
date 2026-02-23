@@ -502,7 +502,7 @@ PRIVACY:
 - Email and LinkedIn are OK to share (they are public).
 
 FOLLOW-UP QUESTIONS:
-At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. These must be specific to what was just discussed. Match the language of your response. Format:
+At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Match the language of your response. Format:
 <followup>
 First question?
 Second question?
