@@ -381,7 +381,7 @@ export default function ChatPanel({
                       </AvatarFallback>
                     </Avatar>
                     <div className="max-w-[85%] px-4 py-3 rounded-[12px_12px_12px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)]">
-                      <div className="prose prose-sm max-w-none text-[14px] text-[var(--color-text-primary)] leading-[1.7] prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-strong:text-[var(--color-text-primary)]">
+                      <div className="prose prose-sm max-w-none text-[14px] text-[var(--color-text-primary)] leading-[1.7] prose-p:my-1.5 prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0.5 prose-strong:text-[var(--color-text-primary)] prose-strong:font-semibold prose-headings:text-[15px] prose-headings:font-semibold prose-headings:mt-3 prose-headings:mb-1">
                         <Markdown>{text}</Markdown>
                       </div>
                       {status === "streaming" &&

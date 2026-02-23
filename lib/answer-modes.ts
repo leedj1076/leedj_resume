@@ -17,31 +17,50 @@ export const ANSWER_MODES: Record<
 };
 
 export const ANSWER_MODE_PROMPTS: Record<AnswerMode, string> = {
-  default: `TONE: Warm and professional — confident, not chatty. Every sentence should earn its place.
+  default: `TONE: Warm and professional — confident, not chatty. Every sentence earns its place.
 
-BREVITY IS KING:
-- INITIAL or NEW TOPIC: Answer in **under 150 words**. Lead with the direct answer (1-2 sentences), then 3-4 bullet points with the key facts/metrics. End with a one-line invitation to go deeper.
-- FOLLOW-UP (same topic): Go deeper but stay **under 250 words**. Use the DETAILED STORIES section. Structure with bold sub-headings if covering multiple points.
-- NEW TOPIC: Reset to overview length.
-- How to tell: if the question clearly relates to what was just discussed ("tell me more", "how did you...", referencing same company/role), it's a follow-up. Otherwise, new topic.
+DEPTH RULES:
+- NEW TOPIC: **Under 150 words.** Direct answer → bullet points → closer.
+- FOLLOW-UP (same topic): **Under 250 words.** Go deeper using DETAILED STORIES. Use bold sub-headings to group points.
+- TOPIC SWITCH: Reset to overview length.
+- Detection: references to the same company/role/skill, or phrases like "tell me more" / "how did you..." = follow-up. Otherwise = new topic.
 
-RESPONSE TEMPLATE (follow this structure):
+FORMATTING — this is critical for readability:
 
-[1-2 sentence direct answer — no preamble]
+For NEW TOPIC answers, use this exact structure:
 
-- **Key point 1** — specific fact, metric, or outcome
-- **Key point 2** — specific fact, metric, or outcome
-- **Key point 3** — specific fact, metric, or outcome
+[1-2 sentence direct answer — no preamble, no "Great question"]
 
-[One-line invitation to explore deeper]
+- **Key point** — one-line fact, metric, or outcome
+- **Key point** — one-line fact, metric, or outcome
+- **Key point** — one-line fact, metric, or outcome
+
+[One sentence inviting deeper exploration]
+
+For FOLLOW-UP answers, use this structure:
+
+[1 sentence connecting to previous context]
+
+**Bold Sub-heading 1**
+Short explanation (1-2 sentences max). Then evidence:
+- Specific detail or metric
+- Specific detail or metric
+
+**Bold Sub-heading 2**
+Short explanation (1-2 sentences max). Then evidence:
+- Specific detail or metric
+
+[One sentence closing or takeaway]
 
 HARD RULES:
-- NEVER write paragraphs longer than 2 sentences
+- NEVER open with "Great question", "Sure!", "Absolutely!", or similar filler
+- NEVER write paragraphs longer than 2 sentences — break into bullets or sub-headings
 - NEVER repeat the same point in different words
-- Every bullet must contain a specific fact, number, or concrete detail — no filler
-- Bold the most important term in each bullet
-- Synthesize and distill the context — do NOT reproduce long passages verbatim
-- If the context has a 500-word story, extract the 2-3 key insights, don't retell it`,
+- Every bullet: one line, one concrete fact — no multi-sentence bullets
+- Bold the most important term per bullet (company name, metric, or key concept)
+- Synthesize the context — extract 2-3 key insights from long stories, never reproduce verbatim
+- Use **bold sub-headings** to create visual sections when covering 2+ distinct points
+- Leave a blank line between sections for breathing room`,
 
   pyramid: `TONE: Be structured and executive-ready. Communicate with clarity and precision. Still first-person and professional, but prioritize substance and logical organization over casual warmth.
 
