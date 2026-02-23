@@ -581,5 +581,270 @@
     ],
     "is_core_strength": true,
     "token_count": 312
+  },
+  {
+    "chunk_id": "interview-q4.1-founder-philosophy",
+    "question": "What do you think is the most important thing when starting a company?",
+    "answer_summary": "Founder philosophy expressed as behavior is the most important thing — the founder's temperament becomes the 'operating system' for everything. Four principles: mission-level commitment + founder chemistry, problem-first over technology, capital efficiency + radical simplification, and winning a focused wedge before building a compounding moat.",
+    "text": "If I have to choose one thing, it's founder philosophy expressed as behavior — because in the first 1–2 years there aren't reliable metrics. What you really have is a small group of people making thousands of decisions under uncertainty. The founder's temperament becomes the \"operating system\" for everything: product quality, speed of iteration, hiring bar, culture, fundraising behavior, and how the company responds when reality disagrees with the plan.\n\nFour principles learned the hard way:\n\n1) Mission-level commitment and founder chemistry — the team IS the company. What differentiates survival is whether founders treat it like a mission when it stops being fun. What must not break is the founders' ability to tell the truth early, disagree without ego, and commit decisively. Organizations are made of people — founders who build iconic companies develop internal leaders and retain product ownership.\n\n2) Start with the problem and customer's reality — not the technology. At Flint, we started with sophisticated GNN technology and tried to find the best application. We underestimated behavior change friction. The real test: \"will a normal user do this every day without feeling like homework?\" Validate the smallest repeatable user action early.\n\n3) Capital efficiency and radical simplification — constraints force clarity. Dangerous to confuse fundraising with progress. Under stress, weak founders expand scope; strong founders simplify. Profitability or a credible path keeps the founder in control.\n\n4) Win a focused wedge first, then build a compounding moat. Most failures come from being too broad too early. A moat is when the advantage compounds with usage, distribution, or time.\n\nThis is also how I'd evaluate founders as a 심사역. Altos invests on the belief that 창업자의 철학이 지표보다 중요 — metrics are lagging indicators of the decisions a founding team already made. The philosophy comes first; the numbers follow.",
+    "source_type": "qa_story",
+    "section": "founder_philosophy",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "founder evaluation",
+      "startup strategy",
+      "product-market fit",
+      "capital efficiency",
+      "team building"
+    ],
+    "keywords": [
+      "founder philosophy",
+      "operating system",
+      "mission commitment",
+      "founder chemistry",
+      "problem-first",
+      "behavior change",
+      "capital efficiency",
+      "focused wedge",
+      "compounding moat",
+      "Altos alignment"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "founder_philosophy",
+      "investor_thesis",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 520
+  },
+  {
+    "chunk_id": "interview-q4.2-good-vs-bad-investor",
+    "question": "What differentiates a good investor from a bad investor?",
+    "answer_summary": "A good investor improves a founder's long-term decision quality and execution velocity. A bad investor increases anxiety and noise. Five dimensions: crisis composure (foxhole test), psychological safety, context over KPI panic, signaling discipline for next round, and expanding optionality without ego. Great investors compound founder quality.",
+    "text": "At Flint, while raising ~KRW 450M in seed funding and navigating government grants, I experienced both ends of the spectrum.\n\nOne principle: A good investor improves a founder's long-term decision quality and execution velocity. A bad investor increases anxiety and noise.\n\nFive dimensions:\n\n1) Crisis Behavior — The Foxhole Test. At Flint, when our GNN knowledge graph hit an adoption ceiling, one investor asked 'When will MAU recover?' — pressure without direction. Another asked 'What does the user data say about the friction? If you can't resolve it in eight weeks, what is the highest-leverage use of remaining runway?' — urgency without panic.\n\n2) Psychological Safety — Understanding Founders. During a difficult pivot, one investor said: 'Pivot until you make it. We invested in the team, not just the metric.' That didn't remove pressure — it gave stability to keep moving.\n\n3) Context Over KPI Panic. Experienced investors use metrics as diagnostic tools, providing pattern recognition to distinguish turbulence from structural issues.\n\n4) Signaling Discipline. Strong investors reverse-engineer the next raise — they make the company investable, not just funded.\n\n5) Expanding Optionality Without Ego. They expand the founder's solution space without removing founder agency.\n\nCapital is commoditized. What isn't: crisis composure, judgment calibration, psychological alignment, and real partnership. I want to be the kind of investor I needed when I was building Flint.",
+    "source_type": "qa_story",
+    "section": "founder_philosophy",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "investor evaluation",
+      "founder empathy",
+      "crisis management",
+      "fundraising",
+      "stakeholder management"
+    ],
+    "keywords": [
+      "good investor",
+      "bad investor",
+      "foxhole test",
+      "crisis composure",
+      "psychological safety",
+      "KPI panic",
+      "signaling discipline",
+      "founder quality",
+      "Flint fundraising",
+      "diagnostic pressure"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "founder_philosophy",
+      "investor_thesis",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 480
+  },
+  {
+    "chunk_id": "interview-q4.3-restart-flint",
+    "question": "If you could restart Flint, what would you do differently?",
+    "answer_summary": "Two changes: (1) Start with urgent pain, not technology — optimize for behavioral inevitability over intellectual elegance. (2) Stay in the game longer with better diagnostics — distinguish 'no demand' from 'too hard to use' and design for Zero-Input Value. The biggest regret is stopping one or two iteration cycles too early.",
+    "text": "If I restarted Flint, I would change two things. The product mistakes flowed from the strategic ones.\n\n1) Start With Urgent Pain — Not With Technology. The root mistake was starting from architecture instead of urgency. We anchored the company around technical possibility, not a desperate user problem. Technology creates possibility. Urgency creates companies. We optimized for intellectual elegance. I would now optimize for behavioral inevitability.\n\n2) Stay in the Game Longer — With Better Diagnostics. This is the decision I regret most. When growth plateaued, I interpreted it as market rejection. Looking back, we likely didn't fail the market test — we failed the usability test. The value was real, but buried under too much behavioral change. Today, companies like Pocket, Nessie, and OpenNote are proving the core belief was valid. I would design for Zero-Input Value and commit to a predefined iteration runway before concluding the thesis failed. I stopped one or two cycles too early. That's on me.\n\nPhilosophical shift: Problem Urgency over Technical Ambition. Behavioral Simplicity over Architectural Purity. Diagnostic Clarity over Early Interpretation.",
+    "source_type": "qa_story",
+    "section": "failure_learning",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "self-reflection",
+      "product strategy",
+      "user behavior analysis",
+      "startup iteration",
+      "diagnostic thinking"
+    ],
+    "keywords": [
+      "restart Flint",
+      "behavioral inevitability",
+      "Zero-Input Value",
+      "diagnostic clarity",
+      "misdiagnosed failure",
+      "urgency vs technology",
+      "iteration runway",
+      "usability test",
+      "market test"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "failure_learning",
+      "product_strategy",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 420
+  },
+  {
+    "chunk_id": "interview-q4.4-fundraising-hardest-part",
+    "question": "What was the hardest part of fundraising?",
+    "answer_summary": "The hardest part was bridging the gap between what is true and what is legible. Compressing a '100-hour truth' into a '10-minute narrative' without losing the essence. Two experiences: Flint (novel tech isn't automatically investable) and DUG (fighting lagging market narratives). Key diagnostic: distinguishing false negatives from false positives.",
+    "text": "The hardest part of fundraising was bridging the gap between what is true and what is legible. Founders live in the nuance of their product 24/7. Investors have 30 minutes to pattern-match. My struggle was compressing a '100-hour truth' into a '10-minute narrative' without losing the essence.\n\nTwo experiences taught me this:\n\n1) Flint — We had genuinely novel GNN-based knowledge graph technology. But novel tech isn't automatically investable. Investors need to see a clear wedge: who is the first user, what is the first use case, and why will adoption compound? We learned the hard way that the pitch must lead with the wedge, not the architecture. The technology is the moat claim — but the wedge is what makes it legible.\n\n2) DUG — The challenge was different. The product was working and revenue was growing, but market narratives lagged reality. When investors hear 'gaming' or 'community platform,' they pattern-match to a saturated category. The real story — a vertical commerce engine with 70%+ organic retention — required actively fighting the default narrative.\n\nThe investor lesson I carry: learn to distinguish a 'communication problem' from a 'product problem.' A false negative is when a good company fails to raise because the narrative doesn't land. A false positive is when a weak company raises because the narrative is too polished. As a 심사역, my job is to see through both — and this founder experience is exactly what gives me that diagnostic instinct.",
+    "source_type": "qa_story",
+    "section": "fundraising_experience",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "fundraising",
+      "investor relations",
+      "narrative building",
+      "founder empathy",
+      "pattern recognition"
+    ],
+    "keywords": [
+      "fundraising",
+      "truth vs legibility",
+      "100-hour truth",
+      "10-minute narrative",
+      "false negative",
+      "false positive",
+      "communication problem",
+      "product problem",
+      "wedge first",
+      "market narrative"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "fundraising_experience",
+      "founder_philosophy",
+      "investor_thesis"
+    ],
+    "is_core_strength": true,
+    "token_count": 380
+  },
+  {
+    "chunk_id": "interview-q4.5-shutting-down-flint-emotions",
+    "question": "How did you feel emotionally when you shut down Flint?",
+    "answer_summary": "Two emotional waves: identity hit (self-shame, invalidating 3 years) and responsibility (felt like spending others' capital and credibility). Shifted from 'verdict on worth' to 'expensive tuition' — codified failure mechanisms. Became a different operator at DUG: diagnostic over emotional. Earned empathy as an investor, not theoretical.",
+    "text": "Shutting down Flint hit in two waves. First was an identity hit — it felt like invalidating three years. Real self-shame from asking talented people to believe in a vision and feeling like I failed to deliver. Second and heavier was responsibility — even with supportive investors, it felt personal, like spending the capital and credibility of people who trusted me. Spent nights replaying: What did I miss? What did I delay? What should I have decided earlier?\n\nThe shift came when I forced myself from 'What does this say about me?' to 'What did this teach me?' Stopped treating it as a verdict on worth and started treating it as expensive tuition. Wrote down failure mechanisms — usability vs market, thesis vs execution — to codify lessons, not punish myself.\n\nThis is why I became a different operator at DUG: less emotional and more diagnostic, less in love with cool tech and more obsessed with customer reality. The experience hurt, humbled, and made me serious. Because I've carried that weight firsthand, I don't romanticize founder struggles — my empathy as an investor is earned, not theoretical, and I can stay steady next to founders when things get hard.",
+    "source_type": "qa_story",
+    "section": "founder_empathy",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "emotional resilience",
+      "self-awareness",
+      "founder empathy",
+      "post-mortem analysis",
+      "leadership under pressure"
+    ],
+    "keywords": [
+      "shutdown emotions",
+      "identity crisis",
+      "self-shame",
+      "responsibility",
+      "expensive tuition",
+      "verdict to tuition",
+      "diagnostic mindset",
+      "earned empathy",
+      "founder struggles"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "founder_empathy",
+      "failure_learning",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 310
+  },
+  {
+    "chunk_id": "interview-q4.6-founding-again",
+    "question": "Do you see yourself founding again?",
+    "answer_summary": "Doesn't rule it out but it's not the plan. Two learnings: founding cost is real (10-year commitment), and highest leverage has shifted to helping multiple founders. Committed to VC seriously — compounding judgment, pattern recognition, and founder trust at Altos.",
+    "text": "I won't lie — I don't rule it out, but it's not my plan. Having built a company, I learned two things. First, the cost is real — founding is a 10-year non-negotiable commitment to one problem, emotionally, financially, and in opportunity cost. I don't romanticize that anymore. I would only do it again if I found a problem I was uniquely obsessed with — so much that I couldn't not build it. Second, my highest leverage has changed. My best work isn't only executing inside one company — it's helping multiple founders think through hard problems, spot blind spots early, and make better decisions faster. That's where I consistently get the most energy. My intention is to commit to VC seriously — not as a bridge. I want to spend this phase compounding judgment, pattern recognition, and founder trust at Altos. And if I can keep increasing my impact at Altos, I'd rather stay and compound here.",
+    "source_type": "qa_story",
+    "section": "vc_commitment",
+    "company": "Altos",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "self-awareness",
+      "career planning",
+      "founder empathy",
+      "investor judgment"
+    ],
+    "keywords": [
+      "founding again",
+      "VC commitment",
+      "highest leverage",
+      "compounding judgment",
+      "pattern recognition",
+      "founder trust",
+      "not a bridge"
+    ],
+    "depth": "surface",
+    "focus_tags": [
+      "vc_motivation",
+      "self_awareness",
+      "career_direction"
+    ],
+    "is_core_strength": false,
+    "token_count": 210
+  },
+  {
+    "chunk_id": "interview-q4.7-confidence-after-failure",
+    "question": "After startup failure, was your confidence ever shaken?",
+    "answer_summary": "Yes — confidence was shaken in two ways: comparison trap (peers progressing while feeling like a 3-year detour) and ego hit (market rewards value, not effort). But confidence changed shape: lost arrogance of 'I know what works,' gained confidence of 'I can handle it when it breaks.' In VC, this is an advantage — doesn't confuse conviction with truth.",
+    "text": "Yes, confidence was shaken. The hardest part wasn't the work — it was looking around. While friends were getting promoted at big companies, I felt like I had taken a three-year detour to nowhere. The market doesn't reward effort by default — it rewards value. That gap hit my ego.\n\nBut confidence didn't disappear — it changed shape. I lost the arrogance of 'I know what works.' Before Flint, I believed if I was smart enough and worked hard enough, I could force a product to succeed. Flint humbled me — you can't outwork a market and you can't brute-force adoption if you're solving the wrong problem. And I gained the confidence of 'I can handle it when it breaks.' Even when the worst thing happened — shutting down — I survived, looked my team in the eye, admitted failure, and moved forward.\n\nIn investing, that's an advantage. Because my ego has been tested, I don't confuse conviction with truth. I'm more skeptical of my initial excitement. I assume I'll be wrong sometimes and build processes to find out quickly. It replaced fragile, naïve confidence with quiet, tested confidence — making me a safer, healthier partner for founders and capital.",
+    "source_type": "qa_story",
+    "section": "founder_empathy",
+    "company": "Flint Technologies",
+    "role": "COO",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "emotional resilience",
+      "self-awareness",
+      "metacognition",
+      "investor judgment",
+      "humility"
+    ],
+    "keywords": [
+      "confidence shaken",
+      "comparison trap",
+      "healthy confidence",
+      "fragile vs tested confidence",
+      "conviction vs truth",
+      "ego tested",
+      "admit failure",
+      "process discipline"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "founder_empathy",
+      "self_awareness",
+      "investor_thesis"
+    ],
+    "is_core_strength": true,
+    "token_count": 280
   }
 ]

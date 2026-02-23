@@ -94,6 +94,13 @@ const CHUNK_LABELS: Record<string, string> = {
   "interview-q3.3-flint-shutdown": "Flint Shutdown",
   "interview-q3.4-dug-departure": "Why Left DUG",
   "interview-q3.5-breadth-strength-weakness": "Breadth vs Depth",
+  "interview-q4.1-founder-philosophy": "Founder Philosophy",
+  "interview-q4.2-good-vs-bad-investor": "Good vs Bad Investor",
+  "interview-q4.3-restart-flint": "Restart Flint",
+  "interview-q4.4-fundraising-hardest-part": "Fundraising Challenge",
+  "interview-q4.5-shutting-down-flint-emotions": "Shutdown Emotions",
+  "interview-q4.6-founding-again": "Founding Again?",
+  "interview-q4.7-confidence-after-failure": "Confidence & Failure",
 };
 
 // Chunks that are always pinned — exclude from source tags to avoid noise
