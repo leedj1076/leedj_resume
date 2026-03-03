@@ -943,5 +943,44 @@
     "focus_tags": ["ace_reputation"],
     "is_core_strength": false,
     "token_count": 35
+  },
+  {
+    "chunk_id": "interview-q13.2-handling-disagreement",
+    "question": "When you're confident about a disagreement, how do you handle it?",
+    "answer_summary": "Treats disagreement as a decision-quality tool, not a status fight. Three-step framework: ground in goal + decision rights + reversibility, test own confidence and ask what you're missing, convert to experiment. Two examples: pushed DLC strategy with conviction at DUG (25% of revenue), committed fully despite disagreeing on MR prototype (strong platform response).",
+    "text": "I try to treat disagreement as a decision-quality tool, not a status fight.\n\nOne of the biggest lessons I took from Flint is that even when I feel certain, I can still be wrong — sometimes it's timing, sometimes it's the problem framing, sometimes it's what users will actually do. So when I'm confident, I hold that confidence with humility: the goal is the right outcome, not me being right.\n\n1) I ground the disagreement in the goal and decision rights\n\nFirst I clarify three things:\n\n* What's the goal we're optimizing for?\n* Who is the decision-maker?\n* Is this reversible or irreversible?\n\nThat prevents opinion debates and forces alignment on what matters.\n\n2) I test my confidence and ask what I might be missing\n\nI ask myself: Am I confident because I have evidence, or because I'm attached?\nIf I have data, I lead with it. If I don't, I label it as a hypothesis.\n\nThen I assume the other person is rational from their perspective and ask:\n\"What are you seeing that I'm not?\"\n\n3) I try to turn the disagreement into an experiment\n\nInstead of arguing endlessly, I push an option mindset:\n\n* Can we test this quickly?\n* Can we timebox it?\n* Can we hedge with a smaller bet first?\n\n\nExample: When I pushed with conviction (DUG DLC strategy)\n\nAt DUG, we disagreed on whether to invest in more DLCs versus putting everything into the next title. Some argued we couldn't afford delays; others wanted near-term revenue stability.\n\nI pushed for DLCs because I believed it strengthened the long-term business:\n\n1. It kept users engaged and reduced churn,\n2. It created repeatable revenue drops,\n3. The team would build a content engine and get faster over time.\n\nWe aligned on a clear plan — bi-monthly DLC releases (World Series Tour) — and DLC revenue stabilized at roughly 25% of total revenue, helping defend revenue as the base game aged.\n\n\nExample: When I committed even though I disagreed\n\nIn another case, our CEO wanted to prototype a new MR-focused title despite a small team. My instinct was to focus. But I followed his intuition because he had direct expectations and signal from Apple and Meta about their upcoming roadmap that I didn't have — and he was the decision-maker closest to that information.\n\nSo I committed fully. We built the prototype, and when we showed it to platform stakeholders, the response was strong — they were intrigued and wanted to see progress.\n\nSo my approach is: strong conviction, low ego — ground it in goals, test my own certainty, and convert disagreement into learning through fast experiments.",
+    "source_type": "qa_story",
+    "section": "character_attitude",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "conflict resolution",
+      "decision-making",
+      "stakeholder alignment",
+      "strategic thinking",
+      "intellectual humility"
+    ],
+    "keywords": [
+      "disagreement",
+      "conviction vs ego",
+      "decision quality",
+      "DLC strategy",
+      "experiment mindset",
+      "strong conviction low ego",
+      "decision rights",
+      "hypothesis labeling",
+      "World Series Tour",
+      "MR prototype"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "character_attitude",
+      "leadership_strategy",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 480
   }
 ]

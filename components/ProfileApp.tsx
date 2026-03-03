@@ -28,6 +28,7 @@ export default function ProfileApp() {
   const [sessionId] = useState(() => crypto.randomUUID());
   const [darkMode, setDarkMode] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [profileVisible, setProfileVisible] = useState(true);
 
   // Sync dark mode state with DOM on mount; check if welcome modal should show
   useEffect(() => {
@@ -149,6 +150,27 @@ export default function ProfileApp() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          {/* Profile panel toggle — desktop only */}
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => setProfileVisible((v) => !v)}
+            aria-label={profileVisible ? "Hide profile panel" : "Show profile panel"}
+            className="hidden lg:inline-flex text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
+          >
+            {profileVisible ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+                <polyline points="14 9 17 12 14 15" />
+              </svg>
+            )}
+          </Button>
           {/* Dark mode toggle */}
           <Button
             variant="ghost"
@@ -238,7 +260,9 @@ export default function ProfileApp() {
         <div
           className={`${
             mobileTab === "profile" ? "flex" : "hidden"
-          } lg:flex h-full lg:h-auto lg:w-[46%] lg:min-w-[390px] lg:max-w-[520px] lg:border-r border-[var(--color-border-primary)] shrink-0 flex-col bg-[var(--color-profile-bg)]`}
+          } ${
+            profileVisible ? "lg:flex" : "lg:hidden"
+          } h-full lg:h-auto lg:w-[46%] lg:min-w-[390px] lg:max-w-[520px] lg:border-r border-[var(--color-border-primary)] shrink-0 flex-col bg-[var(--color-profile-bg)]`}
         >
           <ProfilePanel lang={lang} onAskChat={askChat} />
         </div>

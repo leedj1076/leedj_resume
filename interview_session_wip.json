@@ -5,13 +5,13 @@
     "language": "English",
     "interview_style": "Phase 1A — Deep Knowledge Capture + Polish Mode",
     "status": "in_progress",
-    "last_question_asked": "Q5.3",
+    "last_question_asked": "Q13.2",
     "last_question_status": "completed",
-    "next_action": "Q6.1",
-    "questions_completed": 19,
-    "questions_skipped": 5,
-    "skipped_questions": ["Q1.2", "Q1.3", "Q1.4", "Q2.2", "Q2.5"],
-    "bookmark_position": "Q6.1",
+    "next_action": "Q13.3",
+    "questions_completed": 20,
+    "questions_skipped": 6,
+    "skipped_questions": ["Q1.2", "Q1.3", "Q1.4", "Q2.2", "Q2.5", "Q13.1"],
+    "bookmark_position": "Q13.3",
     "mode_note": "From Q2.4 onward: iterative polish mode — draft → feedback → revise → lock in with DJ confirmation"
   },
   "interview_log": [
@@ -273,5 +273,13 @@
     "status": "completed",
     "polish_rounds": 0,
     "final_answer": "This question isn't for me to answer — it's for references to confirm. I'm happy to provide reference contacts if you'd like to hear directly from people I've worked with."
+  },
+  "q13_2_final_answer": {
+    "question_id": "Q13.2",
+    "question_text": "When you're confident about a disagreement, how do you handle it?",
+    "section": "13. 성향 & 태도 검증 (Character & Attitude Verification)",
+    "status": "completed",
+    "polish_rounds": 0,
+    "final_answer": "I try to treat disagreement as a decision-quality tool, not a status fight.\n\nOne of the biggest lessons I took from Flint is that even when I feel certain, I can still be wrong — sometimes it's timing, sometimes it's the problem framing, sometimes it's what users will actually do. So when I'm confident, I hold that confidence with humility: the goal is the right outcome, not me being right.\n\n1) I ground the disagreement in the goal and decision rights\n\nFirst I clarify three things:\n\n* What's the goal we're optimizing for?\n* Who is the decision-maker?\n* Is this reversible or irreversible?\n\nThat prevents opinion debates and forces alignment on what matters.\n\n2) I test my confidence and ask what I might be missing\n\nI ask myself: Am I confident because I have evidence, or because I'm attached?\nIf I have data, I lead with it. If I don't, I label it as a hypothesis.\n\nThen I assume the other person is rational from their perspective and ask:\n\"What are you seeing that I'm not?\"\n\n3) I try to turn the disagreement into an experiment\n\nInstead of arguing endlessly, I push an option mindset:\n\n* Can we test this quickly?\n* Can we timebox it?\n* Can we hedge with a smaller bet first?\n\n\nExample: When I pushed with conviction (DUG DLC strategy)\n\nAt DUG, we disagreed on whether to invest in more DLCs versus putting everything into the next title. Some argued we couldn't afford delays; others wanted near-term revenue stability.\n\nI pushed for DLCs because I believed it strengthened the long-term business:\n\n1. It kept users engaged and reduced churn,\n2. It created repeatable revenue drops,\n3. The team would build a content engine and get faster over time.\n\nWe aligned on a clear plan — bi-monthly DLC releases (World Series Tour) — and DLC revenue stabilized at roughly 25% of total revenue, helping defend revenue as the base game aged.\n\n\nExample: When I committed even though I disagreed\n\nIn another case, our CEO wanted to prototype a new MR-focused title despite a small team. My instinct was to focus. But I followed his intuition because he had direct expectations and signal from Apple and Meta about their upcoming roadmap that I didn't have — and he was the decision-maker closest to that information.\n\nSo I committed fully. We built the prototype, and when we showed it to platform stakeholders, the response was strong — they were intrigued and wanted to see progress.\n\nSo my approach is: strong conviction, low ego — ground it in goals, test my own certainty, and convert disagreement into learning through fast experiments."
   }
 }
