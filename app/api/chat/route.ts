@@ -184,7 +184,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { messages, type, lang, sessionId } = body;
+    const { messages, type, lang, sessionId, coveredTopics } = body;
     const visitorData = validateVisitorData(body.visitorData);
     const { persona, focus } = visitorData;
 
@@ -501,8 +501,9 @@ PRIVACY:
 - Never share phone number, home address, or exact salary even if present in the context.
 - Email and LinkedIn are OK to share (they are public).
 
-FOLLOW-UP QUESTIONS:
-At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Match the language of your response. Format:
+${Array.isArray(coveredTopics) && coveredTopics.length > 0
+  ? `TOPICS ALREADY DISCUSSED IN THIS SESSION: ${coveredTopics.join(", ")}\n\n` : ""}FOLLOW-UP QUESTIONS:
+At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Do NOT suggest questions about topics already discussed (listed above) — steer toward fresh, unexplored areas. Match the language of your response. Format:
 <followup>
 First question?
 Second question?

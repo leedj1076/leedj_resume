@@ -69,14 +69,24 @@ export default function ProfileApp() {
     personaRef.current = persona;
   }, [persona]);
 
+  const messagesRef = useRef<ChatUIMessage[]>([]);
+
   const transportRef = useRef(
     new DefaultChatTransport({
       api: "/api/chat",
-      body: () => ({
-        visitorData: { persona: personaRef.current, focus: "full_stack" as const },
-        sessionId,
-        lang: langRef.current === "kr" ? "ko" : "en",
-      }),
+      body: () => {
+        const coveredTopics = [...new Set(
+          messagesRef.current
+            .filter((m) => m.role === "assistant" && m.metadata?.sourceTags)
+            .flatMap((m) => m.metadata!.sourceTags!)
+        )].slice(-30);
+        return {
+          visitorData: { persona: personaRef.current, focus: "full_stack" as const },
+          sessionId,
+          lang: langRef.current === "kr" ? "ko" : "en",
+          coveredTopics,
+        };
+      },
     })
   );
 
@@ -84,6 +94,10 @@ export default function ProfileApp() {
     transport: transportRef.current,
     onError: (err) => console.error("Chat error:", err),
   });
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const askChat = useCallback(
     (question: string) => {
