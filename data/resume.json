@@ -1,7 +1,7 @@
 [
   {
     "chunk_id": "personal-summary",
-    "text": "Dong Jae Lee is a strategic business development professional with a multidisciplinary background in mechanical engineering, AI, and robotics. He has a proven record of leading cross-company PoC initiatives and global partnerships with Apple, Meta, and Google. He is skilled in translating frontier technologies—AI models, sensors, and robotics systems—into scalable commercial solutions. He is a former Co-Founder who combines a rigorous engineering background with Industrial Design principles to drive user-centric business strategies.",
+    "text": "Dong Jae Lee is a founder-operator who has built, scaled, and shut down an AI startup—from defining MVP and raising seed capital from Strong Ventures and Fast Ventures to navigating pivots and winding down with hard-earned lessons. He has a technical foundation from KAIST, and operational experience across enterprise data systems, spatial computing, and global platform partnerships (Apple, Meta, Google). He is focused on founders solving technically hard problems where adoption is driven by behavioral necessity, not just impressive technology.",
     "source_type": "resume",
     "section": "summary",
     "company": null,
@@ -30,7 +30,7 @@
   },
   {
     "chunk_id": "contact-info",
-    "text": "Dong Jae Lee can be reached at phone number +82-10-2310-0776, email leedj.1076@gmail.com, and LinkedIn at https://www.linkedin.com/in/dongjae-lee/.",
+    "text": "Dong Jae Lee can be reached at phone number +82-10-2310-0776, email leedj.1076@gmail.com, LinkedIn at https://www.linkedin.com/in/dongjae-lee/, and his personal site at ambientlabs.space/dj.",
     "source_type": "resume",
     "section": "summary",
     "company": null,
@@ -51,7 +51,7 @@
   },
   {
     "chunk_id": "skills-expertise",
-    "text": "Dong Jae Lee's core skills and expertise include: Strategic Planning, Partnership Management, Go-to-Market (GTM) Strategy, Business Development, Cross-functional Leadership, Investor Relations, Product Strategy, Competitive Analysis, Market Intelligence, and Operational Optimization. His technical literacy covers Big Data & Cloud Infrastructure (SaaS/PaaS models, Hadoop, Kubernetes), Generative AI (RAG Architecture, Stable Diffusion, Gemini workflows), Graph Neural Networks, Unity game engine, VisionOS, photogrammetry pipelines, and database management systems.",
+    "text": "Dong Jae Lee's core skills and expertise include: Strategic Planning, Partnership Management, Go-to-Market (GTM) Strategy, Business Development, Cross-functional Leadership, Investor Relations, Product Strategy, Competitive Analysis, Market Intelligence, and Operational Optimization. His technical literacy covers AI/ML (RAG, LLMs, Graph Neural Networks), Cloud Infrastructure (SaaS/PaaS, Hadoop, Kubernetes), Spatial Computing (Unity, VisionOS), and Database Management Systems. His technology and market interests include spatial computing & XR ecosystems, and AI agent infrastructure & foundation models.",
     "source_type": "resume",
     "section": "skills",
     "company": null,
@@ -206,6 +206,69 @@
     "is_core_strength": false
   },
   {
+    "chunk_id": "exp-changjo-current",
+    "text": "Dong Jae Lee returned to Changjo Architecture at the CEO's request in February 2026 for Strategy & Market Research on a contract basis. Changjo Architecture is an architecture firm expanding into smart agriculture and frontier technology ventures. He leads company evaluation across Space, GenAI, and Smart Agriculture, and built a due diligence rubric and dashboard for structured company assessment. He provides strategic direction for the Smart Farm division, including market repositioning and technology roadmap based on competitive landscape analysis. He researches emerging AI agent ecosystems and agent-to-agent infrastructure to evaluate venture opportunities, analyzing macro technology shifts (PC to Web to Mobile to AI).",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Market Research, Contract",
+    "start_date": "2026-02",
+    "end_date": null,
+    "skills": [
+      "market research",
+      "due diligence",
+      "competitive analysis",
+      "strategic planning",
+      "technology roadmap",
+      "AI agent infrastructure"
+    ],
+    "keywords": [
+      "Changjo Architecture",
+      "Space",
+      "GenAI",
+      "Smart Agriculture",
+      "due diligence dashboard",
+      "AI agents",
+      "venture evaluation",
+      "macro technology shifts"
+    ],
+    "token_count": 105,
+    "depth": "surface",
+    "focus_tags": ["business_development", "ai_llms", "leadership_strategy"],
+    "is_core_strength": true
+  },
+  {
+    "chunk_id": "exp-changjo-bd",
+    "text": "Dong Jae Lee worked as Business Development on contract at Changjo Architecture in Seoul, Korea, from September 2023 to February 2024. He launched a greenfield indoor farming initiative leveraging the firm's facility design expertise, rapidly building domain knowledge in controlled environment agriculture (CEA), market sizing, and technology benchmarking. He built and operated farming setups from scratch and devised a novel water-injection method to minimize water usage. He researched automation methodologies for plant growth and harvesting. His work led to the creation of a dedicated Smart Farm division within the company.",
+    "source_type": "resume",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Business Development, Contract",
+    "start_date": "2023-09",
+    "end_date": "2024-02",
+    "skills": [
+      "business development",
+      "market sizing",
+      "technology benchmarking",
+      "new business initiative",
+      "controlled environment agriculture"
+    ],
+    "keywords": [
+      "Changjo Architecture",
+      "smart farm",
+      "indoor farming",
+      "CEA",
+      "greenfield",
+      "automation",
+      "water-injection method",
+      "Seoul"
+    ],
+    "token_count": 95,
+    "depth": "surface",
+    "focus_tags": ["business_development"],
+    "is_core_strength": false
+  },
+  {
     "chunk_id": "exp-dug-overview",
     "text": "Dong Jae Lee served as Director of the Business & Publishing Division at Devs United Games, Inc. in Seoul, Korea, from February 2024 to August 2025. Devs United Games is an XR game studio creating immersive experiences for the era of spatial computing. He oversaw foundational business operations including HR, legal, and finance, while guiding strategic growth initiatives such as partnerships and revenue generation, ensuring daily execution aligned with long-term company goals.",
     "source_type": "resume",
@@ -237,7 +300,7 @@
   },
   {
     "chunk_id": "exp-dug-partnerships",
-    "text": "At Devs United Games, Dong Jae Lee directed strategic partnerships with Senior Directors at major tech platforms including Meta, Apple, and Google, leading initiatives from product roadmap alignment. He led the strategic partnership with Apple from initial outreach to launch, resulting in Fishing Haven being featured on the Vision Pro App Store. He also managed the porting of a flagship title to a new Google device, managing timelines, trackers, and cross-functional teams to ensure a successful launch.",
+    "text": "At Devs United Games, Dong Jae Lee led the Apple partnership from cold outreach to launch: he navigated indirect communication channels, delivered iterative demos to build trust, and launched Fishing Haven on Vision Pro—an Apple App Store Awards finalist—within 9 months. He initiated the Google Android XR partnership by leveraging the studio's track record on Meta and Apple, secured dev kit access, negotiated funding structure including upfront payment terms, and managed the cross-functional porting timeline.",
     "source_type": "resume",
     "section": "experience",
     "company": "Devs United Games",
@@ -268,7 +331,7 @@
   },
   {
     "chunk_id": "exp-dug-revenue",
-    "text": "At Devs United Games, Dong Jae Lee increased revenue by 55.47% YoY for H1 2025 by driving platform promotions, DLC strategy, and securing inclusion in major sales events and premium subscription programs. He analyzed the emerging Spatial Computing market landscape to formulate the studio's multi-platform entry strategy and successfully pivoted the business model towards high-margin premium subscription services based on competitive benchmarking and user retention analysis.",
+    "text": "At Devs United Games, Dong Jae Lee drove 55.47% YoY revenue growth (H1 2025) by securing entry into Meta Quest+ after assessing cannibalization risk, then redesigning promotions and DLC strategy. He also renegotiated a previously dropped Meta funding deal; after financial analysis of revenue-share obligations vs. capital offered, made the decision to walk away—prioritizing long-term company interests over short-term capital.",
     "source_type": "resume",
     "section": "experience",
     "company": "Devs United Games",
@@ -386,7 +449,7 @@
   },
   {
     "chunk_id": "exp-flint-product-gtm",
-    "text": "At Flint Technologies, Dong Jae Lee designed and built the company's product feedback pipeline from the ground up, creating a scalable system to track, test, and analyze user data that directly informed GTM strategy and core feature development. He analyzed qualitative and quantitative user data to define the MVP (Minimum Viable Product) and prioritize the development roadmap, ensuring engineering resources focused on high-impact features. He developed and executed the initial GTM strategy, identifying early adopter segments and validating business hypotheses through rapid A/B testing and iteration.",
+    "text": "At Flint Technologies, Dong Jae Lee defined the MVP and built a data-driven decision culture across four co-founders by testing competing UIs and landing pages, using real user data to resolve strategic disagreements. He developed and executed the GTM strategy: identified early adopter segments, validated hypotheses through rapid A/B testing, and iterated based on user retention data. He navigated two product pivots before winding down operations after concluding the product did not achieve product-market fit—an experience that sharpened a problem-first lens applied to every subsequent role.",
     "source_type": "resume",
     "section": "experience",
     "company": "Flint Technologies",
@@ -415,7 +478,7 @@
   },
   {
     "chunk_id": "exp-flint-fundraising",
-    "text": "At Flint Technologies, Dong Jae Lee directed corporate strategy and investor relations, securing KRW 450M in seed and government funding. He managed relationships with investors and partners, representing the company at global startup and business events to pitch the business vision, demonstrate growth metrics, and secure strategic support.",
+    "text": "At Flint Technologies, Dong Jae Lee raised seed funding from Strong Ventures and Fast Ventures at a $2.1M post-money valuation and secured government grants totaling KRW 450M in combined capital. He managed investor relations and represented the company at global startup events to pitch the business vision, demonstrate growth metrics, and secure strategic support.",
     "source_type": "resume",
     "section": "experience",
     "company": "Flint Technologies",
@@ -442,7 +505,7 @@
   },
   {
     "chunk_id": "exp-tmax-team-lead",
-    "text": "Dong Jae Lee served as Team Lead at TmaxTibero from July 2019 to May 2021 in Seongnam, Korea. TmaxTibero is a multinational corporation specializing in enterprise data management systems. This role was part of his enlistment as Technical Research Personnel (May 25, 2018 – May 24, 2021). He contributed to developing product strategies by researching global trends in Big Data and Cloud Computing, and benchmarked Database Management products and marketing strategies of leading companies including Oracle and Microsoft. He bridged R&D and enterprise needs by translating client requirements into technical roadmaps, shaping product development across data and AI infrastructure.",
+    "text": "Dong Jae Lee served as Team Lead at TmaxTibero from July 2019 to May 2021 in Seongnam, Korea. TmaxTibero is a multinational corporation specializing in enterprise data management systems. This role was part of his enlistment as Technical Research Personnel (May 2018 – May 2021). He translated enterprise infrastructure needs into product roadmaps through technical discovery and strategic planning with C-level stakeholders at Samsung Electronics and Hyundai. He benchmarked database platforms (Oracle, Microsoft) and researched global trends in cloud infrastructure and AI-driven data systems to inform competitive positioning. He received an Achievement Award for exceeding client expectations.",
     "source_type": "resume",
     "section": "experience",
     "company": "TmaxTibero",
@@ -502,7 +565,7 @@
   },
   {
     "chunk_id": "exp-tmax-software-engineer",
-    "text": "Dong Jae Lee worked as a Software Engineer at TmaxTibero from February 2018 to July 2019 in Seongnam, Korea. He leveraged emerging practices for data management utilizing Big Data and Cloud platforms including Hadoop and Kubernetes. He co-developed an autonomous database system utilizing machine learning, coordinating project milestones with AI specialists.",
+    "text": "Dong Jae Lee worked as a Software Engineer at TmaxTibero from February 2018 to July 2019 in Seongnam, Korea. He developed distributed data infrastructure (Hadoop, Kubernetes) and collaborated with AI engineers on an autonomous database system using machine learning.",
     "source_type": "resume",
     "section": "experience",
     "company": "TmaxTibero",
@@ -617,13 +680,13 @@
   },
   {
     "chunk_id": "narrative-career-trajectory",
-    "text": "Dong Jae Lee's career trajectory spans from engineering foundations to strategic business leadership. He started with a strong STEM education at KAIST (BS and MS in Mechanical Engineering with Industrial Design) and KIT (dual degree in Germany). He began his career as a Software Engineer at TmaxTibero working on Big Data and autonomous database systems, was promoted to Team Lead managing enterprise clients like Samsung and Hyundai, then co-founded Flint Technologies as COO building an AI-powered knowledge management startup, and most recently served as Director of Business & Publishing at Devs United Games (Feb 2024 – Aug 2025) leading XR/spatial computing partnerships with Apple, Meta, and Google.",
+    "text": "Dong Jae Lee's career trajectory spans from engineering foundations to strategic business leadership. He started with a strong STEM education at KAIST (BS and MS in Mechanical Engineering with Industrial Design) and KIT (dual degree in Germany). He began his career as a Software Engineer at TmaxTibero working on Big Data and autonomous database systems, was promoted to Team Lead managing enterprise clients like Samsung and Hyundai, then co-founded Flint Technologies as COO building an AI-powered knowledge management startup. He served as Director of Business & Publishing at Devs United Games (Feb 2024 – Aug 2025) leading XR/spatial computing partnerships with Apple, Meta, and Google. He returned to Changjo Architecture (Feb 2026 – present) at the CEO's request for strategy and market research across Space, GenAI, and Smart Agriculture, including building a due diligence dashboard for structured company assessment.",
     "source_type": "resume",
     "section": "summary",
     "company": null,
     "role": null,
     "start_date": "2010-09",
-    "end_date": "2025-08",
+    "end_date": null,
     "skills": [
       "career progression",
       "engineering",

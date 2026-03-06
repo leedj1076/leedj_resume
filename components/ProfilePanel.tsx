@@ -5,6 +5,7 @@ import {
   STATS,
   HIGHLIGHTS,
   TIMELINE,
+  PORTFOLIO,
   localize,
   type Lang,
 } from "@/lib/profile-data";
@@ -51,12 +52,12 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
             Dong Jae Lee
           </h1>
           <p className="text-[15px] text-[var(--color-text-secondary)] mt-1.5 leading-relaxed">
-            {en ? "Operator → Builder → Strategist" : "운영자 → 빌더 → 전략가"}
+            {en ? "Founder-Operator | Early-Stage Tech & Startups" : "파운더-오퍼레이터 | 초기 스타트업 & 기술 생태계"}
           </p>
           <p className="text-[14px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
             {en
-              ? "Bridging deep tech and real-world business. 8+ years shipping products, closing enterprise deals, and building from zero to scale."
-              : "딥테크와 실제 비즈니스를 연결합니다. 8년+ 제품 출시, 기업 딜 클로징, 제로에서 스케일까지 구축 경험."}
+              ? "Built, scaled, and shut down an AI startup. 8+ years across enterprise data systems, spatial computing, and global platform partnerships (Apple, Meta, Google)."
+              : "AI 스타트업을 구축, 성장, 그리고 종료까지 경험. 8년+ 엔터프라이즈 데이터 시스템, 공간 컴퓨팅, 글로벌 플랫폼 파트너십(Apple, Meta, Google) 경험."}
           </p>
         </div>
 
@@ -145,6 +146,36 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
                   </div>
                 </div>
               </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Portfolio */}
+        <div className="mb-10">
+          <div className="text-[12px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-[0.2em] mb-3.5">
+            {en ? "Portfolio" : "포트폴리오"}
+          </div>
+          <div className="flex flex-col gap-3">
+            {PORTFOLIO.map((p, i) => (
+              <a
+                key={i}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-start justify-between gap-3 border border-[var(--color-border-secondary)] rounded-lg px-4 py-3.5 no-underline hover:border-[var(--color-hover-border)] hover:bg-[var(--color-hover-accent-bg)] transition-colors"
+              >
+                <div className="min-w-0">
+                  <div className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                    {p.title[lang]}
+                  </div>
+                  <div className="text-[13px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
+                    {p.description[lang]}
+                  </div>
+                </div>
+                <span className="text-[var(--color-text-tertiary)] group-hover:text-[var(--color-key)] transition-colors shrink-0 mt-0.5">
+                  ↗
+                </span>
+              </a>
             ))}
           </div>
         </div>

@@ -29,13 +29,20 @@ export interface TimelineEntry {
   chatQ: Bilingual;
 }
 
+export interface PortfolioItem {
+  title: Bilingual;
+  description: Bilingual;
+  url: string;
+  chatQ: Bilingual;
+}
+
 export const STATS: Stat[] = [
   {
     label: "Experience",
-    value: "7+ years",
+    value: "8+ years",
     detail: {
-      en: "Engineer → Team Lead → Co-Founder/COO → Director B&P",
-      kr: "엔지니어 → 팀리드 → 공동창업자/COO → B&P 디렉터",
+      en: "Engineer → Team Lead → Co-Founder/COO → Director B&P → Strategy",
+      kr: "엔지니어 → 팀리드 → 공동창업자/COO → B&P 디렉터 → 전략",
     },
     chatQ: {
       en: "Walk me through DJ's career progression.",
@@ -133,6 +140,19 @@ export const HIGHLIGHTS: Highlight[] = [
 
 export const TIMELINE: TimelineEntry[] = [
   {
+    period: { en: "2026 – Present", kr: "2026 – 현재" },
+    role: { en: "Strategy & Market Research", kr: "전략 & 시장 조사" },
+    company: { en: "Changjo Architecture", kr: "창조건축" },
+    highlight: {
+      en: "Company evaluation across Space, GenAI, and Smart Agriculture; built due diligence dashboard",
+      kr: "우주, GenAI, 스마트 농업 분야 기업 평가; 실사 대시보드 구축",
+    },
+    chatQ: {
+      en: "What is DJ working on now?",
+      kr: "DJ는 현재 무엇을 하고 있나요?",
+    },
+  },
+  {
     period: "2024 – 2025",
     role: { en: "Director, Business & Publishing", kr: "사업 및 퍼블리싱 디렉터" },
     company: "Devs United Games",
@@ -146,12 +166,25 @@ export const TIMELINE: TimelineEntry[] = [
     },
   },
   {
+    period: "2023 – 2024",
+    role: { en: "Business Development", kr: "사업 개발" },
+    company: { en: "Changjo Architecture", kr: "창조건축" },
+    highlight: {
+      en: "Launched indoor farming initiative; created Smart Farm division",
+      kr: "실내 농업 이니셔티브 런칭; 스마트팜 사업부 설립",
+    },
+    chatQ: {
+      en: "Tell me about DJ's work in smart agriculture.",
+      kr: "DJ의 스마트 농업 관련 업무에 대해 알려주세요.",
+    },
+  },
+  {
     period: "2021 – 2024",
     role: { en: "Co-Founder & COO", kr: "공동창업자 & COO" },
     company: "Flint Technologies",
     highlight: {
-      en: "GNN knowledge platform, ₩450M seed + gov't funding, 860+ users",
-      kr: "GNN 지식 플랫폼, 4.5억 시드 + 정부 자금, 860+ 사용자",
+      en: "GNN knowledge platform, ₩450M seed + gov't funding at $2.1M valuation",
+      kr: "GNN 지식 플랫폼, 4.5억 시드 + 정부 자금, $2.1M 밸류에이션",
     },
     chatQ: {
       en: "What did DJ learn from his startup failure?",
@@ -185,6 +218,24 @@ export const TIMELINE: TimelineEntry[] = [
     chatQ: {
       en: "Tell me about DJ's education.",
       kr: "DJ의 학력에 대해 알려주세요.",
+    },
+  },
+];
+
+export const PORTFOLIO: PortfolioItem[] = [
+  {
+    title: {
+      en: "Space Investment Intelligence Platform",
+      kr: "우주 투자 인텔리전스 플랫폼",
+    },
+    description: {
+      en: "AI-powered investment research dashboard profiling 115+ space companies with automated deep research, dual-rubric scoring, and multi-model investment committee debate.",
+      kr: "115개 이상의 우주 기업을 프로파일링하는 AI 기반 투자 리서치 대시보드. 자동화된 심층 리서치, 이중 루브릭 스코어링, 멀티모델 투자위원회 토론 기능.",
+    },
+    url: "https://cja-space-h.vercel.app",
+    chatQ: {
+      en: "Tell me about the Space Investment Intelligence Platform.",
+      kr: "우주 투자 인텔리전스 플랫폼에 대해 알려주세요.",
     },
   },
 ];
