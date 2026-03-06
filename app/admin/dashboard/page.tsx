@@ -20,22 +20,34 @@ interface Exchange {
   reviewed_at: string | null;
 }
 
+interface Session {
+  session_id: string;
+  persona: string;
+  focus: string;
+  lang: string;
+  started_at: string;
+  exchanges: Exchange[];
+}
+
 interface Stats {
-  total: number;
+  totalSessions: number;
+  totalExchanges: number;
+  avgExchangesPerSession: number;
   reviewed: number;
   unreviewed: number;
   personaCounts: Record<string, number>;
   focusCounts: Record<string, number>;
   ratingCounts: Record<string, number>;
   langCounts: Record<string, number>;
-  dailyVolume: Record<string, number>;
+  dailySessions: Record<string, number>;
+  dailyExchanges: Record<string, number>;
 }
 
 const PERSONA_LABELS: Record<string, string> = {
-  vc_investor: "VC Investor",
-  corporate_strategy: "Corporate Strategy",
-  bd_partnerships: "BD / Partnerships",
   hiring_manager: "Hiring Manager",
+  vc_investor: "Investor",
+  bd_partnerships: "Partner",
+  curious_visitor: "Curious Visitor",
 };
 
 const RATING_COLORS: Record<string, string> = {
@@ -52,13 +64,14 @@ export default function AdminDashboard() {
   const [tab, setTab] = useState<"review" | "analytics" | "settings">("review");
 
   // Review state
-  const [exchanges, setExchanges] = useState<Exchange[]>([]);
-  const [total, setTotal] = useState(0);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [totalSessions, setTotalSessions] = useState(0);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("all");
   const [personaFilter, setPersonaFilter] = useState("");
   const [loading, setLoading] = useState(false);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
+  const [expandedExchangeId, setExpandedExchangeId] = useState<number | null>(null);
 
   // Review form state
   const [reviewRating, setReviewRating] = useState<string>("");
@@ -81,7 +94,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/admin/exchanges", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: passwordInput, page: 1 }),
+        body: JSON.stringify({ password: passwordInput, page: 1, view: "sessions" }),
       });
       if (res.status === 401) {
         setAuthError(true);
@@ -91,14 +104,14 @@ export default function AdminDashboard() {
       setAuthenticated(true);
       setAuthError(false);
       const data = await res.json();
-      setExchanges(data.exchanges ?? []);
-      setTotal(data.total ?? 0);
+      setSessions(data.sessions ?? []);
+      setTotalSessions(data.totalSessions ?? 0);
     } catch {
       setAuthError(true);
     }
   };
 
-  const fetchExchanges = useCallback(
+  const fetchSessions = useCallback(
     async (p: number, f: string, persona: string) => {
       setLoading(true);
       try {
@@ -110,11 +123,12 @@ export default function AdminDashboard() {
             page: p,
             filter: f,
             persona: persona || undefined,
+            view: "sessions",
           }),
         });
         const data = await res.json();
-        setExchanges(data.exchanges ?? []);
-        setTotal(data.total ?? 0);
+        setSessions(data.sessions ?? []);
+        setTotalSessions(data.totalSessions ?? 0);
         setPage(p);
       } catch {
         /* ignore */
@@ -191,12 +205,17 @@ export default function AdminDashboard() {
     }
   }, [authenticated, tab, settingsLoaded, fetchSettings]);
 
-  const handleExpand = (ex: Exchange) => {
-    if (expandedId === ex.id) {
-      setExpandedId(null);
+  const handleSessionToggle = (sid: string) => {
+    setExpandedSessionId(expandedSessionId === sid ? null : sid);
+    setExpandedExchangeId(null);
+  };
+
+  const handleExchangeExpand = (ex: Exchange) => {
+    if (expandedExchangeId === ex.id) {
+      setExpandedExchangeId(null);
       return;
     }
-    setExpandedId(ex.id);
+    setExpandedExchangeId(ex.id);
     setReviewRating(ex.dj_rating ?? "");
     setReviewComment(ex.dj_comment ?? "");
     setReviewImprovement(ex.improvement_text ?? "");
@@ -218,9 +237,8 @@ export default function AdminDashboard() {
             reviewRating === "needs_improvement" ? reviewImprovement : undefined,
         }),
       });
-      // Refresh current page
-      await fetchExchanges(page, filter, personaFilter);
-      setExpandedId(null);
+      await fetchSessions(page, filter, personaFilter);
+      setExpandedExchangeId(null);
     } catch {
       /* ignore */
     } finally {
@@ -228,7 +246,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const totalPages = Math.ceil(total / 20);
+  const totalPages = Math.ceil(totalSessions / 10);
 
   // --- Password gate ---
   if (!authenticated) {
@@ -311,28 +329,30 @@ export default function AdminDashboard() {
       <main className="max-w-6xl mx-auto px-6 py-6">
         {tab === "review" ? (
           <ReviewTab
-            exchanges={exchanges}
-            total={total}
+            sessions={sessions}
+            totalSessions={totalSessions}
             page={page}
             totalPages={totalPages}
             filter={filter}
             personaFilter={personaFilter}
             loading={loading}
-            expandedId={expandedId}
+            expandedSessionId={expandedSessionId}
+            expandedExchangeId={expandedExchangeId}
             reviewRating={reviewRating}
             reviewComment={reviewComment}
             reviewImprovement={reviewImprovement}
             submitting={submitting}
             onFilterChange={(f) => {
               setFilter(f);
-              fetchExchanges(1, f, personaFilter);
+              fetchSessions(1, f, personaFilter);
             }}
             onPersonaChange={(p) => {
               setPersonaFilter(p);
-              fetchExchanges(1, filter, p);
+              fetchSessions(1, filter, p);
             }}
-            onPageChange={(p) => fetchExchanges(p, filter, personaFilter)}
-            onExpand={handleExpand}
+            onPageChange={(p) => fetchSessions(p, filter, personaFilter)}
+            onSessionToggle={handleSessionToggle}
+            onExchangeExpand={handleExchangeExpand}
             onRatingChange={setReviewRating}
             onCommentChange={setReviewComment}
             onImprovementChange={setReviewImprovement}
@@ -356,14 +376,15 @@ export default function AdminDashboard() {
 // ─── Review Tab ──────────────────────────────────────────────
 
 function ReviewTab({
-  exchanges,
-  total,
+  sessions,
+  totalSessions,
   page,
   totalPages,
   filter,
   personaFilter,
   loading,
-  expandedId,
+  expandedSessionId,
+  expandedExchangeId,
   reviewRating,
   reviewComment,
   reviewImprovement,
@@ -371,20 +392,22 @@ function ReviewTab({
   onFilterChange,
   onPersonaChange,
   onPageChange,
-  onExpand,
+  onSessionToggle,
+  onExchangeExpand,
   onRatingChange,
   onCommentChange,
   onImprovementChange,
   onSubmitReview,
 }: {
-  exchanges: Exchange[];
-  total: number;
+  sessions: Session[];
+  totalSessions: number;
   page: number;
   totalPages: number;
   filter: string;
   personaFilter: string;
   loading: boolean;
-  expandedId: number | null;
+  expandedSessionId: string | null;
+  expandedExchangeId: number | null;
   reviewRating: string;
   reviewComment: string;
   reviewImprovement: string;
@@ -392,7 +415,8 @@ function ReviewTab({
   onFilterChange: (f: string) => void;
   onPersonaChange: (p: string) => void;
   onPageChange: (p: number) => void;
-  onExpand: (ex: Exchange) => void;
+  onSessionToggle: (sid: string) => void;
+  onExchangeExpand: (ex: Exchange) => void;
   onRatingChange: (r: string) => void;
   onCommentChange: (c: string) => void;
   onImprovementChange: (t: string) => void;
@@ -419,167 +443,182 @@ function ReviewTab({
           className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white"
         >
           <option value="">All Personas</option>
-          <option value="vc_investor">VC Investor</option>
-          <option value="corporate_strategy">Corporate Strategy</option>
-          <option value="bd_partnerships">BD / Partnerships</option>
           <option value="hiring_manager">Hiring Manager</option>
+          <option value="vc_investor">Investor</option>
+          <option value="bd_partnerships">Partner</option>
+          <option value="curious_visitor">Curious Visitor</option>
         </select>
         <span className="text-sm text-gray-500 self-center">
-          {total} exchange{total !== 1 ? "s" : ""}
+          {totalSessions} session{totalSessions !== 1 ? "s" : ""}
         </span>
       </div>
 
       {loading ? (
         <div className="text-center py-12 text-gray-400">Loading...</div>
-      ) : exchanges.length === 0 ? (
+      ) : sessions.length === 0 ? (
         <div className="text-center py-12 text-gray-400">
-          No exchanges found
+          No sessions found
         </div>
       ) : (
-        <div className="space-y-2">
-          {exchanges.map((ex) => (
-            <div
-              key={ex.id}
-              className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-            >
-              {/* Row summary */}
-              <button
-                onClick={() => onExpand(ex)}
-                className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-gray-50 transition-colors"
+        <div className="space-y-3">
+          {sessions.map((session) => {
+            const isOpen = expandedSessionId === session.session_id;
+            const unreviewedCount = session.exchanges.filter((e) => !e.reviewed_at).length;
+            return (
+              <div
+                key={session.session_id}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden"
               >
-                <span className="text-xs text-gray-400 shrink-0 w-36">
-                  {new Date(ex.created_at).toLocaleString()}
-                </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 shrink-0">
-                  {PERSONA_LABELS[ex.persona] ?? ex.persona}
-                </span>
-                <span className="text-sm text-gray-700 truncate flex-1">
-                  {ex.query}
-                </span>
-                {ex.dj_rating && (
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                      RATING_COLORS[ex.dj_rating] ?? ""
-                    }`}
-                  >
-                    {ex.dj_rating === "good" ? "Good" : "Needs Improvement"}
+                {/* Session header */}
+                <button
+                  onClick={() => onSessionToggle(session.session_id)}
+                  className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <span className="text-gray-400 shrink-0 text-xs">
+                    {isOpen ? "\u25BC" : "\u25B6"}
                   </span>
-                )}
-                {!ex.reviewed_at && (
-                  <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
-                )}
-              </button>
-
-              {/* Expanded detail */}
-              {expandedId === ex.id && (
-                <div className="border-t border-gray-100 px-4 py-4 space-y-4">
-                  {/* Query */}
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 mb-1">
-                      Query
-                    </p>
-                    <p className="text-sm text-gray-800 bg-gray-50 p-3 rounded-lg">
-                      {ex.query}
-                    </p>
-                  </div>
-
-                  {/* Response */}
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 mb-1">
-                      Response
-                    </p>
-                    <div className="text-sm bg-gray-50 p-3 rounded-lg prose prose-sm max-w-none">
-                      <Markdown>{ex.response}</Markdown>
-                    </div>
-                  </div>
-
-                  {/* Chunks used */}
-                  {ex.chunks_used && ex.chunks_used.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">
-                        Chunks Used ({ex.chunks_used.length})
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {ex.chunks_used.map((c) => (
-                          <span
-                            key={c}
-                            className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
-                          >
-                            {c}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                  <span className="text-xs text-gray-400 shrink-0">
+                    {new Date(session.started_at).toLocaleString()}
+                  </span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 shrink-0">
+                    {PERSONA_LABELS[session.persona] ?? session.persona}
+                  </span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 shrink-0">
+                    {session.focus}
+                  </span>
+                  <span className="text-sm text-gray-700 truncate flex-1">
+                    {session.exchanges[0]?.query}
+                  </span>
+                  <span className="text-xs text-gray-400 shrink-0">
+                    {session.exchanges.length} Q{session.exchanges.length !== 1 ? "s" : ""}
+                  </span>
+                  {unreviewedCount > 0 && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 shrink-0">
+                      {unreviewedCount} unreviewed
+                    </span>
                   )}
+                </button>
 
-                  {/* Meta row */}
-                  <div className="flex flex-wrap gap-4 text-xs text-gray-400">
-                    <span>Focus: {ex.focus}</span>
-                    <span>Lang: {ex.lang}</span>
-                    <span>Session: {ex.session_id?.slice(0, 8)}</span>
-                    {ex.pinecone_chunk_id && (
-                      <span>Pinecone: {ex.pinecone_chunk_id}</span>
-                    )}
-                  </div>
-
-                  {/* Review form */}
-                  <div className="border-t border-gray-100 pt-4">
-                    <p className="text-xs font-medium text-gray-500 mb-2">
-                      Review
-                    </p>
-                    <div className="flex gap-2 mb-3">
-                      <button
-                        onClick={() => onRatingChange("good")}
-                        className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
-                          reviewRating === "good"
-                            ? "bg-green-50 border-green-300 text-green-800"
-                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
-                        }`}
+                {/* Expanded: list of exchanges in this session */}
+                {isOpen && (
+                  <div className="border-t border-gray-100">
+                    {session.exchanges.map((ex, i) => (
+                      <div
+                        key={ex.id}
+                        className={i > 0 ? "border-t border-gray-50" : ""}
                       >
-                        Good
-                      </button>
-                      <button
-                        onClick={() => onRatingChange("needs_improvement")}
-                        className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
-                          reviewRating === "needs_improvement"
-                            ? "bg-yellow-50 border-yellow-300 text-yellow-800"
-                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        Needs Improvement
-                      </button>
-                    </div>
+                        {/* Exchange row */}
+                        <button
+                          onClick={() => onExchangeExpand(ex)}
+                          className="w-full px-4 py-2.5 pl-10 flex items-center gap-3 text-left hover:bg-blue-50/30 transition-colors"
+                        >
+                          <span className="text-xs text-gray-300 shrink-0 w-5 text-right">
+                            {i + 1}.
+                          </span>
+                          <span className="text-sm text-gray-700 truncate flex-1">
+                            {ex.query}
+                          </span>
+                          {ex.dj_rating && (
+                            <span
+                              className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
+                                RATING_COLORS[ex.dj_rating] ?? ""
+                              }`}
+                            >
+                              {ex.dj_rating === "good" ? "Good" : "Needs Improvement"}
+                            </span>
+                          )}
+                          {!ex.reviewed_at && (
+                            <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
+                          )}
+                        </button>
 
-                    <textarea
-                      value={reviewComment}
-                      onChange={(e) => onCommentChange(e.target.value)}
-                      placeholder="Comment (optional)"
-                      rows={2}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-
-                    {reviewRating === "needs_improvement" && (
-                      <textarea
-                        value={reviewImprovement}
-                        onChange={(e) => onImprovementChange(e.target.value)}
-                        placeholder="Write the improved answer (will be stored as a correction chunk in Pinecone)"
-                        rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    )}
-
-                    <button
-                      onClick={() => onSubmitReview(ex.id)}
-                      disabled={!reviewRating || submitting}
-                      className="px-6 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {submitting ? "Saving..." : "Submit Review"}
-                    </button>
+                        {/* Expanded exchange detail */}
+                        {expandedExchangeId === ex.id && (
+                          <div className="bg-gray-50/50 px-4 py-4 pl-16 space-y-4">
+                            <div>
+                              <p className="text-xs font-medium text-gray-500 mb-1">Query</p>
+                              <p className="text-sm text-gray-800 bg-white p-3 rounded-lg border border-gray-100">
+                                {ex.query}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-gray-500 mb-1">Response</p>
+                              <div className="text-sm bg-white p-3 rounded-lg border border-gray-100 prose prose-sm max-w-none">
+                                <Markdown>{ex.response}</Markdown>
+                              </div>
+                            </div>
+                            {ex.chunks_used && ex.chunks_used.length > 0 && (
+                              <div>
+                                <p className="text-xs font-medium text-gray-500 mb-1">
+                                  Chunks Used ({ex.chunks_used.length})
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                  {ex.chunks_used.map((c) => (
+                                    <span key={c} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                      {c}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {/* Review form */}
+                            <div className="border-t border-gray-200 pt-4">
+                              <p className="text-xs font-medium text-gray-500 mb-2">Review</p>
+                              <div className="flex gap-2 mb-3">
+                                <button
+                                  onClick={() => onRatingChange("good")}
+                                  className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
+                                    reviewRating === "good"
+                                      ? "bg-green-50 border-green-300 text-green-800"
+                                      : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  Good
+                                </button>
+                                <button
+                                  onClick={() => onRatingChange("needs_improvement")}
+                                  className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
+                                    reviewRating === "needs_improvement"
+                                      ? "bg-yellow-50 border-yellow-300 text-yellow-800"
+                                      : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  Needs Improvement
+                                </button>
+                              </div>
+                              <textarea
+                                value={reviewComment}
+                                onChange={(e) => onCommentChange(e.target.value)}
+                                placeholder="Comment (optional)"
+                                rows={2}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                              {reviewRating === "needs_improvement" && (
+                                <textarea
+                                  value={reviewImprovement}
+                                  onChange={(e) => onImprovementChange(e.target.value)}
+                                  placeholder="Write the improved answer (will be stored as a correction chunk in Pinecone)"
+                                  rows={4}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                              )}
+                              <button
+                                onClick={() => onSubmitReview(ex.id)}
+                                disabled={!reviewRating || submitting}
+                                className="px-6 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                {submitting ? "Saving..." : "Submit Review"}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -626,38 +665,50 @@ function AnalyticsTab({
     );
   }
 
-  const maxDaily = Math.max(...Object.values(stats.dailyVolume), 1);
+  const maxDaily = Math.max(
+    ...Object.values(stats.dailySessions),
+    ...Object.values(stats.dailyExchanges),
+    1
+  );
 
   return (
     <div className="space-y-6">
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <SummaryCard label="Total Queries" value={stats.total} />
-        <SummaryCard label="Reviewed" value={stats.reviewed} color="green" />
-        <SummaryCard label="Unreviewed" value={stats.unreviewed} color="orange" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <SummaryCard label="Total Sessions" value={stats.totalSessions} />
+        <SummaryCard label="Total Exchanges" value={stats.totalExchanges} />
+        <SummaryCard label="Avg per Session" value={stats.avgExchangesPerSession} color="blue" />
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <p className="text-sm text-gray-500">Reviewed / Unreviewed</p>
+          <p className="text-2xl font-semibold">
+            <span className="text-green-700">{stats.reviewed}</span>
+            <span className="text-gray-300 mx-1">/</span>
+            <span className="text-orange-600">{stats.unreviewed}</span>
+          </p>
+        </div>
       </div>
 
       {/* Distribution sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DistributionCard
-          title="Persona Distribution"
+          title="Persona Distribution (by session)"
           data={stats.personaCounts}
           labels={PERSONA_LABELS}
           color="blue"
         />
         <DistributionCard
-          title="Focus Area Distribution"
+          title="Focus Area Distribution (by session)"
           data={stats.focusCounts}
           color="purple"
         />
         <DistributionCard
-          title="Rating Distribution"
+          title="Rating Distribution (by exchange)"
           data={stats.ratingCounts}
           labels={{ good: "Good", needs_improvement: "Needs Improvement", unrated: "Unrated" }}
           color="green"
         />
         <DistributionCard
-          title="Language Distribution"
+          title="Language Distribution (by session)"
           data={stats.langCounts}
           labels={{ en: "English", ko: "Korean" }}
           color="indigo"
@@ -666,28 +717,55 @@ function AnalyticsTab({
 
       {/* Daily volume chart */}
       <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">
-          Daily Volume (Last 14 Days)
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-medium text-gray-700">
+            Daily Volume (Last 14 Days)
+          </h3>
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-3 h-3 rounded-sm bg-blue-600" />
+              Sessions
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-3 h-3 rounded-sm bg-blue-300" />
+              Exchanges
+            </span>
+          </div>
+        </div>
         <div className="flex items-end gap-1 h-32">
-          {Object.entries(stats.dailyVolume).map(([day, count]) => (
-            <div
-              key={day}
-              className="flex-1 flex flex-col items-center gap-1"
-            >
-              <span className="text-xs text-gray-500">{count || ""}</span>
+          {Object.keys(stats.dailySessions).map((day) => {
+            const sessions = stats.dailySessions[day] ?? 0;
+            const exchanges = stats.dailyExchanges[day] ?? 0;
+            return (
               <div
-                className="w-full bg-blue-400 rounded-t"
-                style={{
-                  height: `${(count / maxDaily) * 100}%`,
-                  minHeight: count > 0 ? "4px" : "0px",
-                }}
-              />
-              <span className="text-[10px] text-gray-400 -rotate-45 origin-top-left whitespace-nowrap">
-                {day.slice(5)}
-              </span>
-            </div>
-          ))}
+                key={day}
+                className="flex-1 flex flex-col items-center gap-1"
+              >
+                <span className="text-xs text-gray-500">
+                  {exchanges || sessions ? `${sessions}/${exchanges}` : ""}
+                </span>
+                <div className="w-full flex gap-[1px] items-end" style={{ height: `${(Math.max(sessions, exchanges) / maxDaily) * 100}%`, minHeight: (sessions > 0 || exchanges > 0) ? "4px" : "0px" }}>
+                  <div
+                    className="flex-1 bg-blue-600 rounded-t"
+                    style={{
+                      height: sessions > 0 ? `${(sessions / Math.max(sessions, exchanges)) * 100}%` : "0px",
+                      minHeight: sessions > 0 ? "4px" : "0px",
+                    }}
+                  />
+                  <div
+                    className="flex-1 bg-blue-300 rounded-t"
+                    style={{
+                      height: exchanges > 0 ? `${(exchanges / Math.max(sessions, exchanges)) * 100}%` : "0px",
+                      minHeight: exchanges > 0 ? "4px" : "0px",
+                    }}
+                  />
+                </div>
+                <span className="text-[10px] text-gray-400 -rotate-45 origin-top-left whitespace-nowrap">
+                  {day.slice(5)}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -819,6 +897,7 @@ function SummaryCard({
     gray: "text-gray-900",
     green: "text-green-700",
     orange: "text-orange-600",
+    blue: "text-blue-700",
   };
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4">

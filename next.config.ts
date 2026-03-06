@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
     "/": ["./ui_test/**/*"],
     "/ui/[name]": ["./ui_test/**/*"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/dj",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
