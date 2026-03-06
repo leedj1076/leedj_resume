@@ -141,84 +141,84 @@ export const HIGHLIGHTS: Highlight[] = [
 
 export const TIMELINE: TimelineEntry[] = [
   {
-    period: { en: "2026 – Present", kr: "2026 – 현재" },
+    period: { en: "Feb 2026 – Present", kr: "2026.02 – 현재" },
     role: { en: "Strategy & Market Research", kr: "전략 & 시장 조사" },
     company: { en: "Changjo Architecture", kr: "창조건축" },
     highlight: {
-      en: "Company evaluation across Space, GenAI, and Smart Agriculture; built due diligence dashboard",
-      kr: "우주, GenAI, 스마트 농업 분야 기업 평가; 실사 대시보드 구축",
+      en: "Leading company evaluation across space, GenAI, and smart agriculture. Built a due diligence rubric and AI dashboard for structured assessment.",
+      kr: "우주, GenAI, 스마트 농업 분야 기업 평가 주도. 구조화된 평가를 위한 실사 루브릭과 AI 대시보드 구축.",
     },
     chatQ: {
-      en: "What are you currently working on?",
-      kr: "현재 어떤 일을 하고 계신가요?",
+      en: "Could you tell me about your current role at Changjo Architecture?",
+      kr: "현재 창조건축에서의 역할에 대해 말씀해 주시겠어요?",
     },
   },
   {
-    period: "2024 – 2025",
+    period: { en: "Feb 2024 – Aug 2025", kr: "2024.02 – 2025.08" },
     role: { en: "Director, Business & Publishing", kr: "사업 및 퍼블리싱 디렉터" },
     company: "Devs United Games",
     highlight: {
-      en: "55.47% YoY revenue growth; Meta, Apple, Google partnerships",
-      kr: "55.47% YoY 매출 성장; Meta, Apple, Google 파트너십",
+      en: "Secured Meta Quest+, launched on Apple Vision Pro (App Store Awards finalist), initiated Google Android XR. 55% YoY revenue growth.",
+      kr: "Meta Quest+ 진입, Apple Vision Pro 출시(App Store Awards 파이널리스트), Google Android XR 시작. 매출 55% YoY 성장.",
     },
     chatQ: {
-      en: "Could you walk me through the Meta Quest+ partnership?",
-      kr: "Meta Quest+ 파트너십 과정을 설명해 주시겠어요?",
+      en: "What did you do at Devs United Games?",
+      kr: "Devs United Games에서 어떤 일을 하셨나요?",
     },
   },
   {
-    period: "2023 – 2024",
+    period: { en: "Sep 2023 – Feb 2024", kr: "2023.09 – 2024.02" },
     role: { en: "Business Development", kr: "사업 개발" },
     company: { en: "Changjo Architecture", kr: "창조건축" },
     highlight: {
-      en: "Launched indoor farming initiative; created Smart Farm division",
-      kr: "실내 농업 이니셔티브 런칭; 스마트팜 사업부 설립",
+      en: "Launched greenfield indoor farming initiative. Built and operated setups from scratch; created dedicated Smart Farm division.",
+      kr: "실내 농업 사업을 처음부터 기획·런칭. 직접 설비 구축·운영; 스마트팜 전담 사업부 신설.",
     },
     chatQ: {
-      en: "Could you tell me about your work in smart agriculture?",
-      kr: "스마트 농업 관련 업무에 대해 말씀해 주시겠어요?",
+      en: "Could you tell me about your business development work at Changjo?",
+      kr: "창조건축에서의 사업 개발 업무에 대해 말씀해 주시겠어요?",
     },
   },
   {
-    period: "2021 – 2024",
+    period: { en: "May 2021 – Feb 2024", kr: "2021.05 – 2024.02" },
     role: { en: "Co-Founder & COO", kr: "공동창업자 & COO" },
     company: "Flint Technologies",
     highlight: {
-      en: "GNN knowledge platform, ₩450M seed + gov't funding at $2.1M valuation",
-      kr: "GNN 지식 플랫폼, 4.5억 시드 + 정부 자금, $2.1M 밸류에이션",
+      en: "Defined MVP and GTM across four co-founders. Raised ₩450M from Strong & Fast Ventures at $2.1M valuation; wound down after two pivots.",
+      kr: "4인 공동창업 팀에서 MVP·GTM 전략 수립. Strong & Fast Ventures로부터 $2.1M 밸류에이션에 4.5억 유치; 두 번의 피봇 후 사업 종료.",
     },
     chatQ: {
-      en: "What did you learn from your startup experience at Flint?",
-      kr: "Flint에서의 창업 경험에서 무엇을 배우셨나요?",
+      en: "Could you tell me about your experience co-founding Flint?",
+      kr: "Flint 공동창업 경험에 대해 말씀해 주시겠어요?",
     },
   },
   {
-    period: "2018 – 2021",
+    period: { en: "Feb 2018 – May 2021", kr: "2018.02 – 2021.05" },
     role: { en: "Software Engineer → Team Lead", kr: "소프트웨어 엔지니어 → 팀리드" },
     company: "TmaxTibero",
     highlight: {
-      en: "Enterprise DBMS migrations for Samsung, Hyundai; Big Data & Cloud R&D",
-      kr: "삼성, 현대 기업 DBMS 마이그레이션; 빅데이터 & 클라우드 R&D",
+      en: "Enterprise DB migrations for Samsung and Hyundai; built distributed infrastructure (Hadoop, K8s). Promoted to Team Lead, Achievement Award.",
+      kr: "삼성, 현대 대상 엔터프라이즈 DB 마이그레이션; 분산 인프라(Hadoop, K8s) 구축. 팀리드 승진, 공로상 수상.",
     },
     chatQ: {
-      en: "How do you approach enterprise sales?",
-      kr: "엔터프라이즈 영업을 어떻게 접근하시나요?",
+      en: "What did you do at TmaxTibero?",
+      kr: "TmaxTibero에서 어떤 일을 하셨나요?",
     },
   },
   {
-    period: "2010 – 2018",
+    period: { en: "Sep 2010 – Feb 2018", kr: "2010.09 – 2018.02" },
     role: {
       en: "B.S. + M.S. Mechanical Engineering",
       kr: "기계공학 학사 + 석사",
     },
     company: { en: "KAIST + KIT (Germany)", kr: "KAIST + KIT (독일)" },
     highlight: {
-      en: "Double major w/ Industrial Design, Cum Laude, Dean's List, KIT dual degree",
-      kr: "산업디자인 복수전공, 우등졸업, 학장 리스트, KIT 복수학위",
+      en: "Double major with Industrial Design, Cum Laude. Dual degree at KIT Germany.",
+      kr: "산업디자인 복수전공, 우등졸업. 독일 KIT 복수학위.",
     },
     chatQ: {
-      en: "Could you tell me about your education?",
-      kr: "학력에 대해 말씀해 주시겠어요?",
+      en: "Could you tell me about your time at KAIST and KIT?",
+      kr: "KAIST와 KIT에서의 학업에 대해 말씀해 주시겠어요?",
     },
   },
 ];
