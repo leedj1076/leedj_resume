@@ -321,12 +321,19 @@ export default function ChatPanel({
               {en ? "Try one of these:" : "이런 것들을 질문해보세요:"}
             </p>
             <div className="flex flex-col gap-2">
+              <button
+                onClick={() => onSend(en ? "Please introduce yourself." : "자기소개를 해주세요.")}
+                style={{ animation: "fadeInUp 0.4s ease-out 0s both" }}
+                className="text-left px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] transition-colors"
+              >
+                {en ? "Please introduce yourself." : "자기소개를 해주세요."}
+              </button>
               {starters.map((q, i) => (
                 <button
                   key={i}
                   onClick={() => onSend(q)}
                   style={{
-                    animation: `fadeInUp 0.4s ease-out ${i * 0.08}s both`,
+                    animation: `fadeInUp 0.4s ease-out ${(i + 1) * 0.08}s both`,
                   }}
                   className="text-left px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] transition-colors"
                 >

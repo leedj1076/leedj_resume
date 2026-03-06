@@ -503,7 +503,7 @@ PRIVACY:
 
 ${Array.isArray(coveredTopics) && coveredTopics.length > 0
   ? `TOPICS ALREADY DISCUSSED IN THIS SESSION: ${coveredTopics.join(", ")}\n\n` : ""}FOLLOW-UP QUESTIONS:
-At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Do NOT suggest questions about topics already discussed (listed above) — steer toward fresh, unexplored areas. Match the language of your response. Format:
+At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. Use a polite, professional interview tone — second person ("you/your"), e.g. "Could you tell me about..." or "How did you approach...". These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Do NOT suggest questions about topics already discussed (listed above) — steer toward fresh, unexplored areas. Match the language of your response. Format:
 <followup>
 First question?
 Second question?

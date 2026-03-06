@@ -3,13 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import {
   STATS,
-  HIGHLIGHTS,
   TIMELINE,
   PORTFOLIO,
   localize,
   type Lang,
 } from "@/lib/profile-data";
-import HighlightCard from "./HighlightCard";
 import { Button } from "@/components/ui/button";
 
 interface ProfilePanelProps {
@@ -85,22 +83,6 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
           ))}
         </div>
 
-        {/* Highlights — narrative depth */}
-        <div className="mb-10">
-          <div className="text-[12px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-[0.2em] mb-3.5">
-            {en ? "In My Own Words" : "제 이야기"}
-          </div>
-          <div className="flex flex-col gap-3">
-            {HIGHLIGHTS.map((h) => (
-              <HighlightCard
-                key={h.id}
-                title={h.title[lang]}
-                text={h.text[lang]}
-              />
-            ))}
-          </div>
-        </div>
-
         {/* Timeline */}
         <div className="mb-10">
           <div className="text-[12px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-[0.2em] mb-4">
@@ -150,33 +132,57 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
           </div>
         </div>
 
-        {/* Portfolio */}
+        {/* Selected Work */}
         <div className="mb-10">
           <div className="text-[12px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-[0.2em] mb-3.5">
-            {en ? "Portfolio" : "포트폴리오"}
+            {en ? "Work Samples" : "작업 샘플"}
           </div>
-          <div className="flex flex-col gap-3">
-            {PORTFOLIO.map((p, i) => (
-              <a
-                key={i}
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-start justify-between gap-3 border border-[var(--color-border-secondary)] rounded-lg px-4 py-3.5 no-underline hover:border-[var(--color-hover-border)] hover:bg-[var(--color-hover-accent-bg)] transition-colors"
-              >
-                <div className="min-w-0">
-                  <div className="text-[14px] font-semibold text-[var(--color-text-primary)]">
-                    {p.title[lang]}
+          <div className="flex flex-col gap-5">
+            {(() => {
+              const groups: { company: string; items: typeof PORTFOLIO }[] = [];
+              for (const p of PORTFOLIO) {
+                const name = localize(p.company, lang);
+                const last = groups[groups.length - 1];
+                if (last && last.company === name) {
+                  last.items.push(p);
+                } else {
+                  groups.push({ company: name, items: [p] });
+                }
+              }
+              return groups.map((g) => (
+                <div key={g.company}>
+                  <div className="text-[11px] font-medium text-[var(--color-text-muted)] uppercase tracking-[0.15em] mb-2">
+                    {g.company}
                   </div>
-                  <div className="text-[13px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
-                    {p.description[lang]}
+                  <div className="flex flex-col gap-2">
+                    {g.items.map((p, i) => {
+                      const isExternal = p.url.startsWith("http");
+                      return (
+                        <a
+                          key={i}
+                          href={p.url}
+                          target={isExternal ? "_blank" : undefined}
+                          rel={isExternal ? "noopener noreferrer" : undefined}
+                          className="group flex items-start justify-between gap-3 border border-[var(--color-border-secondary)] rounded-lg px-4 py-3.5 no-underline hover:border-[var(--color-hover-border)] hover:bg-[var(--color-hover-accent-bg)] transition-colors"
+                        >
+                          <div className="min-w-0">
+                            <div className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                              {p.title[lang]}
+                            </div>
+                            <div className="text-[13px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
+                              {p.description[lang]}
+                            </div>
+                          </div>
+                          <span className="text-[var(--color-text-tertiary)] group-hover:text-[var(--color-key)] transition-colors shrink-0 mt-0.5">
+                            ↗
+                          </span>
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
-                <span className="text-[var(--color-text-tertiary)] group-hover:text-[var(--color-key)] transition-colors shrink-0 mt-0.5">
-                  ↗
-                </span>
-              </a>
-            ))}
+              ));
+            })()}
           </div>
         </div>
 

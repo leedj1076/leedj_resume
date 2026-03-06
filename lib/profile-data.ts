@@ -34,6 +34,7 @@ export interface PortfolioItem {
   description: Bilingual;
   url: string;
   chatQ: Bilingual;
+  company: Localizable;
 }
 
 export const STATS: Stat[] = [
@@ -45,8 +46,8 @@ export const STATS: Stat[] = [
       kr: "엔지니어 → 팀리드 → 공동창업자/COO → B&P 디렉터 → 전략",
     },
     chatQ: {
-      en: "Walk me through DJ's career progression.",
-      kr: "DJ의 커리어 발전 과정을 알려주세요.",
+      en: "Could you walk me through your career progression?",
+      kr: "커리어 발전 과정을 설명해 주시겠어요?",
     },
   },
   {
@@ -57,8 +58,8 @@ export const STATS: Stat[] = [
       kr: "Devs United에서 플랫폼 프로모션, DLC 전략, 프리미엄 구독 프로그램 주도",
     },
     chatQ: {
-      en: "How did DJ achieve 55% revenue growth?",
-      kr: "DJ는 어떻게 55% 매출 성장을 달성했나요?",
+      en: "How did you achieve 55% revenue growth?",
+      kr: "55% 매출 성장을 어떻게 달성하셨나요?",
     },
   },
   {
@@ -69,8 +70,8 @@ export const STATS: Stat[] = [
       kr: "공동창업자로서 Strong Ventures & Fast Ventures에서 시드 + 정부 자금 유치",
     },
     chatQ: {
-      en: "Tell me about DJ's fundraising experience.",
-      kr: "DJ의 펀드레이징 경험에 대해 알려주세요.",
+      en: "Could you tell me about your fundraising experience?",
+      kr: "펀드레이징 경험에 대해 말씀해 주시겠어요?",
     },
   },
   {
@@ -81,8 +82,8 @@ export const STATS: Stat[] = [
       kr: "RAG 파이프라인(이 앱), Next.js, Python, Unity, VisionOS, Hadoop/K8s 구축",
     },
     chatQ: {
-      en: "What's DJ's technical stack?",
-      kr: "DJ의 기술 스택은 무엇인가요?",
+      en: "Could you describe your technical background?",
+      kr: "기술적 배경에 대해 설명해 주시겠어요?",
     },
   },
   {
@@ -93,8 +94,8 @@ export const STATS: Stat[] = [
       kr: "네이티브 이중언어 + TestDaF 5/5/4/5 독일어",
     },
     chatQ: {
-      en: "What languages does DJ speak?",
-      kr: "DJ는 어떤 언어를 구사하나요?",
+      en: "What languages do you speak?",
+      kr: "어떤 언어를 구사하시나요?",
     },
   },
   {
@@ -105,8 +106,8 @@ export const STATS: Stat[] = [
       kr: "기계공학 + 산업디자인 학사 (우등졸업), KIT 석사 복수학위",
     },
     chatQ: {
-      en: "Tell me about DJ's education.",
-      kr: "DJ의 학력에 대해 알려주세요.",
+      en: "Could you tell me about your education?",
+      kr: "학력에 대해 말씀해 주시겠어요?",
     },
   },
 ];
@@ -116,24 +117,24 @@ export const HIGHLIGHTS: Highlight[] = [
     id: "platforms",
     title: { en: "Platform Partnerships", kr: "플랫폼 파트너십" },
     text: {
-      en: 'At Devs United Games, I didn\'t just "do BD." I built the company\'s entire global distribution channel. Meta Quest+, Apple Vision Pro, Google Android XR — each required navigating different platform politics, different negotiation cultures, and different technical requirements. The 55% YoY revenue growth wasn\'t from one big deal. It was from building repeatable partnership playbooks across three very different ecosystems.',
-      kr: 'Devs United Games에서 단순히 "BD를 했다"가 아닙니다. 회사의 전체 글로벌 유통 채널을 구축했습니다. Meta Quest+, Apple Vision Pro, Google Android XR — 각각 다른 플랫폼 정치, 다른 협상 문화, 다른 기술 요구사항을 탐색해야 했습니다. 55% YoY 매출 성장은 하나의 큰 딜이 아닌, 세 가지 매우 다른 생태계에서 반복 가능한 파트너십 플레이북을 구축한 결과입니다.',
+      en: "At Devs United Games, I led the Apple partnership from cold outreach to launch — navigating indirect communication channels, delivering iterative demos to build trust, and shipping Fishing Haven on Vision Pro as an Apple App Store Awards finalist within 9 months. I secured Meta Quest+ entry after assessing cannibalization risk, driving 55.47% YoY revenue growth. When a Meta funding deal didn't serve the company's long-term interests, I walked away. I initiated the Google Android XR partnership by leveraging our track record on the other two platforms, negotiating dev kit access and upfront payment terms.",
+      kr: "Devs United Games에서 Apple 파트너십을 콜드 아웃리치에서 런칭까지 이끌었습니다 — 간접적 커뮤니케이션 채널을 탐색하고, 반복적 데모로 신뢰를 구축하여, 9개월 만에 Fishing Haven을 Vision Pro에서 Apple App Store Awards 파이널리스트로 출시했습니다. 잠식 리스크를 분석한 후 Meta Quest+ 진입을 확보하여 55.47% YoY 매출 성장을 달성했습니다. Meta 펀딩 딜이 회사의 장기 이익에 부합하지 않을 때는 과감히 포기했습니다. 다른 두 플랫폼에서의 실적을 활용하여 Google Android XR 파트너십을 시작하고, 개발 키트 접근과 선지급 조건을 협상했습니다.",
     },
   },
   {
     id: "failure",
     title: { en: "What I Learned from Failure", kr: "실패에서 배운 것" },
     text: {
-      en: 'Flint Technologies was my most expensive education. We raised ₩450M in seed and government funding, built a genuinely novel GNN-powered knowledge platform, and grew to 860+ users with zero marketing spend. Then it died. Not because the tech was bad — it was ahead of its time. It died because we optimized for algorithmic sophistication over user experience. The GNN required users to manually connect notes as nodes — that manual friction killed adoption even with AI assistance. I learned the difference between "technically validated" and "market-ready" the hard way. That lesson now shapes every product and partnership decision I make.',
-      kr: 'Flint Technologies는 가장 비싼 교육이었습니다. 시드 및 정부 자금으로 4.5억원을 유치하고, 진정으로 혁신적인 GNN 기반 지식 플랫폼을 구축하고, 마케팅 비용 없이 860명 이상의 사용자를 확보했습니다. 그리고 실패했습니다. 기술이 나빠서가 아닙니다 — 시대를 앞섰습니다. 사용자 경험보다 알고리즘 정교함을 최적화했기 때문입니다. GNN은 사용자가 수동으로 노트를 노드로 연결해야 했고, 그 수동 마찰이 AI 지원에도 불구하고 채택을 저해했습니다. "기술적으로 검증된 것"과 "시장 준비가 된 것"의 차이를 어렵게 배웠습니다. 그 교훈이 이제 모든 제품과 파트너십 결정을 형성합니다.',
+      en: "At Flint Technologies, we raised seed funding from Strong Ventures and Fast Ventures at a $2.1M valuation, plus government grants totaling ₩450M. I defined the MVP and built a data-driven decision culture across four co-founders — when we disagreed on direction, we tested competing UIs and landing pages and let real user data decide. We navigated two product pivots before concluding we hadn't achieved product-market fit. The hardest lesson: starting from impressive technology instead of desperate user pain. That experience sharpened a problem-first lens I now apply to every decision — validate the behavior loop early, and if adoption friction is core, solve it decisively or stop.",
+      kr: "Flint Technologies에서 Strong Ventures와 Fast Ventures로부터 $2.1M 밸류에이션으로 시드 투자를 유치하고, 정부 보조금을 포함해 총 4.5억원을 확보했습니다. MVP를 정의하고 네 명의 공동창업자 간 데이터 기반 의사결정 문화를 구축했습니다 — 방향에 대해 의견이 갈릴 때, 경쟁 UI와 랜딩 페이지를 테스트하고 실제 사용자 데이터로 결정했습니다. 두 번의 제품 피봇을 거친 후 제품-시장 적합성을 달성하지 못했다고 결론 내렸습니다. 가장 어려운 교훈: 절실한 사용자 문제가 아닌 인상적인 기술에서 출발한 것. 그 경험이 이제 모든 결정에 적용하는 문제 우선 렌즈를 날카롭게 만들었습니다 — 행동 루프를 일찍 검증하고, 채택 마찰이 핵심이면 단호히 해결하거나 멈추라.",
     },
   },
   {
     id: "enterprise",
     title: { en: "Enterprise Sales DNA", kr: "엔터프라이즈 영업 DNA" },
     text: {
-      en: "Before startups, I spent three years at TmaxTibero — first as a Software Engineer building Big Data and autonomous database systems, then promoted to Team Lead managing enterprise DBMS migrations for Samsung Electronics and Hyundai. Korean enterprise sales is relationship-driven and hierarchical — you don't just pitch a product, you navigate internal politics across multiple stakeholders over months. That experience gave me a muscle that most technical founders lack: the ability to sit in a room with enterprise executives, earn their trust, and turn a technical conversation into a commercial outcome.",
-      kr: "스타트업 이전, TmaxTibero에서 3년간 — 먼저 소프트웨어 엔지니어로 빅데이터와 자율 데이터베이스 시스템을 구축하고, 이후 팀리드로 승진하여 삼성전자와 현대의 기업 DBMS 마이그레이션을 관리했습니다. 한국 기업 영업은 관계 중심이고 위계적입니다 — 단순히 제품을 피칭하는 것이 아니라, 수개월에 걸쳐 여러 이해관계자의 내부 정치를 탐색합니다. 그 경험은 대부분의 기술 창업자에게 없는 근육을 만들었습니다: 기업 임원과 한 방에 앉아 신뢰를 얻고, 기술 대화를 상업적 결과로 전환하는 능력.",
+      en: "Before startups, I spent three years at TmaxTibero — first as a Software Engineer developing distributed data infrastructure with Hadoop and Kubernetes and collaborating on an autonomous database system, then promoted to Team Lead. As Team Lead, I translated enterprise infrastructure needs into product roadmaps through technical discovery and strategic planning with C-level stakeholders at Samsung Electronics and Hyundai. I benchmarked database platforms like Oracle and Microsoft and researched global trends in cloud infrastructure and AI-driven data systems. I received an Achievement Award for exceeding client expectations. That experience gave me a muscle most technical founders lack: bridging R&D and enterprise needs under pressure.",
+      kr: "스타트업 이전, TmaxTibero에서 3년간 — 먼저 소프트웨어 엔지니어로 Hadoop과 Kubernetes 기반 분산 데이터 인프라를 개발하고 자율 데이터베이스 시스템에 협업한 후, 팀리드로 승진했습니다. 팀리드로서 삼성전자와 현대의 C레벨 이해관계자와 기술 탐색 및 전략 기획을 통해 엔터프라이즈 인프라 요구사항을 제품 로드맵으로 전환했습니다. Oracle, Microsoft 등 데이터베이스 플랫폼을 벤치마킹하고 클라우드 인프라 및 AI 기반 데이터 시스템의 글로벌 트렌드를 연구했습니다. 고객 기대를 초과 달성하여 공로상을 수상했습니다. 그 경험은 대부분의 기술 창업자에게 없는 근육을 만들었습니다: 압박 속에서 R&D와 엔터프라이즈 요구를 연결하는 능력.",
     },
   },
 ];
@@ -148,8 +149,8 @@ export const TIMELINE: TimelineEntry[] = [
       kr: "우주, GenAI, 스마트 농업 분야 기업 평가; 실사 대시보드 구축",
     },
     chatQ: {
-      en: "What is DJ working on now?",
-      kr: "DJ는 현재 무엇을 하고 있나요?",
+      en: "What are you currently working on?",
+      kr: "현재 어떤 일을 하고 계신가요?",
     },
   },
   {
@@ -161,8 +162,8 @@ export const TIMELINE: TimelineEntry[] = [
       kr: "55.47% YoY 매출 성장; Meta, Apple, Google 파트너십",
     },
     chatQ: {
-      en: "Tell me about the Meta Quest+ partnership.",
-      kr: "Meta Quest+ 파트너십에 대해 알려주세요.",
+      en: "Could you walk me through the Meta Quest+ partnership?",
+      kr: "Meta Quest+ 파트너십 과정을 설명해 주시겠어요?",
     },
   },
   {
@@ -174,8 +175,8 @@ export const TIMELINE: TimelineEntry[] = [
       kr: "실내 농업 이니셔티브 런칭; 스마트팜 사업부 설립",
     },
     chatQ: {
-      en: "Tell me about DJ's work in smart agriculture.",
-      kr: "DJ의 스마트 농업 관련 업무에 대해 알려주세요.",
+      en: "Could you tell me about your work in smart agriculture?",
+      kr: "스마트 농업 관련 업무에 대해 말씀해 주시겠어요?",
     },
   },
   {
@@ -187,8 +188,8 @@ export const TIMELINE: TimelineEntry[] = [
       kr: "GNN 지식 플랫폼, 4.5억 시드 + 정부 자금, $2.1M 밸류에이션",
     },
     chatQ: {
-      en: "What did DJ learn from his startup failure?",
-      kr: "스타트업 실패에서 무엇을 배웠나요?",
+      en: "What did you learn from your startup experience at Flint?",
+      kr: "Flint에서의 창업 경험에서 무엇을 배우셨나요?",
     },
   },
   {
@@ -200,8 +201,8 @@ export const TIMELINE: TimelineEntry[] = [
       kr: "삼성, 현대 기업 DBMS 마이그레이션; 빅데이터 & 클라우드 R&D",
     },
     chatQ: {
-      en: "How does DJ approach enterprise sales?",
-      kr: "DJ는 엔터프라이즈 영업을 어떻게 접근하나요?",
+      en: "How do you approach enterprise sales?",
+      kr: "엔터프라이즈 영업을 어떻게 접근하시나요?",
     },
   },
   {
@@ -216,14 +217,16 @@ export const TIMELINE: TimelineEntry[] = [
       kr: "산업디자인 복수전공, 우등졸업, 학장 리스트, KIT 복수학위",
     },
     chatQ: {
-      en: "Tell me about DJ's education.",
-      kr: "DJ의 학력에 대해 알려주세요.",
+      en: "Could you tell me about your education?",
+      kr: "학력에 대해 말씀해 주시겠어요?",
     },
   },
 ];
 
 export const PORTFOLIO: PortfolioItem[] = [
+  // — Changjo Architecture —
   {
+    company: { en: "Changjo Architecture", kr: "창조건축" },
     title: {
       en: "Space Investment Intelligence Platform",
       kr: "우주 투자 인텔리전스 플랫폼",
@@ -234,8 +237,74 @@ export const PORTFOLIO: PortfolioItem[] = [
     },
     url: "https://cja-space-h.vercel.app",
     chatQ: {
-      en: "Tell me about the Space Investment Intelligence Platform.",
-      kr: "우주 투자 인텔리전스 플랫폼에 대해 알려주세요.",
+      en: "Could you walk me through the Space Investment Intelligence Platform?",
+      kr: "우주 투자 인텔리전스 플랫폼에 대해 설명해 주시겠어요?",
+    },
+  },
+  // — Devs United Games —
+  {
+    company: "Devs United Games",
+    title: {
+      en: "Apple Immersive Video Analysis",
+      kr: "Apple Immersive Video 분석",
+    },
+    description: {
+      en: "Research on filming techniques, human factors, directing grammar, and production lifecycle for Apple's 180° stereoscopic 3D format on Vision Pro.",
+      kr: "Apple의 Vision Pro 180° 입체 3D 포맷을 위한 촬영 기법, 인체공학, 연출 문법, 프로덕션 라이프사이클 분석.",
+    },
+    url: "/dj/apple-immersive-video",
+    chatQ: {
+      en: "What motivated your research on Apple Immersive Video?",
+      kr: "Apple Immersive Video 연구를 하게 된 계기가 무엇인가요?",
+    },
+  },
+  {
+    company: "Devs United Games",
+    title: {
+      en: "The First Breakout Game: Platform-Defining Games",
+      kr: "최초의 브레이크아웃 게임: 플랫폼을 정의한 게임들",
+    },
+    description: {
+      en: "Analysis of how every computing platform produced a defining game — from Solitaire to Beat Saber — and what that pattern means for the first smart glasses game.",
+      kr: "솔리테어부터 비트 세이버까지, 모든 컴퓨팅 플랫폼이 자신을 정의하는 게임을 만들어낸 패턴 분석과 스마트 글래스 첫 게임에 대한 시사점.",
+    },
+    url: "/dj/breakout-game-analysis",
+    chatQ: {
+      en: "What is your analysis on platform-defining games?",
+      kr: "플랫폼을 정의하는 게임에 대한 분석을 들려주시겠어요?",
+    },
+  },
+  // — Flint Technologies —
+  {
+    company: "Flint Technologies",
+    title: {
+      en: "B2B SaaS and the Knowledge Management Problem",
+      kr: "B2B SaaS와 지식 관리 문제",
+    },
+    description: {
+      en: "Structural analysis of why knowledge management tools struggle as businesses — the backend/frontend divide, the human nature problem, and the algorithm threshold.",
+      kr: "지식 관리 도구가 비즈니스로 어려움을 겪는 구조적 분석 — 백엔드/프론트엔드 구분, 인간 본성 문제, 알고리즘 임계점.",
+    },
+    url: "/dj/b2b-saas-km-analysis",
+    chatQ: {
+      en: "What are your views on B2B SaaS in knowledge management?",
+      kr: "지식 관리 분야 B2B SaaS에 대한 견해를 들려주시겠어요?",
+    },
+  },
+  {
+    company: "Flint Technologies",
+    title: {
+      en: "Flint: Knowledge Management Crisis Analysis",
+      kr: "Flint: 지식 관리 위기 분석",
+    },
+    description: {
+      en: "Analysis of the information debt problem and Flint's AI-powered approach using GNN to close the gap between knowledge collection and utilization.",
+      kr: "정보 부채 문제 분석과 GNN 기반 AI로 지식 수집과 활용 간 격차를 해소하는 Flint의 접근 방식.",
+    },
+    url: "/dj/flint-analysis",
+    chatQ: {
+      en: "Could you tell me about the knowledge management problem Flint was solving?",
+      kr: "Flint가 해결하려 했던 지식 관리 문제에 대해 말씀해 주시겠어요?",
     },
   },
 ];
@@ -249,19 +318,19 @@ export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = 
 
 export const STARTER_QUESTIONS: Record<Lang, string[]> = {
   en: [
-    "What makes DJ different from other candidates?",
-    "Tell me about the Meta Quest+ partnership.",
-    "What did DJ learn from his startup failure?",
-    "What's DJ's technical stack?",
-    "How does DJ approach business development?",
-    "What was DJ's role at Flint Technologies?",
+    "What sets you apart from other candidates?",
+    "Could you walk me through the Meta Quest+ partnership?",
+    "What did you learn from your startup experience at Flint?",
+    "Could you describe your technical background?",
+    "How do you typically approach business development?",
+    "What was your role at Flint Technologies?",
   ],
   kr: [
-    "DJ를 다른 후보자와 차별화하는 것은 무엇인가요?",
-    "Meta Quest+ 파트너십에 대해 알려주세요.",
-    "스타트업 실패에서 무엇을 배웠나요?",
-    "DJ의 기술 스택은 무엇인가요?",
-    "DJ는 사업개발을 어떻게 접근하나요?",
+    "다른 후보자와 차별화되는 점은 무엇인가요?",
+    "Meta Quest+ 파트너십 과정을 설명해 주시겠어요?",
+    "Flint에서의 창업 경험에서 무엇을 배우셨나요?",
+    "기술적 배경에 대해 설명해 주시겠어요?",
+    "사업개발을 보통 어떻게 접근하시나요?",
     "Flint Technologies에서의 역할은 무엇이었나요?",
   ],
 };
@@ -269,20 +338,20 @@ export const STARTER_QUESTIONS: Record<Lang, string[]> = {
 export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, string[]>>> = {
   vc_investor: {
     en: [
-      "Why is DJ transitioning from operator to VC?",
-      "How would DJ support portfolio companies?",
-      "How does DJ evaluate early-stage startups?",
-      "What did founding a startup teach DJ about investing?",
-      "How did DJ build the Apple and Meta partnerships?",
-      "What was DJ's fundraising experience at Flint?",
+      "What motivates your transition from operator to VC?",
+      "How would you support portfolio companies?",
+      "How do you evaluate early-stage startups?",
+      "What did founding a startup teach you about investing?",
+      "Could you walk me through how you built the Apple and Meta partnerships?",
+      "Could you tell me about your fundraising experience at Flint?",
     ],
     kr: [
-      "DJ는 왜 오퍼레이터에서 VC로 전환하려는 건가요?",
-      "DJ는 포트폴리오 기업을 어떻게 지원할 수 있나요?",
-      "DJ는 초기 스타트업을 어떻게 평가하나요?",
+      "오퍼레이터에서 VC로 전환하려는 동기가 무엇인가요?",
+      "포트폴리오 기업을 어떻게 지원하시겠어요?",
+      "초기 스타트업을 어떻게 평가하시나요?",
       "창업 경험이 투자에 대해 무엇을 가르쳐줬나요?",
-      "Apple과 Meta 파트너십을 어떻게 구축했나요?",
-      "Flint에서의 투자유치 경험에 대해 알려주세요.",
+      "Apple과 Meta 파트너십을 구축한 과정을 설명해 주시겠어요?",
+      "Flint에서의 투자유치 경험에 대해 말씀해 주시겠어요?",
     ],
   },
 };
