@@ -253,10 +253,47 @@ ${context}
     // 3. Detect entity/section filter in query
     const detected = detectFilter(truncatedQuery);
 
-    // 4. Build retrieval query with conversation context for better follow-up handling
-    const retrievalQuery = buildRetrievalQuery(truncatedQuery, messages);
+    // 4. Rewrite the user query into a better search query for vector retrieval.
+    //    Uses a fast LLM call to expand vague questions into specific, keyword-rich
+    //    search terms that improve Pinecone embedding similarity. Falls back to the
+    //    original conversational-context approach if the rewrite fails.
+    let retrievalQuery: string;
+    try {
+      const conversationContext = messages.length > 2
+        ? messages
+            .slice(-4, -1)
+            .filter((m: { role: string }) => m.role === "assistant" || m.role === "user")
+            .map((m: { role: string; content?: string; parts?: Array<{ type: string; text?: string }> }) => {
+              const text = m.content ?? m.parts?.filter((p: { type: string }) => p.type === "text").map((p: { text?: string }) => p.text ?? "").join(" ") ?? "";
+              return `${m.role}: ${text.split(/\s+/).slice(0, 50).join(" ")}`;
+            })
+            .join("\n")
+        : "";
 
-    // 5. Embed the retrieval query
+      const { text: rewritten } = await generateText({
+        model: google("gemini-2.0-flash"),
+        temperature: 0,
+        maxOutputTokens: 150,
+        prompt: `You are a search query optimizer for a professional resume database about Dong Jae Lee. Given a visitor's question (and optional conversation context), rewrite it into a keyword-rich search query that will retrieve the most relevant resume chunks via embedding similarity.
+
+Rules:
+- Output ONLY the rewritten search query, nothing else
+- Expand vague references: "your startup" → "Flint Technologies co-founder COO startup", "gaming company" → "Devs United Games XR spatial computing"
+- Include relevant proper nouns, role titles, company names, and domain terms
+- Resolve pronouns using conversation context (e.g. "How did you do that?" → expand based on what was just discussed)
+- Keep the output under 50 words
+- If the question is already specific, return it mostly unchanged with minor keyword additions
+
+${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}
+
+Rewritten search query:`,
+      });
+      retrievalQuery = rewritten.trim() || buildRetrievalQuery(truncatedQuery, messages);
+    } catch {
+      retrievalQuery = buildRetrievalQuery(truncatedQuery, messages);
+    }
+
+    // 5. Embed the rewritten retrieval query
     const { embedding } = await embed({
       model: google.embedding("gemini-embedding-001"),
       value: retrievalQuery.slice(0, 2000),
