@@ -102,8 +102,8 @@ export const STATS: Stat[] = [
     label: { en: "Education", kr: "학력" },
     value: "KAIST + KIT",
     detail: {
-      en: "B.S. Mech. Eng. + Industrial Design (Cum Laude), M.S. dual degree with KIT",
-      kr: "기계공학 + 산업디자인 학사 (우등졸업), KIT 석사 복수학위",
+      en: "B.S. Mech. Eng. + Industrial Design (Cum Laude), M.S. with research at KIT Germany",
+      kr: "기계공학 + 산업디자인 학사 (우등졸업), 독일 KIT 연구과정 석사",
     },
     chatQ: {
       en: "Could you tell me about your education?",
@@ -213,8 +213,8 @@ export const TIMELINE: TimelineEntry[] = [
     },
     company: { en: "KAIST + KIT (Germany)", kr: "KAIST + KIT (독일)" },
     highlight: {
-      en: "Double major with Industrial Design, Cum Laude. Dual degree at KIT Germany.",
-      kr: "산업디자인 복수전공, 우등졸업. 독일 KIT 복수학위.",
+      en: "Double major with Industrial Design, Cum Laude. Research at KIT Germany.",
+      kr: "산업디자인 복수전공, 우등졸업. 독일 KIT 연구과정.",
     },
     chatQ: {
       en: "Could you tell me about your time at KAIST and KIT?",
