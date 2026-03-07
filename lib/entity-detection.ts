@@ -8,9 +8,11 @@ export type DetectedFilter =
   | null;
 
 const COMPANY_ALIASES: [RegExp, string][] = [
+  [/changjo|창조건축|창조/i, "Changjo Architecture"],
   [/devs?\s*united|데브스|\bdug\b/i, "Devs United Games"],
   [/flint|플린트/i, "Flint Technologies"],
   [/tmax|tibero|티맥스/i, "TmaxTibero"],
+  [/altos|알토스/i, "Altos Ventures"],
   [/\bkaist\b|카이스트/i, "KAIST"],
   [/\bkit\b|karlsruhe/i, "KIT"],
 ];
@@ -23,12 +25,13 @@ const SECTION_PATTERNS: [RegExp, string][] = [
 
 // Overview chunk IDs per company for dynamic pinning
 const COMPANY_OVERVIEW_IDS: Record<string, string> = {
+  "Changjo Architecture": "exp-changjo-current",
   "Devs United Games": "exp-dug-overview",
   "Flint Technologies": "exp-flint-overview",
   "TmaxTibero": "exp-tmax-team-lead",
 };
 
-// "most recent" patterns — maps to DUG (known most recent role)
+// "most recent" patterns — maps to current role
 const RECENCY_PATTERN = /most recent|latest|current|last role|가장 최근|현재/i;
 
 /**
@@ -43,7 +46,7 @@ export function detectFilter(query: string): DetectedFilter {
 
   // 2. Recency detection ("most recent role", "latest", etc.)
   if (RECENCY_PATTERN.test(query)) {
-    return { type: "company", value: "Devs United Games" };
+    return { type: "company", value: "Changjo Architecture" };
   }
 
   // 3. Year-based temporal detection ("in 2020", "during 2019")

@@ -5,6 +5,15 @@ export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = 
   vc_investor: {
     summary: 1.3,
     experience: 1.2,
+    motivation: 1.4,
+    founder_philosophy: 1.4,
+    failure_learning: 1.3,
+    ace_reputation: 1.3,
+    career_transition: 1.3,
+    narrative: 1.3,
+    founder_empathy: 1.2,
+    vc_commitment: 1.2,
+    introduction: 1.1,
     project: 1.1,
     skills: 1.0,
     education: 0.8,
@@ -43,7 +52,7 @@ export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = 
 // System prompt tone instructions per persona
 export const PERSONA_TONE: Record<Persona, string> = {
   vc_investor:
-    "The visitor is a VC investor. Emphasize scalability, revenue metrics, market size, growth rates, and ROI. Lead with quantitative results and business model insights. Frame experiences through an investment thesis lens.",
+    "The visitor is from the VC or investment world. Frame answers around what makes a strong investor: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Lead with specific examples that demonstrate judgment, conviction, and an operator-to-investor edge. Quantitative results matter as evidence of execution, not as the main story.",
   corporate_strategy:
     "The visitor is a corporate strategy professional. Emphasize strategic thinking, competitive analysis, market positioning, and cross-functional leadership. Frame experiences through organizational impact and long-term planning.",
   bd_partnerships:
@@ -110,16 +119,16 @@ export const FOCUS_SKILL_TERMS: Record<Focus, string[]> = {
 export const PERSONA_QUESTIONS: Record<Persona, Record<"en" | "ko", string[]>> = {
   vc_investor: {
     en: [
-      "What was your revenue growth at Devs United Games?",
-      "How did you validate product-market fit at Flint?",
-      "What metrics drove your partnership decisions?",
-      "Tell me about your fundraising experience",
+      "Why do you want to transition from operator to VC?",
+      "How would you evaluate an early-stage founder?",
+      "What did founding and shutting down Flint teach you about investing?",
+      "How did you build the Apple partnership from scratch?",
     ],
     ko: [
-      "데브스 유나이티드에서의 매출 성장은 어떠했나요?",
-      "플린트에서 제품-시장 적합성을 어떻게 검증했나요?",
-      "파트너십 결정을 이끈 지표는 무엇인가요?",
-      "자금 조달 경험에 대해 알려주세요",
+      "왜 오퍼레이터에서 VC로 전환하려 하나요?",
+      "초기 단계 창업자를 어떻게 평가하시겠어요?",
+      "플린트 창업과 종료가 투자에 대해 무엇을 가르쳤나요?",
+      "Apple 파트너십을 어떻게 처음부터 구축했나요?",
     ],
   },
   corporate_strategy: {
