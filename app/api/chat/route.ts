@@ -1,4 +1,4 @@
-import { streamText, generateText, embed, convertToModelMessages } from "ai";
+import { streamText, generateText, embed, convertToModelMessages, createUIMessageStreamResponse } from "ai";
 import { google } from "@ai-sdk/google";
 import { getResumeIndex } from "@/lib/pinecone";
 import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
@@ -253,11 +253,12 @@ ${context}
     // 3. Detect entity/section filter in query
     const detected = detectFilter(truncatedQuery);
 
-    // 4. Rewrite the user query into a better search query for vector retrieval.
-    //    Uses a fast LLM call to expand vague questions into specific, keyword-rich
-    //    search terms that improve Pinecone embedding similarity. Falls back to the
-    //    original conversational-context approach if the rewrite fails.
+    // 4. Rewrite the user query into a better search query for vector retrieval
+    //    AND classify the intent as specific/broad/ambiguous.
+    //    Uses a single fast LLM call. Falls back to current behavior on parse failure.
     let retrievalQuery: string;
+    let intent: "specific" | "broad" | "ambiguous" = "specific";
+    let clarifications: string[] = [];
     try {
       const conversationContext = messages.length > 2
         ? messages
@@ -270,27 +271,102 @@ ${context}
             .join("\n")
         : "";
 
-      const { text: rewritten } = await generateText({
+      const { text: rewriteResult } = await generateText({
         model: google("gemini-2.0-flash"),
         temperature: 0,
-        maxOutputTokens: 150,
-        prompt: `You are a search query optimizer for a professional resume database about Dong Jae Lee. Given a visitor's question (and optional conversation context), rewrite it into a keyword-rich search query that will retrieve the most relevant resume chunks via embedding similarity.
+        maxOutputTokens: 250,
+        prompt: `You are a search query optimizer for a professional resume database about Dong Jae Lee.
 
-Rules:
-- Output ONLY the rewritten search query, nothing else
+Analyze the visitor's question (and optional conversation context) and return a JSON object:
+{
+  "intent": "specific" | "broad" | "ambiguous",
+  "query": "keyword-rich search query for embedding retrieval",
+  "clarifications": ["option 1?", "option 2?"]
+}
+
+Intent rules:
+- "specific": question targets a known topic, company, role, skill, or story (e.g. "How did you build the Apple partnership?", "What was your role at Flint?")
+- "broad": question covers a wide area (e.g. "tell me about yourself", "what's your background?", "what's your experience?", "자기소개 해주세요")
+- "ambiguous": unclear what the user is asking — vague pronouns without context, off-topic, or too vague to retrieve meaningfully (e.g. "how about that thing?", "what do you think?", "그거 어떻게 했어요?" without prior context)
+
+Query rules:
 - Expand vague references: "your startup" → "Flint Technologies co-founder COO startup", "gaming company" → "Devs United Games XR spatial computing"
 - Include relevant proper nouns, role titles, company names, and domain terms
-- Resolve pronouns using conversation context (e.g. "How did you do that?" → expand based on what was just discussed)
-- Keep the output under 50 words
-- If the question is already specific, return it mostly unchanged with minor keyword additions
+- Resolve pronouns using conversation context
+- Keep the query under 50 words
+- For broad intent, make the query cover the main career areas
 
-${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}
+Clarifications: only populate when intent is "ambiguous". Provide 2-3 clarifying questions that would help narrow down the answer. Write them in the same language as the user's question.
 
-Rewritten search query:`,
+Output ONLY valid JSON, no markdown fences or extra text.
+
+${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}`,
       });
-      retrievalQuery = rewritten.trim() || buildRetrievalQuery(truncatedQuery, messages);
+
+      // Parse JSON response; fall back to plain-text query on failure
+      try {
+        const parsed = JSON.parse(rewriteResult.trim());
+        retrievalQuery = (parsed.query || "").trim() || buildRetrievalQuery(truncatedQuery, messages);
+        if (parsed.intent === "broad" || parsed.intent === "ambiguous") {
+          intent = parsed.intent;
+        }
+        if (Array.isArray(parsed.clarifications) && parsed.clarifications.length > 0) {
+          clarifications = parsed.clarifications.slice(0, 3);
+        }
+      } catch {
+        // JSON parse failed — treat rewrite result as plain query string (backward compat)
+        retrievalQuery = rewriteResult.trim() || buildRetrievalQuery(truncatedQuery, messages);
+      }
     } catch {
       retrievalQuery = buildRetrievalQuery(truncatedQuery, messages);
+    }
+
+    // 4a. Ambiguous intent — short-circuit before retrieval
+    if (intent === "ambiguous" && clarifications.length > 0) {
+      const responseLang = lang === "ko" ? "ko" : "en";
+      const clarifyMessage = responseLang === "ko"
+        ? "정확한 답변을 드리고 싶은데요, 어떤 부분이 궁금하신지 좀 더 알려주시겠어요?"
+        : "I'd like to give you a specific answer! Could you help me narrow it down?";
+
+      const followupBlock = `\n\n<followup>\n${clarifications.join("\n")}\n</followup>`;
+
+      logAnalytics({
+        type: "query",
+        query: truncatedQuery.slice(0, 200),
+        persona,
+        focus,
+        intent: "ambiguous",
+        chunksRetrieved: 0,
+        chunksAfterRerank: 0,
+        timestamp: new Date().toISOString(),
+      });
+
+      logExchange({
+        sessionId: sessionId ?? "",
+        persona,
+        focus,
+        lang: lang ?? "en",
+        query: truncatedQuery,
+        response: clarifyMessage + followupBlock,
+        chunksUsed: [],
+      });
+
+      const textPartId = "ambiguous-text";
+      const stream = new ReadableStream({
+        start(controller) {
+          const fullText = clarifyMessage + followupBlock;
+          controller.enqueue({ type: "start" });
+          controller.enqueue({ type: "start-step" });
+          controller.enqueue({ type: "text-start", id: textPartId });
+          controller.enqueue({ type: "text-delta", id: textPartId, delta: fullText });
+          controller.enqueue({ type: "text-end", id: textPartId });
+          controller.enqueue({ type: "finish-step" });
+          controller.enqueue({ type: "finish", finishReason: "stop", messageMetadata: { sourceTags: [] } });
+          controller.close();
+        },
+      });
+
+      return createUIMessageStreamResponse({ stream });
     }
 
     // 5. Embed the rewritten retrieval query
@@ -486,6 +562,7 @@ Rewritten search query:`,
       console.log("[RAG] Persona:", persona, "Focus:", focus);
       console.log("[RAG] Retrieved chunks:", [...chunks.keys()]);
       console.log("[RAG] After re-ranking:", rankedChunks.map((c) => c.id));
+      console.log("[RAG] Intent:", intent);
       console.log("[RAG] Overview:", overviewChunks.length, "Deep:", deepDiveChunks.length);
     }
 
@@ -494,6 +571,7 @@ Rewritten search query:`,
       query: truncatedQuery.slice(0, 200),
       persona,
       focus,
+      intent,
       chunksRetrieved: chunks.size,
       chunksAfterRerank: rankedChunks.length,
       timestamp: new Date().toISOString(),
@@ -516,6 +594,13 @@ Rewritten search query:`,
 Stay grounded in the facts from your resume.
 
 ${modePrompt}
+${intent === "broad" ? `
+RESPONSE MODE: OVERVIEW
+This is a broad question — give a concise overview rather than diving deep into any single topic.
+- Organize your response as 3-5 short bullet points covering the key areas of your background relevant to the question.
+- Keep each bullet point to 1-2 sentences max.
+- Your follow-up suggestions should help the visitor drill into specific topics from the overview (e.g. a specific company, a particular skill, a notable achievement).
+` : ""}
 
 LANGUAGE: Detect the language of each user message and respond in the SAME language.
 - If the user writes in Korean, respond entirely in Korean.
