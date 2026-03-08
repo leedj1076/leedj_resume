@@ -184,7 +184,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { messages, type, lang, sessionId, coveredTopics } = body;
+    const { messages, type, lang, sessionId, coveredTopics, visitorEmail } = body;
     const visitorData = validateVisitorData(body.visitorData);
     const { persona, focus } = visitorData;
 
@@ -221,7 +221,7 @@ ${context}
 --- END ---`,
       });
 
-      logAnalytics({ type: "init", persona, focus, lang, timestamp: new Date().toISOString() });
+      logAnalytics({ type: "init", persona, focus, lang, timestamp: new Date().toISOString(), visitorEmail });
 
       return new Response(
         JSON.stringify({ welcome }),
@@ -339,6 +339,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
         chunksRetrieved: 0,
         chunksAfterRerank: 0,
         timestamp: new Date().toISOString(),
+        visitorEmail,
       });
 
       logExchange({
@@ -349,6 +350,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
         query: truncatedQuery,
         response: clarifyMessage + followupBlock,
         chunksUsed: [],
+        visitorEmail,
       });
 
       const textPartId = "ambiguous-text";
@@ -575,6 +577,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       chunksRetrieved: chunks.size,
       chunksAfterRerank: rankedChunks.length,
       timestamp: new Date().toISOString(),
+      visitorEmail,
     });
 
     // 12. Convert UI messages to model messages (sliding window)
@@ -647,6 +650,7 @@ ${context}`,
           query: truncatedQuery,
           response: text,
           chunksUsed: rankedChunks.map((c) => c.id),
+          visitorEmail,
         });
       },
     });

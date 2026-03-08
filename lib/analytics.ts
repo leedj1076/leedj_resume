@@ -16,6 +16,7 @@ export function logAnalytics(event: Record<string, unknown>): void {
       chunks_after_rerank: event.chunksAfterRerank,
       message_id: event.messageId,
       feedback_value: event.value,
+      visitor_email: event.visitorEmail,
     })
     .then(({ error }) => {
       if (error) console.error("[ANALYTICS] Supabase insert error:", error.message);
@@ -30,6 +31,7 @@ export function logExchange(exchange: {
   query: string;
   response: string;
   chunksUsed: string[];
+  visitorEmail?: string;
 }): void {
   supabase
     ?.from("chat_exchanges")
@@ -41,6 +43,7 @@ export function logExchange(exchange: {
       query: exchange.query,
       response: exchange.response,
       chunks_used: exchange.chunksUsed,
+      visitor_email: exchange.visitorEmail,
     })
     .then(({ error }) => {
       if (error) console.error("[EXCHANGE] Supabase insert error:", error.message);

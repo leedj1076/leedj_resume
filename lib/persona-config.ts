@@ -2,34 +2,35 @@ import type { Persona, Focus } from "./types";
 
 // Multiplicative score adjustments per persona per section (for re-ranking)
 export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = {
-  vc_investor: {
-    summary: 1.3,
+  recruiter: {
+    summary: 1.2,
     experience: 1.2,
-    motivation: 1.4,
-    founder_philosophy: 1.4,
-    failure_learning: 1.3,
-    ace_reputation: 1.3,
-    career_transition: 1.3,
-    narrative: 1.3,
-    founder_empathy: 1.2,
-    vc_commitment: 1.2,
-    introduction: 1.1,
+    motivation: 1.3,
+    skills: 1.2,
+    career_transition: 1.2,
+    narrative: 1.2,
+    founder_philosophy: 1.1,
+    failure_learning: 1.1,
     project: 1.1,
+    education: 1.0,
+    awards: 1.0,
+    leadership: 1.0,
+  },
+  founder: {
+    experience: 1.4,
+    founder_philosophy: 1.4,
+    failure_learning: 1.4,
+    project: 1.3,
+    motivation: 1.3,
+    narrative: 1.2,
+    founder_empathy: 1.2,
+    summary: 1.1,
     skills: 1.0,
     education: 0.8,
     awards: 0.7,
-    leadership: 0.7,
-  },
-  corporate_strategy: {
-    summary: 1.2,
-    experience: 1.3,
-    skills: 1.1,
-    education: 1.0,
-    project: 0.9,
-    awards: 0.8,
     leadership: 0.8,
   },
-  bd_partnerships: {
+  partner: {
     summary: 1.1,
     experience: 1.4,
     project: 0.9,
@@ -38,27 +39,29 @@ export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = 
     awards: 0.7,
     leadership: 0.8,
   },
-  hiring_manager: {
+  curious_visitor: {
     summary: 1.0,
-    experience: 1.1,
-    skills: 1.2,
-    education: 1.1,
-    project: 1.1,
+    experience: 1.0,
+    skills: 1.0,
+    education: 1.0,
+    project: 1.0,
     awards: 1.0,
     leadership: 1.0,
+    narrative: 1.0,
+    motivation: 1.0,
   },
 };
 
 // System prompt tone instructions per persona
 export const PERSONA_TONE: Record<Persona, string> = {
-  vc_investor:
-    "The visitor is from the VC or investment world. Frame answers around what makes a strong investor: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Lead with specific examples that demonstrate judgment, conviction, and an operator-to-investor edge. Quantitative results matter as evidence of execution, not as the main story.",
-  corporate_strategy:
-    "The visitor is a corporate strategy professional. Emphasize strategic thinking, competitive analysis, market positioning, and cross-functional leadership. Frame experiences through organizational impact and long-term planning.",
-  bd_partnerships:
-    "The visitor is a business development / partnerships professional. Emphasize deal negotiation, partnership structures, relationship management, and revenue impact of partnerships. Share specific stories of how deals were structured and closed.",
-  hiring_manager:
-    "The visitor is a hiring manager. Provide a balanced view across technical skills, leadership, collaboration, and career progression. Highlight concrete achievements and transferable skills.",
+  recruiter:
+    "The visitor is a recruiter evaluating DJ for a venture capital role. Frame answers around what makes a strong VC candidate: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Highlight the operator-to-investor edge — founding a startup, closing platform partnerships, driving revenue growth — as evidence of judgment and conviction.",
+  founder:
+    "The visitor is a startup founder. Frame answers around what resonates with founders: hands-on building experience, lessons from failure, product-market fit instincts, fundraising, and the grit of going from zero to one. Lead with specific stories that show empathy for the founder journey.",
+  partner:
+    "The visitor is a business development or partnerships professional. Emphasize deal negotiation, partnership structures, relationship management, and revenue impact of partnerships. Share specific stories of how deals were structured and closed.",
+  curious_visitor:
+    "The visitor is casually exploring. Provide a friendly, accessible overview. Avoid jargon. Give a well-rounded picture of background, skills, and interesting projects. Keep it conversational and easy to follow.",
 };
 
 // System prompt focus-area instructions per focus
@@ -117,35 +120,35 @@ export const FOCUS_SKILL_TERMS: Record<Focus, string[]> = {
 
 // 4 suggested questions per persona, bilingual (en/ko)
 export const PERSONA_QUESTIONS: Record<Persona, Record<"en" | "ko", string[]>> = {
-  vc_investor: {
+  recruiter: {
     en: [
-      "Why do you want to transition from operator to VC?",
-      "How would you evaluate an early-stage founder?",
-      "What did founding and shutting down Flint teach you about investing?",
+      "Why does DJ want to transition into venture capital?",
+      "How would DJ's operator background help him as an investor?",
+      "How does DJ evaluate early-stage startups?",
+      "What did founding Flint teach DJ about the investor side?",
+    ],
+    ko: [
+      "DJ가 왜 벤처캐피탈로 전환하려 하나요?",
+      "DJ의 오퍼레이터 경험이 투자자로서 어떻게 도움이 되나요?",
+      "DJ는 초기 스타트업을 어떻게 평가하나요?",
+      "Flint 창업 경험이 투자자 관점에서 무엇을 가르쳐줬나요?",
+    ],
+  },
+  founder: {
+    en: [
+      "What did founding and shutting down Flint teach you?",
       "How did you build the Apple partnership from scratch?",
+      "What's your approach to finding product-market fit?",
+      "How did you make decisions with four co-founders?",
     ],
     ko: [
-      "왜 오퍼레이터에서 VC로 전환하려 하나요?",
-      "초기 단계 창업자를 어떻게 평가하시겠어요?",
-      "플린트 창업과 종료가 투자에 대해 무엇을 가르쳤나요?",
+      "Flint 창업과 종료에서 무엇을 배우셨나요?",
       "Apple 파트너십을 어떻게 처음부터 구축했나요?",
+      "제품-시장 적합성을 찾는 접근 방식은 어떤가요?",
+      "네 명의 공동창업자와 어떻게 의사결정했나요?",
     ],
   },
-  corporate_strategy: {
-    en: [
-      "How did you shape product strategy at TmaxTibero?",
-      "What was your approach to competitive analysis?",
-      "How did you align engineering with business goals?",
-      "Describe your experience with organizational scaling",
-    ],
-    ko: [
-      "티맥스에서 어떻게 제품 전략을 수립했나요?",
-      "경쟁 분석에 대한 접근 방식은 무엇인가요?",
-      "엔지니어링과 사업 목표를 어떻게 조율했나요?",
-      "조직 확장 경험을 설명해 주세요",
-    ],
-  },
-  bd_partnerships: {
+  partner: {
     en: [
       "How did you negotiate the Apple Vision Pro partnership?",
       "Describe your deal structure with Meta",
@@ -159,18 +162,18 @@ export const PERSONA_QUESTIONS: Record<Persona, Record<"en" | "ko", string[]>> =
       "포기한 딜에 대해 말씀해 주세요",
     ],
   },
-  hiring_manager: {
+  curious_visitor: {
     en: [
-      "What did you do at Devs United Games?",
-      "What technologies do you work with?",
-      "Tell me about your education",
-      "Describe your partnership experience",
+      "Could you give me an overview of your career?",
+      "What kind of work do you do?",
+      "What projects are you most proud of?",
+      "How did you get into tech?",
     ],
     ko: [
-      "데브스 유나이티드에서 무엇을 하셨나요?",
-      "어떤 기술을 다루시나요?",
-      "학력에 대해 알려주세요",
-      "파트너십 경험을 설명해 주세요",
+      "커리어에 대해 간단히 소개해 주시겠어요?",
+      "어떤 일을 하시나요?",
+      "가장 자랑스러운 프로젝트는 무엇인가요?",
+      "어떻게 테크 분야에 입문하셨나요?",
     ],
   },
 };

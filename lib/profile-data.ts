@@ -310,9 +310,9 @@ export const PORTFOLIO: PortfolioItem[] = [
 ];
 
 export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
-  { value: "hiring_manager", en: "Hiring Manager", kr: "채용 담당자" },
-  { value: "vc_investor", en: "Investor", kr: "투자자" },
-  { value: "bd_partnerships", en: "Partner", kr: "파트너" },
+  { value: "recruiter", en: "Recruiter", kr: "채용 담당자" },
+  { value: "founder", en: "Founder", kr: "창업자" },
+  { value: "partner", en: "Partner", kr: "파트너" },
   { value: "curious_visitor", en: "Curious Visitor", kr: "방문자" },
 ];
 
@@ -336,22 +336,76 @@ export const STARTER_QUESTIONS: Record<Lang, string[]> = {
 };
 
 export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, string[]>>> = {
-  vc_investor: {
+  recruiter: {
     en: [
-      "What motivates your transition from operator to VC?",
-      "How would you support portfolio companies?",
-      "How do you evaluate early-stage startups?",
-      "What did founding a startup teach you about investing?",
-      "Could you walk me through how you built the Apple and Meta partnerships?",
-      "Could you tell me about your fundraising experience at Flint?",
+      "Why does DJ want to transition into venture capital?",
+      "How would DJ's operator background help him support portfolio companies?",
+      "How does DJ evaluate early-stage startups?",
+      "What did founding Flint teach DJ about the investor side?",
+      "Could you walk me through DJ's career trajectory?",
+      "How does DJ bridge technical diligence and business judgment?",
     ],
     kr: [
-      "오퍼레이터에서 VC로 전환하려는 동기가 무엇인가요?",
-      "포트폴리오 기업을 어떻게 지원하시겠어요?",
-      "초기 스타트업을 어떻게 평가하시나요?",
-      "창업 경험이 투자에 대해 무엇을 가르쳐줬나요?",
-      "Apple과 Meta 파트너십을 구축한 과정을 설명해 주시겠어요?",
+      "DJ가 왜 벤처캐피탈로 전환하려 하나요?",
+      "DJ의 오퍼레이터 경험이 포트폴리오 기업 지원에 어떻게 도움이 되나요?",
+      "DJ는 초기 스타트업을 어떻게 평가하나요?",
+      "Flint 창업 경험이 투자자 관점에서 무엇을 가르쳐줬나요?",
+      "DJ의 커리어 여정을 설명해 주시겠어요?",
+      "DJ는 기술 실사와 비즈니스 판단을 어떻게 연결하나요?",
+    ],
+  },
+  founder: {
+    en: [
+      "What did founding Flint teach you about building products?",
+      "How did you build the Apple partnership from scratch?",
+      "What's your approach to finding product-market fit?",
+      "How did you make decisions with four co-founders?",
+      "Could you tell me about your fundraising experience at Flint?",
+      "What's the hardest lesson you learned from startup failure?",
+    ],
+    kr: [
+      "Flint 창업이 제품 만들기에 대해 무엇을 가르쳐줬나요?",
+      "Apple 파트너십을 어떻게 처음부터 구축했나요?",
+      "제품-시장 적합성을 찾는 접근 방식은 어떤가요?",
+      "네 명의 공동창업자와 어떻게 의사결정했나요?",
       "Flint에서의 투자유치 경험에 대해 말씀해 주시겠어요?",
+      "스타트업 실패에서 배운 가장 어려운 교훈은 무엇인가요?",
+    ],
+  },
+  partner: {
+    en: [
+      "How did you negotiate the Apple spatial computing partnership?",
+      "What's your approach to building strategic partnerships?",
+      "Could you tell me about the Meta Quest+ revenue deal?",
+      "How do you identify and evaluate potential partners?",
+      "What was your BD strategy at Devs United Games?",
+      "How do you handle complex multi-stakeholder negotiations?",
+    ],
+    kr: [
+      "Apple 공간 컴퓨팅 파트너십을 어떻게 협상하셨나요?",
+      "전략적 파트너십 구축에 대한 접근 방식은 어떤가요?",
+      "Meta Quest+ 수익 딜에 대해 말씀해 주시겠어요?",
+      "잠재적 파트너를 어떻게 발굴하고 평가하시나요?",
+      "Devs United Games에서의 BD 전략은 무엇이었나요?",
+      "복잡한 다자간 협상을 어떻게 처리하시나요?",
+    ],
+  },
+  curious_visitor: {
+    en: [
+      "Could you give me an overview of your career?",
+      "What kind of work do you do?",
+      "What projects are you most proud of?",
+      "What's the most interesting challenge you've faced?",
+      "How did you get into tech?",
+      "What are you working on these days?",
+    ],
+    kr: [
+      "커리어에 대해 간단히 소개해 주시겠어요?",
+      "어떤 일을 하시나요?",
+      "가장 자랑스러운 프로젝트는 무엇인가요?",
+      "가장 흥미로웠던 도전은 무엇이었나요?",
+      "어떻게 테크 분야에 입문하셨나요?",
+      "요즘은 어떤 일을 하고 계신가요?",
     ],
   },
 };

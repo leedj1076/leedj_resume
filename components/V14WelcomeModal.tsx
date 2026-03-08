@@ -13,19 +13,20 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface V14WelcomeModalProps {
-  onStart: (lang: Lang, persona: string) => void;
+  onStart: (lang: Lang, persona: string, email?: string) => void;
 }
 
 export default function V14WelcomeModal({ onStart }: V14WelcomeModalProps) {
   const [lang, setLang] = useState<Lang>("en");
   const [persona, setPersona] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
   const en = lang === "en";
 
   return (
     <Dialog open onOpenChange={() => {}}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[640px] px-16 py-12 rounded-2xl bg-[var(--color-page-bg)] border-[var(--color-border-primary)]"
+        className="max-w-[720px] sm:max-w-[720px] px-20 py-12 rounded-2xl bg-[var(--color-page-bg)] border-[var(--color-border-primary)]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -99,11 +100,27 @@ export default function V14WelcomeModal({ onStart }: V14WelcomeModalProps) {
           </div>
         </div>
 
+        {/* Disclaimer + Email */}
+        <div className="mb-6">
+          <p className="text-[12px] text-[var(--color-text-tertiary)] leading-[1.7] mb-3">
+            {en
+              ? "Answers are generated and may contain inaccuracies. To ensure you have correct information, feel free to leave your email — I'll follow up with any corrections."
+              : "답변은 자동 생성되며 부정확할 수 있습니다. 정확한 정보를 전달드리기 위해 이메일을 남겨주시면 수정 사항을 보내드리겠습니다."}
+          </p>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@example.com"
+            className="w-full px-3 py-2 text-[13px] rounded-lg border border-[var(--color-border-secondary)] bg-[var(--color-page-bg)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-hover-border)] transition-colors"
+          />
+        </div>
+
         {/* Start button */}
         <Button
           disabled={!persona}
           onClick={() => {
-            if (persona) onStart(lang, persona);
+            if (persona) onStart(lang, persona, email.trim() || undefined);
           }}
           className="w-full py-3 h-auto text-[14px] font-medium rounded-lg bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] hover:bg-[var(--color-button-send-hover)] disabled:bg-[var(--color-button-send-disabled)] disabled:text-[var(--color-text-muted)] disabled:opacity-100"
         >

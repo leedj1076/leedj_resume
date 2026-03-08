@@ -1,10 +1,10 @@
 import type { UIMessage } from "ai";
 
 export type Persona =
-  | "vc_investor"
-  | "corporate_strategy"
-  | "bd_partnerships"
-  | "hiring_manager";
+  | "recruiter"
+  | "founder"
+  | "partner"
+  | "curious_visitor";
 
 export type Focus =
   | "business_development"

@@ -26,6 +26,7 @@ interface Session {
   focus: string;
   lang: string;
   started_at: string;
+  visitor_email: string | null;
   exchanges: Exchange[];
 }
 
@@ -44,10 +45,15 @@ interface Stats {
 }
 
 const PERSONA_LABELS: Record<string, string> = {
+  recruiter: "Recruiter",
+  founder: "Founder",
+  partner: "Partner",
+  curious_visitor: "Curious Visitor",
+  // Legacy labels for historical data
   hiring_manager: "Hiring Manager",
   vc_investor: "Investor",
-  bd_partnerships: "Partner",
-  curious_visitor: "Curious Visitor",
+  bd_partnerships: "BD / Partnerships",
+  corporate_strategy: "Corporate Strategy",
 };
 
 const RATING_COLORS: Record<string, string> = {
@@ -443,9 +449,9 @@ function ReviewTab({
           className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white"
         >
           <option value="">All Personas</option>
-          <option value="hiring_manager">Hiring Manager</option>
-          <option value="vc_investor">Investor</option>
-          <option value="bd_partnerships">Partner</option>
+          <option value="recruiter">Recruiter</option>
+          <option value="founder">Founder</option>
+          <option value="partner">Partner</option>
           <option value="curious_visitor">Curious Visitor</option>
         </select>
         <span className="text-sm text-gray-500 self-center">
@@ -486,6 +492,11 @@ function ReviewTab({
                   <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 shrink-0">
                     {session.focus}
                   </span>
+                  {session.visitor_email && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 shrink-0" title={session.visitor_email}>
+                      {session.visitor_email}
+                    </span>
+                  )}
                   <span className="text-sm text-gray-700 truncate flex-1">
                     {session.exchanges[0]?.query}
                   </span>

@@ -23,7 +23,7 @@ function shuffleIndices(length: number, pick: number): number[] {
 
 export default function ProfileApp() {
   const [lang, setLang] = useState<Lang>("en");
-  const [persona, setPersona] = useState("hiring_manager");
+  const [persona, setPersona] = useState("recruiter");
   const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
   const [sessionId] = useState(() => crypto.randomUUID());
   const [darkMode, setDarkMode] = useState(false);
@@ -38,9 +38,12 @@ export default function ProfileApp() {
     }
   }, []);
 
-  const handleWelcomeStart = useCallback((selectedLang: Lang, selectedPersona: string) => {
+  const visitorEmailRef = useRef<string | undefined>(undefined);
+
+  const handleWelcomeStart = useCallback((selectedLang: Lang, selectedPersona: string, email?: string) => {
     setLang(selectedLang);
     setPersona(selectedPersona);
+    visitorEmailRef.current = email;
     setShowWelcome(false);
     sessionStorage.setItem("v14-welcomed", "1");
   }, []);
@@ -85,6 +88,7 @@ export default function ProfileApp() {
           sessionId,
           lang: langRef.current === "kr" ? "ko" : "en",
           coveredTopics,
+          visitorEmail: visitorEmailRef.current,
         };
       },
     })

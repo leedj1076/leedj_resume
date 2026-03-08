@@ -14,14 +14,19 @@ import type { Persona, Focus } from "@/lib/types";
 
 // Map prototype persona/focus IDs → real IDs
 const PERSONA_MAP: Record<string, Persona> = {
-  vc: "vc_investor",
-  strategy: "corporate_strategy",
-  bd: "bd_partnerships",
-  hiring: "hiring_manager",
-  vc_investor: "vc_investor",
-  corporate_strategy: "corporate_strategy",
-  bd_partnerships: "bd_partnerships",
-  hiring_manager: "hiring_manager",
+  recruiter: "recruiter",
+  founder: "founder",
+  partner: "partner",
+  curious_visitor: "curious_visitor",
+  // Legacy aliases
+  vc: "recruiter",
+  strategy: "recruiter",
+  bd: "partner",
+  hiring: "recruiter",
+  vc_investor: "recruiter",
+  corporate_strategy: "recruiter",
+  bd_partnerships: "partner",
+  hiring_manager: "recruiter",
 };
 
 const FOCUS_MAP: Record<string, Focus> = {
@@ -46,7 +51,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "Empty query" }, { status: 400 });
     }
 
-    const persona = PERSONA_MAP[personaId] ?? "hiring_manager";
+    const persona = PERSONA_MAP[personaId] ?? "recruiter";
     const focus = FOCUS_MAP[focusId] ?? "full_stack";
     const truncatedQuery = query.slice(0, 2000);
 

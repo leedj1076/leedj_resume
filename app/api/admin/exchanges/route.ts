@@ -73,6 +73,7 @@ export async function POST(req: Request) {
       focus: exs[0].focus,
       lang: exs[0].lang,
       started_at: exs[0].created_at,
+      visitor_email: exs.find((e) => e.visitor_email)?.visitor_email ?? null,
       exchanges: exs, // chronological
     }));
 

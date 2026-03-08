@@ -6,10 +6,10 @@ import type { Persona, Focus, VisitorData } from "@/lib/types";
 type Lang = "en" | "ko";
 
 const PERSONA_OPTIONS: { value: Persona; en: string; ko: string }[] = [
-  { value: "vc_investor", en: "VC / Investor", ko: "VC / 투자자" },
-  { value: "corporate_strategy", en: "Corporate Strategy", ko: "기업 전략" },
-  { value: "bd_partnerships", en: "BD / Partnerships", ko: "사업개발 / 파트너십" },
-  { value: "hiring_manager", en: "Hiring Manager", ko: "채용 담당자" },
+  { value: "recruiter", en: "Recruiter", ko: "채용 담당자" },
+  { value: "founder", en: "Founder", ko: "창업자" },
+  { value: "partner", en: "Partner", ko: "파트너" },
+  { value: "curious_visitor", en: "Curious Visitor", ko: "방문자" },
 ];
 
 const FOCUS_OPTIONS: { value: Focus; en: string; ko: string }[] = [
