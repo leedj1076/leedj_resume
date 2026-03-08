@@ -1,7 +1,7 @@
 import type { UIMessage } from "ai";
 
 export type Persona =
-  | "recruiter"
+  | "vc"
   | "founder"
   | "partner"
   | "curious_visitor";

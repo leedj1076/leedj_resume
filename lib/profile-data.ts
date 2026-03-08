@@ -310,7 +310,7 @@ export const PORTFOLIO: PortfolioItem[] = [
 ];
 
 export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
-  { value: "recruiter", en: "Recruiter", kr: "채용 담당자" },
+  { value: "vc", en: "VC", kr: "VC" },
   { value: "founder", en: "Founder", kr: "창업자" },
   { value: "partner", en: "Partner", kr: "파트너" },
   { value: "curious_visitor", en: "Curious Visitor", kr: "방문자" },
@@ -336,7 +336,7 @@ export const STARTER_QUESTIONS: Record<Lang, string[]> = {
 };
 
 export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, string[]>>> = {
-  recruiter: {
+  vc: {
     en: [
       "Why does DJ want to transition into venture capital?",
       "How would DJ's operator background help him support portfolio companies?",

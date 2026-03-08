@@ -23,7 +23,7 @@ function shuffleIndices(length: number, pick: number): number[] {
 
 export default function ProfileApp() {
   const [lang, setLang] = useState<Lang>("en");
-  const [persona, setPersona] = useState("recruiter");
+  const [persona, setPersona] = useState("vc");
   const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
   const [sessionId] = useState(() => crypto.randomUUID());
   const [darkMode, setDarkMode] = useState(false);

@@ -1,7 +1,7 @@
 import type { Persona, Focus, VisitorData } from "./types";
 
 const VALID_PERSONAS: Persona[] = [
-  "recruiter",
+  "vc",
   "founder",
   "partner",
   "curious_visitor",
@@ -25,5 +25,5 @@ export function validateVisitorData(raw: unknown): VisitorData {
   ) {
     return { persona: (raw as VisitorData).persona, focus: (raw as VisitorData).focus };
   }
-  return { persona: "recruiter", focus: "full_stack" };
+  return { persona: "vc", focus: "full_stack" };
 }

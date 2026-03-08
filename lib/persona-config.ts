@@ -2,7 +2,7 @@ import type { Persona, Focus } from "./types";
 
 // Multiplicative score adjustments per persona per section (for re-ranking)
 export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = {
-  recruiter: {
+  vc: {
     summary: 1.2,
     experience: 1.2,
     motivation: 1.3,
@@ -54,8 +54,8 @@ export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = 
 
 // System prompt tone instructions per persona
 export const PERSONA_TONE: Record<Persona, string> = {
-  recruiter:
-    "The visitor is a recruiter evaluating DJ for a venture capital role. Frame answers around what makes a strong VC candidate: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Highlight the operator-to-investor edge — founding a startup, closing platform partnerships, driving revenue growth — as evidence of judgment and conviction.",
+  vc:
+    "The visitor is evaluating DJ for a venture capital role. Frame answers around what makes a strong VC candidate: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Highlight the operator-to-investor edge — founding a startup, closing platform partnerships, driving revenue growth — as evidence of judgment and conviction.",
   founder:
     "The visitor is a startup founder. Frame answers around what resonates with founders: hands-on building experience, lessons from failure, product-market fit instincts, fundraising, and the grit of going from zero to one. Lead with specific stories that show empathy for the founder journey.",
   partner:
@@ -120,7 +120,7 @@ export const FOCUS_SKILL_TERMS: Record<Focus, string[]> = {
 
 // 4 suggested questions per persona, bilingual (en/ko)
 export const PERSONA_QUESTIONS: Record<Persona, Record<"en" | "ko", string[]>> = {
-  recruiter: {
+  vc: {
     en: [
       "Why does DJ want to transition into venture capital?",
       "How would DJ's operator background help him as an investor?",

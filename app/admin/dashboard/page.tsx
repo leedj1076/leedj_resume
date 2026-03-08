@@ -45,7 +45,7 @@ interface Stats {
 }
 
 const PERSONA_LABELS: Record<string, string> = {
-  recruiter: "Recruiter",
+  vc: "VC",
   founder: "Founder",
   partner: "Partner",
   curious_visitor: "Curious Visitor",
@@ -449,7 +449,7 @@ function ReviewTab({
           className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white"
         >
           <option value="">All Personas</option>
-          <option value="recruiter">Recruiter</option>
+          <option value="vc">VC</option>
           <option value="founder">Founder</option>
           <option value="partner">Partner</option>
           <option value="curious_visitor">Curious Visitor</option>
