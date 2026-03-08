@@ -554,7 +554,7 @@ function ReviewTab({
                             </div>
                             <div>
                               <p className="text-xs font-medium text-gray-500 mb-1">Response</p>
-                              <div className="text-sm bg-white p-3 rounded-lg border border-gray-100 prose prose-sm max-w-none">
+                              <div className="text-sm text-gray-800 bg-white p-3 rounded-lg border border-gray-100 prose prose-sm prose-gray max-w-none">
                                 <Markdown>{ex.response}</Markdown>
                               </div>
                             </div>
