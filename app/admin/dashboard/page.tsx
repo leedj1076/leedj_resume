@@ -62,6 +62,14 @@ const RATING_COLORS: Record<string, string> = {
 };
 
 export default function AdminDashboard() {
+  // Force light mode — admin page uses hardcoded light backgrounds
+  useEffect(() => {
+    const html = document.documentElement;
+    const wasDark = html.classList.contains("dark");
+    html.classList.remove("dark");
+    return () => { if (wasDark) html.classList.add("dark"); };
+  }, []);
+
   const [authenticated, setAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState(false);
