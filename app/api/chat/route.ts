@@ -13,7 +13,7 @@ import {
 import { logAnalytics, logExchange } from "@/lib/analytics";
 import { getAnswerMode } from "@/lib/settings";
 import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
-import type { Persona, Focus, ChatUIMessage } from "@/lib/types";
+import type { Persona, Focus, ChatUIMessage, TraceStep } from "@/lib/types";
 
 // Simple in-memory rate limiter (per-IP, resets on deploy)
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
@@ -88,7 +88,7 @@ const CHUNK_LABELS: Record<string, string> = {
   "interview-q1.1-self-introduction": "Self-Introduction",
   "interview-q2.1-why-vc": "Why VC",
   "interview-q2.3-five-year-vision-altos": "5-Year Vision",
-  "interview-q2.4-altos-receive": "What From Altos",
+  "interview-q2.4-altos-receive": "What From Firm",
   "interview-q3.1-engineer-to-business": "Engineer → Business",
   "interview-q3.2-tmaxtibero-lessons": "Tmax Lessons",
   "interview-q3.3-flint-shutdown": "Flint Shutdown",
@@ -119,6 +119,9 @@ interface ChunkRecord {
   section: string;
   skills: string[];
   isCoreStrength: boolean;
+  pineconeScore: number;
+  question?: string;
+  chunkType?: string;
 }
 
 export const maxDuration = 30;
@@ -184,7 +187,16 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { messages, type, lang, sessionId, coveredTopics, visitorEmail } = body;
+    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, internal } = body;
+    const skipTracking = internal === true;
+    const isInternal = internal === true;
+    const traceSteps: TraceStep[] = [];
+    const traceStart = Date.now();
+    function addTrace(label: string, summary: string, data: Record<string, unknown>) {
+      if (isInternal) {
+        traceSteps.push({ label, timestamp: Date.now() - traceStart, summary, data });
+      }
+    }
     const visitorData = validateVisitorData(body.visitorData);
     const { persona, focus } = visitorData;
 
@@ -221,7 +233,7 @@ ${context}
 --- END ---`,
       });
 
-      logAnalytics({ type: "init", persona, focus, lang, timestamp: new Date().toISOString(), visitorEmail });
+      if (!skipTracking) logAnalytics({ type: "init", persona, focus, lang, timestamp: new Date().toISOString(), visitorEmail });
 
       return new Response(
         JSON.stringify({ welcome }),
@@ -250,13 +262,26 @@ ${context}
     }
     const truncatedQuery = query.slice(0, 2000);
 
+    addTrace("Query Processing", `"${truncatedQuery.slice(0, 80)}${truncatedQuery.length > 80 ? '...' : ''}" | persona=${persona}, focus=${focus}`, {
+      rawQuery: truncatedQuery.slice(0, 200),
+      persona,
+      focus,
+      lang: lang ?? "en",
+      messageCount: messages.length,
+    });
+
     // 3. Detect entity/section filter in query
     const detected = detectFilter(truncatedQuery);
+
+    addTrace("Entity Detection", detected ? `Found ${detected.type}: "${'value' in detected ? detected.value : 'temporal filter'}"` : "No entity detected", {
+      detected: detected ?? null,
+    });
 
     // 4. Rewrite the user query into a better search query for vector retrieval
     //    AND classify the intent as specific/broad/ambiguous.
     //    Uses a single fast LLM call. Falls back to current behavior on parse failure.
     let retrievalQuery: string;
+    let rewriteResult: string | undefined;
     let intent: "specific" | "broad" | "ambiguous" = "specific";
     let clarifications: string[] = [];
     try {
@@ -271,11 +296,7 @@ ${context}
             .join("\n")
         : "";
 
-      const { text: rewriteResult } = await generateText({
-        model: google("gemini-2.0-flash"),
-        temperature: 0,
-        maxOutputTokens: 250,
-        prompt: `You are a search query optimizer for a professional resume database about Dong Jae Lee.
+      const rewritePrompt = `You are a search query optimizer for a professional resume database about Dong Jae Lee.
 
 Analyze the visitor's question (and optional conversation context) and return a JSON object:
 {
@@ -300,8 +321,18 @@ Clarifications: only populate when intent is "ambiguous". Provide 2-3 clarifying
 
 Output ONLY valid JSON, no markdown fences or extra text.
 
-${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}`,
+${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}`;
+
+      addTrace("Query Rewrite Prompt", `Sent to gemini-2.0-flash (${rewritePrompt.length} chars)`, {
+        prompt: rewritePrompt,
       });
+
+      ({ text: rewriteResult } = await generateText({
+        model: google("gemini-2.0-flash"),
+        temperature: 0,
+        maxOutputTokens: 250,
+        prompt: rewritePrompt,
+      }));
 
       // Parse JSON response; fall back to plain-text query on failure
       try {
@@ -321,6 +352,19 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       retrievalQuery = buildRetrievalQuery(truncatedQuery, messages);
     }
 
+    addTrace("Query Rewrite Result", `Rewritten: "${retrievalQuery.slice(0, 100)}"`, {
+      rawResult: rewriteResult?.trim() ?? "(fallback — no rewrite result)",
+      rewrittenQuery: retrievalQuery,
+      originalQuery: truncatedQuery,
+    });
+
+    addTrace("Intent Classification", `intent=${intent} | query: "${retrievalQuery.slice(0, 100)}"${clarifications.length > 0 ? ` | ${clarifications.length} clarifications` : ''}`, {
+      intent,
+      retrievalQuery: retrievalQuery.slice(0, 300),
+      clarifications,
+      hasConversationContext: messages.length > 2,
+    });
+
     // 4a. Ambiguous intent — short-circuit before retrieval
     if (intent === "ambiguous" && clarifications.length > 0) {
       const responseLang = lang === "ko" ? "ko" : "en";
@@ -330,29 +374,35 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
 
       const followupBlock = `\n\n<followup>\n${clarifications.join("\n")}\n</followup>`;
 
-      logAnalytics({
-        type: "query",
-        query: truncatedQuery.slice(0, 200),
-        persona,
-        focus,
-        intent: "ambiguous",
-        chunksRetrieved: 0,
-        chunksAfterRerank: 0,
-        timestamp: new Date().toISOString(),
-        visitorEmail,
+      if (!skipTracking) {
+        logAnalytics({
+          type: "query",
+          query: truncatedQuery.slice(0, 200),
+          persona,
+          focus,
+          intent: "ambiguous",
+          chunksRetrieved: 0,
+          chunksAfterRerank: 0,
+          timestamp: new Date().toISOString(),
+          visitorEmail,
+        });
+        logExchange({
+          sessionId: sessionId ?? "",
+          persona,
+          focus,
+          lang: lang ?? "en",
+          query: truncatedQuery,
+          response: clarifyMessage + followupBlock,
+          chunksUsed: [],
+          visitorEmail,
+        });
+      }
+
+      addTrace("Early Return", `Ambiguous intent — returning ${clarifications.length} clarifying questions`, {
+        clarifications,
       });
 
-      logExchange({
-        sessionId: sessionId ?? "",
-        persona,
-        focus,
-        lang: lang ?? "en",
-        query: truncatedQuery,
-        response: clarifyMessage + followupBlock,
-        chunksUsed: [],
-        visitorEmail,
-      });
-
+      const traceForAmbiguous = isInternal ? { steps: traceSteps, totalDurationMs: Date.now() - traceStart } : undefined;
       const textPartId = "ambiguous-text";
       const stream = new ReadableStream({
         start(controller) {
@@ -363,7 +413,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
           controller.enqueue({ type: "text-delta", id: textPartId, delta: fullText });
           controller.enqueue({ type: "text-end", id: textPartId });
           controller.enqueue({ type: "finish-step" });
-          controller.enqueue({ type: "finish", finishReason: "stop", messageMetadata: { sourceTags: [] } });
+          controller.enqueue({ type: "finish", finishReason: "stop", messageMetadata: { sourceTags: [], ...(traceForAmbiguous ? { trace: traceForAmbiguous } : {}) } });
           controller.close();
         },
       });
@@ -371,11 +421,31 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       return createUIMessageStreamResponse({ stream });
     }
 
-    // 5. Embed the rewritten retrieval query
-    const { embedding } = await embed({
-      model: google.embedding("gemini-embedding-001"),
-      value: retrievalQuery.slice(0, 2000),
-      providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
+    // 5. Embed queries — rewritten for general retrieval + raw for direct match detection
+    const rawQueryDiffers = retrievalQuery !== truncatedQuery;
+    const embeddingPromises = [
+      embed({
+        model: google.embedding("gemini-embedding-001"),
+        value: retrievalQuery.slice(0, 2000),
+        providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
+      }),
+      ...(rawQueryDiffers && intent !== "broad" ? [
+        embed({
+          model: google.embedding("gemini-embedding-001"),
+          value: truncatedQuery.slice(0, 2000),
+          providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
+        }),
+      ] : []),
+    ];
+    const embeddingResults = await Promise.all(embeddingPromises);
+    const { embedding } = embeddingResults[0];
+    const rawEmbedding = rawQueryDiffers && intent !== "broad" ? embeddingResults[1]?.embedding : null;
+
+    addTrace("Embedding", `Embedded ${retrievalQuery.length} chars${rawEmbedding ? ' + raw query' : ''} with gemini-embedding-001`, {
+      model: "gemini-embedding-001",
+      queryLength: retrievalQuery.length,
+      embeddingDimensions: embedding.length,
+      hasRawEmbedding: !!rawEmbedding,
     });
 
     const index = getResumeIndex();
@@ -418,8 +488,8 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       }
       const results = await Promise.all(promises);
       const [semanticResults, companyResults, pinnedResults] = results as [
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
         { records: Record<string, { metadata?: Record<string, unknown> } | undefined> },
       ];
 
@@ -427,7 +497,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       addMatchChunks(chunks, companyResults.matches);
       addMatchChunks(chunks, semanticResults.matches);
       if (hasFocusFilter && results[3]) {
-        addMatchChunks(chunks, (results[3] as { matches: Array<{ id: string; metadata?: Record<string, unknown> }> }).matches);
+        addMatchChunks(chunks, (results[3] as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches);
       }
     } else if (detected?.type === "temporal") {
       const promises: Promise<unknown>[] = [
@@ -452,8 +522,8 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       }
       const results = await Promise.all(promises);
       const [semanticResults, temporalResults, pinnedResults] = results as [
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
         { records: Record<string, { metadata?: Record<string, unknown> } | undefined> },
       ];
 
@@ -461,7 +531,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       addMatchChunks(chunks, temporalResults.matches);
       addMatchChunks(chunks, semanticResults.matches);
       if (hasFocusFilter && results[3]) {
-        addMatchChunks(chunks, (results[3] as { matches: Array<{ id: string; metadata?: Record<string, unknown> }> }).matches);
+        addMatchChunks(chunks, (results[3] as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches);
       }
     } else if (detected?.type === "section") {
       const promises: Promise<unknown>[] = [
@@ -486,8 +556,8 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       }
       const results = await Promise.all(promises);
       const [semanticResults, sectionResults, pinnedResults] = results as [
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
         { records: Record<string, { metadata?: Record<string, unknown> } | undefined> },
       ];
 
@@ -495,7 +565,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       addMatchChunks(chunks, sectionResults.matches);
       addMatchChunks(chunks, semanticResults.matches);
       if (hasFocusFilter && results[3]) {
-        addMatchChunks(chunks, (results[3] as { matches: Array<{ id: string; metadata?: Record<string, unknown> }> }).matches);
+        addMatchChunks(chunks, (results[3] as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches);
       }
     } else {
       const promises: Promise<unknown>[] = [
@@ -514,48 +584,154 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       }
       const results = await Promise.all(promises);
       const [semanticResults, pinnedResults] = results as [
-        { matches: Array<{ id: string; metadata?: Record<string, unknown> }> },
+        { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> },
         { records: Record<string, { metadata?: Record<string, unknown> } | undefined> },
       ];
 
       addPinnedChunks(chunks, pinnedIds, pinnedResults);
       addMatchChunks(chunks, semanticResults.matches);
       if (hasFocusFilter && results[2]) {
-        addMatchChunks(chunks, (results[2] as { matches: Array<{ id: string; metadata?: Record<string, unknown> }> }).matches);
+        addMatchChunks(chunks, (results[2] as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches);
       }
     }
 
-    // 9. Persona-aware re-ranking
-    const rankedChunks = [...chunks.values()]
+    addTrace("Retrieval", `${chunks.size} chunks retrieved | filter: ${detected?.type ?? 'none'} | pinned: ${pinnedIds.length}`, {
+      totalChunks: chunks.size,
+      filterType: detected?.type ?? "none",
+      filterValue: detected && 'value' in detected ? detected.value : null,
+      pinnedIds,
+      hasFocusFilter,
+      chunkIds: [...chunks.keys()],
+      topScores: [...chunks.values()].sort((a, b) => b.pineconeScore - a.pineconeScore).slice(0, 5).map(c => ({
+        id: c.id,
+        score: Math.round(c.pineconeScore * 1000) / 1000,
+        section: c.section,
+      })),
+    });
+
+    // 9. Direct match detection via raw-query QA search
+    //    The rewrite step can transform the query away from exact Q&A matches,
+    //    so we search separately with the raw user query embedding.
+    //    We detect the match BEFORE merging into chunks to avoid comparing
+    //    scores from different embeddings (raw vs rewritten).
+    let directMatchChunk: ChunkRecord | null = null;
+    if (intent !== "broad" && rawEmbedding) {
+      const rawQaResults = await ns.query({
+        vector: rawEmbedding,
+        topK: 5,
+        includeMetadata: true,
+        filter: { chunk_type: { $eq: "qa_story" } },
+      });
+      const rawQaMatches = (rawQaResults as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches;
+
+      // Detect direct match using raw scores (same embedding space)
+      if (rawQaMatches.length >= 1 && (rawQaMatches[0].score ?? 0) >= 0.72) {
+        const topScore = rawQaMatches[0].score ?? 0;
+        const gap = rawQaMatches.length >= 2
+          ? topScore - (rawQaMatches[1].score ?? 0)
+          : 1;
+        if (gap >= 0.03 || topScore >= 0.85) {
+          // Build the ChunkRecord for the match (may already exist in chunks)
+          const match = rawQaMatches[0];
+          directMatchChunk = chunks.get(match.id) ?? (match.metadata?.enrichedText ? {
+            id: match.id,
+            enrichedText: match.metadata.enrichedText as string,
+            depth: (match.metadata.depth as string) ?? "surface",
+            section: (match.metadata.section as string) ?? "",
+            skills: (match.metadata.skills as string[]) ?? [],
+            isCoreStrength: (match.metadata.is_core_strength as boolean) ?? false,
+            pineconeScore: topScore,
+            question: (match.metadata.question as string) || undefined,
+            chunkType: (match.metadata.chunk_type as string) || undefined,
+          } : null);
+        }
+      }
+
+      // Merge raw QA results into chunks map (for context assembly)
+      addMatchChunks(chunks, rawQaMatches);
+    }
+
+    addTrace("Direct Match", directMatchChunk
+      ? `MATCH: "${directMatchChunk.question?.slice(0, 60)}" (score: ${directMatchChunk.pineconeScore.toFixed(3)})`
+      : "No direct match found", {
+      found: !!directMatchChunk,
+      ...(directMatchChunk ? {
+        matchId: directMatchChunk.id,
+        matchScore: directMatchChunk.pineconeScore,
+        matchQuestion: directMatchChunk.question,
+      } : {}),
+    });
+
+    // 10. Persona-aware re-ranking
+    const rankedWithScores = [...chunks.values()]
       .map((chunk) => ({
         chunk,
-        score: scoreChunk(chunk, persona, focus),
+        personaScore: scoreChunk(chunk, persona, focus),
       }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 15)
-      .map((r) => r.chunk);
+      .sort((a, b) => b.personaScore - a.personaScore)
+      .slice(0, 15);
+    const rankedChunks = rankedWithScores.map((r) => r.chunk);
 
-    // 10. Assemble structured context — separate overview from deep-dive
-    const overviewChunks: string[] = [];
-    const deepDiveChunks: string[] = [];
+    addTrace("Re-ranking", `${chunks.size} → ${rankedChunks.length} chunks after persona re-rank`, {
+      inputCount: chunks.size,
+      outputCount: rankedChunks.length,
+      topChunks: rankedWithScores.slice(0, 8).map(r => ({
+        id: r.chunk.id,
+        label: CHUNK_LABELS[r.chunk.id] ?? r.chunk.id,
+        section: r.chunk.section,
+        pineconeScore: Math.round(r.chunk.pineconeScore * 1000) / 1000,
+        personaMultiplier: Math.round(r.personaScore * 100) / 100,
+      })),
+    });
 
-    for (const chunk of rankedChunks) {
-      if (chunk.depth === "deep_dive") {
-        deepDiveChunks.push(chunk.enrichedText);
-      } else {
-        overviewChunks.push(chunk.enrichedText);
+    // 11. Assemble structured context
+    let context: string;
+
+    if (directMatchChunk) {
+      // Direct match mode: primary answer + limited supplementary context
+      const supplementary = rankedChunks
+        .filter((c) => c.id !== directMatchChunk!.id)
+        .slice(0, 5);
+
+      context = "--- PRIMARY ANSWER ---\n[PRIMARY ANSWER]\n" + directMatchChunk.enrichedText;
+      if (supplementary.length > 0) {
+        context +=
+          "\n\n--- SUPPLEMENTARY CONTEXT ---\n" +
+          supplementary.map((c) => c.enrichedText).join("\n\n");
       }
+      context += "\n--- END RESUME ---";
+    } else {
+      // Standard mode: separate overview from deep-dive
+      const overviewChunks: string[] = [];
+      const deepDiveChunks: string[] = [];
+
+      for (const chunk of rankedChunks) {
+        if (chunk.depth === "deep_dive") {
+          deepDiveChunks.push(chunk.enrichedText);
+        } else {
+          overviewChunks.push(chunk.enrichedText);
+        }
+      }
+
+      context = "--- OVERVIEW ---\n" + overviewChunks.join("\n\n");
+      if (deepDiveChunks.length > 0) {
+        context +=
+          "\n\n--- DETAILED STORIES (for follow-up depth) ---\n" +
+          deepDiveChunks.join("\n\n");
+      }
+      context += "\n--- END RESUME ---";
     }
 
-    let context = "--- OVERVIEW ---\n" + overviewChunks.join("\n\n");
-    if (deepDiveChunks.length > 0) {
-      context +=
-        "\n\n--- DETAILED STORIES (for follow-up depth) ---\n" +
-        deepDiveChunks.join("\n\n");
-    }
-    context += "\n--- END RESUME ---";
+    addTrace("Context Assembly", directMatchChunk
+      ? `Direct match mode | context: ${context.length} chars`
+      : `Standard mode | ${rankedChunks.filter(c => c.depth !== "deep_dive").length} overview + ${rankedChunks.filter(c => c.depth === "deep_dive").length} deep-dive | ${context.length} chars`, {
+      mode: directMatchChunk ? "direct_match" : "standard",
+      contextLength: context.length,
+      overviewChunks: rankedChunks.filter(c => c.depth !== "deep_dive").length,
+      deepDiveChunks: rankedChunks.filter(c => c.depth === "deep_dive").length,
+    });
 
-    // 11. Log retrieval details
+    // 12. Log retrieval details
     if (process.env.NODE_ENV === "development") {
       console.log("[RAG] Query:", truncatedQuery);
       console.log("[RAG] Retrieval query:", retrievalQuery.slice(0, 200));
@@ -565,20 +741,26 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       console.log("[RAG] Retrieved chunks:", [...chunks.keys()]);
       console.log("[RAG] After re-ranking:", rankedChunks.map((c) => c.id));
       console.log("[RAG] Intent:", intent);
-      console.log("[RAG] Overview:", overviewChunks.length, "Deep:", deepDiveChunks.length);
+      if (directMatchChunk) {
+        console.log(`[RAG] DIRECT MATCH: ${directMatchChunk.id} score: ${directMatchChunk.pineconeScore} question: "${directMatchChunk.question}"`);
+      }
     }
 
-    logAnalytics({
-      type: "query",
-      query: truncatedQuery.slice(0, 200),
-      persona,
-      focus,
-      intent,
-      chunksRetrieved: chunks.size,
-      chunksAfterRerank: rankedChunks.length,
-      timestamp: new Date().toISOString(),
-      visitorEmail,
-    });
+    if (!skipTracking) {
+      logAnalytics({
+        type: "query",
+        query: truncatedQuery.slice(0, 200),
+        persona,
+        focus,
+        intent,
+        chunksRetrieved: chunks.size,
+        chunksAfterRerank: rankedChunks.length,
+        directMatch: directMatchChunk?.id,
+        directMatchScore: directMatchChunk?.pineconeScore,
+        timestamp: new Date().toISOString(),
+        visitorEmail,
+      });
+    }
 
     // 12. Convert UI messages to model messages (sliding window)
     const recentMessages = messages.slice(-MAX_HISTORY);
@@ -588,16 +770,17 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
     const answerMode = await getAnswerMode();
     const modePrompt = ANSWER_MODE_PROMPTS[answerMode];
 
-    const result = streamText({
-      model: google("gemini-2.5-flash"),
-      temperature: 0.3,
-      maxOutputTokens: 2048,
-      abortSignal: req.signal,
-      system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
+    const systemPrompt = `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.
 
 ${modePrompt}
-${intent === "broad" ? `
+${directMatchChunk ? `
+DIRECT MATCH MODE:
+The user's question closely matches a specific prepared answer (marked [PRIMARY ANSWER] below).
+- Use the PRIMARY ANSWER as the backbone of your response — follow its structure, reasoning, and key examples.
+- Preserve DJ's personal voice and specific phrasing where it's strong. You may condense or lightly restructure for readability, but don't replace his words with generic corporate language.
+- You may weave in supplementary context where it genuinely strengthens the answer, but the primary answer should clearly dominate. Don't give equal weight to tangential material.
+` : intent === "broad" ? `
 RESPONSE MODE: OVERVIEW
 This is a broad question — give a concise overview rather than diving deep into any single topic.
 - Organize your response as 3-5 short bullet points covering the key areas of your background relevant to the question.
@@ -639,19 +822,38 @@ ${PERSONA_TONE[persona]}
 ${FOCUS_HIGHLIGHT[focus]}
 
 --- MY RESUME ---
-${context}`,
+${context}`;
+
+    addTrace("Generation", `model=gemini-2.5-flash | mode=${answerMode} | ${directMatchChunk ? 'direct_match' : intent === 'broad' ? 'overview' : 'standard'}`, {
+      model: "gemini-2.5-flash",
+      answerMode,
+      responseMode: directMatchChunk ? "direct_match" : intent === "broad" ? "overview" : "standard",
+      temperature: 0.3,
+      maxOutputTokens: 2048,
+      contextLength: context.length,
+      systemPrompt,
+    });
+
+    const result = streamText({
+      model: google("gemini-2.5-flash"),
+      temperature: 0.3,
+      maxOutputTokens: 2048,
+      abortSignal: req.signal,
+      system: systemPrompt,
       messages: modelMessages,
       onFinish: ({ text }) => {
-        logExchange({
-          sessionId: sessionId ?? "",
-          persona,
-          focus,
-          lang: lang ?? "en",
-          query: truncatedQuery,
-          response: text,
-          chunksUsed: rankedChunks.map((c) => c.id),
-          visitorEmail,
-        });
+        if (!skipTracking) {
+          logExchange({
+            sessionId: sessionId ?? "",
+            persona,
+            focus,
+            lang: lang ?? "en",
+            query: truncatedQuery,
+            response: text,
+            chunksUsed: rankedChunks.map((c) => c.id),
+            visitorEmail,
+          });
+        }
       },
     });
 
@@ -670,7 +872,10 @@ ${context}`,
     return result.toUIMessageStreamResponse<ChatUIMessage>({
       messageMetadata: ({ part }) => {
         if (part.type === "finish") {
-          return { sourceTags };
+          return {
+            sourceTags,
+            ...(isInternal ? { trace: { steps: traceSteps, totalDurationMs: Date.now() - traceStart } } : {}),
+          };
         }
         return undefined;
       },
@@ -701,6 +906,9 @@ function addPinnedChunks(
         section: (record.metadata.section as string) ?? "",
         skills: (record.metadata.skills as string[]) ?? [],
         isCoreStrength: (record.metadata.is_core_strength as boolean) ?? false,
+        pineconeScore: 0,
+        question: (record.metadata.question as string) || undefined,
+        chunkType: (record.metadata.chunk_type as string) || undefined,
       });
     }
   }
@@ -708,7 +916,7 @@ function addPinnedChunks(
 
 function addMatchChunks(
   chunks: Map<string, ChunkRecord>,
-  matches: Array<{ id: string; metadata?: Record<string, unknown> }>
+  matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }>
 ) {
   for (const match of matches) {
     if (!chunks.has(match.id) && match.metadata?.enrichedText) {
@@ -719,6 +927,9 @@ function addMatchChunks(
         section: (match.metadata.section as string) ?? "",
         skills: (match.metadata.skills as string[]) ?? [],
         isCoreStrength: (match.metadata.is_core_strength as boolean) ?? false,
+        pineconeScore: match.score ?? 0,
+        question: (match.metadata.question as string) || undefined,
+        chunkType: (match.metadata.chunk_type as string) || undefined,
       });
     }
   }

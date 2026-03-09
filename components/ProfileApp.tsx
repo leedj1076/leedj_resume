@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import ProfilePanel from "./ProfilePanel";
 import ChatPanel from "./ChatPanel";
+import TracePanel from "./TracePanel";
 import V14WelcomeModal from "./V14WelcomeModal";
 import type { Lang } from "@/lib/profile-data";
 import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, V14_PERSONA_OPTIONS } from "@/lib/profile-data";
@@ -21,7 +22,7 @@ function shuffleIndices(length: number, pick: number): number[] {
   return indices.slice(0, pick);
 }
 
-export default function ProfileApp() {
+export default function ProfileApp({ internal }: { internal?: boolean } = {}) {
   const [lang, setLang] = useState<Lang>("en");
   const [persona, setPersona] = useState("vc");
   const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
@@ -29,6 +30,7 @@ export default function ProfileApp() {
   const [darkMode, setDarkMode] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [profileVisible, setProfileVisible] = useState(true);
+  const [selectedTraceMessageId, setSelectedTraceMessageId] = useState<string | null>(null);
 
   // Sync dark mode state with DOM on mount; check if welcome modal should show
   useEffect(() => {
@@ -89,6 +91,7 @@ export default function ProfileApp() {
           lang: langRef.current === "kr" ? "ko" : "en",
           coveredTopics,
           visitorEmail: visitorEmailRef.current,
+          ...(internal ? { internal: true } : {}),
         };
       },
     })
@@ -126,11 +129,21 @@ export default function ProfileApp() {
           persona: personaRef.current,
           focus: "full_stack",
           sessionId,
+          ...(internal ? { internal: true } : {}),
         }),
       }).catch(() => {});
     },
     [sessionId]
   );
+
+  // Auto-select latest assistant message with trace data for the trace panel
+  const latestTraceMessageId = internal
+    ? [...messages].reverse().find((m) => m.role === "assistant" && m.metadata?.trace)?.id ?? null
+    : null;
+  const activeTraceMessageId = selectedTraceMessageId ?? latestTraceMessageId;
+  const activeTrace = internal
+    ? messages.find((m) => m.id === activeTraceMessageId)?.metadata?.trace ?? null
+    : null;
 
   const en = lang === "en";
 
@@ -302,8 +315,16 @@ export default function ProfileApp() {
             onReset={handleReset}
             onFeedback={handleFeedback}
             starterIndices={starterIndices}
+            internal={internal}
+            selectedTraceMessageId={activeTraceMessageId}
+            onSelectTrace={internal ? setSelectedTraceMessageId : undefined}
           />
         </div>
+
+        {/* Right: Trace panel (internal only) */}
+        {internal && (
+          <TracePanel trace={activeTrace} messageId={activeTraceMessageId ?? undefined} />
+        )}
       </div>
 
       {/* Welcome modal */}

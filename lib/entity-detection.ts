@@ -12,7 +12,7 @@ const COMPANY_ALIASES: [RegExp, string][] = [
   [/devs?\s*united|데브스|\bdug\b/i, "Devs United Games"],
   [/flint|플린트/i, "Flint Technologies"],
   [/tmax|tibero|티맥스/i, "TmaxTibero"],
-  [/altos|알토스/i, "Altos Ventures"],
+  [/altos|알토스/i, "Target Firm"],
   [/\bkaist\b|카이스트/i, "KAIST"],
   [/\bkit\b|karlsruhe/i, "KIT"],
 ];

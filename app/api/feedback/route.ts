@@ -3,11 +3,18 @@ import { logAnalytics } from "@/lib/analytics";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { messageId, value, persona, focus, sessionId } = body;
+    const { messageId, value, persona, focus, sessionId, internal } = body;
 
     if (!messageId || !["up", "down"].includes(value)) {
       return new Response(JSON.stringify({ error: "Invalid feedback" }), {
         status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (internal) {
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }

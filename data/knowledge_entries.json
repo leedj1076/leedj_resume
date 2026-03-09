@@ -103,12 +103,12 @@
   },
   {
     "chunk_id": "interview-q2.4-altos-receive",
-    "question": "What do you want to receive from Altos?",
-    "answer_summary": "DJ seeks apprenticeship in judgment through exposure to Altos' decision-making processes, access to diverse portfolio (Baemin, Toss, Furiosa, Anthropic), and hands-on founder support beyond capital.",
-    "text": "First, apprenticeship in judgment. Altos has decades of reps through real cycles. I want to learn how your partners build conviction — how you read founders, separate what's structural from what's noise, and stay calm when markets move. Not from a playbook — by being in the room. The conversations, the memos, the actual trade-offs.\n\nSecond, the portfolio. Very few funds touch consumer platforms like Baemin and Toss, deep tech like Furiosa and Anthropic, and Korea-US cross-border — all under one roof. That range is the fastest way to build real pattern recognition, because the cases are so different. I want that exposure.\n\nThird, the unglamorous work. Altos is unusual in how it shows up beyond capital. Hiring calibration, GTM sequencing, hard strategic calls — not just writing checks. I want to grow inside a team where helping founders means doing the actual work, with trust and mutual respect.\n\nAnd I think the fit goes both ways — I bring a founder-operator lens that makes that support real, not theoretical.",
+    "question": "What do you want to receive from the firm you join?",
+    "answer_summary": "DJ seeks apprenticeship in judgment through exposure to the firm's decision-making processes, access to a diverse portfolio, and hands-on founder support beyond capital.",
+    "text": "First, apprenticeship in judgment. I want to join a firm with decades of reps through real cycles. I want to learn how experienced partners build conviction — how they read founders, separate what's structural from what's noise, and stay calm when markets move. Not from a playbook — by being in the room. The conversations, the memos, the actual trade-offs.\n\nSecond, the portfolio. I'm drawn to firms that touch consumer platforms, deep tech, and cross-border — all under one roof. That range is the fastest way to build real pattern recognition, because the cases are so different. I want that exposure.\n\nThird, the unglamorous work. I want to be at a firm that shows up beyond capital. Hiring calibration, GTM sequencing, hard strategic calls — not just writing checks. I want to grow inside a team where helping founders means doing the actual work, with trust and mutual respect.\n\nAnd I think the fit goes both ways — I bring a founder-operator lens that makes that support real, not theoretical.",
     "source_type": "qa_story",
     "section": "motivation",
-    "company": "Altos",
+    "company": null,
     "role": null,
     "start_date": null,
     "end_date": null,
@@ -119,7 +119,7 @@
       "decision-making"
     ],
     "keywords": [
-      "Altos",
+      "VC firm",
       "apprenticeship",
       "judgment",
       "founder support",
@@ -257,7 +257,7 @@
     "chunk_id": "interview-q3.4-dug-departure",
     "question": "Why did you leave DUG? It's only been a year and a half.",
     "answer_summary": "DJ left DUG after 18 months of delivering strong results to pursue VC, recognizing that pattern-matching across multiple companies compounds better than depth in one vertical. The move reflects clarity about his strengths, not instability.",
-    "text": "That's a fair question. The honest answer is: leaving was an intentional career choice, not an escape. DUG clarified what kind of work I want to compound long-term.\n\nFirst, the output speaks for itself. In 18 months, starting from zero process as essentially a one-person operation, I delivered 55.47% year-over-year revenue growth in the first half of 2025, got featured on the Vision Pro App Store, secured Meta Quest+ entry, and built the Google Android XR partnership. I'm not someone who leaves before the work is done — I left after delivering real results.\n\nSecond, it confirmed my direction. I've always been strongest when I learn fast and connect patterns across domains — double-majoring across disciplines, moving from hardware and design into software, then into startups. At DUG, I ramped quickly in XR and delivered outcomes across platforms. The pattern is consistent: I'm fast at entering new spaces, synthesizing what matters, and turning it into strategy and execution. VC is the role where that strength compounds across many companies, rather than being locked into one.\n\nThird, I want to accelerate by learning alongside people with decades of investment judgment. Flint and DUG taught me a lot through doing, but I want to grow in an environment where I'm working closely with great investors and learning how they evaluate founders and markets in real time. Altos is compelling because it's a small, high-bar team where that kind of learning happens naturally.\n\nFourth, there was a fit reality. I originally joined to help build and scale the business side, but I'm not a game person at heart. Over time I realized I'm more energized by supporting founders and companies across categories than being tied to one product vertical long-term.\n\nSo the short tenure reflects clarity, not instability: DUG helped me see that the next chapter I want is VC — especially at Altos — where I can compound learning and impact across many founders.",
+    "text": "That's a fair question. The honest answer is: leaving was an intentional career choice, not an escape. DUG clarified what kind of work I want to compound long-term.\n\nFirst, the output speaks for itself. In 18 months, starting from zero process as essentially a one-person operation, I delivered 55.47% year-over-year revenue growth in the first half of 2025, got featured on the Vision Pro App Store, secured Meta Quest+ entry, and built the Google Android XR partnership. I'm not someone who leaves before the work is done — I left after delivering real results.\n\nSecond, it confirmed my direction. I've always been strongest when I learn fast and connect patterns across domains — double-majoring across disciplines, moving from hardware and design into software, then into startups. At DUG, I ramped quickly in XR and delivered outcomes across platforms. The pattern is consistent: I'm fast at entering new spaces, synthesizing what matters, and turning it into strategy and execution. VC is the role where that strength compounds across many companies, rather than being locked into one.\n\nThird, I want to accelerate by learning alongside people with decades of investment judgment. Flint and DUG taught me a lot through doing, but I want to grow in an environment where I'm working closely with great investors and learning how they evaluate founders and markets in real time. A small, high-bar VC team is where that kind of learning happens naturally.\n\nFourth, there was a fit reality. I originally joined to help build and scale the business side, but I'm not a game person at heart. Over time I realized I'm more energized by supporting founders and companies across categories than being tied to one product vertical long-term.\n\nSo the short tenure reflects clarity, not instability: DUG helped me see that the next chapter I want is VC — where I can compound learning and impact across many founders.",
     "source_type": "qa_story",
     "section": "career_transition",
     "company": "Devs United Games",
@@ -296,7 +296,7 @@
     "chunk_id": "interview-q3.5-breadth-strength-weakness",
     "question": "You've experienced many different fields. Is that a strength or weakness for VC?",
     "answer_summary": "Breadth is both strength and weakness. Weakness: lacks 10+ years in single domain. Strength: has repeatable evaluation framework across contexts and depth in technical products, enterprise reality, and platform ecosystems.",
-    "text": "It's both — and I think the key is being honest about the trade-off, while showing how I manage it.\n\nOn the weakness side: I don't have 10+ years in one single domain, so I won't pretend I'm the world's deepest expert in DBMS, AI, or XR. That kind of depth can matter, especially for highly specialized deals. And there's a narrative risk with breadth: if you move too often, people can assume you're unfocused. I'm aware of that, and I'll need to earn trust through consistency and high-quality work at Altos.\n\nOn the strength side: In VC, you often have to form conviction in unfamiliar areas quickly. My breadth isn't \"I tried a lot of things\" — it's that I've repeatedly built a repeatable evaluation framework across very different contexts:\n\n1. Understand the technical architecture — what's actually hard, what's commodity, and what breaks at scale.\n2. Map the competitive landscape — who can replicate, who can bundle, and what the true alternative is, including \"build in-house.\"\n3. Identify the real user pain and adoption friction — what behavior must change, and why will users stick with it.\n4. Pressure-test the business model and GTM — sales cycle, unit economics, dependencies, and what must be true for the company to win.\n\nThat framework comes from lived experience: enterprise dynamics at Samsung-level accounts, building products as a founder, and operating in platform-driven ecosystems like Apple, Meta, and Google. It also lets me be a credible conversation partner to founders across multiple categories.\n\nAnd to be clear, I'm not only broad — I do have depth where it matters for Altos. I'm strongest at the intersection of technical products, enterprise reality, and platform ecosystems — and that's a durable lens for evaluating a lot of modern software and deep-tech startups.\n\nSo I'd summarize it like this: breadth is a weakness if it's just curiosity. Breadth is a strength in VC if it's paired with a consistent framework and a few real depth anchors. My goal at Altos is to prove the latter — starting with the areas where my depth is already real: technical products, enterprise dynamics, and platform ecosystems.",
+    "text": "It's both — and I think the key is being honest about the trade-off, while showing how I manage it.\n\nOn the weakness side: I don't have 10+ years in one single domain, so I won't pretend I'm the world's deepest expert in DBMS, AI, or XR. That kind of depth can matter, especially for highly specialized deals. And there's a narrative risk with breadth: if you move too often, people can assume you're unfocused. I'm aware of that, and I'll need to earn trust through consistency and high-quality work.\n\nOn the strength side: In VC, you often have to form conviction in unfamiliar areas quickly. My breadth isn't \"I tried a lot of things\" — it's that I've repeatedly built a repeatable evaluation framework across very different contexts:\n\n1. Understand the technical architecture — what's actually hard, what's commodity, and what breaks at scale.\n2. Map the competitive landscape — who can replicate, who can bundle, and what the true alternative is, including \"build in-house.\"\n3. Identify the real user pain and adoption friction — what behavior must change, and why will users stick with it.\n4. Pressure-test the business model and GTM — sales cycle, unit economics, dependencies, and what must be true for the company to win.\n\nThat framework comes from lived experience: enterprise dynamics at Samsung-level accounts, building products as a founder, and operating in platform-driven ecosystems like Apple, Meta, and Google. It also lets me be a credible conversation partner to founders across multiple categories.\n\nAnd to be clear, I'm not only broad — I do have depth where it matters for Altos. I'm strongest at the intersection of technical products, enterprise reality, and platform ecosystems — and that's a durable lens for evaluating a lot of modern software and deep-tech startups.\n\nSo I'd summarize it like this: breadth is a weakness if it's just curiosity. Breadth is a strength in VC if it's paired with a consistent framework and a few real depth anchors. My goal is to prove the latter — starting with the areas where my depth is already real: technical products, enterprise dynamics, and platform ecosystems.",
     "source_type": "qa_story",
     "section": "self_assessment",
     "company": null,
@@ -420,12 +420,12 @@
   },
   {
     "chunk_id": "interview-q2.3-five-year-vision-altos",
-    "question": "What role do you want to play at Altos over the next 5 years?",
+    "question": "What role do you want to play at a VC firm over the next 5 years?",
     "answer_summary": "Two-phase vision: Years 1-2 earn trust through output and execution; Years 3-5 lead with conviction. Developed technical DD framework for pre-revenue startups focusing on moat, proprietary compounding, and falsification.",
-    "text": "Two-phase vision over the next 5 years at Altos. Years 1-2: my focus is on earning trust through output. I will work to understand Altos' investment thesis deeply, develop strong pattern recognition across the portfolio, and demonstrate consistent high-quality work in sourcing, diligence, and founder support. Years 3-5: once I've built credibility, I want to lead with conviction on areas where I can add unique value.\n\nOne specific area I want to develop is a technical diligence framework for pre-revenue startups. For early-stage deep tech or platform companies, traditional due diligence frameworks often fall short. I want to build a framework with three core blocks:\n\n1. The moat claim — what does the founder believe creates defensibility? Is it technical, regulatory, network, or something else? And is that claim actually falsifiable, or is it narrative?\n\n2. Proprietary compounding — if the moat is real, what feedback loops and advantages compound over time? What does the winner look like at 10x scale?\n\n3. Proof and falsification — what evidence would change my mind? What experiments or signals do we need within the next 12-24 months to increase confidence? This is the discipline I learned at Flint: disagree but commit, but back it with data.\n\nThis framework comes from my experience building at Flint, learning enterprise dynamics at Tmax, and operating in large platform ecosystems at DUG. I believe this is a differentiating capability for Altos in the pre-revenue space, and it's something I can develop and refine over the next few years.",
+    "text": "Two-phase vision over the next 5 years. Years 1-2: my focus is on earning trust through output. I will work to understand the firm's investment thesis deeply, develop strong pattern recognition across the portfolio, and demonstrate consistent high-quality work in sourcing, diligence, and founder support. Years 3-5: once I've built credibility, I want to lead with conviction on areas where I can add unique value.\n\nOne specific area I want to develop is a technical diligence framework for pre-revenue startups. For early-stage deep tech or platform companies, traditional due diligence frameworks often fall short. I want to build a framework with three core blocks:\n\n1. The moat claim — what does the founder believe creates defensibility? Is it technical, regulatory, network, or something else? And is that claim actually falsifiable, or is it narrative?\n\n2. Proprietary compounding — if the moat is real, what feedback loops and advantages compound over time? What does the winner look like at 10x scale?\n\n3. Proof and falsification — what evidence would change my mind? What experiments or signals do we need within the next 12-24 months to increase confidence? This is the discipline I learned at Flint: disagree but commit, but back it with data.\n\nThis framework comes from my experience building at Flint, learning enterprise dynamics at Tmax, and operating in large platform ecosystems at DUG. I believe this is a differentiating capability in the pre-revenue space, and it's something I can develop and refine over the next few years.",
     "source_type": "qa_story",
     "section": "motivation",
-    "company": "Altos",
+    "company": null,
     "role": null,
     "start_date": null,
     "end_date": null,
@@ -438,7 +438,7 @@
     ],
     "keywords": [
       "five-year vision",
-      "Altos",
+      "VC firm",
       "technical DD",
       "pre-revenue startups",
       "moat",
@@ -460,7 +460,7 @@
     "chunk_id": "interview-q4.1-founder-philosophy",
     "question": "What do you think is the most important thing when starting a company?",
     "answer_summary": "Founder philosophy expressed as behavior is the most important thing — the founder's temperament becomes the 'operating system' for everything. Four principles: mission-level commitment + founder chemistry, problem-first over technology, capital efficiency + radical simplification, and winning a focused wedge before building a compounding moat.",
-    "text": "If I have to choose one thing, it's founder philosophy expressed as behavior — because in the first 1–2 years there aren't reliable metrics. What you really have is a small group of people making thousands of decisions under uncertainty. The founder's temperament becomes the \"operating system\" for everything: product quality, speed of iteration, hiring bar, culture, fundraising behavior, and how the company responds when reality disagrees with the plan.\n\nFrom my own experience, I break it into four principles I've learned the hard way — not from theory.\n\n1) Mission-level commitment and founder chemistry — because the team IS the company.\n\nIn early-stage startups, everyone can talk about vision. What differentiates survival is whether the founders treat it like a mission — whether they truly care about the work, the details, and the team when it stops being fun. I saw the opposite risk at Flint: when conviction weakens, everything slows — decision speed, recruiting, product iteration. \"Why\" isn't a slogan; it's an operating asset.\n\nBut individual commitment isn't enough. Product and strategy will change. What must not break is the founders' ability to tell the truth early (\"this isn't working\"), disagree without ego, and commit decisively. At Flint, when we hit core product friction, the correct response required uncomfortable decisions. If co-founders can't have clean, low-ego conversations at that moment, the company bleeds time and conviction. You can fix product, you can fix GTM, you can fix hiring. It's extremely hard to fix a founding relationship that can't handle truth under pressure.\n\nAnd this extends beyond founders — organizations are made of people, and execution quality is carried by long-term context. When the people who truly understand the product leave — especially without proper handover — maintenance and iteration become fragile. Founders who build iconic companies don't rely on importing \"world-class saviors.\" They develop internal leaders and retain product ownership.\n\n2) Start with the problem and the customer's reality — not the technology.\n\nThis is the most common mistake technical founders make — and I made it even though I knew better.\n\nAt Flint, we started with a sophisticated technology (GNN / knowledge graph) and tried to find the best application for it. The vision was intellectually beautiful, but we underestimated how hard it is to get users to repeatedly do the core action. We asked for too much behavior change. The real test isn't \"does this look impressive?\" — it's \"will a normal user do this every day without feeling like homework?\"\n\nI learned this earlier in enterprise settings too: in industry, \"one successful experiment\" doesn't matter unless it fits deployment reality — timeline, risk tolerance, procurement, internal alignment, and accountability when something breaks. A product exists to solve a customer problem in a way the customer can actually adopt.\n\nThat changed my founder philosophy permanently: validate the smallest repeatable user action early, and be ruthless about friction.\n\n3) Capital efficiency and radical simplification — constraints force clarity.\n\nOne of the most dangerous founder failure modes is confusing fundraising with progress. Founders who are capital-efficient aren't just \"spending less\" — they're learning faster per dollar. Constraints force you to see what users truly value, what doesn't scale, what costs too much, and what the unit economics are trying to tell you.\n\nGreat founders don't waste energy on things they can't control — macro, competitors' announcements, hype cycles. Under stress, weak founders expand scope; strong founders simplify: what can we ship, what can we measure, what can we improve this week, what decision unlocks progress. This sounds basic, but in practice it's a temperament test.\n\nI respect founders who build fundamentals early and don't scale theatrically just to match a promised growth narrative. Profitability — or a credible path to it — keeps the founder in control.\n\n4) Win a focused wedge first, then build a compounding moat.\n\nMost early-stage failures I've seen come from trying to be too broad too early. The founders who win start with a narrow, painful problem where they can be the obvious best solution, then expand outward from that position of strength.\n\nAnd a real business needs both: customers who pay today, and a reason it keeps winning over time. Moats often form from workflow position and switching costs, data and feedback loops, distribution advantages — especially platform dynamics — or unique operational know-how that compounds. If a company's differentiation is only a feature, it will be copied. A moat is when the advantage compounds with usage, distribution, or time.\n\nMy conclusion — and why this matters for how I'd evaluate founders at Altos:\n\nMy founder philosophy is: mission-level commitment + low-ego truth-telling + problem-first value creation + capital-efficient fundamentals + focused wedge into compounding moat.\n\nI hold that view because I've lived both sides — I made the classic tech-first mistake at Flint, I've seen customer reality dominate technical elegance in enterprise settings, I've watched platform dynamics and distribution matter operationally at DUG, and I've seen how people and continuity determine whether execution compounds or collapses.\n\nThis is also exactly how I'd evaluate founders as a 심사역. Altos invests on the belief that 창업자의 철학이 지표보다 중요 — and I agree, because I've seen firsthand that metrics are lagging indicators of the decisions a founding team already made. The philosophy comes first; the numbers follow.",
+    "text": "If I have to choose one thing, it's founder philosophy expressed as behavior — because in the first 1–2 years there aren't reliable metrics. What you really have is a small group of people making thousands of decisions under uncertainty. The founder's temperament becomes the \"operating system\" for everything: product quality, speed of iteration, hiring bar, culture, fundraising behavior, and how the company responds when reality disagrees with the plan.\n\nFrom my own experience, I break it into four principles I've learned the hard way — not from theory.\n\n1) Mission-level commitment and founder chemistry — because the team IS the company.\n\nIn early-stage startups, everyone can talk about vision. What differentiates survival is whether the founders treat it like a mission — whether they truly care about the work, the details, and the team when it stops being fun. I saw the opposite risk at Flint: when conviction weakens, everything slows — decision speed, recruiting, product iteration. \"Why\" isn't a slogan; it's an operating asset.\n\nBut individual commitment isn't enough. Product and strategy will change. What must not break is the founders' ability to tell the truth early (\"this isn't working\"), disagree without ego, and commit decisively. At Flint, when we hit core product friction, the correct response required uncomfortable decisions. If co-founders can't have clean, low-ego conversations at that moment, the company bleeds time and conviction. You can fix product, you can fix GTM, you can fix hiring. It's extremely hard to fix a founding relationship that can't handle truth under pressure.\n\nAnd this extends beyond founders — organizations are made of people, and execution quality is carried by long-term context. When the people who truly understand the product leave — especially without proper handover — maintenance and iteration become fragile. Founders who build iconic companies don't rely on importing \"world-class saviors.\" They develop internal leaders and retain product ownership.\n\n2) Start with the problem and the customer's reality — not the technology.\n\nThis is the most common mistake technical founders make — and I made it even though I knew better.\n\nAt Flint, we started with a sophisticated technology (GNN / knowledge graph) and tried to find the best application for it. The vision was intellectually beautiful, but we underestimated how hard it is to get users to repeatedly do the core action. We asked for too much behavior change. The real test isn't \"does this look impressive?\" — it's \"will a normal user do this every day without feeling like homework?\"\n\nI learned this earlier in enterprise settings too: in industry, \"one successful experiment\" doesn't matter unless it fits deployment reality — timeline, risk tolerance, procurement, internal alignment, and accountability when something breaks. A product exists to solve a customer problem in a way the customer can actually adopt.\n\nThat changed my founder philosophy permanently: validate the smallest repeatable user action early, and be ruthless about friction.\n\n3) Capital efficiency and radical simplification — constraints force clarity.\n\nOne of the most dangerous founder failure modes is confusing fundraising with progress. Founders who are capital-efficient aren't just \"spending less\" — they're learning faster per dollar. Constraints force you to see what users truly value, what doesn't scale, what costs too much, and what the unit economics are trying to tell you.\n\nGreat founders don't waste energy on things they can't control — macro, competitors' announcements, hype cycles. Under stress, weak founders expand scope; strong founders simplify: what can we ship, what can we measure, what can we improve this week, what decision unlocks progress. This sounds basic, but in practice it's a temperament test.\n\nI respect founders who build fundamentals early and don't scale theatrically just to match a promised growth narrative. Profitability — or a credible path to it — keeps the founder in control.\n\n4) Win a focused wedge first, then build a compounding moat.\n\nMost early-stage failures I've seen come from trying to be too broad too early. The founders who win start with a narrow, painful problem where they can be the obvious best solution, then expand outward from that position of strength.\n\nAnd a real business needs both: customers who pay today, and a reason it keeps winning over time. Moats often form from workflow position and switching costs, data and feedback loops, distribution advantages — especially platform dynamics — or unique operational know-how that compounds. If a company's differentiation is only a feature, it will be copied. A moat is when the advantage compounds with usage, distribution, or time.\n\nMy conclusion — and why this matters for how I'd evaluate founders as an investor:\n\nMy founder philosophy is: mission-level commitment + low-ego truth-telling + problem-first value creation + capital-efficient fundamentals + focused wedge into compounding moat.\n\nI hold that view because I've lived both sides — I made the classic tech-first mistake at Flint, I've seen customer reality dominate technical elegance in enterprise settings, I've watched platform dynamics and distribution matter operationally at DUG, and I've seen how people and continuity determine whether execution compounds or collapses.\n\nThis is also exactly how I'd evaluate founders as a 심사역. Great VC firms invest on the belief that 창업자의 철학이 지표보다 중요 — and I agree, because I've seen firsthand that metrics are lagging indicators of the decisions a founding team already made. The philosophy comes first; the numbers follow.",
     "source_type": "qa_story",
     "section": "founder_philosophy",
     "company": "Flint Technologies",
@@ -484,7 +484,7 @@
       "capital efficiency",
       "focused wedge",
       "compounding moat",
-      "Altos alignment"
+      "VC alignment"
     ],
     "depth": "deep_dive",
     "focus_tags": [
@@ -652,11 +652,11 @@
   {
     "chunk_id": "interview-q4.6-founding-again",
     "question": "Do you see yourself founding again?",
-    "answer_summary": "Doesn't rule it out but it's not the plan. Two learnings: founding cost is real (10-year commitment), and highest leverage has shifted to helping multiple founders. Committed to VC seriously — compounding judgment, pattern recognition, and founder trust at Altos.",
-    "text": "I won't lie — I don't rule it out, but it's not my plan.\n\nHaving built a company, I learned two things very clearly.\n\nFirst, the cost is real. Founding is a 10-year, non-negotiable commitment to one problem. It takes a heavy toll — emotionally, financially, and in opportunity cost. I don't romanticize that anymore. I would only do it again if I found a problem I was uniquely obsessed with — so much that I couldn't not build it.\n\nSecond, my highest leverage has changed. I've realized my best work isn't only executing inside one company. It's helping multiple founders think through hard problems, spot blind spots early, and make better decisions faster. That's where I consistently get the most energy.\n\nSo my intention is to commit to VC seriously — not as a bridge. I want to spend this phase compounding judgment, pattern recognition, and founder trust at Altos. I want to become genuinely useful at the firm level.\n\nAnd if I can keep increasing my impact at Altos, I'd rather stay and compound here.",
+    "answer_summary": "Doesn't rule it out but it's not the plan. Two learnings: founding cost is real (10-year commitment), and highest leverage has shifted to helping multiple founders. Committed to VC seriously — compounding judgment, pattern recognition, and founder trust.",
+    "text": "I won't lie — I don't rule it out, but it's not my plan.\n\nHaving built a company, I learned two things very clearly.\n\nFirst, the cost is real. Founding is a 10-year, non-negotiable commitment to one problem. It takes a heavy toll — emotionally, financially, and in opportunity cost. I don't romanticize that anymore. I would only do it again if I found a problem I was uniquely obsessed with — so much that I couldn't not build it.\n\nSecond, my highest leverage has changed. I've realized my best work isn't only executing inside one company. It's helping multiple founders think through hard problems, spot blind spots early, and make better decisions faster. That's where I consistently get the most energy.\n\nSo my intention is to commit to VC seriously — not as a bridge. I want to spend this phase compounding judgment, pattern recognition, and founder trust. I want to become genuinely useful at the firm level.\n\nAnd if I can keep increasing my impact, I'd rather stay and compound.",
     "source_type": "qa_story",
     "section": "vc_commitment",
-    "company": "Altos",
+    "company": null,
     "role": null,
     "start_date": null,
     "end_date": null,
@@ -974,5 +974,202 @@
     ],
     "is_core_strength": true,
     "token_count": 310
+  },
+  {
+    "chunk_id": "final-q8-what-makes-you-different",
+    "question": "What makes you different from other operator-to-VC candidates?",
+    "answer_summary": "Uncommon combination: (1) founder empathy from building, failing, and shutting down a company — personal reference points for stress and ambiguity, (2) cross-context operating experience (enterprise B2B, founding, platform partnerships) with consistent thread toward bridging technology and market, (3) cross-cultural perspective from living across multiple countries — understanding assumptions underneath communication and trust-building.",
+    "text": "I think one of my strengths is not any single credential by itself, but a combination that is relatively uncommon.\n\nFirst, I've been on both sides of the investor-founder relationship, and I've also gone through the hard version of it. I've built a company, seen it fail, and had to shut it down. That gave me a level of realism and empathy that I do not think comes from observing startups from the outside. When someone is under pressure, I'm not reacting to a theoretical situation. I have personal reference points for how stress, ambiguity, and self-doubt can affect judgment. I think that changes both how I evaluate people and how I work with them.\n\nSecond, my operating experience spans a few very different environments, but there is a consistent thread underneath it. I've worked in enterprise B2B, I've been a founder, and I've worked on partnerships with companies like Apple, Meta, and Google. Each of those taught me something different: how large organizations actually make decisions, how hard it is for startups to keep moving under real constraints, and how much distribution, timing, and external relationships matter in practice. On paper that may look broad, but the direction has been consistent. I've kept moving toward roles where I had to understand both the technology itself and how it becomes a business.\n\nThird, growing up and living across multiple countries gave me a broader perspective on how people think, what they prioritize, and how culture shapes the way they make decisions and live their lives. So for me, working across Korean and US contexts is not just about language. It is about understanding the assumptions underneath how people communicate, what they value, how they build trust, and what feels natural or uncomfortable to them. I think that has helped me understand people more accurately and build relationships across different backgrounds.\n\nSo I would say my strength is the combination of founder empathy, practical operating perspective, and an ability to understand people and businesses across different contexts, all tied together by a consistent interest in how technology actually turns into a real company. I think that combination lets me evaluate founders and businesses with more texture than a single-track background would allow.",
+    "source_type": "interview_qa",
+    "section": "final_40_competitive_positioning",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "self-advocacy",
+      "cross-cultural communication",
+      "pattern recognition",
+      "founder empathy"
+    ],
+    "keywords": [
+      "differentiation",
+      "uncommon combination",
+      "founder empathy",
+      "cross-context operating",
+      "enterprise B2B",
+      "platform partnerships",
+      "cross-cultural",
+      "bridging technology and market",
+      "multiple countries",
+      "consistent thread"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "competitive_positioning",
+      "self_advocacy",
+      "career_narrative"
+    ],
+    "is_core_strength": true,
+    "token_count": 400
+  },
+  {
+    "chunk_id": "final-q9-why-hire-over-vc-experience",
+    "question": "Why should we hire you over someone with 2-3 years of VC experience?",
+    "answer_summary": "Acknowledges VC experience gap honestly. Operator judgment from building, shipping, partnerships (Apple/Meta/Google). Hands-on technical/product evaluation. Founder empathy from lived failure. Explicitly acknowledges gaps in VC craft — no ego around level/title, willing to start from fundamentals. Key reframe: which gaps are more trainable — VC mechanics (learnable) vs operator judgment + founder understanding (harder to teach).",
+    "text": "I think this is the right question to ask, and I want to answer it directly.\n\nSomeone with 2–3 years of VC experience would bring real advantages that I do not have yet. They've likely written investment memos, sat through IC discussions, supported portfolio companies in a formal investor capacity, and developed pattern recognition around the mechanics of venture. I would not pretend otherwise.\n\nThe reason to hire me would be that I bring a different kind of judgment — one built through operating, building, and failing firsthand.\n\nI've built products, worked across engineering, product, and business, negotiated partnerships with companies like Apple, Meta, and Google, and experienced what it means to try to build something under real uncertainty. So when I meet a founder, I'm not only evaluating the idea. I can often understand much more concretely what it takes to build, recruit, partner, sell, and survive.\n\nI also think I can evaluate technical and product claims from a more hands-on place. Because I've worked across technical systems, product decisions, and execution constraints, I can usually tell the difference between what is grounded, what is aspirational, and what is directionally right but much harder than it sounds.\n\nAnd having gone through a company shutdown myself, I think I relate to founders with a level of realism and empathy that is difficult to get from a purely observational path. When a founder is struggling, I'm not reacting to a startup cliché. I understand more personally what that can feel like.\n\nAt the same time, I know I have gaps in the traditional craft of venture, and I respect that. I would need to learn the mechanics — how to write better memos, how to develop investor-specific judgment, how to support the partnership, and how to operate within the discipline of a fund. I also realize my background may look a bit less typical because I've had a longer and more varied operating path than the standard candidate profile. But I don't have ego around level or title. If the fit is right, I'm very comfortable starting from the fundamentals, going through that learning curve seriously, and earning trust through the work.\n\nSo I'm not saying VC experience doesn't matter. It does. The question is which gaps are more trainable. My view is that the formal mechanics of venture can be learned relatively quickly by someone who is highly motivated and structured, while the combination of operator judgment, technical fluency, partnership experience, and lived founder understanding is harder to teach.",
+    "source_type": "interview_qa",
+    "section": "final_40_competitive_defense",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "self-advocacy",
+      "competitive positioning",
+      "self-awareness",
+      "strategic communication"
+    ],
+    "keywords": [
+      "why hire me",
+      "VC experience gap",
+      "operator judgment",
+      "technical evaluation",
+      "founder empathy",
+      "trainable gaps",
+      "pressure-tested",
+      "Flint failure",
+      "Apple Meta Google partnerships",
+      "hiring approach",
+      "PM PO engineer backgrounds"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "competitive_defense",
+      "self_advocacy",
+      "career_narrative"
+    ],
+    "is_core_strength": true,
+    "token_count": 480
+  },
+  {
+    "chunk_id": "final-q19-team-over-self-altruism",
+    "question": "When have you prioritized your team or company's interests over your own?",
+    "answer_summary": "Two examples: (1) Scheduled honeymoon around WWDC business trip — expanded Apple network, built Developer Relations relationships. (2) Built Vision Pro demo outside formal role by bringing in a friend — gave CEO and Apple something tangible, led to Apple DevRel asking about porting game to Vision Pro. Common thread: starts from what team/company needs, acts accordingly even when inconvenient.",
+    "text": "Two examples come to mind.\n\nFirst, around WWDC, I scheduled my honeymoon around the business trip so there would not be a conflict. The honeymoon was very important to both me and my wife, but we also understood how meaningful that opportunity was for the company and why my attendance mattered. So we made that decision together, knowing this was an important moment and that I had a responsibility to show up for it.\n\nThat trip ended up being valuable for the company. We were able to expand our network inside Apple, build relationships with developers and Developer Relations people, and strengthen connections that became useful later on. For me, that was a clear example of putting the company's long-term interest ahead of what would have been more convenient personally.\n\nSecond, early in the Apple partnership, our team was already stretched with updates and development for a new title, but we also wanted to show our CEO and Apple what our app could look like on Vision Pro. It was not part of my formal role, but I felt it was important for the company to move quickly and make the opportunity more concrete. So I brought in a friend of mine who was interested in Vision Pro app development, and we built a demo together.\n\nThat demo gave both our CEO and Apple something tangible to react to, rather than just an abstract idea. It helped internally by making the opportunity easier to discuss, and it helped externally by showing our interest and direction in a more concrete way. After seeing it, Apple's Developer Relations team became interested and asked whether we could port our game or develop a Vision Pro version for the platform.\n\nWhat is common in both examples is that I tend to start from what the team or company needs most in that moment, and then act accordingly, even when it is not the most convenient option for me personally or the most obvious part of my role.",
+    "source_type": "interview_qa",
+    "section": "final_40_character_altruism",
+    "company": "DUG",
+    "role": "Head of Partnerships & Operations",
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "selflessness",
+      "initiative",
+      "partnership management",
+      "team-first mindset"
+    ],
+    "keywords": [
+      "altruism",
+      "team over self",
+      "WWDC",
+      "honeymoon",
+      "Apple network",
+      "Vision Pro demo",
+      "Developer Relations",
+      "initiative beyond role",
+      "company interest first",
+      "trust building"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "character_attitude",
+      "altruism",
+      "initiative"
+    ],
+    "is_core_strength": true,
+    "token_count": 330
+  },
+  {
+    "chunk_id": "final-q13-explosive-growth-jcurve",
+    "question": "Have you worked in an organization experiencing explosive growth?",
+    "answer_summary": "Honest gap admission: no classic Series A-B J-curve experience. Three related forms of growth strain: (1) Flint zero-to-one chaos — product, team, process, fundraising simultaneously under uncertainty. (2) DUG rapid scope expansion — Apple Vision Pro, Meta Quest+, Google Android XR while improving internal functions, lean team but complexity grew fast. (3) Observed people side of rapid growth going wrong — inconsistent onboarding, culture not reinforced, friction leading to attrition and layoffs. Understands tensions: speed vs quality, hiring vs absorption, expansion vs focus, process vs flexibility.",
+    "text": "I'll be honest: I have not been inside the classic Series A to B hypergrowth curve where headcount triples and the company is trying to scale everything at once. That is a real gap in my experience, and I would not want to overstate it.\n\nWhat I have experienced, though, are a few related forms of growth strain.\n\nFirst, at Flint, I experienced zero-to-one company building. That is a different kind of chaos. You are not scaling something that already works; you are trying to create product, team, process, and fundraising momentum at the same time, with limited resources and no real playbook. The pressure there is less about managing growth and more about making decisions under extreme uncertainty.\n\nSecond, at DUG, I experienced rapid expansion in scope, even if it was not textbook hypergrowth. In a relatively short period, we were pursuing new platform opportunities across Apple Vision Pro, Meta Quest+, and Google Android XR, while also trying to improve internal functions like HR, finance, legal, and customer support. The team itself stayed relatively lean, but the scope and complexity of what we were trying to handle grew very quickly. I saw how easily ambition can outpace structure when the organization has to absorb too much at once.\n\nI have also seen the people side of rapid growth go wrong. I've been in situations where teams hired quickly, but the organization was not fully ready to absorb that growth well. Onboarding was inconsistent, culture was not reinforced clearly enough, people struggled to settle in, and over time that led to friction, attrition, and layoffs. That taught me that growth is not just about adding people or moving faster. It is about whether the organization has the structure, clarity, and cultural stability to absorb that growth without weakening itself.\n\nSo I would not claim that I have lived the exact Series A to B J-curve from the inside. But I do think I understand some of the underlying tensions quite well: speed versus quality, hiring versus absorption, expansion versus focus, and process versus flexibility. And I'm self-aware enough to know that this is still an area where I would have more to learn from people who have lived the classic version more directly.",
+    "source_type": "interview_qa",
+    "section": "final_40_jcurve_growth",
+    "company": "Flint / DUG",
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "self-awareness",
+      "organizational scaling",
+      "growth management",
+      "honest gap assessment"
+    ],
+    "keywords": [
+      "J-curve",
+      "explosive growth",
+      "Series A-B",
+      "hypergrowth",
+      "zero-to-one",
+      "scope expansion",
+      "hiring absorption",
+      "onboarding",
+      "culture stability",
+      "growth strain",
+      "Flint",
+      "DUG",
+      "Apple Vision Pro",
+      "Meta Quest+",
+      "Google Android XR"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "growth_experience",
+      "self_awareness",
+      "honest_gap"
+    ],
+    "is_core_strength": false,
+    "token_count": 350
+  },
+  {
+    "chunk_id": "final-q33-ten-year-vision",
+    "question": "What kind of person do you want to become in 10 years?",
+    "answer_summary": "Three pillars for 10-year vision: (1) real insight — pattern recognition on why companies succeed/fail, which signals matter vs noise, (2) understanding founders deeply — reading people under pressure, judging founder-problem fit, resilience, followability, (3) genuinely useful after investment — through uncertainty, setbacks, turning points, earning 'they were there when it mattered' reputation. Judgment comes from proximity and market cycles, not frameworks. Mobile example: was a student observing from outside, wants to be in the room for next shifts. Does not picture a title first.",
+    "text": "In 10 years, I want to be someone founders call before they have even decided to start a company.\n\nNot because I have the biggest brand or the loudest presence, but because they trust my judgment. To me, that means three things.\n\nFirst, I want to become someone with real insight — someone founders trust to know what is likely to work and what is not. I want to develop the kind of pattern recognition that helps me understand why certain companies succeed, why others fail, how markets tend to respond, and which signals matter versus which are just noise. I want founders to feel that if they bring me an idea, I can help them see more clearly whether it has real potential or whether they are missing something important.\n\nSecond, I want to become very good at understanding founders. Not in a superficial way, but in a way that lets me see who this person really is under pressure. I want to get better at judging whether this is the right person for the problem, whether they have the depth, resilience, and clarity to keep building through difficulty, and whether they are someone others will genuinely want to follow. I think that ability to read people well is one of the hardest and most important parts of investing.\n\nThird, I want to be the kind of investor who is genuinely useful after the investment. I do not just want to make a good decision at the beginning and then disappear. I want to help founders through the long process of building — especially through uncertainty, setbacks, and important turning points. I want to build the kind of reputation where founders say, \"They were there when it mattered.\" That kind of trust takes years to earn and seconds to lose.\n\nI do not think any of this comes from frameworks alone. It comes from staying close to companies, seeing decisions play out over years, and learning from both good outcomes and bad ones. It comes from experiencing real market cycles firsthand as an investor, not just as an observer. When mobile took off, I was a student. I saw that shift happen, but only from the outside. The next decade will have its own defining shifts, and I want to be in the room for those moments — making decisions, learning through them, and building judgment from the inside.\n\nSo when I think about 10 years from now, I do not picture a title first. I picture being someone with deep insight, strong judgment about people, and a reputation for being genuinely useful when it matters. That is the direction I want to grow into.",
+    "source_type": "interview_qa",
+    "section": "final_40_life_vision",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "long-term thinking",
+      "self-awareness",
+      "investor philosophy",
+      "founder empathy"
+    ],
+    "keywords": [
+      "ten year vision",
+      "pattern recognition",
+      "understanding founders",
+      "post-investment value",
+      "market cycles",
+      "mobile shift",
+      "deep insight",
+      "people judgment",
+      "reputation",
+      "genuinely useful",
+      "no title first"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "life_vision",
+      "investor_philosophy",
+      "long_term_commitment"
+    ],
+    "is_core_strength": true,
+    "token_count": 380
   }
 ]

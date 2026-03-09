@@ -17,8 +17,21 @@ export interface VisitorData {
   focus: Focus;
 }
 
+export interface TraceStep {
+  label: string;
+  timestamp: number; // ms since request start
+  summary: string;   // one-line human-readable summary
+  data: Record<string, unknown>;
+}
+
+export interface TraceData {
+  steps: TraceStep[];
+  totalDurationMs: number;
+}
+
 export type MessageMetadata = {
   sourceTags?: string[];
+  trace?: TraceData;
 };
 
 export type ChatUIMessage = UIMessage<MessageMetadata>;
