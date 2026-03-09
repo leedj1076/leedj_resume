@@ -284,7 +284,7 @@ function GenerationDetail({ data }: { data: Record<string, unknown> }) {
       <Row label="Temperature">{String(data.temperature)}</Row>
       <Row label="Max tokens">{Number(data.maxOutputTokens).toLocaleString()}</Row>
       <Row label="Context">{Number(data.contextLength).toLocaleString()} chars</Row>
-      {data.systemPrompt && <PromptBlock label="System prompt" text={String(data.systemPrompt)} />}
+      {data.systemPrompt ? <PromptBlock label="System prompt" text={String(data.systemPrompt)} /> : null}
     </div>
   );
 }
