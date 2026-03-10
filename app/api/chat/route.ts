@@ -11,6 +11,7 @@ import {
   CORE_STRENGTH_IDS,
 } from "@/lib/persona-config";
 import { logAnalytics, logExchange } from "@/lib/analytics";
+import { sendNewSessionAlert } from "@/lib/email";
 import { getAnswerMode } from "@/lib/settings";
 import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
 import type { Persona, Focus, ChatUIMessage, TraceStep } from "@/lib/types";
@@ -104,6 +105,25 @@ const CHUNK_LABELS: Record<string, string> = {
   "interview-q5.1-ace-evidence": "Ace Evidence",
   "interview-q5.2-beyond-expectations-example": "Beyond Expectations",
   "interview-q5.3-colleague-evaluation": "Colleague Evaluation",
+  "interview-q13.2-handling-disagreement": "Handling Disagreement",
+  "final-q1-finding-founders-sourcing": "Deal Sourcing",
+  "final-q6-stress-mental-resilience": "Stress & Resilience",
+  "final-q11-self-initiated-knowledge-system": "Self-Initiated Projects",
+  "final-q8-what-makes-you-different": "What Makes DJ Different",
+  "final-q9-why-hire-over-vc-experience": "Why Hire DJ",
+  "final-q19-team-over-self-altruism": "Team Over Self",
+  "final-q13-explosive-growth-jcurve": "Growth Experience",
+  "final-q33-ten-year-vision": "10-Year Vision",
+  "changjo-2026-current-role": "Changjo Current Role",
+  "dug-meta-quest-plus-deal": "Meta Quest+ Deal",
+  "dug-google-android-xr-partnership": "Google Android XR",
+  "dug-walking-away-meta-funding": "Meta Funding Walk-Away",
+  "education-kaist-kit": "KAIST & KIT Education",
+  "technical-skills-overview": "Technical Background",
+  "changjo-smart-farm-initiative": "Smart Farm Initiative",
+  "languages-international-experience": "Languages & International",
+  "tmaxtibero-technical-work": "TmaxTibero Technical",
+  "leadership-cross-functional-management": "Cross-Functional Leadership",
 };
 
 // Chunks that are always pinned — exclude from source tags to avoid noise
@@ -261,6 +281,18 @@ ${context}
       );
     }
     const truncatedQuery = query.slice(0, 2000);
+
+    // Fire-and-forget email alert on first message of a new session
+    if (messages.length === 1) {
+      sendNewSessionAlert({
+        query: truncatedQuery,
+        persona,
+        focus,
+        lang: lang ?? "en",
+        sessionId: sessionId ?? "",
+        visitorEmail,
+      });
+    }
 
     addTrace("Query Processing", `"${truncatedQuery.slice(0, 80)}${truncatedQuery.length > 80 ? '...' : ''}" | persona=${persona}, focus=${focus}`, {
       rawQuery: truncatedQuery.slice(0, 200),
