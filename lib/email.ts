@@ -20,7 +20,7 @@ export function sendNewSessionAlert(data: {
     .send({
       from: "Ask DJ <onboarding@resend.dev>",
       to: "leedj.1076@gmail.com",
-      subject: `New visitor: "${data.query.slice(0, 60)}"`,
+      subject: `New visitor: ${data.visitorEmail || "anonymous"}`,
       html: `<p><strong>New chat session</strong></p>
         <p><strong>Query:</strong> ${data.query}</p>
         <p><strong>Persona:</strong> ${data.persona}</p>
