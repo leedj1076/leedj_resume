@@ -5,7 +5,7 @@
     "answer_summary": "Equal 25% equity split among four Flint founders had pros (equal weight/responsibility, no share disputes, focus on work) and cons (hard decision-making initially — numerous meetings and votes). Solved by trusting data (A/B tested landing pages for product direction) and learning 'disagree but commit'.",
     "text": "Splitting equity equally among four founders at Flint had clear trade-offs.\n\nThe upside: everyone carried the same weight and responsibility. There were no disputes over shares, which let us focus entirely on the work.\n\nThe downside: decision-making was hard at first — too many meetings and votes. We tried many methodologies before finding what worked. As engineers, we ultimately decided to trust data. We would find ways to get objective signals and committed to following them.\n\nFor example, when we disagreed on product direction — generic tool vs specific use case — each founder had a different vision. So we designed separate UIs and landing pages for each idea, released them publicly, measured reactions over a set time period, and followed the most validated path.\n\nThat's also where we learned 'disagree but commit': even if your idea lost, you must not work any less because it wasn't chosen.",
     "source_type": "qa_story",
-    "section": "stories",
+    "section": "experience",
     "company": "Flint",
     "role": null,
     "start_date": null,
@@ -27,8 +27,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "leadership_strategy",
-      "business_development"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": false,
     "token_count": 209
@@ -47,7 +47,7 @@
     "skills": [
       "fundraising",
       "venture capital",
-      "negotiation"
+      "deal negotiation"
     ],
     "keywords": [
       "Seed round",
@@ -71,14 +71,14 @@
     "answer_summary": "Two structural barriers made Korean VCs resistant: US incorporation (해외투자신고 bureaucracy, multiple meetings trying to convince us not to incorporate in US) and equal 25% equity split among four founders. Held firm on both — US incorporation was strategically necessary, equal equity was the fair thing to do.",
     "text": "The hardest moment in fundraising was convincing Korean VCs to invest despite two structural barriers.\n\nFirst, Flint was incorporated in the US. Korean VCs found the 해외투자신고 (overseas investment reporting) bureaucracy burdensome, and we had several meetings where they actively tried to convince us not to incorporate there.\n\nSecond, we split equity equally — 25% among all four founders. Korean VCs typically dislike this structure and prefer a clear lead founder.\n\nWe held firm on both. US incorporation was strategically necessary for our target market, and equal equity was the fair thing to do since all founders were fully committed and contributing equally.",
     "source_type": "qa_story",
-    "section": "fundraising_experience",
+    "section": "experience",
     "company": "Flint Technologies",
     "role": "COO",
     "start_date": null,
     "end_date": null,
     "skills": [
       "fundraising",
-      "negotiation",
+      "deal negotiation",
       "leadership",
       "conviction under pressure"
     ],
@@ -95,7 +95,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "fundraising_experience",
+      "business_development",
       "leadership_strategy"
     ],
     "is_core_strength": false,
@@ -132,7 +132,6 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "vc_motivation",
       "leadership_strategy"
     ],
     "is_core_strength": true,
@@ -169,8 +168,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "career_transition",
-      "self_awareness"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 315
@@ -207,9 +205,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "leadership_strategy",
       "business_development",
-      "enterprise_expertise"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 432
@@ -246,9 +243,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "failure_learning",
-      "product_strategy",
-      "self_awareness"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 407
@@ -285,9 +281,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "career_transition",
-      "vc_motivation",
-      "self_awareness"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 332
@@ -298,7 +292,7 @@
     "answer_summary": "Breadth is both strength and weakness. Weakness: lacks 10+ years in single domain. Strength: has repeatable evaluation framework across contexts and depth in technical products, enterprise reality, and platform ecosystems.",
     "text": "It's both — and I think the key is being honest about the trade-off, while showing how I manage it.\n\nOn the weakness side: I don't have 10+ years in one single domain, so I won't pretend I'm the world's deepest expert in DBMS, AI, or XR. That kind of depth can matter, especially for highly specialized deals. And there's a narrative risk with breadth: if you move too often, people can assume you're unfocused. I'm aware of that, and I'll need to earn trust through consistency and high-quality work.\n\nOn the strength side: In VC, you often have to form conviction in unfamiliar areas quickly. My breadth isn't \"I tried a lot of things\" — it's that I've repeatedly built a repeatable evaluation framework across very different contexts:\n\n1. Understand the technical architecture — what's actually hard, what's commodity, and what breaks at scale.\n2. Map the competitive landscape — who can replicate, who can bundle, and what the true alternative is, including \"build in-house.\"\n3. Identify the real user pain and adoption friction — what behavior must change, and why will users stick with it.\n4. Pressure-test the business model and GTM — sales cycle, unit economics, dependencies, and what must be true for the company to win.\n\nThat framework comes from lived experience: enterprise dynamics at Samsung-level accounts, building products as a founder, and operating in platform-driven ecosystems like Apple, Meta, and Google. It also lets me be a credible conversation partner to founders across multiple categories.\n\nAnd to be clear, I'm not only broad — I do have depth where it matters for Altos. I'm strongest at the intersection of technical products, enterprise reality, and platform ecosystems — and that's a durable lens for evaluating a lot of modern software and deep-tech startups.\n\nSo I'd summarize it like this: breadth is a weakness if it's just curiosity. Breadth is a strength in VC if it's paired with a consistent framework and a few real depth anchors. My goal is to prove the latter — starting with the areas where my depth is already real: technical products, enterprise dynamics, and platform ecosystems.",
     "source_type": "qa_story",
-    "section": "self_assessment",
+    "section": "motivation",
     "company": null,
     "role": null,
     "start_date": null,
@@ -324,9 +318,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "self_awareness",
-      "investor_thesis",
-      "business_development"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 386
@@ -337,7 +330,7 @@
     "answer_summary": "DJ summarizes his career as bridging deep tech and real-world business. He combines technical depth earned at KAIST with business acumen, having progressed through Zero-to-One founding at Flint and Scaling at DUG. Known for adaptability and reliability with owner's mindset.",
     "text": "Hello, I'm Dong Jae Lee. Career-wise, if I were to summarize my career in one sentence, it would be 'bridging the gap between deep tech and real-world business.' I built my foundation at KAIST, majoring in Mechanical Engineering and Industrial Design. This gave me the literacy to understand complex technology, but my real passion has always been finding the market value within that technology and turning it into a viable, growing business.\n\nMy career has been defined by two distinct phases:\nFirst is the 'Zero to One' phase. I co-founded a tech startup called Flint Technologies. As the COO, I experienced the raw reality of building something from nothing. I didn't just strategize; I executed—from defining the MVP and finding Product-Market Fit to securing seed funding and handling investor relations. This experience taught me grit, agility, and how to make critical decisions with limited resources.\n\nSecond is the 'Scaling' phase. As the Director at Devs United Games, I focused on global expansion and monetization in the XR space. I led high-stakes partnerships with global platforms like Meta, Apple, and Google.\n\nI also worked on Strategy & Market Research at Changjo Architecture, where I evaluated companies and opportunities across Space, GenAI, and Smart Agriculture sectors.\n\nIn short, I offer the best of both worlds: the technical depth to earn the respect of engineering teams, and the business acumen to drive revenue and strategy. I'm looking forward to bringing that versatility to your team.\n\nOn a personal level, I am someone who runs toward new challenges, not away from them. My resume reflects a diverse path—from engineering to founding a startup, and then to scaling a gaming business. This isn't because I lack focus, but because I am not afraid of being a beginner again if it means solving a harder, more meaningful problem. I thrive on that steep learning curve.\n\nBut no matter where I go, one thing remains constant: my reputation. I take great pride in the fact that my former colleagues—leaders, peers, and engineers alike—are my strongest advocates. They know me as someone who works with an owner's mindset: I don't just 'clock in'; I own the problem until it's solved.\n\nI believe this combination of adaptability and reliability is why people always want to work with me again.",
     "source_type": "qa_story",
-    "section": "introduction",
+    "section": "summary",
     "company": null,
     "role": null,
     "start_date": null,
@@ -372,9 +365,9 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "introduction",
-      "leadership_strategy",
-      "business_development"
+      "business_development",
+      "full_stack",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 400
@@ -411,8 +404,6 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "vc_motivation",
-      "self_awareness",
       "leadership_strategy"
     ],
     "is_core_strength": true,
@@ -449,9 +440,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "vc_motivation",
-      "investor_thesis",
-      "business_development"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 312
@@ -488,8 +478,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "founder_philosophy",
-      "investor_thesis",
+      "business_development",
       "leadership_strategy"
     ],
     "is_core_strength": true,
@@ -527,9 +516,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "founder_philosophy",
-      "investor_thesis",
-      "self_awareness"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 854
@@ -565,9 +553,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "failure_learning",
-      "product_strategy",
-      "self_awareness"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 463
@@ -578,7 +565,7 @@
     "answer_summary": "The hardest part was bridging the gap between what is true and what is legible. Compressing a '100-hour truth' into a '10-minute narrative' without losing the essence. Two experiences: Flint (novel tech isn't automatically investable) and DUG (fighting lagging market narratives). Key diagnostic: distinguishing false negatives from false positives.",
     "text": "The hardest part of fundraising was bridging the gap between what is true and what is legible.\n\nFounders live in the nuance of their product 24/7. Investors have 30 minutes to pattern-match. My struggle was compressing a '100-hour truth' into a '10-minute narrative' without losing the essence.\n\nI experienced this in two different ways at Flint and DUG.\n\n1) Flint: Novel tech isn't automatically investable. At Flint, we were pitching a pre-revenue product built on GNN-based knowledge graphs. The hardest part was that I was selling complexity, while investors were buying clarity. Early on, I spent too much time explaining how it worked instead of why it had to exist. Investors didn't care about the GNN itself — they cared about the wedge: Who is the desperate user? What pain is acute? Why does this win? Why now? I learned the hard way: if you can't make the wedge legible in 60 seconds, you lose the room — even if the tech is real. The right sequence is: wedge first, architecture second.\n\n2) DUG: Fighting market narratives that lag reality. At DUG, the challenge wasn't product quality — it was sentiment. In Korea, XR had already been labeled 'post-hype' after a wave of metaverse failures. But the reality in the US was different: platform cycles were restarting, Apple and Google were entering, and we had real revenue. Fundraising required translating reality into an investable narrative: 'The platform cycle is restarting. We're not selling a story — we have revenue. We need capital to scale, not to survive.' Fundraising is often less about the world as it is, and more about what the market currently believes is real.\n\nClosing — the investor lesson: This changed how I evaluate founders. When someone struggles to pitch, I now ask a diagnostic question: 'Is this a communication problem — or a product problem?' Some founders have a great business but tell a messy story (false negative). Others tell a great story but have a messy business (false positive). My job as an investor is to look past pitch polish and diagnose the truth underneath — and help the 'messy but great' founders make their wedge legible.",
     "source_type": "qa_story",
-    "section": "fundraising_experience",
+    "section": "experience",
     "company": "Flint Technologies",
     "role": "COO",
     "start_date": null,
@@ -604,9 +591,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "fundraising_experience",
-      "founder_philosophy",
-      "investor_thesis"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 471
@@ -642,9 +628,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "founder_empathy",
-      "failure_learning",
-      "self_awareness"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 371
@@ -655,7 +639,7 @@
     "answer_summary": "Doesn't rule it out but it's not the plan. Two learnings: founding cost is real (10-year commitment), and highest leverage has shifted to helping multiple founders. Committed to VC seriously — compounding judgment, pattern recognition, and founder trust.",
     "text": "I won't lie — I don't rule it out, but it's not my plan.\n\nHaving built a company, I learned two things very clearly.\n\nFirst, the cost is real. Founding is a 10-year, non-negotiable commitment to one problem. It takes a heavy toll — emotionally, financially, and in opportunity cost. I don't romanticize that anymore. I would only do it again if I found a problem I was uniquely obsessed with — so much that I couldn't not build it.\n\nSecond, my highest leverage has changed. I've realized my best work isn't only executing inside one company. It's helping multiple founders think through hard problems, spot blind spots early, and make better decisions faster. That's where I consistently get the most energy.\n\nSo my intention is to commit to VC seriously — not as a bridge. I want to spend this phase compounding judgment, pattern recognition, and founder trust. I want to become genuinely useful at the firm level.\n\nAnd if I can keep increasing my impact, I'd rather stay and compound.",
     "source_type": "qa_story",
-    "section": "vc_commitment",
+    "section": "motivation",
     "company": null,
     "role": null,
     "start_date": null,
@@ -677,9 +661,7 @@
     ],
     "depth": "surface",
     "focus_tags": [
-      "vc_motivation",
-      "self_awareness",
-      "career_direction"
+      "leadership_strategy"
     ],
     "is_core_strength": false,
     "token_count": 230
@@ -714,9 +696,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "founder_empathy",
-      "self_awareness",
-      "investor_thesis"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 397
@@ -727,7 +708,7 @@
     "answer_summary": "Two evidence frames: (1) Deliver beyond expectations — DUG (Apple Vision Pro feature, Meta Quest+, Google Android XR from near zero in 18 months, Fishing Haven Apple App Store Awards finalist), TmaxTibero (fast promotion, Samsung DBMS task force, achievement award), Flint (full-stack founder execution, KRW 450M raised), Changjo Architecture (smart farm prototype from zero domain knowledge). (2) People choose to work with me again — DUG CEO recruited from Flint, cofounders reached out first, Changjo CEO re-engaged.",
     "text": "I wouldn't call myself an \"ace\" — that's for references to decide. But I can answer in two evidence-based ways:\n\n1. I deliver beyond what the role requires.\n2. People choose to work with me again.\n\n\n1) \"I deliver beyond expectations.\"\n\nDUG (Director) — outcomes from near zero\nIn ~18 months, we secured an Apple Vision Pro App Store feature, entered Meta Quest+, and closed a Google Android XR partnership. These weren't inherited wins. We had no prior Apple relationship; I started from cold outreach and ran partnerships end-to-end — research → outreach → positioning → negotiation → contract closure → execution — while building the internal process essentially from scratch.\nOur game Fishing Haven also became a finalist for the 2025 Apple App Store Awards (Games).\n\nTmaxTibero — high-stakes enterprise delivery + fast promotion\nAt TmaxTibero, I ramped quickly and was promoted faster than typical because I became a reliable owner for high-stakes work. I was on the Samsung DBMS migration task force, where I developed DBMS management tooling and coordinated across Samsung (client), internal delivery, and the core DB team — three groups with conflicting incentives. The work was recognized internally (including an achievement award). The core capability I demonstrated was translating technical requirements into stakeholder decisions and outcomes under pressure.\n\nFlint (co-founder) — full-stack execution under uncertainty\nAs a co-founder, I led major parts of execution and fundraising. We raised ~KRW 450M and secured government grants while building a technically ambitious product (GNN-based knowledge graph). Even though the company shut down, it shows I can operate in founder mode — framing, fundraising, shipping, making hard calls in ambiguity — and then reflect clearly on what failed and why.\n\nChangjo Architecture — new business groundwork (smart farms)\nAfter Flint, I was brought in by the CEO of Changjo Architecture to explore a new business initiative in smart farms — a domain where neither the company nor I had prior experience. I built early prototypes and hands-on validation (rack systems, cultivation method testing). That became the foundation for an internal smart farm effort that continued as a dedicated initiative/division.\n\n\n2) \"People want to work with me again.\"\n\nA signal I trust is being pulled back in by people who have seen me operate.\n\n* DUG recruiting: I met Mark Choi (CEO of DUG) while I was at Flint, and he later recruited me into DUG as I was winding Flint down.\n* Flint cofounders: My cofounders (Daeheon Jeong and Sanggyun An) reached out to start Flint because they had seen my work ethic and execution firsthand during our undergrad projects.\n* Repeat engagement at Changjo: The CEO of Changjo Architecture re-engaged me for additional new-business work after the initial smart farm prototype effort.\n\nI don't claim \"ace\" as a label. But repeated pull signals are external evidence that people trust me with ambiguous, high-ownership work — and want to collaborate again.\n\nSo the evidence is: outcomes delivered from near zero, repeated ownership in high-stakes settings, and repeat \"pull\" signals. That's the closest objective proof I can offer that I consistently delivered at an \"ace\" level.",
     "source_type": "qa_story",
-    "section": "ace_reputation",
+    "section": "experience",
     "company": null,
     "role": null,
     "start_date": null,
@@ -755,7 +736,6 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "ace_reputation",
       "business_development",
       "leadership_strategy"
     ],
@@ -768,7 +748,7 @@
     "answer_summary": "Apple Vision Pro partnership at DUG: zero Apple presence to App Store Awards finalist in under 9 months. Cold outreach on LinkedIn, built relationship with Apple Developer Relations Korea, shipped Fishing Haven for Vision Pro alongside Korea launch, earned Apple marketing support. Expanded into ongoing strategic relationship (future titles, Apple Immersive Video, Blackmagic URSA Cine).",
     "text": "One clear example is the Apple Vision Pro partnership at Devs United Games. In under nine months, I took us from zero presence on Apple's platform to becoming an App Store Award finalist.\n\nWhen I joined DUG in February 2025, Vision Pro had just launched. We were strong on Meta Quest, but on Apple we had no relationships, no product in flight, and no clear path in — and early traction with Apple mattered strategically.\n\nI took ownership of changing that.\n\nI didn't wait for a warm intro. I cold-outreached Apple stakeholders on LinkedIn with a specific case: we had a proven, high-retention title on Quest, and we wanted to bring it to Vision Pro. That led to a connection to Apple Developer Relations in Korea, and from the first meeting I drove a concrete plan — what we'd ship, the timeline, what Apple needed to see, and how we'd execute.\n\nOn the product side, it wasn't a simple port — it was a new platform and stack. But we built Fishing Haven for Vision Pro, launched alongside the Korea Vision Pro rollout in November, earned marketing support from Apple, and in 2025 the title became a finalist for the Apple App Store Awards (Games).\n\nWhat made this beyond expectations is the starting point: there was no existing pipeline. I initiated the relationship cold, built the internal process, aligned the right stakeholders, and delivered a platform-level outcome.\n\nAnd we didn't treat it as a one-off — we continued into follow-on discussions for future Vision Pro titles and adjacent opportunities around Apple Immersive Video and the emerging ecosystem, including workflows like the Blackmagic URSA Cine Immersive camera.\n\nThat's the before-and-after: cold start → shipped product → Apple marketing support → App Store Awards finalist → ongoing strategic relationship.",
     "source_type": "qa_story",
-    "section": "ace_reputation",
+    "section": "experience",
     "company": "Devs United Games",
     "role": "Director",
     "start_date": null,
@@ -793,9 +773,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "ace_reputation",
-      "business_development",
-      "platform_strategy"
+      "business_development"
     ],
     "is_core_strength": true,
     "token_count": 380
@@ -806,15 +784,21 @@
     "answer_summary": "Defers to references. Offers to provide reference contacts directly.",
     "text": "This question isn't for me to answer — it's for references to confirm. I'm happy to provide reference contacts if you'd like to hear directly from people I've worked with.",
     "source_type": "qa_story",
-    "section": "ace_reputation",
+    "section": "experience",
     "company": null,
     "role": null,
     "start_date": null,
     "end_date": null,
     "skills": [],
-    "keywords": ["reference check", "colleague evaluation", "defers to references"],
+    "keywords": [
+      "reference check",
+      "colleague evaluation",
+      "defers to references"
+    ],
     "depth": "surface",
-    "focus_tags": ["ace_reputation"],
+    "focus_tags": [
+      "business_development"
+    ],
     "is_core_strength": false,
     "token_count": 35
   },
@@ -824,7 +808,7 @@
     "answer_summary": "Treats disagreement as a decision-quality tool, not a status fight. Three-step framework: ground in goal + decision rights + reversibility, test own confidence and ask what you're missing, convert to experiment. Two examples: pushed DLC strategy with conviction at DUG (25% of revenue), committed fully despite disagreeing on MR prototype (strong platform response).",
     "text": "I try to treat disagreement as a decision-quality tool, not a status fight.\n\nOne of the biggest lessons I took from Flint is that even when I feel certain, I can still be wrong — sometimes it's timing, sometimes it's the problem framing, sometimes it's what users will actually do. So when I'm confident, I hold that confidence with humility: the goal is the right outcome, not me being right.\n\n1) I ground the disagreement in the goal and decision rights\n\nFirst I clarify three things:\n\n* What's the goal we're optimizing for?\n* Who is the decision-maker?\n* Is this reversible or irreversible?\n\nThat prevents opinion debates and forces alignment on what matters.\n\n2) I test my confidence and ask what I might be missing\n\nI ask myself: Am I confident because I have evidence, or because I'm attached?\nIf I have data, I lead with it. If I don't, I label it as a hypothesis.\n\nThen I assume the other person is rational from their perspective and ask:\n\"What are you seeing that I'm not?\"\n\n3) I try to turn the disagreement into an experiment\n\nInstead of arguing endlessly, I push an option mindset:\n\n* Can we test this quickly?\n* Can we timebox it?\n* Can we hedge with a smaller bet first?\n\n\nExample: When I pushed with conviction (DUG DLC strategy)\n\nAt DUG, we disagreed on whether to invest in more DLCs versus putting everything into the next title. Some argued we couldn't afford delays; others wanted near-term revenue stability.\n\nI pushed for DLCs because I believed it strengthened the long-term business:\n\n1. It kept users engaged and reduced churn,\n2. It created repeatable revenue drops,\n3. The team would build a content engine and get faster over time.\n\nWe aligned on a clear plan — bi-monthly DLC releases (World Series Tour) — and DLC revenue stabilized at roughly 25% of total revenue, helping defend revenue as the base game aged.\n\n\nExample: When I committed even though I disagreed\n\nIn another case, our CEO wanted to prototype a new MR-focused title despite a small team. My instinct was to focus. But I followed his intuition because he had direct expectations and signal from Apple and Meta about their upcoming roadmap that I didn't have — and he was the decision-maker closest to that information.\n\nSo I committed fully. We built the prototype, and when we showed it to platform stakeholders, the response was strong — they were intrigued and wanted to see progress.\n\nSo my approach is: strong conviction, low ego — ground it in goals, test my own certainty, and convert disagreement into learning through fast experiments.",
     "source_type": "qa_story",
-    "section": "character_attitude",
+    "section": "leadership",
     "company": "Devs United Games",
     "role": "Director",
     "start_date": null,
@@ -850,9 +834,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "character_attitude",
-      "leadership_strategy",
-      "self_awareness"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 480
@@ -863,7 +845,7 @@
     "answer_summary": "Sourcing philosophy: earn the right to be in earliest conversations. Built relationships through KAIST, Apple Developer Academy, startup programs. Founding experience creates trust — people open up. Engages early when someone considers founding. As 심사역, personal network is seed, firm ecosystem is multiplier. Already connected to founders at LBox, Supertone, Vessl AI, Cuckoo, and stealth companies.",
     "text": "The best founders usually do not announce to the market that they are starting a company. They reach out quietly to one or two people they trust. So my sourcing philosophy is to earn the right to be part of those earliest conversations.\n\nI've built relationships across KAIST, my work experience, and the broader startup ecosystem. For example, while scouting talent through the Apple Developer Academy network, I got to know many strong builders early on. I also developed connections through startup programs, consulting circles, and adjacent tech communities. Since I've been interested in startups since my undergraduate years, many people in my close circle today are founders, startup operators, or VCs.\n\nThe reason I've been able to build real relationships with these people is, first, that I try to approach people I respect directly and spend time with them — often through coffee chats or dinners rather than purely formal networking. Second, because I've had founding experience myself, people often open up to me about what they are struggling with. I can relate to the ambiguity, pressure, and tradeoffs of building something from scratch, so those conversations often become more honest and substantive. In some cases, I can also be helpful by sharing perspective, talking through difficulties, or giving practical advice.\n\nThat proximity means I often hear early when someone is seriously considering leaving to build something. When that happens, I try to engage early — meet them, understand the problem they are drawn to, understand why now, and form an independent view on founder-market fit before the company is visible to the broader market. I think that is the real work of sourcing: not just having broad access, but combining proximity with trust and judgment.\n\nAs a 심사역, this compounds — portfolio founders become part of that trust network, and the firm's reputation means founders who don't know me yet are more willing to take that first meeting. My personal network becomes the seed; the firm's ecosystem becomes the multiplier.\n\nI've seen that pattern multiple times already through people connected to companies like LBox, Supertone, Vessl AI, and Cuckoo, and I also know a few people currently preparing companies in stealth. So to me, great sourcing is not about knowing the most people. It is about being close to the right people, building deep trust over time, and earning a place in the earliest conversations.",
     "source_type": "interview_qa",
-    "section": "final_45_deal_sourcing",
+    "section": "experience",
     "company": null,
     "role": null,
     "start_date": null,
@@ -891,9 +873,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "vc_operations",
-      "network_strategy",
-      "relationship_building"
+      "business_development"
     ],
     "is_core_strength": true,
     "token_count": 420
@@ -904,7 +884,7 @@
     "answer_summary": "Three mechanisms: (1) separate identity from outcome — treat setbacks as tuition not verdicts, (2) physical discipline — Ashtanga yoga, running, sleep as prerequisites for judgment quality, (3) don't carry stress alone — talk to trusted people honestly. Learned through Flint shutdown experience.",
     "text": "I'll be direct: shutting down Flint was one of the hardest periods of my life. I felt real shame, replayed decisions obsessively, and compared myself to peers whose careers seemed much more linear and stable. That experience taught me that stress management is not optional. It is a professional capability.\n\nThere are three things I rely on now.\n\nFirst, I separate identity from outcome. During Flint, the shutdown felt like a verdict on my worth. Over time, I learned to treat setbacks as expensive tuition rather than character judgments. When I catch myself spiraling into \"What does this say about me?\", I deliberately shift to \"What is this teaching me?\" That mental reframing has probably been the single most important change in how I deal with pressure.\n\nSecond, I take physical discipline seriously. For me, sleep and exercise are not nice-to-haves; they are prerequisites for clear thinking. I saw very clearly during Flint's hardest periods that when I was mentally and physically depleted, the quality of my judgment dropped. Since then, I've treated physical health as part of the job. I practice Ashtanga yoga, I run, and sometimes the best thing I can do is step away, sleep, and come back with more perspective. Often that reset helps me see a problem more accurately and less emotionally.\n\nThird, I try not to carry stress alone. When things are difficult, I've learned the value of talking to a small number of people I trust and being honest about what is actually weighing on me. I do not think resilience means absorbing everything in silence. I think it means staying functional, reflective, and open enough to keep making good decisions under pressure.\n\nI'm not claiming I'm immune to stress. I'm saying I know my patterns, I have mechanisms that I trust, and I've gone through a genuinely painful failure without becoming defensive or cynical. That experience made me more grounded, more self-aware, and better able to stay steady in uncertain situations.",
     "source_type": "interview_qa",
-    "section": "final_43_character_maturity",
+    "section": "leadership",
     "company": "Flint",
     "role": null,
     "start_date": null,
@@ -929,9 +909,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "character_attitude",
-      "self_awareness",
-      "maturity"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 350
@@ -942,7 +920,7 @@
     "answer_summary": "Built a searchable knowledge system around own career — 150+ Q&A entries. Forced intellectual honesty and pattern recognition: discovered career thread (bridging technology and market) that wasn't visible before. Connects to venture instinct: structuring fragmented qualitative information into coherent judgment.",
     "text": "One recent example is building a searchable knowledge system around my own work and reflections.\n\nNo one asked me to do it. I started it because I felt a normal resume was too flat — it could list roles and achievements, but it could not really capture how I think, what I've learned, the mistakes I've made, or the patterns across the different things I've done. So I built the system myself from the ground up: I designed the architecture, iterated on the interface many times, and created the knowledge base by writing more than 150 Q&A entries based on my actual work, decisions, and reflections.\n\nIt was meaningful to me for two reasons. First, it forced intellectual honesty and pattern recognition. I had to revisit my past work in detail — not just outcomes, but also the reasoning, blind spots, mistakes, and tradeoffs behind them. Through that process, I realized that my career looked scattered from the outside, but underneath it there was actually one consistent thread: I kept moving toward roles where I could bridge technology and market. I had never articulated that so clearly before.\n\nSecond, it turned years of experience into something structured, searchable, and reusable. Instead of leaving everything scattered across memory and old documents, I built a system I can keep learning from over time.\n\nI also think that instinct matters in venture. A lot of investing is about taking fragmented qualitative information and forming a coherent view from it. This project came from the same impulse: when something important is unstructured, I want to build the structure myself and use it to improve judgment.\n\nWhat made it especially meaningful is that no one told me to do it. I saw the gap, defined the project, and kept iterating until it became genuinely useful.",
     "source_type": "interview_qa",
-    "section": "final_43_self_driven",
+    "section": "motivation",
     "company": null,
     "role": null,
     "start_date": null,
@@ -968,9 +946,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "self_driven",
-      "initiative",
-      "self_awareness"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 310
@@ -981,7 +957,7 @@
     "answer_summary": "Uncommon combination: (1) founder empathy from building, failing, and shutting down a company — personal reference points for stress and ambiguity, (2) cross-context operating experience (enterprise B2B, founding, platform partnerships) with consistent thread toward bridging technology and market, (3) cross-cultural perspective from living across multiple countries — understanding assumptions underneath communication and trust-building.",
     "text": "I think one of my strengths is not any single credential by itself, but a combination that is relatively uncommon.\n\nFirst, I've been on both sides of the investor-founder relationship, and I've also gone through the hard version of it. I've built a company, seen it fail, and had to shut it down. That gave me a level of realism and empathy that I do not think comes from observing startups from the outside. When someone is under pressure, I'm not reacting to a theoretical situation. I have personal reference points for how stress, ambiguity, and self-doubt can affect judgment. I think that changes both how I evaluate people and how I work with them.\n\nSecond, my operating experience spans a few very different environments, but there is a consistent thread underneath it. I've worked in enterprise B2B, I've been a founder, and I've worked on partnerships with companies like Apple, Meta, and Google. Each of those taught me something different: how large organizations actually make decisions, how hard it is for startups to keep moving under real constraints, and how much distribution, timing, and external relationships matter in practice. On paper that may look broad, but the direction has been consistent. I've kept moving toward roles where I had to understand both the technology itself and how it becomes a business.\n\nThird, growing up and living across multiple countries gave me a broader perspective on how people think, what they prioritize, and how culture shapes the way they make decisions and live their lives. So for me, working across Korean and US contexts is not just about language. It is about understanding the assumptions underneath how people communicate, what they value, how they build trust, and what feels natural or uncomfortable to them. I think that has helped me understand people more accurately and build relationships across different backgrounds.\n\nSo I would say my strength is the combination of founder empathy, practical operating perspective, and an ability to understand people and businesses across different contexts, all tied together by a consistent interest in how technology actually turns into a real company. I think that combination lets me evaluate founders and businesses with more texture than a single-track background would allow.",
     "source_type": "interview_qa",
-    "section": "final_40_competitive_positioning",
+    "section": "narrative",
     "company": null,
     "role": null,
     "start_date": null,
@@ -1006,9 +982,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "competitive_positioning",
-      "self_advocacy",
-      "career_narrative"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 400
@@ -1019,7 +994,7 @@
     "answer_summary": "Acknowledges VC experience gap honestly. Operator judgment from building, shipping, partnerships (Apple/Meta/Google). Hands-on technical/product evaluation. Founder empathy from lived failure. Explicitly acknowledges gaps in VC craft — no ego around level/title, willing to start from fundamentals. Key reframe: which gaps are more trainable — VC mechanics (learnable) vs operator judgment + founder understanding (harder to teach).",
     "text": "I think this is the right question to ask, and I want to answer it directly.\n\nSomeone with 2–3 years of VC experience would bring real advantages that I do not have yet. They've likely written investment memos, sat through IC discussions, supported portfolio companies in a formal investor capacity, and developed pattern recognition around the mechanics of venture. I would not pretend otherwise.\n\nThe reason to hire me would be that I bring a different kind of judgment — one built through operating, building, and failing firsthand.\n\nI've built products, worked across engineering, product, and business, negotiated partnerships with companies like Apple, Meta, and Google, and experienced what it means to try to build something under real uncertainty. So when I meet a founder, I'm not only evaluating the idea. I can often understand much more concretely what it takes to build, recruit, partner, sell, and survive.\n\nI also think I can evaluate technical and product claims from a more hands-on place. Because I've worked across technical systems, product decisions, and execution constraints, I can usually tell the difference between what is grounded, what is aspirational, and what is directionally right but much harder than it sounds.\n\nAnd having gone through a company shutdown myself, I think I relate to founders with a level of realism and empathy that is difficult to get from a purely observational path. When a founder is struggling, I'm not reacting to a startup cliché. I understand more personally what that can feel like.\n\nAt the same time, I know I have gaps in the traditional craft of venture, and I respect that. I would need to learn the mechanics — how to write better memos, how to develop investor-specific judgment, how to support the partnership, and how to operate within the discipline of a fund. I also realize my background may look a bit less typical because I've had a longer and more varied operating path than the standard candidate profile. But I don't have ego around level or title. If the fit is right, I'm very comfortable starting from the fundamentals, going through that learning curve seriously, and earning trust through the work.\n\nSo I'm not saying VC experience doesn't matter. It does. The question is which gaps are more trainable. My view is that the formal mechanics of venture can be learned relatively quickly by someone who is highly motivated and structured, while the combination of operator judgment, technical fluency, partnership experience, and lived founder understanding is harder to teach.",
     "source_type": "interview_qa",
-    "section": "final_40_competitive_defense",
+    "section": "narrative",
     "company": null,
     "role": null,
     "start_date": null,
@@ -1045,9 +1020,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "competitive_defense",
-      "self_advocacy",
-      "career_narrative"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 480
@@ -1058,7 +1032,7 @@
     "answer_summary": "Two examples: (1) Scheduled honeymoon around WWDC business trip — expanded Apple network, built Developer Relations relationships. (2) Built Vision Pro demo outside formal role by bringing in a friend — gave CEO and Apple something tangible, led to Apple DevRel asking about porting game to Vision Pro. Common thread: starts from what team/company needs, acts accordingly even when inconvenient.",
     "text": "Two examples come to mind.\n\nFirst, around WWDC, I scheduled my honeymoon around the business trip so there would not be a conflict. The honeymoon was very important to both me and my wife, but we also understood how meaningful that opportunity was for the company and why my attendance mattered. So we made that decision together, knowing this was an important moment and that I had a responsibility to show up for it.\n\nThat trip ended up being valuable for the company. We were able to expand our network inside Apple, build relationships with developers and Developer Relations people, and strengthen connections that became useful later on. For me, that was a clear example of putting the company's long-term interest ahead of what would have been more convenient personally.\n\nSecond, early in the Apple partnership, our team was already stretched with updates and development for a new title, but we also wanted to show our CEO and Apple what our app could look like on Vision Pro. It was not part of my formal role, but I felt it was important for the company to move quickly and make the opportunity more concrete. So I brought in a friend of mine who was interested in Vision Pro app development, and we built a demo together.\n\nThat demo gave both our CEO and Apple something tangible to react to, rather than just an abstract idea. It helped internally by making the opportunity easier to discuss, and it helped externally by showing our interest and direction in a more concrete way. After seeing it, Apple's Developer Relations team became interested and asked whether we could port our game or develop a Vision Pro version for the platform.\n\nWhat is common in both examples is that I tend to start from what the team or company needs most in that moment, and then act accordingly, even when it is not the most convenient option for me personally or the most obvious part of my role.",
     "source_type": "interview_qa",
-    "section": "final_40_character_altruism",
+    "section": "leadership",
     "company": "DUG",
     "role": "Head of Partnerships & Operations",
     "start_date": null,
@@ -1083,9 +1057,7 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "character_attitude",
-      "altruism",
-      "initiative"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 330
@@ -1096,7 +1068,7 @@
     "answer_summary": "Honest gap admission: no classic Series A-B J-curve experience. Three related forms of growth strain: (1) Flint zero-to-one chaos — product, team, process, fundraising simultaneously under uncertainty. (2) DUG rapid scope expansion — Apple Vision Pro, Meta Quest+, Google Android XR while improving internal functions, lean team but complexity grew fast. (3) Observed people side of rapid growth going wrong — inconsistent onboarding, culture not reinforced, friction leading to attrition and layoffs. Understands tensions: speed vs quality, hiring vs absorption, expansion vs focus, process vs flexibility.",
     "text": "I'll be honest: I have not been inside the classic Series A to B hypergrowth curve where headcount triples and the company is trying to scale everything at once. That is a real gap in my experience, and I would not want to overstate it.\n\nWhat I have experienced, though, are a few related forms of growth strain.\n\nFirst, at Flint, I experienced zero-to-one company building. That is a different kind of chaos. You are not scaling something that already works; you are trying to create product, team, process, and fundraising momentum at the same time, with limited resources and no real playbook. The pressure there is less about managing growth and more about making decisions under extreme uncertainty.\n\nSecond, at DUG, I experienced rapid expansion in scope, even if it was not textbook hypergrowth. In a relatively short period, we were pursuing new platform opportunities across Apple Vision Pro, Meta Quest+, and Google Android XR, while also trying to improve internal functions like HR, finance, legal, and customer support. The team itself stayed relatively lean, but the scope and complexity of what we were trying to handle grew very quickly. I saw how easily ambition can outpace structure when the organization has to absorb too much at once.\n\nI have also seen the people side of rapid growth go wrong. I've been in situations where teams hired quickly, but the organization was not fully ready to absorb that growth well. Onboarding was inconsistent, culture was not reinforced clearly enough, people struggled to settle in, and over time that led to friction, attrition, and layoffs. That taught me that growth is not just about adding people or moving faster. It is about whether the organization has the structure, clarity, and cultural stability to absorb that growth without weakening itself.\n\nSo I would not claim that I have lived the exact Series A to B J-curve from the inside. But I do think I understand some of the underlying tensions quite well: speed versus quality, hiring versus absorption, expansion versus focus, and process versus flexibility. And I'm self-aware enough to know that this is still an area where I would have more to learn from people who have lived the classic version more directly.",
     "source_type": "interview_qa",
-    "section": "final_40_jcurve_growth",
+    "section": "experience",
     "company": "Flint / DUG",
     "role": null,
     "start_date": null,
@@ -1126,9 +1098,8 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "growth_experience",
-      "self_awareness",
-      "honest_gap"
+      "business_development",
+      "leadership_strategy"
     ],
     "is_core_strength": false,
     "token_count": 350
@@ -1139,7 +1110,7 @@
     "answer_summary": "Three pillars for 10-year vision: (1) real insight — pattern recognition on why companies succeed/fail, which signals matter vs noise, (2) understanding founders deeply — reading people under pressure, judging founder-problem fit, resilience, followability, (3) genuinely useful after investment — through uncertainty, setbacks, turning points, earning 'they were there when it mattered' reputation. Judgment comes from proximity and market cycles, not frameworks. Mobile example: was a student observing from outside, wants to be in the room for next shifts. Does not picture a title first.",
     "text": "In 10 years, I want to be someone founders call before they have even decided to start a company.\n\nNot because I have the biggest brand or the loudest presence, but because they trust my judgment. To me, that means three things.\n\nFirst, I want to become someone with real insight — someone founders trust to know what is likely to work and what is not. I want to develop the kind of pattern recognition that helps me understand why certain companies succeed, why others fail, how markets tend to respond, and which signals matter versus which are just noise. I want founders to feel that if they bring me an idea, I can help them see more clearly whether it has real potential or whether they are missing something important.\n\nSecond, I want to become very good at understanding founders. Not in a superficial way, but in a way that lets me see who this person really is under pressure. I want to get better at judging whether this is the right person for the problem, whether they have the depth, resilience, and clarity to keep building through difficulty, and whether they are someone others will genuinely want to follow. I think that ability to read people well is one of the hardest and most important parts of investing.\n\nThird, I want to be the kind of investor who is genuinely useful after the investment. I do not just want to make a good decision at the beginning and then disappear. I want to help founders through the long process of building — especially through uncertainty, setbacks, and important turning points. I want to build the kind of reputation where founders say, \"They were there when it mattered.\" That kind of trust takes years to earn and seconds to lose.\n\nI do not think any of this comes from frameworks alone. It comes from staying close to companies, seeing decisions play out over years, and learning from both good outcomes and bad ones. It comes from experiencing real market cycles firsthand as an investor, not just as an observer. When mobile took off, I was a student. I saw that shift happen, but only from the outside. The next decade will have its own defining shifts, and I want to be in the room for those moments — making decisions, learning through them, and building judgment from the inside.\n\nSo when I think about 10 years from now, I do not picture a title first. I picture being someone with deep insight, strong judgment about people, and a reputation for being genuinely useful when it matters. That is the direction I want to grow into.",
     "source_type": "interview_qa",
-    "section": "final_40_life_vision",
+    "section": "motivation",
     "company": null,
     "role": null,
     "start_date": null,
@@ -1165,11 +1136,802 @@
     ],
     "depth": "deep_dive",
     "focus_tags": [
-      "life_vision",
-      "investor_philosophy",
-      "long_term_commitment"
+      "leadership_strategy"
     ],
     "is_core_strength": true,
     "token_count": 380
+  },
+  {
+    "chunk_id": "changjo-2026-due-diligence-dashboard",
+    "question": "How did you build the due diligence evaluation system, and what does it do?",
+    "answer_summary": "Built structured evaluation system for frontier tech ventures across Space, GenAI, Smart Agriculture at Changjo Architecture. Designed due diligence rubric from scratch — consistent scoring framework replacing gut feel. Built AI-powered dashboard using Gemini/Claude/ChatGPT for automated deep research, dual-rubric scoring, and multi-model investment committee debate. Produces structured company profiles for comparison. Built entirely from ground up.",
+    "text": "The CEO brought me back to Changjo Architecture in February 2026 specifically for strategy and market research — not the business development work I did in my first stint.\n\nMy main project has been building a structured evaluation system for frontier technology ventures across three sectors: Space, GenAI, and Smart Agriculture. I designed a due diligence rubric from scratch — a scoring framework that breaks down company assessment into consistent, comparable dimensions rather than relying on gut feel or ad hoc analysis.\n\nOn top of that, I built an AI-powered dashboard that automates much of the research and profiling process. It uses automated deep research via Gemini, Claude or ChatGPT to pull and synthesize information about target companies, applies dual-rubric scoring for structured assessment, and runs multi-model investment committee debate to stress-test conclusions from different angles. The output is a structured company profile that makes it easier to compare opportunities and identify where conviction is strongest.\n\nI built the whole thing from the ground up — architecture, implementation, iteration. It directly reflects the kind of systematic evaluation work I want to do in VC: turning qualitative, fragmented information about early-stage companies into structured, defensible judgment.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Market Research",
+    "start_date": "2026-02",
+    "end_date": null,
+    "skills": [
+      "due diligence",
+      "market research",
+      "AI dashboard development",
+      "company evaluation",
+      "venture analysis",
+      "system design"
+    ],
+    "keywords": [
+      "Changjo Architecture",
+      "due diligence rubric",
+      "AI dashboard",
+      "Space",
+      "GenAI",
+      "Smart Agriculture",
+      "multi-model debate",
+      "structured evaluation",
+      "company profiling",
+      "investment committee"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ai_llms",
+      "due_diligence",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 250
+  },
+  {
+    "chunk_id": "changjo-2026-space-dd-rubric",
+    "question": "Can you tell me more about the rubric?",
+    "answer_summary": "Multi-agent AI pipeline for institutional-grade investment diligence on 100+ space companies. Two-stage funnel: Stage 1 scores across 12 dimensions heavily shaped by CEO's priorities, using multiple agents as advocates and skeptics. Stage 2 deep dive uses OSINT cross-referencing (USAspending.gov, SBIR.gov, SEC Form D, FCC/FAA filings, launch manifests, job postings) for syndicate mapping, TRL/MRL verification, unit economics, exit modeling. Unverifiable metrics flagged for founder Q&A.",
+    "text": "I built a multi-agent AI pipeline that runs investment diligence on over 100 space companies. It works in two stages — first a broad scoring pass to filter the universe, then deep research on the ones that survive.\n\nIn the first stage, every company gets scored across 12 dimensions. The scoring criteria were heavily shaped by what the CEO thought was most important — I calibrated the rubric around his priorities for deep-tech space investing, things like technology readiness, market position, capital efficiency, team integrity, exit realism, and so on. The pipeline uses multiple agents as advocates and skeptics, debating each company before producing a final score. That prevents any single model's bias from driving the output. The scores get bucketed into priority tiers and surfaced in a React dashboard.\n\nFor the companies that pass, stage two goes deeper — but not from company websites or PR. I cross-reference government contract databases like USAspending and SBIR, SEC Form D filings, FCC and FAA regulatory filings, launch manifests, even job postings. From there the system covers syndicate mapping, team background verification, independent TRL/MRL assessment against actual flight data, unit economics, and exit modeling that accounts for hardware CapEx dilution. Anything that can't be independently verified gets flagged for founder Q&A — no guessing, no hallucinating numbers.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Market Research",
+    "start_date": "2026-02",
+    "end_date": null,
+    "skills": [
+      "due diligence",
+      "space industry analysis",
+      "multi-agent AI systems",
+      "OSINT research",
+      "investment scoring",
+      "rubric design"
+    ],
+    "keywords": [
+      "space companies",
+      "12 dimensions",
+      "TRL MRL",
+      "multi-agent debate",
+      "advocate skeptic pipeline",
+      "OSINT",
+      "USAspending",
+      "SEC Form D",
+      "syndicate mapping",
+      "exit modeling",
+      "React dashboard",
+      "deep tech investing"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "due_diligence",
+      "ai_llms",
+      "space_industry"
+    ],
+    "is_core_strength": true,
+    "token_count": 450
+  },
+  {
+    "chunk_id": "changjo-2026-dd-system-impact",
+    "question": "How has the due diligence system changed an actual investment decision?",
+    "answer_summary": "Biggest impact at screening/prioritization: side-by-side comparison across same dimensions replaced one-by-one intuition-based evaluation. Surfaced where moats were truly differentiated vs. only looked strong in isolation. Helped prioritize right deep dives. At deep-dive stage, OSINT research exposed two common weakness patterns: market demand gaps (claimed contracts but TAM couldn't support venture-scale returns) and technology readiness gaps (strong lab results but large gap to real-world deployment). Several companies dropped after deeper scrutiny.",
+    "text": "The biggest impact was at the screening and prioritization stage.\n\nOnce we scored the full universe on the same dimensions, we could compare companies side by side — especially within the same sector or sub-sector. That changed the process from evaluating companies one by one, largely from memory and intuition, to evaluating them relatively and systematically. It became much easier to see where a company's real strengths were, where its moat was truly differentiated, and where it only looked strong in isolation.\n\nThat mattered because it helped us prioritize the right deep dives. Instead of spending equal time on every interesting company, we could quickly identify which ones were genuinely worth the effort.\n\nThen at the deep-dive stage, the system ran broader market research and OSINT — cross-referencing things like government contracts, filings, launch data, and hiring signals. That gave us a fuller picture not just of the company itself, but of the market quality, execution readiness, and whether the apparent strengths held up under scrutiny.\n\nIn several cases, companies that looked attractive in the initial scoring got dropped once the deeper research exposed weaknesses that weren't obvious at first glance. The most common patterns were:\n\n- Market demand gaps — companies claimed strong contracts or customer pipelines, but the actual demand for their technology wasn't large enough to support venture-scale returns.\n- Technology readiness gaps — companies had strong lab or pilot results, but the gap between controlled performance and real-world deployment was much larger than their materials suggested.\n\nSo the system didn't make the decision for us, but it changed where we spent time, what we eliminated early, and how quickly we reached conviction.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Market Research",
+    "start_date": "2026-02",
+    "end_date": null,
+    "skills": [
+      "due diligence",
+      "company screening",
+      "investment prioritization",
+      "OSINT research"
+    ],
+    "keywords": [
+      "DD system impact",
+      "side-by-side comparison",
+      "screening prioritization",
+      "market demand gaps",
+      "technology readiness gaps",
+      "venture-scale returns",
+      "relative evaluation",
+      "deep dive filtering"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "due_diligence",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 280
+  },
+  {
+    "chunk_id": "changjo-2026-dd-system-limits",
+    "question": "What are the limits of the due diligence system? When does it fail or mislead?",
+    "answer_summary": "Three main limitations: (1) Public-data bias — system works best with visible companies, can confuse visibility with quality for stealth/early-stage companies. (2) Model reliability/hallucination — AI can produce credible-sounding false claims. Addressed through forced source/evidence chains, cross-referencing, recent data updates, but not fully solved. Unverifiable claims treated as leads, not truth. (3) Cannot judge founders — scores market/tech/credentials on paper but can't assess judgment, resilience, adaptability. System is a filter and time-saver, not a decision-maker.",
+    "text": "The biggest limitation is that the system is only as good as what it can see.\n\nFirst, it has a public-data bias. It works well when a company leaves a real footprint — contracts, filings, hiring activity, investor disclosures, launch signals. But for very early-stage or stealth companies, there may be very little to work with. And even when data exists, it can be uneven: companies that are more visible can look stronger than quieter companies with better fundamentals. So one risk is confusing visibility with quality.\n\nSecond, model reliability is still a real issue. One of the biggest risks with AI-generated research is hallucination: claims that sound credible but are wrong — a contract that doesn't exist, a funding round that never happened, or a partnership that was misattributed.\n\nI treated that as a core system design problem. So I forced the AI to provide sources, reasoning, and evidence chains rather than just outputs. I went through several iterations to make it back up factual claims, cross-reference them, and update them with the most recent available data instead of relying on stale summaries. That reduced the problem significantly.\n\nBut I still don't assume it's solved. If a claim can't be independently verified, I treat it as a lead to investigate, not as truth.\n\nThird, it cannot judge founders. It can help score market, technology, and credentials on paper, but it cannot tell you whether a founder has judgment, resilience, or adaptability. That still requires direct conversation.\n\nSo I treat the system as a filter and a time-saver, not a decision-maker. It improves triage, helps structure comparison, and tells us where to look more carefully — but it doesn't replace human judgment.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Market Research",
+    "start_date": "2026-02",
+    "end_date": null,
+    "skills": [
+      "system design",
+      "AI reliability",
+      "data validation",
+      "self-awareness",
+      "due diligence"
+    ],
+    "keywords": [
+      "DD system limitations",
+      "public-data bias",
+      "hallucination",
+      "visibility vs quality",
+      "model reliability",
+      "evidence chains",
+      "founder judgment",
+      "filter not decision-maker"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "due_diligence",
+      "ai_llms"
+    ],
+    "is_core_strength": true,
+    "token_count": 300
+  },
+  {
+    "chunk_id": "changjo-2026-qualitative-vs-quantitative",
+    "question": "How do you weight qualitative vs. quantitative signals for pre-revenue companies where most data is noisy?",
+    "answer_summary": "Weights qualitative signals more heavily for pre-revenue — founder temperament is the operating system for everything. Uses quantitative as a discipline via three questions: is the moat claim falsifiable, do advantages compound, what evidence would change my mind. Acknowledges long VC experience creates an edge in founder reading that systems can't replicate. Qualitative first, quantitative as a check, humility about what takes experience.",
+    "text": "For pre-revenue companies, I weight qualitative signals more heavily, especially founder quality.\n\nThe reason is simple: in the first one to two years, most numbers are still noisy. What you really have is a small group of people making hundreds of decisions under uncertainty. So the founder's temperament becomes the operating system for everything — speed of iteration, product quality, hiring bar, culture, and how the company responds when reality breaks the plan.\n\nThat said, I don't ignore quantitative signals. I use them more as a discipline for thinking than as hard proof. I usually ask three questions:\n\n1. Is the moat claim falsifiable, or is it just a story?\n2. Are there any advantages that actually compound over time — through data, workflow, distribution, or usage?\n3. What evidence in the next 12 to 24 months would change my mind?\n\nThat helps me separate real signal from narrative, even when the numbers are thin.\n\nBut the honest answer is that this is also where long investing experience matters most. I can build systems that structure market and technology analysis. I can reduce noise and make comparisons more rigorous. But reading a founder — their judgment under pressure, how they handle ambiguity, whether they can keep a team together when things get hard — that comes from years of sitting across from founders and seeing patterns repeat.\n\nThat's the part I most want to develop. So my answer is: qualitative first, quantitative as a check, and a lot of humility about what can only be learned through experience.",
+    "source_type": "qa_story",
+    "section": "investment_philosophy",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "founder evaluation",
+      "investment judgment",
+      "pattern recognition",
+      "self-awareness"
+    ],
+    "keywords": [
+      "qualitative vs quantitative",
+      "pre-revenue",
+      "founder quality",
+      "moat falsifiability",
+      "compounding advantages",
+      "noisy data",
+      "VC experience",
+      "founder reading"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "due_diligence",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 280
+  },
+  {
+    "chunk_id": "changjo-2026-ai-agent-research",
+    "question": "What patterns are you seeing in AI agent ecosystems, and why does it matter?",
+    "answer_summary": "Researching AI agent ecosystems at Changjo. Core thesis: most companies overestimate model quality, underestimate interface and workflow ownership. Three patterns: (1) current chat interface is basically DOS — pushing work onto users, adoption breaks when behavior change is too high (Flint lesson), winners build invisible interfaces; (2) infrastructure value will commoditize, real question is who owns workflow layer — seat-based SaaS incumbents most at risk; (3) agent-to-agent economics via MCP/A2A protocols creating machine-to-machine layer with no historical precedent. Already built small-scale multi-agent coordination in DD dashboard.",
+    "text": "What I'm seeing is that the AI agent ecosystem is still very early, and most companies are overestimating the importance of model quality while underestimating the importance of interface and workflow ownership.\n\nThe first pattern is that most AI products still push too much work onto the user. The current chat interface is powerful, but in many cases it's basically a command line. It asks the user to become a prompt engineer instead of removing work for them. That matters because adoption usually breaks when behavior change is too high. I learned that very directly at Flint — we asked users to do too much upfront, and adoption stalled. I think many AI products today have the same risk. So I'm more interested in products where the interface becomes invisible and the agent just does the work.\n\nThe second pattern is around where value will settle. Right now a lot of value is concentrated in compute and infrastructure, which is normal in the early phase of a platform shift. But over time, those layers tend to commoditize. The more important question is who owns the workflow and the user relationship. That's why I think many seat-based SaaS incumbents are vulnerable: if an agent can execute the workflow directly, the GUI matters less and their pricing model gets pressured. So I'm watching for companies building durable advantages at the workflow layer — data, distribution, and lock-in.\n\nThe third pattern is the emergence of agent-to-agent coordination. With standards like MCP and A2A, agents are starting to discover tools, negotiate, and pass work across systems. That matters because it creates a new machine-to-machine layer where value may not sit in the same places it did in traditional software. At Changjo, I've built a small internal example of this using multi-agent debate to stress-test investment conclusions, and even at that scale you can see how coordination creates value beyond a single model response.\n\nSo the reason this matters is simple: the winners probably won't just be the companies with the best model. They'll be the ones that reduce user friction, own the workflow, and build durable position as agents start acting more autonomously.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Market Research",
+    "start_date": "2026-02",
+    "end_date": null,
+    "skills": [
+      "market research",
+      "AI ecosystem analysis",
+      "platform cycle analysis",
+      "pattern recognition",
+      "venture thesis development"
+    ],
+    "keywords": [
+      "AI agents",
+      "chat as DOS",
+      "interface friction",
+      "behavioral adoption",
+      "SaaS dissolution",
+      "workflow ownership",
+      "data moats",
+      "workflow lock-in",
+      "agent-to-agent",
+      "MCP A2A protocols",
+      "multi-agent coordination"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ai_llms",
+      "market_analysis",
+      "venture_thesis"
+    ],
+    "is_core_strength": true,
+    "token_count": 280
+  },
+  {
+    "chunk_id": "changjo-2023-zero-to-one-smart-farm",
+    "question": "How did you build a smart farm initiative from zero domain knowledge?",
+    "answer_summary": "Joined Changjo Architecture late 2023 with colleague Joon to explore frontier tech expansion. No prior agriculture experience. Layered approach: studied CEA landscape and market sizing, visited 12+ indoor farm operators and food processing plants, consulted Professor Jeon at SNU for technical foundation (nutrient solutions, diagnosing tip burn). Built indoor farming rack systems, ran cultivation experiments, developed water-injection method that reduced water usage — Professor Jeon encouraged patenting. Initiative grew into dedicated Smart Farm division. Zero to new business line in ~5 months.",
+    "text": "When I joined Changjo Architecture in late 2023 with my colleague Joon, the CEO wanted to explore whether the company could expand beyond architecture into frontier technology ventures. Smart farming was one of the first areas we tested, and neither the company nor we had any real domain knowledge at the start.\n\nSo we approached it in layers. First, we built the knowledge base: we studied the CEA landscape, benchmarked competitors, sized the market, and tried to understand the economics of indoor farming. Then we went into the field. We visited more than a dozen indoor farm operators, spoke with founders about real bottlenecks like unit economics and scaling, and visited food processing plants to understand what happens after cultivation.\n\nAt the same time, we brought in outside expertise. We worked with Professor Jeon at Seoul National University, who helped us build the technical foundation — from nutrient solutions to diagnosing issues like tip burn in our own experiments. That helped us move from theory to real operating understanding.\n\nThen we built and tested ourselves. We set up indoor farming rack systems, ran cultivation experiments, and compared different growing methods hands-on. Through that process, we developed a water-injection approach that reduced water usage in our tests compared with more conventional methods. When we showed it to Professor Jeon, he encouraged us to move quickly on patenting it.\n\nThe result was that the effort grew into a dedicated Smart Farm division inside Changjo Architecture that continued after we left. So in about five months, we went from zero domain knowledge to helping create a functioning new business line.\n\nWhat I think this shows is that I can enter an unfamiliar domain, learn quickly, combine research with fieldwork, and turn ambiguity into something operational and commercially real.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "New Business Development",
+    "start_date": "2023-10",
+    "end_date": "2024-02",
+    "skills": [
+      "zero-to-one building",
+      "market research",
+      "hands-on prototyping",
+      "new business development",
+      "domain learning",
+      "field research",
+      "academic consulting"
+    ],
+    "keywords": [
+      "Changjo Architecture",
+      "smart farm",
+      "indoor farming",
+      "controlled environment agriculture",
+      "CEA",
+      "water-injection method",
+      "zero domain knowledge",
+      "new business line",
+      "rack systems",
+      "cultivation experiments",
+      "Professor Jeon SNU",
+      "food processing plants",
+      "nutrient solutions",
+      "tip burn"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "zero_to_one",
+      "initiative",
+      "new_business"
+    ],
+    "is_core_strength": true,
+    "token_count": 200
+  },
+  {
+    "chunk_id": "dug-meta-quest-plus-deal",
+    "question": "How did you secure the Meta Quest+ deal and drive 55% revenue growth?",
+    "answer_summary": "Assessed cannibalization risk of Meta Quest+ subscription model against existing paid sales, concluded incremental reach outweighed risk. Secured entry into the program. Redesigned promotions and DLC strategy (bi-monthly World Series Tour releases) to maximize recurring revenue. DLC revenue stabilized at ~25% of total. Combined effect: 55.47% YoY revenue growth in H1 2025.",
+    "text": "The 55.47% YoY revenue growth in H1 2025 came from a combination of strategic decisions, not a single win.\n\nThe biggest lever was securing entry into Meta Quest+, Meta's subscription program. The key challenge was cannibalization risk — if our game was available through a subscription, would it undercut our paid sales on the same platform? I ran the analysis and concluded that the incremental reach from Quest+'s subscriber base outweighed the cannibalization risk, especially since our title had already captured most of its organic audience on the Quest Store.\n\nOnce we were in Quest+, I redesigned our monetization approach. We launched a bi-monthly DLC release cadence — the World Series Tour — which created repeatable revenue drops and kept users engaged longer. DLC revenue stabilized at roughly 25% of total revenue, which gave us a recurring revenue layer on top of the subscription income.\n\nI also restructured our promotion strategy to align with platform merchandising cycles, ensuring we had visibility during key sales periods.\n\nThe combined effect — Quest+ subscription revenue, DLC recurring revenue, and optimized promotions — drove the 55.47% growth. It wasn't about one big deal; it was about building a revenue engine with multiple reinforcing parts.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "revenue strategy",
+      "monetization",
+      "cannibalization analysis",
+      "DLC strategy",
+      "platform partnerships"
+    ],
+    "keywords": [
+      "Meta Quest+",
+      "55.47% YoY revenue growth",
+      "cannibalization risk",
+      "DLC strategy",
+      "World Series Tour",
+      "subscription model",
+      "revenue engine",
+      "promotions",
+      "Devs United Games"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 250
+  },
+  {
+    "chunk_id": "dug-google-android-xr-partnership",
+    "question": "How did you initiate the Google Android XR partnership?",
+    "answer_summary": "Leveraged existing Apple and Meta track record as credibility proof. Approached Google's XR team proactively when Android XR was still emerging. Secured dev kit access and negotiated upfront funding terms — unusual for a small studio. Managed cross-functional porting across engineering and business teams.",
+    "text": "The Google Android XR partnership was the third platform deal I built at DUG, and it came together because of a deliberate pattern I'd established with the previous two.\n\nBy the time Google was ramping up Android XR, we had already shipped on Meta Quest and Apple Vision Pro, with strong results on both — Quest+ entry, App Store Awards finalist. That track record became our credibility proof. When I approached Google's XR team, I didn't pitch from scratch; I pointed to delivered outcomes on competing platforms and argued that we were a proven partner who could ship on their platform quickly and at high quality.\n\nThe negotiation was focused on two things: dev kit access (critical for a small studio that couldn't afford to buy hardware at scale) and upfront funding terms to offset porting costs. Securing upfront payment is unusual for a studio our size, but I made the case based on our delivery track record and the strategic value of having a polished title ready for their platform launch.\n\nI also managed the cross-functional porting process — coordinating between our engineering team on the technical port, the business side on contract terms, and Google's developer relations team on timeline and deliverables.\n\nThe broader lesson: each platform partnership made the next one easier. Apple credibility helped with Google. Meta revenue data helped with Apple. Building a track record is compounding leverage.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "partnership development",
+      "deal negotiation",
+      "platform strategy",
+      "cross-functional management",
+      "business development"
+    ],
+    "keywords": [
+      "Google Android XR",
+      "dev kit access",
+      "upfront funding",
+      "platform partnership",
+      "track record leverage",
+      "compounding credibility",
+      "cross-functional porting",
+      "Devs United Games"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 240
+  },
+  {
+    "chunk_id": "dug-walking-away-meta-funding",
+    "question": "Tell me about the Meta funding deal you walked away from.",
+    "answer_summary": "Meta offered a funding deal that had been previously dropped and renegotiated. After analyzing revenue-share vs. capital terms, concluded the deal would dilute the company's position and limit future fundraising leverage. Walked away to preserve equity and position the company for a stronger independent raise.",
+    "text": "This was one of the harder decisions at DUG because it meant saying no to real money on the table.\n\nMeta had a funding program for studios building on Quest. We'd had an earlier version of the deal that fell through, and when it came back, the terms had changed. I renegotiated the structure, but when I analyzed the final terms — specifically the revenue-share implications versus the capital we'd receive — I concluded it wasn't a good deal for the company long-term.\n\nThe core issue was that the revenue-share terms would have effectively given Meta too much leverage over our economics on the platform. If we accepted, we'd be trading short-term capital for long-term margin compression. And strategically, taking that deal would have weakened our negotiating position for a future equity raise — investors would see the Meta revenue-share overhang as a liability.\n\nSo I recommended we walk away, and the CEO agreed. It wasn't a dramatic moment — it was a careful analysis of what the deal actually meant for the company's cap table and fundraising trajectory.\n\nThe lesson I took from it: not every deal that looks like money is actually good money. The discipline to say no when the terms don't serve the long-term interest is one of the most important things in business development — and in investing.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Devs United Games",
+    "role": "Director",
+    "start_date": "2024-02",
+    "end_date": "2025-08",
+    "skills": [
+      "deal analysis",
+      "deal negotiation",
+      "strategic judgment",
+      "revenue-share analysis",
+      "capital strategy"
+    ],
+    "keywords": [
+      "Meta funding",
+      "walked away",
+      "revenue-share",
+      "deal discipline",
+      "equity preservation",
+      "negotiation",
+      "long-term thinking",
+      "cap table",
+      "fundraising leverage"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 230
+  },
+  {
+    "chunk_id": "education-kaist-kit",
+    "question": "Tell me about your education at KAIST and KIT.",
+    "answer_summary": "B.S. in Mechanical Engineering with Industrial Design double major at KAIST (National Scholarship, Dean's List, Cum Laude). M.S. in Mechanical Engineering at KAIST with National & BK21 Scholarship. Dual degree at KIT Germany (65 ECTS) during master's. The double major was intentional — engineering for understanding systems, design for understanding adoption.",
+    "text": "My education was at KAIST, Korea's top science and technology university, with a research stint at KIT in Germany.\n\nFor my bachelor's, I double-majored in Mechanical Engineering and Industrial Design — and that combination was intentional. Mechanical Engineering gave me the foundation to understand how complex systems work: mechanics, production processes, manufacturing constraints. Industrial Design taught me the other side: how users interact with products, why they adopt or reject them, and how design shapes behavior. I graduated Cum Laude with a National Scholarship and made the Dean's List.\n\nFor my master's, I continued in Mechanical Engineering at KAIST on a National and BK21 Scholarship. During the program, I did a dual degree at KIT (Karlsruhe Institute of Technology) in Germany, completing 65 ECTS toward an M.S. in Mechanical Engineering. Living and studying in Germany for over a year deepened both my technical research skills and my cross-cultural perspective.\n\nThe education path might look unusual for someone in business development and VC, but each piece was deliberate. Engineering gave me the literacy to evaluate technical claims. Design gave me the instinct for user adoption. Research gave me the discipline to analyze systematically. And the international exposure — KAIST, KIT, living across Korea, Germany, Austria, and the US — shaped how I read people, markets, and opportunities across different contexts.",
+    "source_type": "qa_story",
+    "section": "education",
+    "company": null,
+    "role": null,
+    "start_date": "2010-03",
+    "end_date": "2018-02",
+    "skills": [
+      "mechanical engineering",
+      "industrial design",
+      "research methodology",
+      "cross-cultural adaptation"
+    ],
+    "keywords": [
+      "KAIST",
+      "KIT",
+      "Germany",
+      "Mechanical Engineering",
+      "Industrial Design",
+      "double major",
+      "Cum Laude",
+      "Dean's List",
+      "National Scholarship",
+      "BK21",
+      "dual degree",
+      "research"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "full_stack",
+      "leadership_strategy"
+    ],
+    "is_core_strength": false,
+    "token_count": 240
+  },
+  {
+    "chunk_id": "technical-skills-overview",
+    "question": "What is your technical background and what technologies do you work with?",
+    "answer_summary": "Hands-on across multiple stacks: AI/ML (built a RAG pipeline with Pinecone, LLMs, worked with GNNs at Flint), distributed systems (Hadoop, Kubernetes at TmaxTibero), spatial computing (Unity, VisionOS at DUG), and full-stack web (Next.js, Python, TypeScript). Not a pure engineer — a technical operator who builds when needed and evaluates with depth.",
+    "text": "My technical background spans several domains, and I've used it differently at each stage of my career.\n\nAt TmaxTibero, I worked on enterprise data infrastructure — building distributed systems with Hadoop and Kubernetes, collaborating on an autonomous database system, and doing database platform benchmarking against Oracle and Microsoft. That gave me a deep understanding of how large-scale data systems work in production, not just in theory.\n\nAt Flint, our core product was built on Graph Neural Networks. As COO I wasn't writing the GNN code, but I understood the architecture deeply enough to make product decisions, communicate with investors, and evaluate technical tradeoffs.\n\nAt DUG, I gained hands-on familiarity with spatial computing — Unity for VR/MR development and VisionOS for Apple Vision Pro. I even built an early Vision Pro demo prototype with a friend to show Apple what our game could look like on the platform.\n\nMost recently, I built this interactive profile site myself — a full RAG (Retrieval-Augmented Generation) pipeline using Next.js, TypeScript, Python, Pinecone vector database, and Google's Gemini embedding model. It retrieves relevant context from my knowledge base and generates grounded answers. I designed the architecture, wrote the code, and iterated through 14 UI versions.\n\nI'm not positioning myself as a pure software engineer. I'm a technical operator — someone who builds when needed, evaluates technical claims with depth, and bridges engineering teams and business decisions. That combination is what makes me useful in both operating and investing contexts.",
+    "source_type": "qa_story",
+    "section": "skills",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "RAG architecture",
+      "distributed systems",
+      "Hadoop",
+      "Kubernetes",
+      "Next.js",
+      "Python",
+      "TypeScript",
+      "Unity",
+      "VisionOS",
+      "graph neural networks",
+      "vector database",
+      "Pinecone"
+    ],
+    "keywords": [
+      "technical background",
+      "RAG pipeline",
+      "Pinecone",
+      "Next.js",
+      "Python",
+      "Hadoop",
+      "Kubernetes",
+      "Unity",
+      "VisionOS",
+      "GNN",
+      "Gemini",
+      "full-stack",
+      "technical operator"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ai_llms",
+      "full_stack"
+    ],
+    "is_core_strength": true,
+    "token_count": 270
+  },
+  {
+    "chunk_id": "changjo-smart-farm-initiative",
+    "question": "Tell me about the smart farm initiative at Changjo Architecture.",
+    "answer_summary": "Launched an indoor farming initiative from zero domain knowledge. Built and operated farming setups from scratch, devised a novel water-injection method to minimize water usage. The effort grew into a dedicated Smart Farm division within the company. Demonstrates zero-to-one builder instinct even outside core competency.",
+    "text": "When I joined Changjo Architecture in late 2023, the CEO wanted to explore whether the company could expand beyond architecture into frontier technology ventures. One of the first areas we looked at was indoor farming — controlled environment agriculture.\n\nNeither the company nor I had prior experience in agriculture. I started from scratch: building domain knowledge in controlled environment agriculture, studying the technology landscape, doing market sizing, and benchmarking existing solutions.\n\nBut I didn't just research — I built. I set up indoor farming rack systems, ran cultivation experiments, and tested different growing methods hands-on. Through that process, I devised a novel water-injection method that significantly minimized water usage compared to conventional indoor farming approaches.\n\nThe initiative grew into a dedicated Smart Farm division within Changjo Architecture — a new business unit that continued operating after I moved to DUG.\n\nThis project is a good example of how I operate: when I enter a new domain, I don't just analyze from a distance. I build domain knowledge through doing — getting my hands dirty, testing hypotheses, and creating something tangible. That's the same instinct I brought to every role, whether it was enterprise databases, AI startups, spatial computing partnerships, or venture evaluation.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "Changjo Architecture",
+    "role": "Business Development",
+    "start_date": "2023-09",
+    "end_date": "2024-02",
+    "skills": [
+      "new business development",
+      "domain learning",
+      "prototyping",
+      "market research",
+      "zero-to-one building"
+    ],
+    "keywords": [
+      "Changjo Architecture",
+      "smart farm",
+      "indoor farming",
+      "controlled environment agriculture",
+      "water-injection method",
+      "zero domain knowledge",
+      "new business division",
+      "hands-on building"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "full_stack"
+    ],
+    "is_core_strength": false,
+    "token_count": 220
+  },
+  {
+    "chunk_id": "languages-international-experience",
+    "question": "What languages do you speak and how does your international experience shape your work?",
+    "answer_summary": "Native bilingual in Korean and English. Advanced German (TestDAF 5/5/4/5). Lived in Korea, Germany, Austria, and the US. Cross-cultural perspective goes beyond language — understanding assumptions underneath communication, trust-building, and decision-making across different business cultures.",
+    "text": "I'm a native bilingual in Korean and English, and I speak advanced German — I scored 5/5/4/5 on the TestDAF, which is the highest band in three of four sections.\n\nThe German came from living and studying at KIT in Karlsruhe for over a year during my master's program, plus time in Austria. Combined with growing up between Korea and the US, I've lived across four countries and operated in very different cultural and business environments.\n\nBut the real value isn't just speaking multiple languages — it's the cross-cultural lens it gives me. Working across Korean and American contexts isn't just about translation. It's about understanding the assumptions underneath how people communicate, what they value, how they build trust, and what feels natural or uncomfortable to them.\n\nFor example, Korean business relationships often depend on demonstrating sincerity and long-term commitment before getting to the substance. American business culture tends to lead with the value proposition. German culture emphasizes precision and thorough preparation. These aren't just stereotypes — they're real patterns that affect how deals get done, how founders communicate with investors, and how cross-border partnerships are built.\n\nAt DUG, this mattered practically when I was working with Apple (US-headquartered but with a Korean Developer Relations team), Meta (US-based), and Google (US-based with Korean-market considerations). Being able to navigate both cultural registers — and knowing which one to use when — made those relationships smoother.\n\nFor VC, especially in a Korea-US cross-border context, this is a genuine differentiator. I can evaluate founders, build relationships, and support portfolio companies across both markets without the friction that comes from cultural misalignment.",
+    "source_type": "qa_story",
+    "section": "skills",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "Korean",
+      "English",
+      "German",
+      "cross-cultural communication",
+      "international business"
+    ],
+    "keywords": [
+      "trilingual",
+      "Korean",
+      "English",
+      "German",
+      "TestDAF",
+      "cross-cultural",
+      "Korea-US",
+      "Austria",
+      "Germany",
+      "KIT",
+      "cross-border",
+      "cultural lens"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "full_stack",
+      "leadership_strategy"
+    ],
+    "is_core_strength": false,
+    "token_count": 280
+  },
+  {
+    "chunk_id": "tmaxtibero-technical-work",
+    "question": "What technical work did you do at TmaxTibero?",
+    "answer_summary": "Built distributed data infrastructure with Hadoop and Kubernetes. Collaborated on an autonomous database system. As Team Lead, translated enterprise infrastructure needs into product roadmaps through technical discovery with Samsung and Hyundai stakeholders. Benchmarked Oracle and Microsoft platforms. Received Achievement Award.",
+    "text": "At TmaxTibero, I spent three years across two roles — Software Engineer and then Team Lead.\n\nAs a Software Engineer, my core work was building distributed data infrastructure using Hadoop and Kubernetes. I also collaborated on an autonomous database system — a product that aimed to reduce the need for manual database administration. On the competitive intelligence side, I benchmarked database platforms like Oracle and Microsoft and researched global trends in cloud infrastructure and AI-driven data systems to inform our product positioning.\n\nWhen I was promoted to Team Lead, my role shifted toward bridging the technical and business sides. I was the dedicated engineer on the Samsung DBMS migration task force, where I had to coordinate between three groups with different incentives: Samsung's enterprise requirements, our internal delivery team's priorities, and the core DB engineering team's API and roadmap constraints. I translated enterprise infrastructure needs into product roadmaps through technical discovery and strategic planning sessions with C-level stakeholders at both Samsung Electronics and Hyundai.\n\nI received an Achievement Award for exceeding client expectations — specifically for the quality and reliability of the Samsung work.\n\nThe biggest lesson from this period was that technical quality alone doesn't win in enterprise. What matters is whether the solution fits the customer's reality — their timeline, risk tolerance, procurement process, and internal decision-making. That insight fundamentally shaped how I approach both product decisions and startup evaluation.",
+    "source_type": "qa_story",
+    "section": "experience",
+    "company": "TmaxTibero",
+    "role": "Software Engineer → Team Lead",
+    "start_date": "2018-02",
+    "end_date": "2021-05",
+    "skills": [
+      "distributed systems",
+      "Hadoop",
+      "Kubernetes",
+      "database management",
+      "enterprise sales",
+      "stakeholder management",
+      "technical leadership"
+    ],
+    "keywords": [
+      "TmaxTibero",
+      "Hadoop",
+      "Kubernetes",
+      "autonomous database",
+      "Samsung",
+      "Hyundai",
+      "DBMS migration",
+      "Achievement Award",
+      "Oracle",
+      "Microsoft",
+      "enterprise infrastructure",
+      "Team Lead"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ai_llms",
+      "full_stack",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 260
+  },
+  {
+    "chunk_id": "leadership-cross-functional-management",
+    "question": "How do you lead and manage cross-functional teams?",
+    "answer_summary": "Leadership approach shaped by operating as a bridge across stakeholders at every company. At TmaxTibero: coordinated customer, delivery, and engineering teams. At Flint: built decision culture across four co-founders using data. At DUG: managed partnerships across Apple, Meta, Google while coordinating internal engineering, legal, finance, and support functions.",
+    "text": "My leadership style is shaped by one consistent pattern: in every role, I've operated as a bridge between groups with different incentives, timelines, and languages.\n\nAt TmaxTibero, my daily work required coordinating three parties: customer expectations and timelines (Samsung, Hyundai), internal delivery team priorities, and the core DB engineering roadmap. You can't win that triangle with technical skill alone — you win by translating, making trade-offs explicit, and aligning incentives across groups that don't naturally communicate well.\n\nAt Flint, the challenge was different — leading among peers. With four co-founders, decision-making was hard at first. Too many meetings, too many votes. We solved it by building a data-driven decision culture: when we disagreed on product direction, we designed competing UIs and landing pages, released them publicly, and followed the data. That framework — 'disagree but commit, backed by evidence' — became our operating system.\n\nAt DUG, I was essentially a one-person business division managing external partnerships with Apple, Meta, and Google simultaneously, while also helping improve internal functions across HR, finance, legal, and customer support. The key was knowing when to go deep (critical deal negotiations) versus when to set up systems that could run without me (internal process improvements).\n\nThe common thread: I lead by making the implicit explicit — surfacing assumptions, clarifying decision rights, and converting disagreements into testable experiments rather than opinion battles. I've found that the best cross-functional leadership isn't about having authority over everyone; it's about being trusted by everyone because you translate fairly and deliver consistently.",
+    "source_type": "qa_story",
+    "section": "leadership",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "cross-functional leadership",
+      "stakeholder management",
+      "decision-making frameworks",
+      "team building",
+      "bridge building"
+    ],
+    "keywords": [
+      "leadership",
+      "cross-functional",
+      "stakeholder alignment",
+      "bridge building",
+      "decision rights",
+      "data-driven decisions",
+      "disagree but commit",
+      "TmaxTibero",
+      "Flint",
+      "DUG",
+      "Samsung",
+      "Apple",
+      "Meta",
+      "Google"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "business_development",
+      "leadership_strategy"
+    ],
+    "is_core_strength": true,
+    "token_count": 280
+  },
+  {
+    "chunk_id": "final-q15-resume-walkthrough",
+    "question": "Walk me through your resume.",
+    "answer_summary": "Career arc framed as deliberate expansion from building technology to bringing it to market. Five phases: (1) KAIST/KIT foundation — systems + adoption + global mindset, (2) TmaxTibero — enterprise deployment reality, Samsung DBMS migration, (3) Flint — founding, seed funding, shutdown, learned tech-first mistake, (4) DUG — platform partnerships with Apple/Meta/Google, Vision Pro launch, App Store Awards finalist, distribution/timing as durable advantage, (5) Changjo — market research, diligence frameworks. Thread: compounding lenses (technical depth, enterprise adoption, founder reality, platform distribution) → VC as higher leverage role.",
+    "text": "If I summarize my career in one line: I've deliberately expanded from building technology to bringing it to market — and now I want to apply that operating pattern recognition as a VC.\n\nFirst, the foundation. I double-majored in Mechanical Engineering and Industrial Design at KAIST because I was always interested in both sides: how systems work and why people actually adopt products. I also did research in Germany at KIT, which gave me a rigorous engineering mindset and comfort operating globally.\n\nThen I learned enterprise reality at TmaxTibero. I started as an engineer on database infrastructure and worked on large enterprise deployments, including Samsung's DBMS migration. The key lesson was simple: in the real world, technology isn't judged by elegance — it's judged by deployment reality: risk, timelines, stakeholder alignment, and trust. That's where I learned how large organizations actually buy and adopt.\n\nThen I became a founder at Flint. I co-founded an AI startup as COO, raised seed funding and government grants, built the product, navigated pivots — and we eventually shut it down. That experience permanently shaped my judgment. We made a common technical-founder mistake: starting from technology instead of a painful, urgent problem. I learned firsthand that great tech doesn't matter if the behavior loop doesn't stick, and I learned how to make decisions under uncertainty with real consequences.\n\nAfter that I went to Devs United Games to scale. I joined as Director of Business to build the commercial and partnership side of an XR game studio. In about 18 months, I built platform partnerships with Apple, Meta, and Google — including launching on Vision Pro and becoming a finalist for the Apple App Store Awards, entering Meta Quest+, and closing a Google Android XR partnership. That chapter taught me how platform ecosystems work and how distribution and timing create durable advantage.\n\nMost recently, I've been working with Changjo Architecture on new initiatives — market research and strategy across areas like smart agriculture and frontier tech — building diligence frameworks and evaluating companies.\n\nThe thread across all of this is that I've built a set of lenses that compound: technical depth, enterprise adoption, founder reality, and platform distribution. VC is the role where those lenses become higher leverage — I get to back great founders early, help them navigate hard decisions, and apply what I've learned across many companies rather than inside just one.\n\nAnd that's why VC is the logical next step for me.",
+    "source_type": "interview_qa",
+    "section": "final_40_resume_narrative",
+    "company": null,
+    "role": null,
+    "start_date": null,
+    "end_date": null,
+    "skills": [
+      "career narrative",
+      "self-presentation",
+      "strategic communication"
+    ],
+    "keywords": [
+      "resume walkthrough",
+      "career arc",
+      "KAIST",
+      "KIT Germany",
+      "TmaxTibero",
+      "Samsung DBMS",
+      "Flint",
+      "founding",
+      "DUG",
+      "Apple Vision Pro",
+      "Meta Quest+",
+      "Google Android XR",
+      "Changjo Architecture",
+      "compounding lenses",
+      "pattern recognition"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "career_narrative",
+      "self_introduction",
+      "resume"
+    ],
+    "is_core_strength": true,
+    "token_count": 380
+  },
+  {
+    "chunk_id": "changjo-2026-ai-agent-bear-case",
+    "question": "What's the strongest counterargument that AI agents are NOT a platform shift of PC/web/mobile magnitude?",
+    "answer_summary": "Three counterarguments: (1) Trust gap may be structural — agent failures are probabilistic and non-repeatable, unlike deterministic software bugs. Without trust, users stay in the loop and agents stay as assistants. (2) Downstream economic problem — agents only justify higher pricing if they replace headcount, which requires trust first. Incumbents (Microsoft/Google) can bundle agents without standalone ROI pressure. (3) Regulatory — EU AI Act and FDA already impose human-oversight requirements on autonomous AI decisions. Conclusion: important software wave, not yet PC/web/mobile-scale platform reset.",
+    "text": "The strongest counterargument is that the trust gap may be structural, not just a timing problem.\n\nEvery previous platform shift had unreliable early phases — the web had broken pages and failed payments, mobile had crashes and spotty connectivity. But those were engineering problems with deterministic fixes. Agent failures are different. They're probabilistic. The same input can produce different outputs, and when an agent gets something wrong — a payment, a legal clause, a medical recommendation — the failure mode isn't repeatable. You can't just file a bug and patch it. That makes trust fundamentally harder to build, and without trust, users stay in the loop, and agents stay as assistants.\n\nThat trust gap creates a downstream economic problem. In theory, an agent that replaces a full employee is worth far more than a software seat — the buyer is saving on salary, not just on software. So the willingness to pay should be much higher. But that only works if the agent is reliable enough to actually replace the person. If trust isn't there, the human stays in the loop, the headcount doesn't shrink, and the agent becomes just another software cost that has to justify itself against existing tools. Meanwhile, incumbents like Microsoft and Google can bundle agent features into existing subscriptions without needing to prove standalone ROI — which makes it even harder for startups to compete on pricing.\n\nThe third is regulatory. The EU AI Act already classifies autonomous decision-making in hiring, lending, and medical diagnosis as high-risk, requiring human oversight by design. The FDA has separate approval pathways for AI that recommends versus AI that decides. If this pattern holds across industries, human-in-the-loop becomes a regulatory default, and agents stay as copilots regardless of how good the technology becomes.\n\nSo I still believe agents could become a platform shift, but I think there are at least three hard problems — trust, economics, and regulation — that need to be solved before this moves from an important software wave to a true computing reset. Until those gaps close, the default assumption should be: important software wave, not yet PC/web/mobile-scale platform reset.",
+    "source_type": "interview_qa",
+    "section": "deep_dive_changjo_2026",
+    "company": "Changjo Architecture",
+    "role": "Strategy & Research Lead",
+    "skills": [
+      "market analysis",
+      "investment thesis",
+      "critical thinking",
+      "platform shift analysis",
+      "AI ecosystem"
+    ],
+    "keywords": [
+      "AI agents",
+      "platform shift",
+      "counterargument",
+      "bear case",
+      "trust gap",
+      "probabilistic",
+      "deterministic",
+      "SaaS economics",
+      "per-seat pricing",
+      "incumbent bundling",
+      "Microsoft Copilot",
+      "Google Gemini",
+      "EU AI Act",
+      "FDA",
+      "human-in-the-loop",
+      "regulation",
+      "copilot vs operator"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "ai_agent_ecosystem",
+      "investment_thesis",
+      "critical_analysis"
+    ],
+    "is_core_strength": true,
+    "token_count": 310
+  },
+  {
+    "chunk_id": "career-pattern-vc-commitment",
+    "question": "You keep entering new domains every 1-2 years. How do you know you won't get restless in VC after the learning curve flattens?",
+    "answer_summary": "Pattern is not restlessness but consistent attraction to entering unfamiliar territory and building judgment in ambiguity. VC is different because (1) learning curve never flattens — every deal is a new domain with deepening layers, (2) VC only becomes valuable if you stay — judgment compounds over full company cycles, sourcing compounds through founder referrals. VC attracts not for novelty but for compounding of judgment, relationships, and trust.",
+    "text": "That's a fair question, and I understand why my resume can look that way at first glance.\n\nBut I don't think the pattern is restlessness. I think the pattern is that I've consistently been drawn to the same kind of work: entering unfamiliar territory, learning quickly, and building judgment in ambiguous situations.\n\nWhat I've learned about myself is that I stay most engaged when the problem keeps evolving. In roles where the scope became more defined, I felt like I was mainly applying what I already knew rather than developing new judgment. That taught me something important about the environment where I do my best work.\n\nAnd that's exactly why VC feels different to me.\n\nIn VC, the learning curve doesn't flatten in the same way. Every deal is a new domain, and even within one domain, the deeper you go, the more layers appear — technology, market structure, founder psychology, regulation, distribution. The work stays intellectually alive.\n\nBut more importantly, VC only becomes truly valuable if you stay long enough for judgment to compound. The real learning comes from seeing full company cycles — how founders behave when things go wrong, how markets shift after the original thesis, how early signals actually play out over five to ten years. The same is true for sourcing and trust: the founders you help today become the people who refer the next generation of founders. That only works if you're consistent over time.\n\nSo for me, VC is not attractive because it gives me novelty. It's attractive because it gives me compounding — of judgment, relationships, and trust.",
+    "source_type": "interview_qa",
+    "section": "deep_dive_career_pattern",
+    "company": null,
+    "role": null,
+    "skills": [
+      "self-awareness",
+      "career narrative",
+      "commitment framing",
+      "VC motivation"
+    ],
+    "keywords": [
+      "restlessness",
+      "domain switching",
+      "learning curve",
+      "VC commitment",
+      "compounding judgment",
+      "founder relationships",
+      "sourcing",
+      "company cycles",
+      "career pattern",
+      "long-term"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "career_narrative",
+      "vc_motivation",
+      "self_awareness"
+    ],
+    "is_core_strength": true,
+    "token_count": 230
+  },
+  {
+    "chunk_id": "flint-personal-failure-deep-dive",
+    "question": "Of all your experiences, which one did you fail at most clearly, and what specifically did YOU get wrong?",
+    "answer_summary": "Flint — three personal failures: (1) Avoided conflict with cofounders (close friends) when he believed in B2B knowledge retrieval direction — deferred instead of pushing, confusing conflict avoidance with collaboration. (2) Underused investors after raising — arrogant mindset, didn't communicate or ask for advice. (3) Shut down too early — confused friction with rejection, concluded thesis failed before fully exhausting iteration path. Lessons: push conviction early, use the people trying to help, diagnose carefully before quitting.",
+    "text": "Flint, clearly. And the failure was personal, not just circumstantial.\n\nIf I break it down honestly, I got three things wrong.\n\nFirst, I avoided conflict when I should have pushed harder.\nI believed we should move more toward B2B knowledge retrieval, but the team leaned another way, and I deferred. At the time, I told myself I was being collaborative. Looking back, I was avoiding conflict because we were close friends and I didn't want to be the person creating tension. That wasn't maturity — it was a lack of courage.\n\nSecond, I underused our investors after the round.\nWe worked hard to raise from strong people, and then once we had the money, we mostly put our heads down and built. Part of that was focus, but part of it was mindset. I overestimated the value of our internal conviction and underestimated the value of outside perspective. We didn't communicate enough, didn't ask for help, and didn't use the network we had earned access to. That was a mistake.\n\nThird, I shut down too early.\nThis is the one I think about the most. The real mistake wasn't just that we stopped — it's that I concluded too quickly that the thesis had failed, when in reality we had not fully exhausted the iteration path. I confused friction with rejection, and I made that call before we had pushed far enough on simplification, positioning, and usability. That's on me.\n\nWhat I took from that is very specific:\n\n* if I have conviction, I need to push clearly and early;\n* if people are trying to help, I need to use them;\n* and if something isn't working, I need to diagnose more carefully before deciding it's dead.\n\nThose lessons changed how I operate, and they're also part of how I evaluate founders now.",
+    "source_type": "interview_qa",
+    "section": "deep_dive_flint_failure",
+    "company": "Flint Technologies",
+    "role": "COO / Co-founder",
+    "skills": [
+      "self-awareness",
+      "conflict management",
+      "investor relations",
+      "founder psychology",
+      "persistence"
+    ],
+    "keywords": [
+      "Flint",
+      "failure",
+      "personal accountability",
+      "conflict avoidance",
+      "B2B knowledge retrieval",
+      "investor communication",
+      "shutting down",
+      "gave up too early",
+      "conviction",
+      "founder lessons",
+      "friendship dynamics",
+      "deference"
+    ],
+    "depth": "deep_dive",
+    "focus_tags": [
+      "founder_experience",
+      "self_awareness",
+      "failure_lessons"
+    ],
+    "is_core_strength": true,
+    "token_count": 270
   }
 ]
