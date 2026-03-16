@@ -254,7 +254,7 @@ function ContextAssemblyDetail({ data }: { data: Record<string, unknown> }) {
 function QueryRewritePromptDetail({ data }: { data: Record<string, unknown> }) {
   return (
     <div>
-      <Row label="Target"><Pill color="blue">gemini-2.0-flash</Pill></Row>
+      <Row label="Target"><Pill color="blue">gpt-5.4</Pill></Row>
       <PromptBlock label="Full prompt" text={String(data.prompt)} />
     </div>
   );

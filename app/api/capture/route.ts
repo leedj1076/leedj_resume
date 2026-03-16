@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 
 export const maxDuration = 60;
 
@@ -86,10 +86,9 @@ export async function POST(req: Request) {
     const modelMessages = await convertToModelMessages(messages);
 
     const result = streamText({
-      model: google("gemini-2.5-flash"),
+      model: openai("gpt-5.4"),
       system: INTERVIEW_SYSTEM_PROMPT,
       messages: modelMessages,
-      temperature: 0.7,
       maxOutputTokens: 1024,
     });
 

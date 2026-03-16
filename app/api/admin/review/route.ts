@@ -1,5 +1,5 @@
 import { embed } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { supabase } from "@/lib/supabase";
 import { getResumeIndex } from "@/lib/pinecone";
 
@@ -55,9 +55,8 @@ export async function POST(req: Request) {
 
       // Embed the original question so similar future queries match this correction
       const { embedding } = await embed({
-        model: google.embedding("gemini-embedding-001"),
+        model: openai.embedding("text-embedding-3-large"),
         value: exchange.query.slice(0, 2000),
-        providerOptions: { google: { taskType: "RETRIEVAL_DOCUMENT" } },
       });
 
       const index = getResumeIndex();

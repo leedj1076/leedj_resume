@@ -1,5 +1,5 @@
 import { streamText, generateText, embed, convertToModelMessages, createUIMessageStreamResponse } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { getResumeIndex } from "@/lib/pinecone";
 import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
 import { validateVisitorData } from "@/lib/visitor-data";
@@ -238,8 +238,7 @@ export async function POST(req: Request) {
       const responseLang = lang === "ko" ? "Korean" : "English";
 
       const { text: welcome } = await generateText({
-        model: google("gemini-2.5-flash"),
-        temperature: 0.4,
+        model: openai("gpt-5.4"),
         maxOutputTokens: 300,
         prompt: `You are the professional whose resume is provided below. Write a warm, personalized 2-3 sentence welcome message in ${responseLang}.
 ${PERSONA_TONE[persona]}
@@ -355,14 +354,13 @@ Output ONLY valid JSON, no markdown fences or extra text.
 
 ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}`;
 
-      addTrace("Query Rewrite Prompt", `Sent to gemini-2.0-flash (${rewritePrompt.length} chars)`, {
+      addTrace("Query Rewrite Prompt", `Sent to gpt-5.4 (${rewritePrompt.length} chars)`, {
         prompt: rewritePrompt,
       });
 
       ({ text: rewriteResult } = await generateText({
-        model: google("gemini-2.0-flash"),
-        temperature: 0,
-        maxOutputTokens: 250,
+        model: openai("gpt-5.4"),
+        maxOutputTokens: 1000,
         prompt: rewritePrompt,
       }));
 
@@ -457,24 +455,22 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
     const rawQueryDiffers = retrievalQuery !== truncatedQuery;
     const embeddingPromises = [
       embed({
-        model: google.embedding("gemini-embedding-001"),
+        model: openai.embedding("text-embedding-3-large"),
         value: retrievalQuery.slice(0, 2000),
-        providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
       }),
       ...(rawQueryDiffers && intent !== "broad" ? [
         embed({
-          model: google.embedding("gemini-embedding-001"),
+          model: openai.embedding("text-embedding-3-large"),
           value: truncatedQuery.slice(0, 2000),
-          providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
-        }),
+          }),
       ] : []),
     ];
     const embeddingResults = await Promise.all(embeddingPromises);
     const { embedding } = embeddingResults[0];
     const rawEmbedding = rawQueryDiffers && intent !== "broad" ? embeddingResults[1]?.embedding : null;
 
-    addTrace("Embedding", `Embedded ${retrievalQuery.length} chars${rawEmbedding ? ' + raw query' : ''} with gemini-embedding-001`, {
-      model: "gemini-embedding-001",
+    addTrace("Embedding", `Embedded ${retrievalQuery.length} chars${rawEmbedding ? ' + raw query' : ''} with text-embedding-3-large`, {
+      model: "text-embedding-3-large",
       queryLength: retrievalQuery.length,
       embeddingDimensions: embedding.length,
       hasRawEmbedding: !!rawEmbedding,
@@ -856,19 +852,17 @@ ${FOCUS_HIGHLIGHT[focus]}
 --- MY RESUME ---
 ${context}`;
 
-    addTrace("Generation", `model=gemini-2.5-flash | mode=${answerMode} | ${directMatchChunk ? 'direct_match' : intent === 'broad' ? 'overview' : 'standard'}`, {
-      model: "gemini-2.5-flash",
+    addTrace("Generation", `model=gpt-5.4 | mode=${answerMode} | ${directMatchChunk ? 'direct_match' : intent === 'broad' ? 'overview' : 'standard'}`, {
+      model: "gpt-5.4",
       answerMode,
       responseMode: directMatchChunk ? "direct_match" : intent === "broad" ? "overview" : "standard",
-      temperature: 0.3,
       maxOutputTokens: 2048,
       contextLength: context.length,
       systemPrompt,
     });
 
     const result = streamText({
-      model: google("gemini-2.5-flash"),
-      temperature: 0.3,
+      model: openai("gpt-5.4"),
       maxOutputTokens: 2048,
       abortSignal: req.signal,
       system: systemPrompt,

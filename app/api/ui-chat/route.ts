@@ -1,5 +1,5 @@
 import { generateText, embed } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { getResumeIndex } from "@/lib/pinecone";
 import {
   PERSONA_TONE,
@@ -57,9 +57,8 @@ export async function POST(req: Request) {
 
     // 1. Embed the query
     const { embedding } = await embed({
-      model: google.embedding("gemini-embedding-001"),
+      model: openai.embedding("text-embedding-3-large"),
       value: truncatedQuery,
-      providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
     });
 
     // 2. Query Pinecone — semantic + pinned + focus-filtered
@@ -184,9 +183,8 @@ export async function POST(req: Request) {
     const modePrompt = ANSWER_MODE_PROMPTS[answerMode];
 
     const { text } = await generateText({
-      model: google("gemini-2.5-flash"),
-      temperature: 0.3,
-      maxOutputTokens: 1024,
+      model: openai("gpt-5.4"),
+      maxOutputTokens: 2048,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.
 

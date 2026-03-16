@@ -1,5 +1,5 @@
 import { embed } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { getPineconeClient } from "../lib/pinecone";
 import { detectFilter, getCompanyOverviewId } from "../lib/entity-detection";
 
@@ -107,9 +107,8 @@ async function runEval() {
 
     // 2. Embed query
     const { embedding } = await embed({
-      model: google.embedding("gemini-embedding-001"),
+      model: openai.embedding("text-embedding-3-large"),
       value: query,
-      providerOptions: { google: { taskType: "RETRIEVAL_QUERY" } },
     });
 
     // 3. Build pinned IDs

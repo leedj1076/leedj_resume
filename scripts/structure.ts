@@ -1,5 +1,5 @@
 import { generateObject, embed } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { getPineconeClient } from "../lib/pinecone";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
@@ -177,7 +177,7 @@ async function main() {
 
     try {
       const { object: entries } = await generateObject({
-        model: google("gemini-2.0-flash"),
+        model: openai("gpt-5.4"),
         schema: z.object({ entries: z.array(KnowledgeEntrySchema) }),
         system: STRUCTURING_PROMPT,
         prompt: `INTERVIEWER QUESTION:\n${question}\n\nDJ'S ANSWER:\n${answer}`,
@@ -297,9 +297,8 @@ async function checkDuplicate(
 ): Promise<boolean> {
   // Embed new text
   const { embedding: newEmb } = await embed({
-    model: google.embedding("gemini-embedding-001"),
+    model: openai.embedding("text-embedding-3-large"),
     value: newText,
-    providerOptions: { google: { taskType: "RETRIEVAL_DOCUMENT" } },
   });
 
   // Check against Pinecone for similarity

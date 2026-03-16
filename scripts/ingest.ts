@@ -1,5 +1,5 @@
 import { embedMany } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { getPineconeClient } from "../lib/pinecone";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
@@ -160,11 +160,10 @@ async function main() {
   const enrichedTexts = allEntries.map(buildEnrichedText);
 
   // 5. Generate embeddings
-  console.log("Generating embeddings with gemini-embedding-001...");
+  console.log("Generating embeddings with text-embedding-3-large...");
   const { embeddings } = await embedMany({
-    model: google.embedding("gemini-embedding-001"),
+    model: openai.embedding("text-embedding-3-large"),
     values: enrichedTexts,
-    providerOptions: { google: { taskType: "RETRIEVAL_DOCUMENT" } },
   });
   console.log(
     `Generated ${embeddings.length} embeddings (dim=${embeddings[0].length})`
@@ -196,10 +195,14 @@ async function main() {
     console.log(`Index "${indexName}" already exists`);
   }
 
-  // 7. Delete all existing vectors in namespace
+  // 7. Delete all existing vectors in namespace (skip on error for fresh index)
   const index = pc.index(indexName);
-  console.log(`Deleting all existing vectors in namespace "${NAMESPACE}"...`);
-  await index.namespace(NAMESPACE).deleteAll();
+  try {
+    console.log(`Deleting all existing vectors in namespace "${NAMESPACE}"...`);
+    await index.namespace(NAMESPACE).deleteAll();
+  } catch (err) {
+    console.log("Delete skipped (index may be freshly created):", (err as Error).message?.slice(0, 100));
+  }
 
   // 8. Upsert vectors with metadata
   const vectors = allEntries.map((entry, i) => {

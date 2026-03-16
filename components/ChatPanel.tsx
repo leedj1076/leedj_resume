@@ -59,6 +59,7 @@ export default function ChatPanel({
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const en = lang === "en";
   const isLoading = status === "submitted" || status === "streaming";
@@ -181,8 +182,19 @@ export default function ChatPanel({
     doc.save(`dj-lee-chat-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
+  // Scroll to bottom — use instant scroll during streaming to avoid
+  // smooth-scroll conflicts that cause bouncing with reasoning models (GPT-5.4)
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = scrollRef.current;
+    if (!el) return;
+    const isStreaming = status === "streaming";
+    if (isStreaming) {
+      // During streaming: snap to bottom instantly (no smooth animation conflicts)
+      el.scrollTop = el.scrollHeight;
+    } else {
+      // After completion or new user message: smooth scroll
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, status]);
 
   // Auto-resize textarea
@@ -305,7 +317,7 @@ export default function ChatPanel({
       </div>
 
       {/* Messages */}
-      <div className="profile-scroll flex-1 overflow-y-auto px-6 py-4">
+      <div ref={scrollRef} className="profile-scroll flex-1 overflow-y-auto px-6 py-4">
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="animate-[fadeIn_0.4s_ease-out]">
