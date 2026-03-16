@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfileAppLoader from "@/components/ProfileAppLoader";
+
+const STORAGE_KEY = "admin_password";
 
 export default function InternalPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  // Auto-login from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) { setChecking(false); return; }
+    fetch("/api/admin/stats", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: saved }),
+    }).then((res) => {
+      if (res.ok) setAuthenticated(true);
+      else localStorage.removeItem(STORAGE_KEY);
+    }).catch(() => {
+      localStorage.removeItem(STORAGE_KEY);
+    }).finally(() => setChecking(false));
+  }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,12 +39,21 @@ export default function InternalPage() {
         setAuthError(true);
         return;
       }
+      localStorage.setItem(STORAGE_KEY, passwordInput);
       setAuthenticated(true);
       setAuthError(false);
     } catch {
       setAuthError(true);
     }
   };
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-400 text-sm">Checking session...</p>
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return (

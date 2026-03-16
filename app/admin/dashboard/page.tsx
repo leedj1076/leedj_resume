@@ -73,6 +73,7 @@ export default function AdminDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState(false);
+  const [checking, setChecking] = useState(true);
   const passwordRef = useRef("");
 
   const [tab, setTab] = useState<"review" | "analytics" | "settings">("review");
@@ -103,6 +104,30 @@ export default function AdminDashboard() {
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
 
+  // Auto-login from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("admin_password");
+    if (!saved) { setChecking(false); return; }
+    fetch("/api/admin/exchanges", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: saved, page: 1, view: "sessions" }),
+    }).then(async (res) => {
+      if (res.ok) {
+        passwordRef.current = saved;
+        setAuthenticated(true);
+        const data = await res.json();
+        setSessions(data.sessions ?? []);
+        setTotalSessions(data.totalSessions ?? 0);
+      } else {
+        localStorage.removeItem("admin_password");
+      }
+    }).catch(() => {
+      localStorage.removeItem("admin_password");
+    }).finally(() => setChecking(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleAuth = async () => {
     try {
       const res = await fetch("/api/admin/exchanges", {
@@ -115,6 +140,7 @@ export default function AdminDashboard() {
         return;
       }
       passwordRef.current = passwordInput;
+      localStorage.setItem("admin_password", passwordInput);
       setAuthenticated(true);
       setAuthError(false);
       const data = await res.json();
@@ -263,6 +289,13 @@ export default function AdminDashboard() {
   const totalPages = Math.ceil(totalSessions / 10);
 
   // --- Password gate ---
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-400 text-sm">Checking session...</p>
+      </div>
+    );
+  }
   if (!authenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -302,9 +335,21 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">
-            Admin Dashboard
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-semibold text-gray-900">
+              Admin Dashboard
+            </h1>
+            <button
+              onClick={() => {
+                if (tab === "review") fetchSessions(page, filter, personaFilter);
+                else if (tab === "analytics") fetchStats();
+              }}
+              title="Refresh data"
+              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+            </button>
+          </div>
           <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
             <button
               onClick={() => setTab("review")}
