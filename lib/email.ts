@@ -1,3 +1,4 @@
+import { waitUntil } from "@vercel/functions";
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -16,8 +17,10 @@ export function sendNewSessionAlert(data: {
 
   const timestamp = new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" });
 
-  resend.emails
-    .send({
+  // Keep the function alive until the send settles (see lib/analytics.ts)
+  waitUntil(
+    resend.emails
+      .send({
       from: "Ask DJ <onboarding@resend.dev>",
       to: "leedj.1076@gmail.com",
       subject: `New visitor: ${data.visitorEmail || "anonymous"}`,
@@ -30,11 +33,12 @@ export function sendNewSessionAlert(data: {
         <p><strong>Session:</strong> ${data.sessionId}</p>
         <p><strong>Time (KST):</strong> ${timestamp}</p>`,
     })
-    .then((result) => {
-      if (result.error) {
-        console.error("[EMAIL] Resend error:", result.error.message);
-      } else {
-        console.log("[EMAIL] Alert sent for session:", data.sessionId);
-      }
-    });
+      .then((result) => {
+        if (result.error) {
+          console.error("[EMAIL] Resend error:", result.error.message);
+        } else {
+          console.log("[EMAIL] Alert sent for session:", data.sessionId);
+        }
+      })
+  );
 }

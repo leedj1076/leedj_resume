@@ -252,7 +252,7 @@ ${context}
 --- END ---`,
       });
 
-      if (!skipTracking) logAnalytics({ type: "init", persona, focus, lang, timestamp: new Date().toISOString(), visitorEmail });
+      if (!skipTracking) logAnalytics({ type: "init", sessionId: sessionId ?? "", persona, focus, lang, timestamp: new Date().toISOString(), visitorEmail });
 
       return new Response(
         JSON.stringify({ welcome }),
@@ -407,6 +407,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       if (!skipTracking) {
         logAnalytics({
           type: "query",
+          sessionId: sessionId ?? "",
           query: truncatedQuery.slice(0, 200),
           persona,
           focus,
@@ -777,6 +778,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
     if (!skipTracking) {
       logAnalytics({
         type: "query",
+        sessionId: sessionId ?? "",
         query: truncatedQuery.slice(0, 200),
         persona,
         focus,
