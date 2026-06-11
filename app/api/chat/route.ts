@@ -6,9 +6,11 @@ import { validateVisitorData } from "@/lib/visitor-data";
 import {
   PERSONA_SECTION_WEIGHTS,
   PERSONA_TONE,
+  PERSONA_FOLLOWUP_HINT,
   FOCUS_HIGHLIGHT,
   FOCUS_SKILL_TERMS,
   CORE_STRENGTH_IDS,
+  personaChunkAdjustment,
 } from "@/lib/persona-config";
 import { logAnalytics, logExchange } from "@/lib/analytics";
 import { sendNewSessionAlert } from "@/lib/email";
@@ -192,7 +194,8 @@ function scoreChunk(
     focus !== "full_stack" && chunk.skills.some((s) => focusTerms.includes(s))
       ? 1.25
       : 1.0;
-  return sectionWeight * coreStrengthBonus * focusMatchBonus;
+  const personaAdjustment = personaChunkAdjustment(persona, chunk);
+  return sectionWeight * coreStrengthBonus * focusMatchBonus * personaAdjustment;
 }
 
 export async function POST(req: Request) {
@@ -653,15 +656,35 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       });
       const rawQaMatches = (rawQaResults as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches;
 
-      // Detect direct match using raw scores (same embedding space)
-      if (rawQaMatches.length >= 1 && (rawQaMatches[0].score ?? 0) >= 0.72) {
-        const topScore = rawQaMatches[0].score ?? 0;
-        const gap = rawQaMatches.length >= 2
-          ? topScore - (rawQaMatches[1].score ?? 0)
+      // Detect direct match using raw scores (same embedding space).
+      // Persona dampening (capped at 1.0): off-persona prepared answers must
+      // clear a higher similarity bar to own the response — e.g. VC-framed
+      // answers for the recruiter persona. The cap keeps boosts from
+      // promoting weak matches into false directs.
+      const dampened = rawQaMatches
+        .map((m) => ({
+          match: m,
+          adjScore:
+            (m.score ?? 0) *
+            Math.min(
+              1.0,
+              personaChunkAdjustment(persona, {
+                id: m.id,
+                section: (m.metadata?.section as string) ?? "",
+                skills: (m.metadata?.skills as string[]) ?? [],
+              })
+            ),
+        }))
+        .sort((a, b) => b.adjScore - a.adjScore);
+
+      if (dampened.length >= 1 && dampened[0].adjScore >= 0.72) {
+        const topScore = dampened[0].adjScore;
+        const gap = dampened.length >= 2
+          ? topScore - dampened[1].adjScore
           : 1;
         if (gap >= 0.03 || topScore >= 0.85) {
           // Build the ChunkRecord for the match (may already exist in chunks)
-          const match = rawQaMatches[0];
+          const match = dampened[0].match;
           directMatchChunk = chunks.get(match.id) ?? (match.metadata?.enrichedText ? {
             id: match.id,
             enrichedText: match.metadata.enrichedText as string,
@@ -669,7 +692,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
             section: (match.metadata.section as string) ?? "",
             skills: (match.metadata.skills as string[]) ?? [],
             isCoreStrength: (match.metadata.is_core_strength as boolean) ?? false,
-            pineconeScore: topScore,
+            pineconeScore: match.score ?? 0,
             question: (match.metadata.question as string) || undefined,
             chunkType: (match.metadata.chunk_type as string) || undefined,
           } : null);
@@ -841,7 +864,7 @@ PRIVACY:
 
 ${Array.isArray(coveredTopics) && coveredTopics.length > 0
   ? `TOPICS ALREADY DISCUSSED IN THIS SESSION: ${coveredTopics.join(", ")}\n\n` : ""}FOLLOW-UP QUESTIONS:
-At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. Use a polite, professional interview tone — second person ("you/your"), e.g. "Could you tell me about..." or "How did you approach...". These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Do NOT suggest questions about topics already discussed (listed above) — steer toward fresh, unexplored areas. Match the language of your response. Format:
+At the very end of every response, suggest exactly 2 brief follow-up questions the visitor might want to ask next. Use a polite, professional interview tone — second person ("you/your"), e.g. "Could you tell me about..." or "How did you approach...". These must be specific to what was just discussed AND answerable from the resume context provided. Do NOT suggest questions about topics not covered in the context — only suggest questions you can actually answer well. Do NOT suggest questions about topics already discussed (listed above) — steer toward fresh, unexplored areas. ${PERSONA_FOLLOWUP_HINT[persona]} Match the language of your response. Format:
 <followup>
 First question?
 Second question?

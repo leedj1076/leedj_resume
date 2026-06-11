@@ -14,19 +14,20 @@ import type { Persona, Focus } from "@/lib/types";
 
 // Map prototype persona/focus IDs → real IDs
 const PERSONA_MAP: Record<string, Persona> = {
-  recruiter: "vc",
-  founder: "founder",
-  partner: "partner",
+  recruiter: "recruiter",
+  founder: "founder_partner",
+  partner: "founder_partner",
+  founder_partner: "founder_partner",
   curious_visitor: "curious_visitor",
   // Legacy aliases
   vc: "vc",
   strategy: "vc",
-  bd: "partner",
-  hiring: "vc",
+  bd: "founder_partner",
+  hiring: "recruiter",
   vc_investor: "vc",
   corporate_strategy: "vc",
-  bd_partnerships: "partner",
-  hiring_manager: "vc",
+  bd_partnerships: "founder_partner",
+  hiring_manager: "recruiter",
 };
 
 const FOCUS_MAP: Record<string, Focus> = {

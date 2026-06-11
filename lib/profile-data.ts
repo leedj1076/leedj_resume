@@ -310,9 +310,9 @@ export const PORTFOLIO: PortfolioItem[] = [
 ];
 
 export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
+  { value: "recruiter", en: "Recruiter", kr: "채용 담당자" },
   { value: "vc", en: "VC", kr: "VC" },
-  { value: "founder", en: "Founder", kr: "창업자" },
-  { value: "partner", en: "Partner", kr: "파트너" },
+  { value: "founder_partner", en: "Founder / Partner", kr: "창업자 / 파트너" },
   { value: "curious_visitor", en: "Curious Visitor", kr: "방문자" },
 ];
 
@@ -336,6 +336,24 @@ export const STARTER_QUESTIONS: Record<Lang, string[]> = {
 };
 
 export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, string[]>>> = {
+  recruiter: {
+    en: [
+      "What hands-on experience does DJ have building AI or ML-based products?",
+      "Tell me about a product DJ took from zero to one.",
+      "Tell me about a technically uncertain project DJ led end-to-end.",
+      "How does DJ design metrics and use A/B testing to improve a product?",
+      "What measurable outcomes has DJ driven as a product owner?",
+      "What is DJ's perspective on AI agents and where they're heading?",
+    ],
+    kr: [
+      "DJ가 AI/ML 기반 제품을 직접 만든 경험을 말씀해 주세요.",
+      "DJ가 제품을 0에서 1로 만든 경험을 말씀해 주세요.",
+      "기술적 불확실성이 큰 프로젝트를 끝까지 리딩한 경험이 있나요?",
+      "DJ는 지표 설계와 A/B 테스트를 어떻게 활용하나요?",
+      "DJ가 프로덕트 오너로서 만든 측정 가능한 성과는 무엇인가요?",
+      "AI 에이전트의 방향성에 대한 DJ의 관점은 무엇인가요?",
+    ],
+  },
   vc: {
     en: [
       "Why does DJ want to transition into venture capital?",
@@ -354,40 +372,22 @@ export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, stri
       "DJ는 기술 실사와 비즈니스 판단을 어떻게 연결하나요?",
     ],
   },
-  founder: {
+  founder_partner: {
     en: [
       "What did founding Flint teach you about building products?",
       "How did you build the Apple partnership from scratch?",
-      "What's your approach to finding product-market fit?",
-      "How did you make decisions with four co-founders?",
-      "Could you tell me about your fundraising experience at Flint?",
+      "Could you tell me about the Meta Quest+ revenue deal?",
       "What's the hardest lesson you learned from startup failure?",
+      "How do you handle complex multi-stakeholder negotiations?",
+      "Could you tell me about your fundraising experience at Flint?",
     ],
     kr: [
       "Flint 창업이 제품 만들기에 대해 무엇을 가르쳐줬나요?",
       "Apple 파트너십을 어떻게 처음부터 구축했나요?",
-      "제품-시장 적합성을 찾는 접근 방식은 어떤가요?",
-      "네 명의 공동창업자와 어떻게 의사결정했나요?",
-      "Flint에서의 투자유치 경험에 대해 말씀해 주시겠어요?",
-      "스타트업 실패에서 배운 가장 어려운 교훈은 무엇인가요?",
-    ],
-  },
-  partner: {
-    en: [
-      "How did you negotiate the Apple spatial computing partnership?",
-      "What's your approach to building strategic partnerships?",
-      "Could you tell me about the Meta Quest+ revenue deal?",
-      "How do you identify and evaluate potential partners?",
-      "What was your BD strategy at Devs United Games?",
-      "How do you handle complex multi-stakeholder negotiations?",
-    ],
-    kr: [
-      "Apple 공간 컴퓨팅 파트너십을 어떻게 협상하셨나요?",
-      "전략적 파트너십 구축에 대한 접근 방식은 어떤가요?",
       "Meta Quest+ 수익 딜에 대해 말씀해 주시겠어요?",
-      "잠재적 파트너를 어떻게 발굴하고 평가하시나요?",
-      "Devs United Games에서의 BD 전략은 무엇이었나요?",
+      "스타트업 실패에서 배운 가장 어려운 교훈은 무엇인가요?",
       "복잡한 다자간 협상을 어떻게 처리하시나요?",
+      "Flint에서의 투자유치 경험에 대해 말씀해 주시겠어요?",
     ],
   },
   curious_visitor: {

@@ -6,9 +6,9 @@ import type { Persona, Focus, VisitorData } from "@/lib/types";
 type Lang = "en" | "ko";
 
 const PERSONA_OPTIONS: { value: Persona; en: string; ko: string }[] = [
+  { value: "recruiter", en: "Recruiter", ko: "채용 담당자" },
   { value: "vc", en: "VC", ko: "VC" },
-  { value: "founder", en: "Founder", ko: "창업자" },
-  { value: "partner", en: "Partner", ko: "파트너" },
+  { value: "founder_partner", en: "Founder / Partner", ko: "창업자 / 파트너" },
   { value: "curious_visitor", en: "Curious Visitor", ko: "방문자" },
 ];
 

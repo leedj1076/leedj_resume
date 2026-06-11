@@ -1,9 +1,9 @@
 import type { UIMessage } from "ai";
 
 export type Persona =
+  | "recruiter"
   | "vc"
-  | "founder"
-  | "partner"
+  | "founder_partner"
   | "curious_visitor";
 
 export type Focus =
