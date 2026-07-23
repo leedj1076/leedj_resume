@@ -346,7 +346,7 @@ Analyze the visitor's question (and optional conversation context) and return a 
 Intent rules:
 - "specific": question targets a known topic, company, role, skill, or story (e.g. "How did you build the Apple partnership?", "What was your role at Flint?")
 - "broad": question covers a wide area (e.g. "tell me about yourself", "what's your background?", "what's your experience?", "자기소개 해주세요")
-- "ambiguous": unclear what the user is asking — vague pronouns without context, off-topic, or too vague to retrieve meaningfully (e.g. "how about that thing?", "what do you think?", "그거 어떻게 했어요?" without prior context)
+- "ambiguous": the QUESTION ITSELF is unclear — vague pronouns with no referent, or too vague to know what is being asked (e.g. "how about that thing?", "what do you think?", "그거 어떻게 했어요?" without prior context). Do NOT mark a clear question "ambiguous" just because it falls outside DJ's resume — hypotheticals, personal motivations, or topics not in his background should be classified "specific" so they can be answered from context or honestly declined, NOT sent back for clarification.
 
 Query rules:
 - Expand vague references: "your startup" → "Flint Technologies co-founder COO startup", "gaming company" → "Devs United Games XR spatial computing"
