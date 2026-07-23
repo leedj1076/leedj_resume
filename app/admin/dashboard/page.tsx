@@ -632,9 +632,11 @@ function ReviewTab({
                   <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 shrink-0">
                     {PERSONA_LABELS[session.persona] ?? session.persona}
                   </span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 shrink-0">
-                    {session.focus}
-                  </span>
+                  {session.focus && session.focus !== "full_stack" && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 shrink-0">
+                      {session.focus}
+                    </span>
+                  )}
                   <span
                     className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 shrink-0"
                     title="Entry source"
@@ -858,7 +860,9 @@ function AnalyticsTab({
         />
         <DistributionCard
           title="Focus Area Distribution (by session)"
-          data={stats.focusCounts}
+          data={Object.fromEntries(
+            Object.entries(stats.focusCounts).filter(([k]) => k !== "full_stack")
+          )}
           color="purple"
         />
         <DistributionCard
