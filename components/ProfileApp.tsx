@@ -205,7 +205,7 @@ export default function ProfileApp({
               onClick={() => setPersona(opt.value)}
               className={`rounded-full text-[11px] px-2.5 py-1 h-auto ${
                 persona === opt.value
-                  ? "bg-[var(--color-key)] text-white border-[var(--color-key)] font-medium hover:bg-[var(--color-key)] hover:text-white"
+                  ? "bg-[var(--color-key)] dark:bg-[var(--color-key)] text-white border-[var(--color-key)] dark:border-[var(--color-key)] font-medium hover:bg-[var(--color-key)] dark:hover:bg-[var(--color-key)] hover:text-white"
                   : "bg-[var(--color-page-bg)] text-[var(--color-text-tertiary)] border-[var(--color-border-secondary)] hover:border-[var(--color-hover-border)]"
               }`}
             >

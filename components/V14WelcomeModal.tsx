@@ -97,8 +97,8 @@ export default function V14WelcomeModal({ onStart, options, defaultPersona }: V1
                 onClick={() => setPersona(opt.value)}
                 className={`py-2.5 h-auto text-[14px] rounded-lg whitespace-normal ${
                   persona === opt.value
-                    ? "bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
-                    : "bg-[var(--color-page-bg)] text-[var(--color-text-primary)] border-[var(--color-border-secondary)] hover:border-[var(--color-hover-border)]"
+                    ? "bg-[var(--color-surface-inverted)] dark:bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] dark:text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] dark:border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] dark:hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
+                    : "bg-[var(--color-page-bg)] dark:bg-[var(--color-page-bg)] text-[var(--color-text-primary)] dark:text-[var(--color-text-primary)] border-[var(--color-border-secondary)] dark:border-[var(--color-border-secondary)] hover:border-[var(--color-hover-border)]"
                 }`}
               >
                 {en ? opt.en : opt.kr}
