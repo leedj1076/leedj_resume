@@ -5,6 +5,7 @@ const VALID_PERSONAS: Persona[] = [
   "vc",
   "founder_partner",
   "curious_visitor",
+  "developer_partnerships",
 ];
 
 // Old persona keys may arrive from stale client bundles or replayed sessions

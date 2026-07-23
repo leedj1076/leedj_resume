@@ -184,7 +184,7 @@ export async function POST(req: Request) {
     const modePrompt = ANSWER_MODE_PROMPTS[answerMode];
 
     const { text } = await generateText({
-      model: openai("gpt-5.4"),
+      model: openai("gpt-5.6-terra"),
       maxOutputTokens: 2048,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.

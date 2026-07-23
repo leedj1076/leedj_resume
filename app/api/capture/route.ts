@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     const modelMessages = await convertToModelMessages(messages);
 
     const result = streamText({
-      model: openai("gpt-5.4"),
+      model: openai("gpt-5.6-terra"),
       system: INTERVIEW_SYSTEM_PROMPT,
       messages: modelMessages,
       maxOutputTokens: 1024,

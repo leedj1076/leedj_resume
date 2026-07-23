@@ -22,9 +22,36 @@ function shuffleIndices(length: number, pick: number): number[] {
   return indices.slice(0, pick);
 }
 
-export default function ProfileApp({ internal }: { internal?: boolean } = {}) {
+export default function ProfileApp({
+  internal,
+  visiblePersonas,
+  personaLabels,
+}: {
+  internal?: boolean;
+  visiblePersonas?: string[];
+  personaLabels?: Record<string, { en: string; kr: string }>;
+} = {}) {
   const [lang, setLang] = useState<Lang>("en");
-  const [persona, setPersona] = useState("vc");
+  // Apply admin-edited display names over the static defaults.
+  const labeledOptions = V14_PERSONA_OPTIONS.map((o) => ({
+    value: o.value,
+    en: personaLabels?.[o.value]?.en ?? o.en,
+    kr: personaLabels?.[o.value]?.kr ?? o.kr,
+  }));
+  // Internal admin view always shows every persona; the public profile is
+  // filtered to the admin-selected set. Empty/undefined falls back to all.
+  const filteredPersonaOptions = visiblePersonas
+    ? labeledOptions.filter((o) => visiblePersonas.includes(o.value))
+    : labeledOptions;
+  const personaOptions =
+    internal || filteredPersonaOptions.length === 0
+      ? labeledOptions
+      : filteredPersonaOptions;
+  const [persona, setPersona] = useState(
+    personaOptions.some((o) => o.value === "vc")
+      ? "vc"
+      : personaOptions[0]?.value ?? "vc"
+  );
   const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
   const [sessionId] = useState(() => crypto.randomUUID());
   const [darkMode, setDarkMode] = useState(false);
@@ -163,7 +190,7 @@ export default function ProfileApp({ internal }: { internal?: boolean } = {}) {
 
         {/* Persona pills — desktop */}
         <div className="hidden sm:flex items-center gap-1">
-          {V14_PERSONA_OPTIONS.map((opt) => (
+          {personaOptions.map((opt) => (
             <Button
               key={opt.value}
               variant="outline"
@@ -329,7 +356,7 @@ export default function ProfileApp({ internal }: { internal?: boolean } = {}) {
 
       {/* Welcome modal */}
       {showWelcome && (
-        <V14WelcomeModal onStart={handleWelcomeStart} />
+        <V14WelcomeModal onStart={handleWelcomeStart} options={personaOptions} />
       )}
     </div>
   );

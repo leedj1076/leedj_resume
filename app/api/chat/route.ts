@@ -11,6 +11,7 @@ import {
   FOCUS_SKILL_TERMS,
   CORE_STRENGTH_IDS,
   personaChunkAdjustment,
+  getSuppressedChunkIds,
 } from "@/lib/persona-config";
 import { logAnalytics, logExchange } from "@/lib/analytics";
 import { sendNewSessionAlert } from "@/lib/email";
@@ -222,6 +223,9 @@ export async function POST(req: Request) {
     }
     const visitorData = validateVisitorData(body.visitorData);
     const { persona, focus } = visitorData;
+    // Invisible landmines: chunk_ids this persona must never surface (see
+    // PERSONA_SUPPRESSED_CHUNKS). Dropped from candidates before the LLM sees them.
+    const suppressedIds = getSuppressedChunkIds(persona);
 
     // --- Cold-start init handler ---
     if (type === "init") {
@@ -241,7 +245,7 @@ export async function POST(req: Request) {
       const responseLang = lang === "ko" ? "Korean" : "English";
 
       const { text: welcome } = await generateText({
-        model: openai("gpt-5.4"),
+        model: openai("gpt-5.6-terra"),
         maxOutputTokens: 300,
         prompt: `You are the professional whose resume is provided below. Write a warm, personalized 2-3 sentence welcome message in ${responseLang}.
 ${PERSONA_TONE[persona]}
@@ -357,12 +361,12 @@ Output ONLY valid JSON, no markdown fences or extra text.
 
 ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}User question: ${truncatedQuery}`;
 
-      addTrace("Query Rewrite Prompt", `Sent to gpt-5.4 (${rewritePrompt.length} chars)`, {
+      addTrace("Query Rewrite Prompt", `Sent to gpt-5.6-terra (${rewritePrompt.length} chars)`, {
         prompt: rewritePrompt,
       });
 
       ({ text: rewriteResult } = await generateText({
-        model: openai("gpt-5.4"),
+        model: openai("gpt-5.6-terra"),
         maxOutputTokens: 1000,
         prompt: rewritePrompt,
       }));
@@ -654,7 +658,10 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
         includeMetadata: true,
         filter: { chunk_type: { $eq: "qa_story" } },
       });
-      const rawQaMatches = (rawQaResults as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches;
+      // Drop suppressed landmines here so they can be neither the direct match
+      // (built below from raw metadata, which bypasses the chunks map) nor merged.
+      const rawQaMatches = (rawQaResults as { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }).matches
+        .filter((m) => !suppressedIds.has(m.id));
 
       // Detect direct match using raw scores (same embedding space).
       // Persona dampening (capped at 1.0): off-persona prepared answers must
@@ -713,6 +720,20 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
         matchQuestion: directMatchChunk.question,
       } : {}),
     });
+
+    // Hard-exclude suppressed chunks from the candidate set (catches semantic,
+    // pinned, and focus matches). Direct-match path is already filtered above.
+    const droppedSuppressed: string[] = [];
+    for (const id of suppressedIds) {
+      if (chunks.delete(id)) droppedSuppressed.push(id);
+    }
+    if (suppressedIds.size > 0) {
+      addTrace("Suppression", `Dropped ${droppedSuppressed.length}/${suppressedIds.size} landmine chunk(s) | persona=${persona}`, {
+        persona,
+        configured: [...suppressedIds],
+        dropped: droppedSuppressed,
+      });
+    }
 
     // 10. Persona-aware re-ranking
     const rankedWithScores = [...chunks.values()]
@@ -877,8 +898,8 @@ ${FOCUS_HIGHLIGHT[focus]}
 --- MY RESUME ---
 ${context}`;
 
-    addTrace("Generation", `model=gpt-5.4 | mode=${answerMode} | ${directMatchChunk ? 'direct_match' : intent === 'broad' ? 'overview' : 'standard'}`, {
-      model: "gpt-5.4",
+    addTrace("Generation", `model=gpt-5.6-terra | mode=${answerMode} | ${directMatchChunk ? 'direct_match' : intent === 'broad' ? 'overview' : 'standard'}`, {
+      model: "gpt-5.6-terra",
       answerMode,
       responseMode: directMatchChunk ? "direct_match" : intent === "broad" ? "overview" : "standard",
       maxOutputTokens: 2048,
@@ -887,7 +908,7 @@ ${context}`;
     });
 
     const result = streamText({
-      model: openai("gpt-5.4"),
+      model: openai("gpt-5.6-terra"),
       maxOutputTokens: 2048,
       abortSignal: req.signal,
       system: systemPrompt,

@@ -177,7 +177,7 @@ async function main() {
 
     try {
       const { object: entries } = await generateObject({
-        model: openai("gpt-5.4"),
+        model: openai("gpt-5.6-terra"),
         schema: z.object({ entries: z.array(KnowledgeEntrySchema) }),
         system: STRUCTURING_PROMPT,
         prompt: `INTERVIEWER QUESTION:\n${question}\n\nDJ'S ANSWER:\n${answer}`,

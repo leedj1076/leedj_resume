@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Markdown from "react-markdown";
+import { V14_PERSONA_OPTIONS } from "@/lib/profile-data";
 
 interface Exchange {
   id: number;
@@ -61,6 +62,12 @@ const RATING_COLORS: Record<string, string> = {
   needs_improvement: "bg-yellow-100 text-yellow-800",
 };
 
+type PersonaLabelMap = Record<string, { en: string; kr: string }>;
+
+const DEFAULT_PERSONA_LABELS: PersonaLabelMap = Object.fromEntries(
+  V14_PERSONA_OPTIONS.map((o) => [o.value, { en: o.en, kr: o.kr }])
+);
+
 export default function AdminDashboard() {
   // Force light mode — admin page uses hardcoded light backgrounds
   useEffect(() => {
@@ -100,6 +107,17 @@ export default function AdminDashboard() {
 
   // Settings state
   const [answerMode, setAnswerMode] = useState<string>("default");
+  // savedPersonas = last applied (server truth); draftPersonas = pending toggles
+  const [savedPersonas, setSavedPersonas] = useState<string[]>(
+    V14_PERSONA_OPTIONS.map((o) => o.value)
+  );
+  const [draftPersonas, setDraftPersonas] = useState<string[]>(
+    V14_PERSONA_OPTIONS.map((o) => o.value)
+  );
+  const [savedLabels, setSavedLabels] = useState<PersonaLabelMap>(DEFAULT_PERSONA_LABELS);
+  const [draftLabels, setDraftLabels] = useState<PersonaLabelMap>(DEFAULT_PERSONA_LABELS);
+  const [personasSaving, setPersonasSaving] = useState(false);
+  const [personasSaved, setPersonasSaved] = useState(false);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
@@ -205,6 +223,14 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.mode) setAnswerMode(data.mode);
+      if (Array.isArray(data.visiblePersonas) && data.visiblePersonas.length > 0) {
+        setSavedPersonas(data.visiblePersonas);
+        setDraftPersonas(data.visiblePersonas);
+      }
+      if (data.personaLabels && typeof data.personaLabels === "object") {
+        setSavedLabels(data.personaLabels);
+        setDraftLabels(data.personaLabels);
+      }
       setSettingsLoaded(true);
     } catch {
       setSettingsLoaded(true);
@@ -232,6 +258,60 @@ export default function AdminDashboard() {
     },
     []
   );
+
+  // Toggle only mutates the draft — nothing persists until Apply is clicked.
+  const handleTogglePersona = useCallback((value: string) => {
+    setPersonasSaved(false);
+    setDraftPersonas((cur) => {
+      const isOn = cur.includes(value);
+      const next = isOn ? cur.filter((v) => v !== value) : [...cur, value];
+      return next.length === 0 ? cur : next; // keep at least one visible
+    });
+  }, []);
+
+  const handleLabelChange = useCallback(
+    (value: string, lang: "en" | "kr", text: string) => {
+      setPersonasSaved(false);
+      setDraftLabels((cur) => ({
+        ...cur,
+        [value]: { ...cur[value], [lang]: text },
+      }));
+    },
+    []
+  );
+
+  const applyPersonaSettings = useCallback(async () => {
+    if (draftPersonas.length === 0) return; // guard: never hide every persona
+    setPersonasSaving(true);
+    setPersonasSaved(false);
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: passwordRef.current,
+          visiblePersonas: draftPersonas,
+          personaLabels: draftLabels,
+        }),
+      });
+      const data = await res.json();
+      if (Array.isArray(data.visiblePersonas) && data.visiblePersonas.length > 0) {
+        setSavedPersonas(data.visiblePersonas);
+        setDraftPersonas(data.visiblePersonas);
+      }
+      if (data.personaLabels && typeof data.personaLabels === "object") {
+        // Server trims/backfills blanks — sync draft to the effective values.
+        setSavedLabels(data.personaLabels);
+        setDraftLabels(data.personaLabels);
+      }
+      setPersonasSaved(true);
+      setTimeout(() => setPersonasSaved(false), 2000);
+    } catch {
+      /* ignore */
+    } finally {
+      setPersonasSaving(false);
+    }
+  }, [draftPersonas, draftLabels]);
 
   useEffect(() => {
     if (authenticated && tab === "analytics" && !stats) {
@@ -422,9 +502,18 @@ export default function AdminDashboard() {
         ) : (
           <SettingsTab
             answerMode={answerMode}
+            draftPersonas={draftPersonas}
+            savedPersonas={savedPersonas}
+            draftLabels={draftLabels}
+            savedLabels={savedLabels}
+            personasSaving={personasSaving}
+            personasSaved={personasSaved}
             saving={settingsSaving}
             saved={settingsSaved}
             onModeChange={saveAnswerMode}
+            onTogglePersona={handleTogglePersona}
+            onLabelChange={handleLabelChange}
+            onApplyPersonaSettings={applyPersonaSettings}
           />
         )}
       </main>
@@ -859,17 +948,164 @@ const MODES = [
 
 function SettingsTab({
   answerMode,
+  draftPersonas,
+  savedPersonas,
+  draftLabels,
+  savedLabels,
+  personasSaving,
+  personasSaved,
   saving,
   saved,
   onModeChange,
+  onTogglePersona,
+  onLabelChange,
+  onApplyPersonaSettings,
 }: {
   answerMode: string;
+  draftPersonas: string[];
+  savedPersonas: string[];
+  draftLabels: PersonaLabelMap;
+  savedLabels: PersonaLabelMap;
+  personasSaving: boolean;
+  personasSaved: boolean;
   saving: boolean;
   saved: boolean;
   onModeChange: (mode: string) => void;
+  onTogglePersona: (value: string) => void;
+  onLabelChange: (value: string, lang: "en" | "kr", text: string) => void;
+  onApplyPersonaSettings: () => void;
 }) {
+  const visibilityDirty =
+    draftPersonas.length !== savedPersonas.length ||
+    [...draftPersonas].sort().join(",") !== [...savedPersonas].sort().join(",");
+  const labelsDirty = V14_PERSONA_OPTIONS.some(
+    (o) =>
+      draftLabels[o.value]?.en !== savedLabels[o.value]?.en ||
+      draftLabels[o.value]?.kr !== savedLabels[o.value]?.kr
+  );
+  const personasDirty = visibilityDirty || labelsDirty;
   return (
     <div className="max-w-2xl">
+      <h2 className="text-lg font-semibold text-gray-900 mb-1">
+        Persona Buttons
+      </h2>
+      <p className="text-sm text-gray-500 mb-4">
+        Toggle which visitor types appear on the interactive profile (/dj) and
+        edit their button labels (English / Korean). Hidden personas can&apos;t
+        be selected by visitors; at least one must stay visible. Changes take
+        effect when you click Apply.
+      </p>
+
+      <div className="flex items-center gap-3 px-1 mb-1.5 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+        <span className="w-6 text-center">On</span>
+        <span className="w-32 shrink-0">Persona</span>
+        <span className="flex-1">English label</span>
+        <span className="flex-1">Korean label</span>
+      </div>
+
+      <div className="space-y-2 mb-4">
+        {V14_PERSONA_OPTIONS.map((opt) => {
+          const visible = draftPersonas.includes(opt.value);
+          const isLastActive = visible && draftPersonas.length === 1;
+          const label = draftLabels[opt.value] ?? { en: opt.en, kr: opt.kr };
+          return (
+            <div key={opt.value} className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  if (!personasSaving && !isLastActive)
+                    onTogglePersona(opt.value);
+                }}
+                disabled={personasSaving || isLastActive}
+                title={
+                  visible
+                    ? isLastActive
+                      ? "At least one persona must stay visible"
+                      : "Visible — click to hide"
+                    : "Hidden — click to show"
+                }
+                className={`w-6 h-6 shrink-0 rounded border-2 flex items-center justify-center transition-colors ${
+                  visible
+                    ? "border-blue-500 bg-blue-500"
+                    : "border-gray-300 bg-white"
+                } ${
+                  personasSaving || isLastActive
+                    ? "opacity-60 cursor-not-allowed"
+                    : "cursor-pointer"
+                }`}
+              >
+                {visible && (
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </button>
+              <code
+                className="w-32 shrink-0 text-[11px] text-gray-400 truncate"
+                title={opt.value}
+              >
+                {opt.value}
+              </code>
+              <input
+                type="text"
+                value={label.en}
+                onChange={(e) => onLabelChange(opt.value, "en", e.target.value)}
+                disabled={personasSaving}
+                placeholder={opt.en}
+                className={`flex-1 min-w-0 px-2.5 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 ${
+                  visible ? "border-gray-300" : "border-gray-200 text-gray-400"
+                }`}
+              />
+              <input
+                type="text"
+                value={label.kr}
+                onChange={(e) => onLabelChange(opt.value, "kr", e.target.value)}
+                disabled={personasSaving}
+                placeholder={opt.kr}
+                className={`flex-1 min-w-0 px-2.5 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 ${
+                  visible ? "border-gray-300" : "border-gray-200 text-gray-400"
+                }`}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Apply — persona changes only take effect when this is clicked */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          onClick={() => {
+            if (personasDirty && !personasSaving) onApplyPersonaSettings();
+          }}
+          disabled={!personasDirty || personasSaving}
+          className={`px-5 py-2 text-sm font-medium rounded-lg transition-colors ${
+            personasDirty && !personasSaving
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          {personasSaving ? "Applying..." : "Apply"}
+        </button>
+        {personasDirty && !personasSaving && (
+          <span className="text-sm text-amber-600">Unsaved changes</span>
+        )}
+        {personasSaved && !personasDirty && (
+          <span className="text-sm text-green-600">
+            Applied — live on the profile
+          </span>
+        )}
+      </div>
+
+      <div className="border-t border-gray-200 my-8" />
+
       <h2 className="text-lg font-semibold text-gray-900 mb-1">
         Answer Mode
       </h2>

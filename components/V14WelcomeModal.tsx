@@ -14,9 +14,11 @@ import { Button } from "@/components/ui/button";
 
 interface V14WelcomeModalProps {
   onStart: (lang: Lang, persona: string, email?: string) => void;
+  options?: { value: string; en: string; kr: string }[];
 }
 
-export default function V14WelcomeModal({ onStart }: V14WelcomeModalProps) {
+export default function V14WelcomeModal({ onStart, options }: V14WelcomeModalProps) {
+  const personaOptions = options ?? V14_PERSONA_OPTIONS;
   const [lang, setLang] = useState<Lang>("en");
   const [persona, setPersona] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -82,8 +84,8 @@ export default function V14WelcomeModal({ onStart }: V14WelcomeModalProps) {
           <p className="text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-widest mb-4">
             {en ? "I'm visiting as a..." : "저는..."}
           </p>
-          <div className="grid grid-cols-4 gap-2.5">
-            {V14_PERSONA_OPTIONS.map((opt) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {personaOptions.map((opt) => (
               <Button
                 key={opt.value}
                 variant="outline"

@@ -310,7 +310,8 @@ export const PORTFOLIO: PortfolioItem[] = [
 ];
 
 export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
-  { value: "recruiter", en: "Recruiter", kr: "채용 담당자" },
+  { value: "recruiter", en: "Recruiter (Product Owner)", kr: "채용 담당자 (PO)" },
+  { value: "developer_partnerships", en: "Recruiter (Strategic Partnerships)", kr: "채용 담당자 (전략 파트너십)" },
   { value: "vc", en: "VC", kr: "VC" },
   { value: "founder_partner", en: "Founder / Partner", kr: "창업자 / 파트너" },
   { value: "curious_visitor", en: "Curious Visitor", kr: "방문자" },
@@ -406,6 +407,24 @@ export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, stri
       "가장 흥미로웠던 도전은 무엇이었나요?",
       "어떻게 테크 분야에 입문하셨나요?",
       "요즘은 어떤 일을 하고 계신가요?",
+    ],
+  },
+  developer_partnerships: {
+    en: [
+      "How did DJ build platform partnerships with Apple, Meta, and Google from scratch?",
+      "How would DJ design a developer program to recruit and onboard studios at scale?",
+      "Could you walk me through the Apple Vision Pro partnership?",
+      "What's DJ's experience with XR and spatial computing platforms?",
+      "How does DJ use AI-assisted tools to build and ship products?",
+      "How does DJ build trust with technical partners across different cultures?",
+    ],
+    kr: [
+      "DJ가 Apple, Meta, Google과의 플랫폼 파트너십을 어떻게 처음부터 구축했나요?",
+      "DJ라면 스튜디오를 대규모로 모집하고 온보딩하는 개발자 프로그램을 어떻게 설계할까요?",
+      "Apple Vision Pro 파트너십 과정을 설명해 주시겠어요?",
+      "XR과 공간 컴퓨팅 플랫폼에 대한 DJ의 경험은 무엇인가요?",
+      "DJ는 AI 도구를 활용해 제품을 어떻게 만들고 출시하나요?",
+      "DJ는 서로 다른 문화권의 기술 파트너와 어떻게 신뢰를 쌓나요?",
     ],
   },
 };

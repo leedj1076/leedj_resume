@@ -4,7 +4,8 @@ export type Persona =
   | "recruiter"
   | "vc"
   | "founder_partner"
-  | "curious_visitor";
+  | "curious_visitor"
+  | "developer_partnerships";
 
 export type Focus =
   | "business_development"
