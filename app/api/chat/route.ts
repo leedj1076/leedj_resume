@@ -211,7 +211,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, internal } = body;
+    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, internal, source } = body;
     const skipTracking = internal === true;
     const isInternal = internal === true;
     const traceSteps: TraceStep[] = [];
@@ -433,6 +433,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
           response: clarifyMessage + followupBlock,
           chunksUsed: [],
           visitorEmail,
+          source,
         });
       }
 
@@ -924,6 +925,7 @@ ${context}`;
             response: text,
             chunksUsed: rankedChunks.map((c) => c.id),
             visitorEmail,
+            source,
           });
         }
       },

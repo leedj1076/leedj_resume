@@ -28,6 +28,7 @@ interface Session {
   lang: string;
   started_at: string;
   visitor_email: string | null;
+  source: string | null;
   exchanges: Exchange[];
 }
 
@@ -633,6 +634,12 @@ function ReviewTab({
                   </span>
                   <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 shrink-0">
                     {session.focus}
+                  </span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 shrink-0"
+                    title="Entry source"
+                  >
+                    {session.source ?? "direct"}
                   </span>
                   {session.visitor_email && (
                     <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 shrink-0" title={session.visitor_email}>

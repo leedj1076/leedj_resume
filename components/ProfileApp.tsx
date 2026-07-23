@@ -26,10 +26,14 @@ export default function ProfileApp({
   internal,
   visiblePersonas,
   personaLabels,
+  source,
+  defaultPersona,
 }: {
   internal?: boolean;
   visiblePersonas?: string[];
   personaLabels?: Record<string, { en: string; kr: string }>;
+  source?: string;
+  defaultPersona?: string;
 } = {}) {
   const [lang, setLang] = useState<Lang>("en");
   // Apply admin-edited display names over the static defaults.
@@ -48,9 +52,11 @@ export default function ProfileApp({
       ? labeledOptions
       : filteredPersonaOptions;
   const [persona, setPersona] = useState(
-    personaOptions.some((o) => o.value === "vc")
-      ? "vc"
-      : personaOptions[0]?.value ?? "vc"
+    defaultPersona && personaOptions.some((o) => o.value === defaultPersona)
+      ? defaultPersona
+      : personaOptions.some((o) => o.value === "vc")
+        ? "vc"
+        : personaOptions[0]?.value ?? "vc"
   );
   const [mobileTab, setMobileTab] = useState<"profile" | "chat">("profile");
   const [sessionId] = useState(() => crypto.randomUUID());
@@ -118,6 +124,7 @@ export default function ProfileApp({
           lang: langRef.current === "kr" ? "ko" : "en",
           coveredTopics,
           visitorEmail: visitorEmailRef.current,
+          source,
           ...(internal ? { internal: true } : {}),
         };
       },
@@ -356,7 +363,11 @@ export default function ProfileApp({
 
       {/* Welcome modal */}
       {showWelcome && (
-        <V14WelcomeModal onStart={handleWelcomeStart} options={personaOptions} />
+        <V14WelcomeModal
+          onStart={handleWelcomeStart}
+          options={personaOptions}
+          defaultPersona={defaultPersona}
+        />
       )}
     </div>
   );

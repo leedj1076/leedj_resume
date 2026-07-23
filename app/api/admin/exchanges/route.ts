@@ -74,6 +74,7 @@ export async function POST(req: Request) {
       lang: exs[0].lang,
       started_at: exs[0].created_at,
       visitor_email: exs.find((e) => e.visitor_email)?.visitor_email ?? null,
+      source: exs.find((e) => e.source)?.source ?? null,
       exchanges: exs, // chronological
     }));
 

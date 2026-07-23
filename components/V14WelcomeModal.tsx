@@ -15,12 +15,17 @@ import { Button } from "@/components/ui/button";
 interface V14WelcomeModalProps {
   onStart: (lang: Lang, persona: string, email?: string) => void;
   options?: { value: string; en: string; kr: string }[];
+  defaultPersona?: string;
 }
 
-export default function V14WelcomeModal({ onStart, options }: V14WelcomeModalProps) {
+export default function V14WelcomeModal({ onStart, options, defaultPersona }: V14WelcomeModalProps) {
   const personaOptions = options ?? V14_PERSONA_OPTIONS;
   const [lang, setLang] = useState<Lang>("en");
-  const [persona, setPersona] = useState<string | null>(null);
+  const [persona, setPersona] = useState<string | null>(
+    defaultPersona && personaOptions.some((o) => o.value === defaultPersona)
+      ? defaultPersona
+      : null
+  );
   const [email, setEmail] = useState("");
   const en = lang === "en";
 

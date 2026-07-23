@@ -42,6 +42,7 @@ export function logExchange(exchange: {
   response: string;
   chunksUsed: string[];
   visitorEmail?: string;
+  source?: string;
 }): void {
   if (!supabase) return;
 
@@ -58,6 +59,7 @@ export function logExchange(exchange: {
         response: exchange.response,
         chunks_used: exchange.chunksUsed,
         visitor_email: exchange.visitorEmail,
+        source: exchange.source ?? null,
       })
         .then(({ error }) => {
           if (error) console.error("[EXCHANGE] Supabase insert error:", error.message);
