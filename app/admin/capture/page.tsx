@@ -4,29 +4,20 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
+import { AdminGate } from "@/components/admin/AdminGate";
 
 export default function CapturePage() {
-  const [password, setPassword] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [authError, setAuthError] = useState(false);
+  return <AdminGate><CaptureContent /></AdminGate>;
+}
+
+function CaptureContent() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const passwordRef = useRef("");
-  useEffect(() => {
-    passwordRef.current = password;
-  }, [password]);
-
-  const transportRef = useRef(
-    new DefaultChatTransport({
-      api: "/api/capture",
-      body: () => ({ password: passwordRef.current }),
-    })
-  );
+  const [transport] = useState(() => new DefaultChatTransport({ api: "/api/capture", credentials: "same-origin" }));
 
   const { messages, sendMessage, stop, status, error } = useChat({
-    transport: transportRef.current,
+    transport,
     onError: (err) => console.error("Capture error:", err),
   });
 
@@ -35,39 +26,6 @@ export default function CapturePage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, status]);
-
-  // Check sessionStorage on mount
-  useEffect(() => {
-    const stored = sessionStorage.getItem("capture_password");
-    if (stored) {
-      setPassword(stored);
-      passwordRef.current = stored;
-      setAuthenticated(true);
-    }
-  }, []);
-
-  function handleAuth(e: React.FormEvent) {
-    e.preventDefault();
-    // We can't verify the password client-side, so we store it and let the API verify
-    // Try a test request to verify
-    fetch("/api/capture", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [], password: passwordInput }),
-    }).then((res) => {
-      if (res.status === 401) {
-        setAuthError(true);
-      } else {
-        setPassword(passwordInput);
-        passwordRef.current = passwordInput;
-        sessionStorage.setItem("capture_password", passwordInput);
-        setAuthenticated(true);
-        setAuthError(false);
-      }
-    }).catch(() => {
-      setAuthError(true);
-    });
-  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,44 +73,6 @@ export default function CapturePage() {
     a.download = `capture-${date}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-  }
-
-  // Password gate
-  if (!authenticated) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <form
-          onSubmit={handleAuth}
-          className="bg-white rounded-2xl shadow-lg p-8 max-w-sm w-full mx-4"
-        >
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">
-            Knowledge Capture
-          </h1>
-          <p className="text-sm text-gray-500 mb-6">
-            Enter the admin password to start an interview session.
-          </p>
-          <input
-            type="password"
-            value={passwordInput}
-            onChange={(e) => {
-              setPasswordInput(e.target.value);
-              setAuthError(false);
-            }}
-            placeholder="Password"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-3"
-          />
-          {authError && (
-            <p className="text-sm text-red-500 mb-3">Invalid password</p>
-          )}
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Enter
-          </button>
-        </form>
-      </div>
-    );
   }
 
   return (
@@ -262,7 +182,7 @@ export default function CapturePage() {
             <div className="flex justify-start">
               <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3">
                 <p className="text-sm text-red-600">
-                  Error: {error.message}. Check your password or try again.
+                  Error: {error.message}. Please try again.
                 </p>
               </div>
             </div>

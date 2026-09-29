@@ -127,6 +127,7 @@ PINECONE_INDEX_NAME=your-development-index
 
 # Required for intended administrator protection
 ADMIN_PASSWORD=choose-a-long-unique-password
+ADMIN_SESSION_SECRET=choose-an-independent-long-random-secret
 
 # Optional for public chat; required for persistent admin workflows
 SUPABASE_URL=https://your-project.supabase.co

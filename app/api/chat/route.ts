@@ -5,6 +5,7 @@ import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
 import { readJsonBody, errorResponse } from "@/lib/server/http";
 import { parseChatRequest } from "@/lib/server/chat-request";
 import { admitPublicChat } from "@/lib/server/rate-limit";
+import { hasAdminSession, requireSameOrigin } from "@/lib/server/admin-auth";
 import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/domain/models";
 import {
   PERSONA_SECTION_WEIGHTS,
@@ -187,14 +188,16 @@ function scoreChunk(
 }
 
 export async function POST(req: Request) {
-  const denied = admitPublicChat(req);
-  if (denied) return denied;
-
   try {
     const body = parseChatRequest(await readJsonBody(req));
-    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, internal, source, visitorData } = body;
-    const skipTracking = internal === true;
-    const isInternal = internal === true;
+    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, source, visitorData } = body;
+    const isInternal = body.internal && await hasAdminSession(req);
+    if (isInternal) requireSameOrigin(req);
+    else {
+      const denied = admitPublicChat(req);
+      if (denied) return denied;
+    }
+    const skipTracking = isInternal;
     const traceSteps: TraceStep[] = [];
     const traceStart = Date.now();
     function addTrace(label: string, summary: string, data: Record<string, unknown>) {
@@ -263,7 +266,7 @@ ${context}
     const truncatedQuery = query.slice(0, 2000);
 
     // Fire-and-forget email alert on first message of a new session
-    if (messages.length === 1) {
+    if (!skipTracking && messages.length === 1) {
       sendNewSessionAlert({
         query: truncatedQuery,
         persona,

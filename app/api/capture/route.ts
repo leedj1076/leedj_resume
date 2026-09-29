@@ -3,6 +3,7 @@ import { openai } from "@ai-sdk/openai";
 import { errorResponse, readJsonBody } from "@/lib/server/http";
 import { parseCaptureMessages } from "@/lib/server/chat-request";
 import { CHAT_MODEL } from "@/lib/domain/models";
+import { requireAdmin, requireSameOrigin } from "@/lib/server/admin-auth";
 
 export const maxDuration = 60;
 
@@ -67,19 +68,10 @@ PRIORITY GAPS TO FILL:
 
 export async function POST(req: Request) {
   try {
+    requireSameOrigin(req);
+    await requireAdmin(req);
     const body = await readJsonBody(req);
-    const password = body && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>).password : undefined;
-
-    // Simple password check
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword || password !== adminPassword) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    const messages = parseCaptureMessages((body as Record<string, unknown>).messages);
+    const messages = parseCaptureMessages(body && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>).messages : undefined);
     const modelMessages = await convertToModelMessages(messages);
 
     const result = streamText({

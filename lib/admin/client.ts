@@ -1,0 +1,31 @@
+import { z } from "zod";
+
+export const ADMIN_SESSION_EXPIRED_EVENT = "ask-dj-admin-session-expired";
+
+export class AdminRequestError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message);
+    this.name = "AdminRequestError";
+  }
+}
+
+export async function adminRequest<T>(url: string, body: unknown, schema: z.ZodType<T>, signal?: AbortSignal): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body), signal,
+    });
+  } catch {
+    throw new AdminRequestError(0, "Network error. Please try again.");
+  }
+  if (!response.ok) {
+    if (response.status === 401 && typeof window !== "undefined") window.dispatchEvent(new Event(ADMIN_SESSION_EXPIRED_EVENT));
+    throw new AdminRequestError(response.status, response.status === 401 ? "Your session has expired. Sign in again." : "Server error. Please try again.");
+  }
+  try {
+    return schema.parse(await response.json());
+  } catch {
+    throw new AdminRequestError(502, "Invalid server response. Please try again.");
+  }
+}

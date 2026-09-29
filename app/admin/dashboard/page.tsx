@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Markdown from "react-markdown";
 import { V14_PERSONA_OPTIONS } from "@/lib/profile-data";
+import { z } from "zod";
+import { AdminGate } from "@/components/admin/AdminGate";
+import { adminRequest } from "@/lib/admin/client";
 
 interface Exchange {
   id: number;
@@ -69,7 +72,28 @@ const DEFAULT_PERSONA_LABELS: PersonaLabelMap = Object.fromEntries(
   V14_PERSONA_OPTIONS.map((o) => [o.value, { en: o.en, kr: o.kr }])
 );
 
+const exchangeSchema = z.object({
+  id: z.number(), created_at: z.string(), session_id: z.string(), persona: z.string(), focus: z.string(), lang: z.string(),
+  query: z.string(), response: z.string(), chunks_used: z.array(z.string()).nullable(), dj_rating: z.string().nullable(),
+  dj_comment: z.string().nullable(), improvement_text: z.string().nullable(), pinecone_chunk_id: z.string().nullable(), reviewed_at: z.string().nullable(),
+});
+const sessionsSchema = z.object({ sessions: z.array(z.object({
+  session_id: z.string(), persona: z.string(), focus: z.string(), lang: z.string(), started_at: z.string(),
+  visitor_email: z.string().nullable(), source: z.string().nullable(), exchanges: z.array(exchangeSchema),
+})), totalSessions: z.number(), page: z.number(), pageSize: z.number() });
+const statsSchema = z.object({
+  totalSessions: z.number(), totalExchanges: z.number(), avgExchangesPerSession: z.number(), reviewed: z.number(), unreviewed: z.number(),
+  personaCounts: z.record(z.string(), z.number()), focusCounts: z.record(z.string(), z.number()), ratingCounts: z.record(z.string(), z.number()),
+  langCounts: z.record(z.string(), z.number()), dailySessions: z.record(z.string(), z.number()), dailyExchanges: z.record(z.string(), z.number()),
+});
+const settingsSchema = z.object({ mode: z.enum(["default", "pyramid"]), visiblePersonas: z.array(z.string()), personaLabels: z.record(z.string(), z.object({ en: z.string(), kr: z.string() })) });
+const reviewSchema = z.object({ success: z.boolean(), pineconeChunkId: z.string().nullable() });
+
 export default function AdminDashboard() {
+  return <AdminGate><DashboardContent /></AdminGate>;
+}
+
+function DashboardContent() {
   // Force light mode — admin page uses hardcoded light backgrounds
   useEffect(() => {
     const html = document.documentElement;
@@ -77,12 +101,6 @@ export default function AdminDashboard() {
     html.classList.remove("dark");
     return () => { if (wasDark) html.classList.add("dark"); };
   }, []);
-
-  const [authenticated, setAuthenticated] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [authError, setAuthError] = useState(false);
-  const [checking, setChecking] = useState(true);
-  const passwordRef = useRef("");
 
   const [tab, setTab] = useState<"review" | "analytics" | "settings">("review");
 
@@ -123,69 +141,11 @@ export default function AdminDashboard() {
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
 
-  // Auto-login from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("admin_password");
-    if (!saved) { setChecking(false); return; }
-    fetch("/api/admin/exchanges", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: saved, page: 1, view: "sessions" }),
-    }).then(async (res) => {
-      if (res.ok) {
-        passwordRef.current = saved;
-        setAuthenticated(true);
-        const data = await res.json();
-        setSessions(data.sessions ?? []);
-        setTotalSessions(data.totalSessions ?? 0);
-      } else {
-        localStorage.removeItem("admin_password");
-      }
-    }).catch(() => {
-      localStorage.removeItem("admin_password");
-    }).finally(() => setChecking(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleAuth = async () => {
-    try {
-      const res = await fetch("/api/admin/exchanges", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: passwordInput, page: 1, view: "sessions" }),
-      });
-      if (res.status === 401) {
-        setAuthError(true);
-        return;
-      }
-      passwordRef.current = passwordInput;
-      localStorage.setItem("admin_password", passwordInput);
-      setAuthenticated(true);
-      setAuthError(false);
-      const data = await res.json();
-      setSessions(data.sessions ?? []);
-      setTotalSessions(data.totalSessions ?? 0);
-    } catch {
-      setAuthError(true);
-    }
-  };
-
   const fetchSessions = useCallback(
     async (p: number, f: string, persona: string) => {
       setLoading(true);
       try {
-        const res = await fetch("/api/admin/exchanges", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            password: passwordRef.current,
-            page: p,
-            filter: f,
-            persona: persona || undefined,
-            view: "sessions",
-          }),
-        });
-        const data = await res.json();
+        const data = await adminRequest("/api/admin/exchanges", { page: p, filter: f, persona: persona || undefined, view: "sessions" }, sessionsSchema);
         setSessions(data.sessions ?? []);
         setTotalSessions(data.totalSessions ?? 0);
         setPage(p);
@@ -198,15 +158,12 @@ export default function AdminDashboard() {
     []
   );
 
+  useEffect(() => { void fetchSessions(1, "all", ""); }, [fetchSessions]);
+
   const fetchStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const res = await fetch("/api/admin/stats", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: passwordRef.current }),
-      });
-      const data = await res.json();
+      const data = await adminRequest("/api/admin/stats", {}, statsSchema);
       setStats(data);
     } catch {
       /* ignore */
@@ -217,12 +174,7 @@ export default function AdminDashboard() {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: passwordRef.current }),
-      });
-      const data = await res.json();
+      const data = await adminRequest("/api/admin/settings", {}, settingsSchema);
       if (data.mode) setAnswerMode(data.mode);
       if (Array.isArray(data.visiblePersonas) && data.visiblePersonas.length > 0) {
         setSavedPersonas(data.visiblePersonas);
@@ -243,11 +195,7 @@ export default function AdminDashboard() {
       setSettingsSaving(true);
       setSettingsSaved(false);
       try {
-        await fetch("/api/admin/settings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password: passwordRef.current, mode }),
-        });
+        await adminRequest("/api/admin/settings", { mode }, settingsSchema);
         setAnswerMode(mode);
         setSettingsSaved(true);
         setTimeout(() => setSettingsSaved(false), 2000);
@@ -286,16 +234,7 @@ export default function AdminDashboard() {
     setPersonasSaving(true);
     setPersonasSaved(false);
     try {
-      const res = await fetch("/api/admin/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          password: passwordRef.current,
-          visiblePersonas: draftPersonas,
-          personaLabels: draftLabels,
-        }),
-      });
-      const data = await res.json();
+      const data = await adminRequest("/api/admin/settings", { visiblePersonas: draftPersonas, personaLabels: draftLabels }, settingsSchema);
       if (Array.isArray(data.visiblePersonas) && data.visiblePersonas.length > 0) {
         setSavedPersonas(data.visiblePersonas);
         setDraftPersonas(data.visiblePersonas);
@@ -315,16 +254,16 @@ export default function AdminDashboard() {
   }, [draftPersonas, draftLabels]);
 
   useEffect(() => {
-    if (authenticated && tab === "analytics" && !stats) {
+    if (tab === "analytics" && !stats) {
       fetchStats();
     }
-  }, [authenticated, tab, stats, fetchStats]);
+  }, [tab, stats, fetchStats]);
 
   useEffect(() => {
-    if (authenticated && tab === "settings" && !settingsLoaded) {
+    if (tab === "settings" && !settingsLoaded) {
       fetchSettings();
     }
-  }, [authenticated, tab, settingsLoaded, fetchSettings]);
+  }, [tab, settingsLoaded, fetchSettings]);
 
   const handleSessionToggle = (sid: string) => {
     setExpandedSessionId(expandedSessionId === sid ? null : sid);
@@ -346,18 +285,7 @@ export default function AdminDashboard() {
     if (!reviewRating) return;
     setSubmitting(true);
     try {
-      await fetch("/api/admin/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          password: passwordRef.current,
-          exchangeId,
-          rating: reviewRating,
-          comment: reviewComment,
-          improvementText:
-            reviewRating === "needs_improvement" ? reviewImprovement : undefined,
-        }),
-      });
+      await adminRequest("/api/admin/review", { exchangeId, rating: reviewRating, comment: reviewComment, improvementText: reviewRating === "needs_improvement" ? reviewImprovement : undefined }, reviewSchema);
       await fetchSessions(page, filter, personaFilter);
       setExpandedExchangeId(null);
     } catch {
@@ -368,47 +296,6 @@ export default function AdminDashboard() {
   };
 
   const totalPages = Math.ceil(totalSessions / 10);
-
-  // --- Password gate ---
-  if (checking) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Checking session...</p>
-      </div>
-    );
-  }
-  if (!authenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-sm">
-          <h1 className="text-xl font-semibold mb-4">Admin Dashboard</h1>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleAuth();
-            }}
-          >
-            <input
-              type="password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              placeholder="Enter admin password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {authError && (
-              <p className="text-sm text-red-600 mb-3">Invalid password</p>
-            )}
-            <button
-              type="submit"
-              className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Enter
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   // --- Authenticated dashboard ---
   return (
