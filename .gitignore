@@ -40,3 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# Local-only Meta interview preparation
+/app/dj/meta/
+/public/meta-*-interview-guide-mobile.html
+/scripts/export-meta-*-mobile.mjs
+/test/[Mm]eta*.md
+/jd/*meta*.md
