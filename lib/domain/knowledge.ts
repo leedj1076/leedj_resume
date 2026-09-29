@@ -2,7 +2,7 @@ import { z } from "zod";
 import { FOCUSES } from "./personas";
 
 export const KNOWLEDGE_SECTIONS = [
-  "summary", "skills", "education", "experience", "leadership", "awards", "project",
+  "summary", "skills", "education", "experience", "leadership", "awards", "project", "stories",
   "motivation", "career_transition", "founder_philosophy", "failure_learning",
   "founder_empathy", "narrative", "investment_philosophy",
   "final_40_resume_narrative", "deep_dive_changjo_2026", "deep_dive_career_pattern",

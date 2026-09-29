@@ -73,6 +73,10 @@ describe("knowledge corpus", () => {
     expect(KnowledgeEntrySchema.safeParse({ ...resume[0], start_date: "2024-13" }).success).toBe(false);
     expect(KnowledgeEntrySchema.safeParse({ ...resume[0], end_date: "2024-00" }).success).toBe(false);
   });
+
+  it("accepts the existing generated stories section", () => {
+    expect(KnowledgeEntrySchema.parse({ ...knowledge[0], section: "stories" }).section).toBe("stories");
+  });
 });
 
 describe("chat message helpers", () => {
