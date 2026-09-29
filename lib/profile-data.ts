@@ -1,4 +1,7 @@
-export type Lang = "en" | "kr";
+import { PERSONA_OPTIONS } from "./domain/personas";
+import type { Language } from "./domain/language";
+
+export type Lang = Language;
 
 type Bilingual = { en: string; kr: string };
 type Localizable = string | Bilingual;
@@ -309,13 +312,7 @@ export const PORTFOLIO: PortfolioItem[] = [
   },
 ];
 
-export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = [
-  { value: "recruiter", en: "Recruiter (Product Owner)", kr: "채용 담당자 (PO)" },
-  { value: "developer_partnerships", en: "Recruiter (Strategic Partnerships)", kr: "채용 담당자 (전략 파트너십)" },
-  { value: "vc", en: "VC", kr: "VC" },
-  { value: "founder_partner", en: "Founder / Partner", kr: "창업자 / 파트너" },
-  { value: "curious_visitor", en: "Curious Visitor", kr: "방문자" },
-];
+export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = PERSONA_OPTIONS.map((option) => ({ ...option }));
 
 export const STARTER_QUESTIONS: Record<Lang, string[]> = {
   en: [

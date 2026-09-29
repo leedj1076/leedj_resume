@@ -1,22 +1,6 @@
 import type { UIMessage } from "ai";
 
-export type Persona =
-  | "recruiter"
-  | "vc"
-  | "founder_partner"
-  | "curious_visitor"
-  | "developer_partnerships";
-
-export type Focus =
-  | "business_development"
-  | "ai_llms"
-  | "leadership_strategy"
-  | "full_stack";
-
-export interface VisitorData {
-  persona: Persona;
-  focus: Focus;
-}
+export type { Persona, Focus, VisitorData, PersonaLabel, PersonaOption } from "./domain/personas";
 
 export interface TraceStep {
   label: string;

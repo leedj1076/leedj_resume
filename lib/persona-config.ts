@@ -1,13 +1,8 @@
 import type { Persona, Focus } from "./types";
+import { PERSONAS } from "./domain/personas";
 
 // Canonical list of every persona key, in the order used for admin + UI display.
-export const ALL_PERSONAS: Persona[] = [
-  "recruiter",
-  "developer_partnerships",
-  "vc",
-  "founder_partner",
-  "curious_visitor",
-];
+export const ALL_PERSONAS: Persona[] = [...PERSONAS];
 
 // Multiplicative score adjustments per persona per section (for re-ranking)
 export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = {
