@@ -2,7 +2,7 @@
 
 Date: 29 September 2026
 
-Status: Proposed design for review; implementation has not started
+Status: Approved by the user; implementation plan awaiting review
 
 Baseline: `12f13a2`
 
