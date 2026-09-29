@@ -1,6 +1,10 @@
 import { generateText, embed } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { getResumeIndex } from "@/lib/pinecone";
+import { readJsonBody, errorResponse } from "@/lib/server/http";
+import { parsePrototypeRequest } from "@/lib/server/chat-request";
+import { admitPublicChat } from "@/lib/server/rate-limit";
+import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/domain/models";
 import {
   PERSONA_TONE,
   FOCUS_HIGHLIGHT,
@@ -10,55 +14,19 @@ import {
 } from "@/lib/persona-config";
 import { getAnswerMode } from "@/lib/settings";
 import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
-import type { Persona, Focus } from "@/lib/types";
-
-// Map prototype persona/focus IDs → real IDs
-const PERSONA_MAP: Record<string, Persona> = {
-  recruiter: "recruiter",
-  founder: "founder_partner",
-  partner: "founder_partner",
-  founder_partner: "founder_partner",
-  curious_visitor: "curious_visitor",
-  // Legacy aliases
-  vc: "vc",
-  strategy: "vc",
-  bd: "founder_partner",
-  hiring: "recruiter",
-  vc_investor: "vc",
-  corporate_strategy: "vc",
-  bd_partnerships: "founder_partner",
-  hiring_manager: "recruiter",
-};
-
-const FOCUS_MAP: Record<string, Focus> = {
-  bd: "business_development",
-  ai: "ai_llms",
-  leadership: "leadership_strategy",
-  fullstack: "full_stack",
-  business_development: "business_development",
-  ai_llms: "ai_llms",
-  leadership_strategy: "leadership_strategy",
-  full_stack: "full_stack",
-};
 
 const BASE_PINNED_IDS = ["narrative-career-trajectory", "personal-summary"];
 
 export async function POST(req: Request) {
+  const denied = admitPublicChat(req);
+  if (denied) return denied;
   try {
-    const body = await req.json();
-    const { query, personaId, focusId, history = [] } = body;
-
-    if (!query?.trim()) {
-      return Response.json({ error: "Empty query" }, { status: 400 });
-    }
-
-    const persona = PERSONA_MAP[personaId] ?? "vc";
-    const focus = FOCUS_MAP[focusId] ?? "full_stack";
-    const truncatedQuery = query.slice(0, 2000);
+    const { query, persona, focus, messages } = parsePrototypeRequest(await readJsonBody(req));
+    const truncatedQuery = query;
 
     // 1. Embed the query
     const { embedding } = await embed({
-      model: openai.embedding("text-embedding-3-large"),
+      model: openai.embedding(EMBEDDING_MODEL),
       value: truncatedQuery,
     });
 
@@ -173,18 +141,14 @@ export async function POST(req: Request) {
     context += "\n--- END RESUME ---";
 
     // 6. Build conversation messages
-    const messages = (history as Array<{ role: string; text: string }>).map((h) => ({
-      role: h.role as "user" | "assistant",
-      content: h.text,
-    }));
-    messages.push({ role: "user" as const, content: truncatedQuery });
+    const modelMessages = messages.slice(-10).map((message) => ({ role: message.role, content: message.parts[0].text }));
 
     // 7. Load answer mode and generate response (non-streaming)
     const answerMode = await getAnswerMode();
     const modePrompt = ANSWER_MODE_PROMPTS[answerMode];
 
     const { text } = await generateText({
-      model: openai("gpt-5.6-terra"),
+      model: openai(CHAT_MODEL),
       maxOutputTokens: 2048,
       system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.
@@ -208,7 +172,7 @@ ${FOCUS_HIGHLIGHT[focus]}
 
 --- MY RESUME ---
 ${context}`,
-      messages,
+      messages: modelMessages,
     });
 
     return Response.json({
@@ -217,9 +181,6 @@ ${context}`,
     });
   } catch (error) {
     console.error("[UI-CHAT] Error:", error);
-    return Response.json(
-      { error: "Something went wrong. Please try again." },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }

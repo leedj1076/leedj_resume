@@ -1,5 +1,8 @@
 import { streamText, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { errorResponse, readJsonBody } from "@/lib/server/http";
+import { parseCaptureMessages } from "@/lib/server/chat-request";
+import { CHAT_MODEL } from "@/lib/domain/models";
 
 export const maxDuration = 60;
 
@@ -64,8 +67,8 @@ PRIORITY GAPS TO FILL:
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { messages, password } = body;
+    const body = await readJsonBody(req);
+    const password = body && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>).password : undefined;
 
     // Simple password check
     const adminPassword = process.env.ADMIN_PASSWORD;
@@ -76,17 +79,11 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!messages || !Array.isArray(messages)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid request" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
+    const messages = parseCaptureMessages((body as Record<string, unknown>).messages);
     const modelMessages = await convertToModelMessages(messages);
 
     const result = streamText({
-      model: openai("gpt-5.6-terra"),
+      model: openai(CHAT_MODEL),
       system: INTERVIEW_SYSTEM_PROMPT,
       messages: modelMessages,
       maxOutputTokens: 1024,
@@ -95,9 +92,6 @@ export async function POST(req: Request) {
     return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("[CAPTURE] Error:", error);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return errorResponse(error);
   }
 }

@@ -2,7 +2,10 @@ import { streamText, generateText, embed, convertToModelMessages, createUIMessag
 import { openai } from "@ai-sdk/openai";
 import { getResumeIndex } from "@/lib/pinecone";
 import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
-import { validateVisitorData } from "@/lib/visitor-data";
+import { readJsonBody, errorResponse } from "@/lib/server/http";
+import { parseChatRequest } from "@/lib/server/chat-request";
+import { admitPublicChat } from "@/lib/server/rate-limit";
+import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/domain/models";
 import {
   PERSONA_SECTION_WEIGHTS,
   PERSONA_TONE,
@@ -18,22 +21,6 @@ import { sendNewSessionAlert } from "@/lib/email";
 import { getAnswerMode } from "@/lib/settings";
 import { ANSWER_MODE_PROMPTS } from "@/lib/answer-modes";
 import type { Persona, Focus, ChatUIMessage, TraceStep } from "@/lib/types";
-
-// Simple in-memory rate limiter (per-IP, resets on deploy)
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 15; // max requests per window
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
-}
 
 // Always-pinned: neutral context chunks
 const BASE_PINNED_IDS = [
@@ -200,18 +187,12 @@ function scoreChunk(
 }
 
 export async function POST(req: Request) {
-  // Rate limit check
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (isRateLimited(ip)) {
-    return new Response(
-      JSON.stringify({ error: "Too many requests. Please wait a moment." }),
-      { status: 429, headers: { "Content-Type": "application/json" } }
-    );
-  }
+  const denied = admitPublicChat(req);
+  if (denied) return denied;
 
   try {
-    const body = await req.json();
-    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, internal, source } = body;
+    const body = parseChatRequest(await readJsonBody(req));
+    const { messages, type, lang, sessionId, coveredTopics, visitorEmail, internal, source, visitorData } = body;
     const skipTracking = internal === true;
     const isInternal = internal === true;
     const traceSteps: TraceStep[] = [];
@@ -221,7 +202,6 @@ export async function POST(req: Request) {
         traceSteps.push({ label, timestamp: Date.now() - traceStart, summary, data });
       }
     }
-    const visitorData = validateVisitorData(body.visitorData);
     const { persona, focus } = visitorData;
     // Invisible landmines: chunk_ids this persona must never surface (see
     // PERSONA_SUPPRESSED_CHUNKS). Dropped from candidates before the LLM sees them.
@@ -245,7 +225,7 @@ export async function POST(req: Request) {
       const responseLang = lang === "ko" ? "Korean" : "English";
 
       const { text: welcome } = await generateText({
-        model: openai("gpt-5.6-terra"),
+        model: openai(CHAT_MODEL),
         maxOutputTokens: 300,
         prompt: `You are the professional whose resume is provided below. Write a warm, personalized 2-3 sentence welcome message in ${responseLang}.
 ${PERSONA_TONE[persona]}
@@ -271,13 +251,7 @@ ${context}
 
     // 1. Get the latest user message text
     const lastMessage = messages[messages.length - 1];
-    const query =
-      lastMessage.content ??
-      lastMessage.parts
-        ?.filter((p: { type: string }) => p.type === "text")
-        .map((p: { text: string }) => p.text)
-        .join(" ") ??
-      "";
+    const query = lastMessage.parts[0].text;
 
     // 2. Validate input
     if (!query.trim()) {
@@ -366,7 +340,7 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
       });
 
       ({ text: rewriteResult } = await generateText({
-        model: openai("gpt-5.6-terra"),
+        model: openai(CHAT_MODEL),
         maxOutputTokens: 1000,
         prompt: rewritePrompt,
       }));
@@ -464,12 +438,12 @@ ${conversationContext ? `Recent conversation:\n${conversationContext}\n` : ""}Us
     const rawQueryDiffers = retrievalQuery !== truncatedQuery;
     const embeddingPromises = [
       embed({
-        model: openai.embedding("text-embedding-3-large"),
+        model: openai.embedding(EMBEDDING_MODEL),
         value: retrievalQuery.slice(0, 2000),
       }),
       ...(rawQueryDiffers && intent !== "broad" ? [
         embed({
-          model: openai.embedding("text-embedding-3-large"),
+          model: openai.embedding(EMBEDDING_MODEL),
           value: truncatedQuery.slice(0, 2000),
           }),
       ] : []),
@@ -909,7 +883,7 @@ ${context}`;
     });
 
     const result = streamText({
-      model: openai("gpt-5.6-terra"),
+      model: openai(CHAT_MODEL),
       maxOutputTokens: 2048,
       abortSignal: req.signal,
       system: systemPrompt,
@@ -956,10 +930,7 @@ ${context}`;
     });
   } catch (error) {
     console.error("[RAG] Error:", error);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong. Please try again." }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return errorResponse(error);
   }
 }
 
