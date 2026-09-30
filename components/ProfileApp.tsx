@@ -12,6 +12,7 @@ import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, V14_PERSONA_OPTIONS } fro
 import type { ChatUIMessage } from "@/lib/types";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { adminTransportFetch } from "@/lib/admin/client";
 
 function shuffleIndices(length: number, pick: number): number[] {
   const indices = Array.from({ length }, (_, i) => i);
@@ -109,30 +110,32 @@ export default function ProfileApp({
 
   const messagesRef = useRef<ChatUIMessage[]>([]);
 
-  const transportRef = useRef(
-    new DefaultChatTransport({
-      api: "/api/chat",
-      body: () => {
-        const coveredTopics = [...new Set(
-          messagesRef.current
-            .filter((m) => m.role === "assistant" && m.metadata?.sourceTags)
-            .flatMap((m) => m.metadata!.sourceTags!)
-        )].slice(-30);
-        return {
-          visitorData: { persona: personaRef.current, focus: "full_stack" as const },
-          sessionId,
-          lang: langRef.current === "kr" ? "ko" : "en",
-          coveredTopics,
-          visitorEmail: visitorEmailRef.current,
-          source,
-          ...(internal ? { internal: true } : {}),
-        };
-      },
-    })
-  );
+  // The transport reads these refs only when it sends, after render.
+  // eslint-disable-next-line react-hooks/refs
+  const [transport] = useState(() => new DefaultChatTransport({
+    api: "/api/chat",
+    credentials: "same-origin",
+    fetch: internal ? adminTransportFetch : undefined,
+    body: () => {
+      const coveredTopics = [...new Set(
+        messagesRef.current
+          .filter((m) => m.role === "assistant" && m.metadata?.sourceTags)
+          .flatMap((m) => m.metadata!.sourceTags!)
+      )].slice(-30);
+      return {
+        visitorData: { persona: personaRef.current, focus: "full_stack" as const },
+        sessionId,
+        lang: langRef.current === "kr" ? "ko" : "en",
+        coveredTopics,
+        visitorEmail: visitorEmailRef.current,
+        source,
+        ...(internal ? { internal: true } : {}),
+      };
+    },
+  }));
 
   const { messages, sendMessage, stop, setMessages, status, error } = useChat<ChatUIMessage>({
-    transport: transportRef.current,
+    transport,
     onError: (err) => console.error("Chat error:", err),
   });
 
@@ -154,7 +157,8 @@ export default function ProfileApp({
 
   const handleFeedback = useCallback(
     (messageId: string, value: "up" | "down") => {
-      fetch("/api/feedback", {
+      const request = internal ? adminTransportFetch : fetch;
+      request("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,7 +171,7 @@ export default function ProfileApp({
         }),
       }).catch(() => {});
     },
-    [sessionId]
+    [sessionId, internal]
   );
 
   // Auto-select latest assistant message with trace data for the trace panel

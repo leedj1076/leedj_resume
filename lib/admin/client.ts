@@ -9,18 +9,26 @@ export class AdminRequestError extends Error {
   }
 }
 
+function handleAdminResponse(response: Response): Response {
+  if (response.status === 401 && typeof window !== "undefined") {
+    window.dispatchEvent(new Event(ADMIN_SESSION_EXPIRED_EVENT));
+  }
+  return response;
+}
+
+export const adminTransportFetch: typeof fetch = async (input, init) => handleAdminResponse(await fetch(input, init));
+
 export async function adminRequest<T>(url: string, body: unknown, schema: z.ZodType<T>, signal?: AbortSignal): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(url, {
+    response = handleAdminResponse(await fetch(url, {
       method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body), signal,
-    });
+    }));
   } catch {
     throw new AdminRequestError(0, "Network error. Please try again.");
   }
   if (!response.ok) {
-    if (response.status === 401 && typeof window !== "undefined") window.dispatchEvent(new Event(ADMIN_SESSION_EXPIRED_EVENT));
     throw new AdminRequestError(response.status, response.status === 401 ? "Your session has expired. Sign in again." : "Server error. Please try again.");
   }
   try {

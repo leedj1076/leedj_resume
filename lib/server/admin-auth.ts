@@ -36,8 +36,9 @@ function adminCookie(req: Request): string | null {
 
 export async function hasAdminSession(req: Request): Promise<boolean> {
   const secret = process.env.ADMIN_SESSION_SECRET;
+  const password = process.env.ADMIN_PASSWORD;
   const token = adminCookie(req);
-  return Boolean(secret && token && await verifyAdminToken(token, secret, Date.now()));
+  return Boolean(secret && password && token && await verifyAdminToken(token, secret, Date.now()));
 }
 
 export async function requireAdmin(req: Request): Promise<void> {

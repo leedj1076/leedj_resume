@@ -2,7 +2,9 @@ import { createAdminToken, requireAdmin, requireSameOrigin, sessionCookie, verif
 import { HttpError, errorResponse, readJsonBody } from "@/lib/server/http";
 import { createRateLimiter } from "@/lib/server/rate-limit";
 
-const loginLimiter = createRateLimiter({ max: 5, windowMs: 60_000, maxKeys: 10_000 });
+// This single-owner admin has one bounded process-local login bucket. Caller-supplied
+// forwarding headers cannot create fresh buckets or evade the five-attempt limit.
+const loginLimiter = createRateLimiter({ max: 5, windowMs: 60_000, maxKeys: 1 });
 
 export async function GET(req: Request): Promise<Response> {
   try {
@@ -16,8 +18,7 @@ export async function GET(req: Request): Promise<Response> {
 export async function POST(req: Request): Promise<Response> {
   try {
     requireSameOrigin(req);
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const admission = loginLimiter.consume(ip);
+    const admission = loginLimiter.consume("admin-login");
     if (!admission.allowed) throw new HttpError(429, "rate_limited", "Too many login attempts", admission.retryAfterSeconds);
     const body = await readJsonBody(req, 2_048);
     const password = body && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>).password : undefined;

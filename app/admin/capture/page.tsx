@@ -5,6 +5,7 @@ import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
 import { AdminGate } from "@/components/admin/AdminGate";
+import { adminTransportFetch } from "@/lib/admin/client";
 
 export default function CapturePage() {
   return <AdminGate><CaptureContent /></AdminGate>;
@@ -14,7 +15,7 @@ function CaptureContent() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const [transport] = useState(() => new DefaultChatTransport({ api: "/api/capture", credentials: "same-origin" }));
+  const [transport] = useState(() => new DefaultChatTransport({ api: "/api/capture", credentials: "same-origin", fetch: adminTransportFetch }));
 
   const { messages, sendMessage, stop, status, error } = useChat({
     transport,

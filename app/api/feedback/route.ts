@@ -1,6 +1,6 @@
 import { logAnalytics } from "@/lib/analytics";
 import { HttpError, errorResponse, readJsonBody } from "@/lib/server/http";
-import { hasAdminSession, requireSameOrigin } from "@/lib/server/admin-auth";
+import { requireAdmin, requireSameOrigin } from "@/lib/server/admin-auth";
 
 export async function POST(req: Request) {
   try {
@@ -12,8 +12,8 @@ export async function POST(req: Request) {
       [persona, focus, sessionId].some((item) => item !== undefined && (typeof item !== "string" || item.length > 128)) ||
       (internal !== undefined && typeof internal !== "boolean")) throw new HttpError(400, "invalid_request", "Invalid feedback");
 
-    const isInternal = internal === true && await hasAdminSession(req);
-    if (isInternal) {
+    if (internal === true) {
+      await requireAdmin(req);
       requireSameOrigin(req);
       return new Response(JSON.stringify({ ok: true }), {
         status: 200,

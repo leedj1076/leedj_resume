@@ -5,7 +5,7 @@ import { detectFilter, getCompanyOverviewId } from "@/lib/entity-detection";
 import { readJsonBody, errorResponse } from "@/lib/server/http";
 import { parseChatRequest } from "@/lib/server/chat-request";
 import { admitPublicChat } from "@/lib/server/rate-limit";
-import { hasAdminSession, requireSameOrigin } from "@/lib/server/admin-auth";
+import { requireAdmin, requireSameOrigin } from "@/lib/server/admin-auth";
 import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/domain/models";
 import {
   PERSONA_SECTION_WEIGHTS,
@@ -191,9 +191,11 @@ export async function POST(req: Request) {
   try {
     const body = parseChatRequest(await readJsonBody(req));
     const { messages, type, lang, sessionId, coveredTopics, visitorEmail, source, visitorData } = body;
-    const isInternal = body.internal && await hasAdminSession(req);
-    if (isInternal) requireSameOrigin(req);
-    else {
+    const isInternal = body.internal;
+    if (isInternal) {
+      await requireAdmin(req);
+      requireSameOrigin(req);
+    } else {
       const denied = admitPublicChat(req);
       if (denied) return denied;
     }

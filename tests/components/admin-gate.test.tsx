@@ -1,8 +1,9 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { AdminGate } from "@/components/admin/AdminGate";
-import { adminRequest } from "@/lib/admin/client";
+import { adminRequest, adminTransportFetch } from "@/lib/admin/client";
 import { z } from "zod";
+import { DefaultChatTransport } from "ai";
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
@@ -60,6 +61,23 @@ it("closes the gate when a later admin request finds an expired session", async 
   fireEvent.click(await screen.findByRole("button", { name: /load stats/i }));
   await screen.findByRole("button", { name: /sign in/i });
   expect(screen.queryByRole("button", { name: /load stats/i })).not.toBeInTheDocument();
+});
+
+it.each(["/api/capture", "/api/chat"])("closes the gate when the %s transport receives 401", async (api) => {
+  const fetcher = vi.fn().mockResolvedValueOnce(Response.json({ authenticated: true }))
+    .mockResolvedValueOnce(Response.json({ error: "Unauthorized" }, { status: 401 }));
+  vi.stubGlobal("fetch", fetcher);
+  const transport = new DefaultChatTransport({ api, fetch: adminTransportFetch });
+  function Protected() {
+    return <button onClick={() => void transport.sendMessages({
+      trigger: "submit-message", chatId: "test", messageId: undefined,
+      messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "test" }] }], abortSignal: undefined,
+    }).catch(() => {})}>Send chat</button>;
+  }
+  render(<AdminGate><Protected /></AdminGate>);
+  fireEvent.click(await screen.findByRole("button", { name: /send chat/i }));
+  await screen.findByRole("button", { name: /sign in/i });
+  expect(fetcher.mock.calls[1][0]).toBe(api);
 });
 
 it("still signs in and out when browser storage is unavailable", async () => {

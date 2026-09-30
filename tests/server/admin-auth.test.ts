@@ -46,12 +46,17 @@ describe("signed admin sessions", () => {
   });
 
   it("requires a configured secret and a valid cookie", async () => {
+    process.env.ADMIN_PASSWORD = "correct";
     process.env.ADMIN_SESSION_SECRET = "test-secret";
     await expect(requireAdmin(new Request(url))).rejects.toMatchObject({ status: 401 });
     const token = await createAdminToken("test-secret", Date.now());
     await expect(requireAdmin(new Request(url, { headers: { cookie: `ask_dj_admin=${token}` } }))).resolves.toBeUndefined();
     delete process.env.ADMIN_SESSION_SECRET;
     await expect(requireAdmin(new Request(url, { headers: { cookie: `ask_dj_admin=${token}` } }))).rejects.toMatchObject({ status: 401 });
+    process.env.ADMIN_SESSION_SECRET = "test-secret";
+    delete process.env.ADMIN_PASSWORD;
+    await expect(requireAdmin(new Request(url, { headers: { cookie: `ask_dj_admin=${token}` } }))).rejects.toMatchObject({ status: 401 });
+    expect((await GET(new Request(url, { headers: { cookie: `ask_dj_admin=${token}` } }))).status).toBe(401);
   });
 
   it("rejects missing or cross-origin mutation origins", () => {
@@ -76,14 +81,16 @@ describe("signed admin sessions", () => {
     expect((await DELETE(new Request(url, { method: "DELETE", headers: { cookie, origin: "https://example.test" } }))).headers.get("set-cookie")).toContain("Max-Age=0");
   });
 
-  it("rejects cross-origin login and limits password attempts to five per minute", async () => {
+  it("rejects cross-origin login and limits attempts despite changing forwarded addresses", async () => {
+    vi.resetModules();
+    const { POST: isolatedPost } = await import("@/app/api/admin/session/route");
     process.env.ADMIN_PASSWORD = "correct";
     process.env.ADMIN_SESSION_SECRET = "test-secret";
-    expect((await POST(mutation("/api/admin/session", { password: "correct" }, { origin: "https://evil.test" }))).status).toBe(403);
+    expect((await isolatedPost(mutation("/api/admin/session", { password: "correct" }, { origin: "https://evil.test" }))).status).toBe(403);
     for (let attempt = 0; attempt < 5; attempt++) {
-      expect((await POST(mutation("/api/admin/session", { password: "wrong" }, { "x-forwarded-for": "198.51.100.42" }))).status).toBe(401);
+      expect((await isolatedPost(mutation("/api/admin/session", { password: "wrong" }, { "x-forwarded-for": `198.51.100.${attempt}` }))).status).toBe(401);
     }
-    const limited = await POST(mutation("/api/admin/session", { password: "correct" }, { "x-forwarded-for": "198.51.100.42" }));
+    const limited = await isolatedPost(mutation("/api/admin/session", { password: "correct" }, { "x-forwarded-for": "198.51.100.200" }));
     expect(limited.status).toBe(429);
     expect(Number(limited.headers.get("retry-after"))).toBeGreaterThan(0);
   });
@@ -98,29 +105,41 @@ describe("signed admin sessions", () => {
     expect((await statsPost(mutation("/api/admin/stats", { password: "correct" }))).status).toBe(401);
   });
 
-  it("tracks forged internal feedback while a signed internal request skips tracking", async () => {
+  it("rejects forged internal feedback while a signed internal request skips tracking", async () => {
+    process.env.ADMIN_PASSWORD = "correct";
     process.env.ADMIN_SESSION_SECRET = "test-secret";
     const payload = { messageId: "m1", value: "up", internal: true };
-    expect((await feedbackPost(mutation("/api/feedback", payload))).status).toBe(200);
-    expect(logAnalytics).toHaveBeenCalledTimes(1);
+    expect((await feedbackPost(mutation("/api/feedback", payload))).status).toBe(401);
+    expect(logAnalytics).not.toHaveBeenCalled();
     vi.mocked(logAnalytics).mockClear();
     const token = await createAdminToken("test-secret", Date.now());
     expect((await feedbackPost(mutation("/api/feedback", payload, { cookie: `ask_dj_admin=${token}` }))).status).toBe(200);
     expect(logAnalytics).not.toHaveBeenCalled();
   });
 
-  it("does not return a trace or suppress tracking and alerts for forged internal chat", async () => {
-    vi.mocked(generateText).mockResolvedValue({ text: JSON.stringify({ intent: "ambiguous", query: "vague", clarifications: ["Which topic?"] }) } as Awaited<ReturnType<typeof generateText>>);
+  it("rejects forged internal chat before model, tracking, or alerts", async () => {
     const response = await chatPost(mutation("/api/chat", { messages: [{ role: "user", content: "vague" }], internal: true }));
-    expect(response.status).toBe(200);
-    const stream = await response.text();
-    expect(stream).not.toContain('"trace"');
-    expect(logAnalytics).toHaveBeenCalledTimes(1);
-    expect(logExchange).toHaveBeenCalledTimes(1);
-    expect(sendNewSessionAlert).toHaveBeenCalledTimes(1);
+    expect(response.status).toBe(401);
+    expect(generateText).not.toHaveBeenCalled();
+    expect(logAnalytics).not.toHaveBeenCalled();
+    expect(logExchange).not.toHaveBeenCalled();
+    expect(sendNewSessionAlert).not.toHaveBeenCalled();
+  });
+
+  it("rejects an internal chat using an issued cookie after admin credentials are removed", async () => {
+    process.env.ADMIN_PASSWORD = "correct";
+    process.env.ADMIN_SESSION_SECRET = "test-secret";
+    const token = await createAdminToken("test-secret", Date.now());
+    delete process.env.ADMIN_PASSWORD;
+    const response = await chatPost(mutation("/api/chat", { messages: [{ role: "user", content: "vague" }], internal: true }, { cookie: `ask_dj_admin=${token}` }));
+    expect(response.status).toBe(401);
+    expect(generateText).not.toHaveBeenCalled();
+    expect(logAnalytics).not.toHaveBeenCalled();
+    expect(sendNewSessionAlert).not.toHaveBeenCalled();
   });
 
   it("returns a trace and skips tracking and alerts for signed internal chat", async () => {
+    process.env.ADMIN_PASSWORD = "correct";
     process.env.ADMIN_SESSION_SECRET = "test-secret";
     const token = await createAdminToken("test-secret", Date.now());
     vi.mocked(generateText).mockResolvedValue({ text: JSON.stringify({ intent: "ambiguous", query: "vague", clarifications: ["Which topic?"] }) } as Awaited<ReturnType<typeof generateText>>);
