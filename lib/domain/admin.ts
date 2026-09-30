@@ -18,8 +18,25 @@ export const exchangeSchema = z.object({
   improvement_text: z.string().nullable(),
   pinecone_chunk_id: z.string().nullable(),
   reviewed_at: z.string().datetime({ offset: true }).nullable(),
+  correction_status: z.enum(["none", "pending", "applied", "failed"]).default("none"),
+  correction_error: z.string().nullable().default(null),
 });
 export type Exchange = z.infer<typeof exchangeSchema>;
+
+export const reviewInputSchema = z.object({
+  exchangeId: z.number().int().positive(),
+  rating: z.enum(["good", "needs_improvement"]),
+  comment: z.string().optional(),
+  improvementText: z.string().optional(),
+});
+export type ReviewInput = z.infer<typeof reviewInputSchema>;
+export type CorrectionStatus = Exchange["correction_status"];
+export type ReviewResult = {
+  success: boolean;
+  pineconeChunkId: string | null;
+  correctionStatus: CorrectionStatus;
+  correctionError?: string;
+};
 
 export const sessionSchema = z.object({
   session_id: z.string(), persona: z.string(), focus: z.string(), lang: z.string(),

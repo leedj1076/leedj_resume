@@ -1,6 +1,6 @@
 import "server-only";
-import { exchangeQuerySchema, type Exchange, type ExchangePage, type ExchangeQuery, type Session, type SessionPage } from "../domain/admin";
-import { fetchAllExchanges } from "./database";
+import { exchangeQuerySchema, exchangeSchema, type Exchange, type ExchangePage, type ExchangeQuery, type Session, type SessionPage } from "../domain/admin";
+import { fetchAllExchanges, requireDatabase } from "./database";
 import { HttpError } from "./http";
 
 function validate(query: ExchangeQuery): ExchangeQuery {
@@ -53,4 +53,17 @@ export async function listSessions(query: ExchangeQuery): Promise<SessionPage> {
   sessions.sort((a, b) => newestFirst(a.exchanges.at(-1)!, b.exchanges.at(-1)!));
   const pageSize = 10;
   return { sessions: sessions.slice((valid.page - 1) * pageSize, valid.page * pageSize), totalSessions: sessions.length, page: valid.page, pageSize };
+}
+
+export async function loadReviewExchange(id: number): Promise<Exchange | null> {
+  const { data, error } = await requireDatabase().from("chat_exchanges").select("*").eq("id", id).maybeSingle();
+  if (error) throw new Error(`Database read failed: ${error.message}`);
+  return data ? exchangeSchema.parse(data) : null;
+}
+
+export async function updateReviewExchange(id: number, patch: Record<string, unknown>): Promise<Exchange> {
+  const { data, error } = await requireDatabase().from("chat_exchanges").update(patch).eq("id", id).select("*").single();
+  if (error) throw new Error(`Database update failed: ${error.message}`);
+  if (!data) throw new Error("Database update returned no exchange");
+  return exchangeSchema.parse(data);
 }
