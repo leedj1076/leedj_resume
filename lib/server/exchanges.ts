@@ -1,5 +1,5 @@
 import "server-only";
-import { exchangeQuerySchema, exchangeSchema, type Exchange, type ExchangePage, type ExchangeQuery, type Session, type SessionPage } from "../domain/admin";
+import { exchangeQuerySchema, exchangeSchema, type Exchange, type ExchangePage, type ExchangeQuery, type ReviewInput, type Session, type SessionPage } from "../domain/admin";
 import { fetchAllExchanges, requireDatabase } from "./database";
 import { HttpError } from "./http";
 
@@ -61,9 +61,33 @@ export async function loadReviewExchange(id: number): Promise<Exchange | null> {
   return data ? exchangeSchema.parse(data) : null;
 }
 
-export async function updateReviewExchange(id: number, patch: Record<string, unknown>): Promise<Exchange> {
-  const { data, error } = await requireDatabase().from("chat_exchanges").update(patch).eq("id", id).select("*").single();
-  if (error) throw new Error(`Database update failed: ${error.message}`);
-  if (!data) throw new Error("Database update returned no exchange");
-  return exchangeSchema.parse(data);
+export async function claimReviewExchange(input: ReviewInput, ownerToken: string): Promise<Exchange | null> {
+  const { data, error } = await requireDatabase().rpc("claim_correction_review", {
+    p_exchange_id: input.exchangeId,
+    p_owner_token: ownerToken,
+    p_rating: input.rating,
+    p_comment: input.comment || null,
+    p_improvement_text: input.improvementText ?? null,
+    p_reviewed_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(`Database review claim failed: ${error.message}`);
+  return data ? exchangeSchema.parse(data) : null;
+}
+
+export async function finishReviewExchange(
+  id: number,
+  ownerToken: string,
+  status: "applied" | "failed" | null,
+  chunkId: string | null = null,
+  detail: string | null = null,
+): Promise<Exchange | null> {
+  const { data, error } = await requireDatabase().rpc("finish_correction_review", {
+    p_exchange_id: id,
+    p_owner_token: ownerToken,
+    p_status: status,
+    p_chunk_id: chunkId,
+    p_error: detail,
+  });
+  if (error) throw new Error(`Database review completion failed: ${error.message}`);
+  return data ? exchangeSchema.parse(data) : null;
 }
