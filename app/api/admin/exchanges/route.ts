@@ -1,126 +1,25 @@
+import { z } from "zod";
 import { requireAdmin, requireSameOrigin } from "@/lib/server/admin-auth";
 import { HttpError, errorResponse, readJsonBody } from "@/lib/server/http";
-import { z } from "zod";
-import { supabase } from "@/lib/supabase";
+import { listExchanges, listSessions } from "@/lib/server/exchanges";
+
+const requestSchema = z.object({
+  page: z.number().int().positive().default(1),
+  filter: z.enum(["all", "unreviewed", "reviewed", "good", "needs_improvement"]).default("all"),
+  persona: z.string().min(1).optional(),
+  view: z.enum(["sessions"]).optional(),
+}).strict();
 
 export async function POST(req: Request) {
   try {
     requireSameOrigin(req);
     await requireAdmin(req);
-    const parsed = z.object({ page: z.number().int().positive().optional(), filter: z.string().optional(), persona: z.string().optional(), view: z.string().optional() }).safeParse(await readJsonBody(req));
+    const parsed = requestSchema.safeParse(await readJsonBody(req));
     if (!parsed.success) throw new HttpError(400, "invalid_request", "Invalid request body");
-    const { page = 1, filter = "all", persona, view } = parsed.data;
-
-    if (!supabase) {
-      return new Response(JSON.stringify({ error: "Database not configured" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // ── Session-grouped view ──────────────────────────────────
-    if (view === "sessions") {
-      let query = supabase
-        .from("chat_exchanges")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (filter === "unreviewed") {
-        query = query.is("reviewed_at", null);
-      } else if (filter === "reviewed") {
-        query = query.not("reviewed_at", "is", null);
-      } else if (filter === "good") {
-        query = query.eq("dj_rating", "good");
-      } else if (filter === "needs_improvement") {
-        query = query.eq("dj_rating", "needs_improvement");
-      }
-      if (persona) {
-        query = query.eq("persona", persona);
-      }
-
-      const { data, error } = await query;
-      if (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      // Group by session_id
-      const sessionMap = new Map<string, typeof data>();
-      for (const row of data ?? []) {
-        const sid = row.session_id || "unknown";
-        if (!sessionMap.has(sid)) sessionMap.set(sid, []);
-        sessionMap.get(sid)!.push(row);
-      }
-
-      // Sort sessions by most recent exchange (descending)
-      const sorted = [...sessionMap.entries()].sort((a, b) => {
-        const aLast = a[1][a[1].length - 1].created_at;
-        const bLast = b[1][b[1].length - 1].created_at;
-        return bLast.localeCompare(aLast);
-      });
-
-      // Paginate sessions (10 per page)
-      const sessionsPerPage = 10;
-      const totalSessions = sorted.length;
-      const offset = (page - 1) * sessionsPerPage;
-      const pageEntries = sorted.slice(offset, offset + sessionsPerPage);
-
-      const sessions = pageEntries.map(([sid, exs]) => ({
-        session_id: sid,
-        persona: exs[0].persona,
-        focus: exs[0].focus,
-        lang: exs[0].lang,
-        started_at: exs[0].created_at,
-        visitor_email: exs.find((e) => e.visitor_email)?.visitor_email ?? null,
-        source: exs.find((e) => e.source)?.source ?? null,
-        exchanges: exs, // chronological
-      }));
-
-      return new Response(
-        JSON.stringify({ sessions, totalSessions, page, pageSize: sessionsPerPage }),
-        { headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // ── Default flat view ─────────────────────────────────────
-    const pageSize = 20;
-    const offset = (page - 1) * pageSize;
-
-    let query = supabase
-      .from("chat_exchanges")
-      .select("*", { count: "exact" })
-      .order("created_at", { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (filter === "unreviewed") {
-      query = query.is("reviewed_at", null);
-    } else if (filter === "reviewed") {
-      query = query.not("reviewed_at", "is", null);
-    } else if (filter === "good") {
-      query = query.eq("dj_rating", "good");
-    } else if (filter === "needs_improvement") {
-      query = query.eq("dj_rating", "needs_improvement");
-    }
-
-    if (persona) {
-      query = query.eq("persona", persona);
-    }
-
-    const { data, count, error } = await query;
-
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(
-      JSON.stringify({ exchanges: data, total: count, page, pageSize }),
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const { page, filter, persona, view } = parsed.data;
+    return Response.json(view === "sessions"
+      ? await listSessions({ page, filter, persona })
+      : await listExchanges({ page, filter, persona }));
   } catch (error) {
     return errorResponse(error);
   }
