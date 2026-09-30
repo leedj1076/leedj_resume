@@ -1,111 +1,16 @@
 import { generateObject, embed } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { getPineconeClient } from "../lib/pinecone";
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import { join } from "path";
+import { Pinecone } from "@pinecone-database/pinecone";
+import { existsSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
-
-// --- Schema ---
-
-const VALID_SECTIONS = [
-  "experience",
-  "skills",
-  "project",
-  "education",
-  "leadership",
-  "awards",
-  "narrative",
-  "stories",
-  "summary",
-] as const;
-
-const VALID_FOCUS_TAGS = [
-  "business_development",
-  "ai_llms",
-  "leadership_strategy",
-  "full_stack",
-] as const;
-
-const KnowledgeEntrySchema = z.object({
-  chunk_id: z
-    .string()
-    .regex(/^[a-z0-9-]+$/, "chunk_id must be lowercase alphanumeric with hyphens"),
-  question: z.string().min(10),
-  answer_summary: z.string().min(20).max(300),
-  text: z.string().min(50),
-  source_type: z.literal("qa_story"),
-  section: z.enum(VALID_SECTIONS),
-  company: z.string().nullable(),
-  role: z.string().nullable(),
-  start_date: z.string().regex(/^\d{4}-\d{2}$/).nullable(),
-  end_date: z.string().regex(/^\d{4}-\d{2}$/).nullable(),
-  skills: z.array(z.string()),
-  keywords: z.array(z.string()),
-  depth: z.enum(["surface", "deep_dive"]),
-  focus_tags: z.array(z.enum(VALID_FOCUS_TAGS)),
-  is_core_strength: z.boolean(),
-});
-
-type KnowledgeEntry = z.infer<typeof KnowledgeEntrySchema> & {
-  token_count: number;
-};
-
-interface ExistingEntry {
-  chunk_id: string;
-  text: string;
-  [key: string]: unknown;
-}
-
-// --- Helpers ---
-
-function estimateTokens(text: string): number {
-  // Rough estimate: ~4 chars per token for English, ~2 for Korean
-  const koreanChars = (text.match(/[\uAC00-\uD7AF]/g) || []).length;
-  const otherChars = text.length - koreanChars;
-  return Math.ceil(otherChars / 4 + koreanChars / 2);
-}
-
-function parseTranscript(raw: string): { question: string; answer: string }[] {
-  const exchanges: { question: string; answer: string }[] = [];
-
-  // Try Claude App format: "Human:" / "Assistant:" blocks
-  const claudePattern = /(?:Human|User|H):\s*([\s\S]*?)(?=(?:Assistant|AI|A):\s*)((?:Assistant|AI|A):\s*[\s\S]*?)(?=(?:Human|User|H):\s*|$)/gi;
-  let match;
-  while ((match = claudePattern.exec(raw)) !== null) {
-    const question = match[1].trim();
-    const answer = match[2].replace(/^(?:Assistant|AI|A):\s*/i, "").trim();
-    if (question.length > 10 && answer.length > 30) {
-      exchanges.push({ question, answer });
-    }
-  }
-
-  if (exchanges.length > 0) return exchanges;
-
-  // Try Q/A format: lines starting with "Q:" and "A:"
-  const qaPattern = /Q:\s*([\s\S]*?)(?=A:\s*)(A:\s*[\s\S]*?)(?=Q:\s*|$)/gi;
-  while ((match = qaPattern.exec(raw)) !== null) {
-    const question = match[1].trim();
-    const answer = match[2].replace(/^A:\s*/i, "").trim();
-    if (question.length > 10 && answer.length > 30) {
-      exchanges.push({ question, answer });
-    }
-  }
-
-  if (exchanges.length > 0) return exchanges;
-
-  // Fallback: treat entire text as a single block to be structured
-  console.log("  Could not parse transcript into Q&A exchanges.");
-  console.log("  Treating the entire input as a single block for the LLM to structure.");
-  exchanges.push({
-    question: "(full transcript — LLM will extract questions)",
-    answer: raw,
-  });
-
-  return exchanges;
-}
+import { parseTranscript, toInterviewExchanges, type TranscriptFormat } from "../lib/chat/transcript";
+import { GeneratedKnowledgeEntrySchema, KnowledgeEntrySchema, type KnowledgeEntry } from "../lib/domain/knowledge";
+import { structureKnowledge, type KnowledgeGenerator } from "../lib/server/knowledge-structuring";
 
 const STRUCTURING_PROMPT = `You are a knowledge structuring agent. Given a raw interview exchange between
-an interviewer and DJ (Dong Jae Lee), extract a structured knowledge entry.
+an interviewer and DJ (Dong Jae Lee), extract structured knowledge entries.
 
 INPUT: A Q&A exchange from the interview transcript.
 
@@ -119,214 +24,116 @@ RULES:
 - Write "text" in third person referring to "Dong Jae Lee" (matching existing resume entries).
 - Set "is_core_strength" to true ONLY for truly standout achievements with strong metrics.
 - "focus_tags" can contain multiple values if the answer spans areas. Use ONLY these values: "business_development", "ai_llms", "leadership_strategy", "full_stack".
-- "section" must match the existing sections: experience, skills, project, education, leadership, awards, narrative, stories, summary.
+- "section" must match the existing sections: experience, skills, project, education, leadership, awards, narrative, stories, summary, motivation, career_transition, founder_philosophy, failure_learning, founder_empathy, investment_philosophy, final_40_resume_narrative, deep_dive_changjo_2026, deep_dive_career_pattern, deep_dive_flint_failure.
 - "chunk_id" must be a unique lowercase slug with hyphens (e.g., "story-flint-pivot-decision").
 - "depth" should be "deep_dive" for detailed stories with specifics, "surface" for overview-level facts.
 - For company/role/dates: infer from context. If not clear, set to null.
 - If the exchange is too vague or uninformative to create a quality entry, return an empty array.`;
 
-// --- Main ---
+export interface ProcessTranscriptOptions {
+  inputPath: string;
+  knowledgePath: string;
+  resumePath: string;
+  format: TranscriptFormat;
+  generate: KnowledgeGenerator;
+  skipDedup?: boolean;
+  isDuplicate?: (text: string, existing: readonly KnowledgeEntry[]) => Promise<boolean>;
+  rename?: typeof renameSync;
+}
 
-async function main() {
+function readEntries(path: string): KnowledgeEntry[] {
+  if (!existsSync(path)) return [];
+  return KnowledgeEntrySchema.array().parse(JSON.parse(readFileSync(path, "utf8")));
+}
+
+function writeAtomically(path: string, entries: readonly KnowledgeEntry[], rename: typeof renameSync): void {
+  const tempPath = join(dirname(path), `.${basename(path)}.${randomUUID()}.tmp`);
+  try {
+    writeFileSync(tempPath, JSON.stringify(entries, null, 2) + "\n", { flag: "wx" });
+    rename(tempPath, path);
+  } catch (error) {
+    rmSync(tempPath, { force: true });
+    throw error;
+  }
+}
+
+export async function processTranscriptFile(options: ProcessTranscriptOptions): Promise<KnowledgeEntry[]> {
+  const { inputPath, knowledgePath, resumePath, format, generate } = options;
+  // Parse before provider setup or writes. Unknown formats never become a whole-document prompt.
+  const exchanges = toInterviewExchanges(parseTranscript(readFileSync(inputPath, "utf8"), format));
+  if (!exchanges.length) throw new Error("Transcript has no completed interviewer/subject exchanges");
+  const existingKnowledge = readEntries(knowledgePath);
+  const existingResume = readEntries(resumePath);
+  const existing = [...existingResume, ...existingKnowledge];
+  const existingIds = new Set<string>();
+  for (const entry of existing) {
+    if (existingIds.has(entry.chunk_id)) throw new Error(`Duplicate existing chunk_id: ${entry.chunk_id}`);
+    existingIds.add(entry.chunk_id);
+  }
+
+  const generated = await structureKnowledge(exchanges, generate);
+  for (const entry of generated) {
+    if (existingIds.has(entry.chunk_id)) throw new Error(`Duplicate chunk_id with existing knowledge: ${entry.chunk_id}`);
+  }
+  const accepted: KnowledgeEntry[] = [];
+  for (const entry of generated) {
+    const isDuplicate = !options.skipDedup && options.isDuplicate
+      ? await options.isDuplicate(entry.text, [...existing, ...accepted])
+      : false;
+    if (!isDuplicate) accepted.push(entry);
+  }
+  if (accepted.length) {
+    const merged = KnowledgeEntrySchema.array().parse([...existingKnowledge, ...accepted]);
+    writeAtomically(knowledgePath, merged, options.rename ?? renameSync);
+  }
+  return accepted;
+}
+
+async function checkDuplicate(text: string, existing: readonly KnowledgeEntry[]): Promise<boolean> {
+  const indexName = process.env.PINECONE_INDEX_NAME;
+  if (!indexName || existing.length === 0) return false;
+  if (!process.env.PINECONE_API_KEY) throw new Error("PINECONE_API_KEY is required for deduplication; use --skip-dedup to bypass it");
+  const { embedding } = await embed({ model: openai.embedding("text-embedding-3-large"), value: text });
+  const index = new Pinecone().index(indexName).namespace("resume");
+  const results = await index.query({ vector: embedding, topK: 1, includeMetadata: false });
+  return (results.matches[0]?.score ?? 0) > 0.9;
+}
+
+async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const inputFlag = args.indexOf("--input");
-  if (inputFlag === -1 || !args[inputFlag + 1]) {
-    console.error("Usage: npm run structure -- --input <path-to-transcript.txt>");
-    console.error("       npm run structure -- --input <path-to-transcript.txt> --skip-dedup");
-    process.exit(1);
+  const formatFlag = args.indexOf("--format");
+  const inputPath = inputFlag >= 0 ? args[inputFlag + 1] : undefined;
+  const requestedFormat = formatFlag >= 0 ? args[formatFlag + 1] : "auto";
+  if (!inputPath || !["auto", "capture-legacy", "qa"].includes(requestedFormat)) {
+    throw new Error("Usage: npm run structure -- --input <transcript> [--format capture-legacy|qa] [--skip-dedup]");
   }
-
-  const inputPath = args[inputFlag + 1];
-  const skipDedup = args.includes("--skip-dedup");
-
-  if (!existsSync(inputPath)) {
-    console.error(`File not found: ${inputPath}`);
-    process.exit(1);
-  }
-
-  const rawTranscript = readFileSync(inputPath, "utf-8");
-  console.log(`Read transcript: ${rawTranscript.length} chars`);
-
-  // 1. Parse transcript into Q&A exchanges
-  const exchanges = parseTranscript(rawTranscript);
-  console.log(`Parsed ${exchanges.length} Q&A exchange(s)\n`);
-
-  // 2. Load existing entries for dedup
-  const knowledgePath = join(__dirname, "../data/knowledge_entries.json");
-  const resumePath = join(__dirname, "../data/resume.json");
-  const existingEntries: ExistingEntry[] = [];
-
-  if (existsSync(resumePath)) {
-    existingEntries.push(...JSON.parse(readFileSync(resumePath, "utf-8")));
-  }
-  if (existsSync(knowledgePath)) {
-    existingEntries.push(...JSON.parse(readFileSync(knowledgePath, "utf-8")));
-  }
-  const existingIds = new Set(existingEntries.map((e) => e.chunk_id));
-  console.log(`Existing entries: ${existingEntries.length} (${existingIds.size} unique IDs)\n`);
-
-  // 3. Process each exchange through the LLM
-  const allNewEntries: KnowledgeEntry[] = [];
-  const skippedDuplicates: string[] = [];
-  const failures: { index: number; error: string }[] = [];
-
-  for (let i = 0; i < exchanges.length; i++) {
-    const { question, answer } = exchanges[i];
-    console.log(`--- Exchange ${i + 1}/${exchanges.length} ---`);
-    console.log(`  Q: ${question.slice(0, 80)}${question.length > 80 ? "..." : ""}`);
-
-    try {
-      const { object: entries } = await generateObject({
+  const format = requestedFormat as TranscriptFormat;
+  const root = join(__dirname, "..");
+  const entries = await processTranscriptFile({
+    inputPath,
+    knowledgePath: join(root, "data/knowledge_entries.json"),
+    resumePath: join(root, "data/resume.json"),
+    format,
+    skipDedup: args.includes("--skip-dedup"),
+    isDuplicate: checkDuplicate,
+    generate: async ({ question, answer }) => {
+      const { object } = await generateObject({
         model: openai("gpt-5.6-terra"),
-        schema: z.object({ entries: z.array(KnowledgeEntrySchema) }),
+        schema: z.object({ entries: z.array(GeneratedKnowledgeEntrySchema) }),
         system: STRUCTURING_PROMPT,
         prompt: `INTERVIEWER QUESTION:\n${question}\n\nDJ'S ANSWER:\n${answer}`,
         temperature: 0.2,
       });
-
-      for (const entry of entries.entries) {
-        // Ensure unique chunk_id
-        let chunkId = entry.chunk_id;
-        let suffix = 2;
-        while (existingIds.has(chunkId) || allNewEntries.some((e) => e.chunk_id === chunkId)) {
-          chunkId = `${entry.chunk_id}-${suffix}`;
-          suffix++;
-        }
-
-        const entryWithTokens: KnowledgeEntry = {
-          ...entry,
-          chunk_id: chunkId,
-          token_count: estimateTokens(entry.text),
-        };
-
-        // Deduplication check via embedding similarity
-        if (!skipDedup && existingEntries.length > 0) {
-          const isDuplicate = await checkDuplicate(entry.text, existingEntries);
-          if (isDuplicate) {
-            skippedDuplicates.push(`${chunkId}: "${entry.answer_summary.slice(0, 60)}..."`);
-            console.log(`  SKIP (duplicate): ${chunkId}`);
-            continue;
-          }
-        }
-
-        allNewEntries.push(entryWithTokens);
-        existingIds.add(chunkId);
-        console.log(`  NEW: ${chunkId} (${entryWithTokens.token_count} tokens)`);
-      }
-
-      if (entries.entries.length === 0) {
-        console.log("  SKIP: LLM returned no entries (exchange too vague)");
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      failures.push({ index: i, error: msg });
-      console.log(`  FAIL: ${msg.slice(0, 100)}`);
-    }
-
-    console.log();
-  }
-
-  // 4. Append new entries to knowledge_entries.json
-  if (allNewEntries.length > 0) {
-    let existing: KnowledgeEntry[] = [];
-    if (existsSync(knowledgePath)) {
-      existing = JSON.parse(readFileSync(knowledgePath, "utf-8"));
-    }
-    const merged = [...existing, ...allNewEntries];
-    writeFileSync(knowledgePath, JSON.stringify(merged, null, 2) + "\n");
-    console.log(`Wrote ${allNewEntries.length} new entries to data/knowledge_entries.json`);
-    console.log(`Total entries in file: ${merged.length}`);
-  } else {
-    console.log("No new entries to write.");
-  }
-
-  // 5. Session report
-  console.log("\n" + "=".repeat(60));
-  console.log("SESSION REPORT");
-  console.log("=".repeat(60));
-  console.log(`Exchanges processed: ${exchanges.length}`);
-  console.log(`New entries captured: ${allNewEntries.length}`);
-  console.log(`Duplicates skipped: ${skippedDuplicates.length}`);
-  console.log(`Failures: ${failures.length}`);
-
-  if (allNewEntries.length > 0) {
-    const sections = new Map<string, number>();
-    const focusTags = new Map<string, number>();
-    for (const e of allNewEntries) {
-      sections.set(e.section, (sections.get(e.section) || 0) + 1);
-      for (const tag of e.focus_tags) {
-        focusTags.set(tag, (focusTags.get(tag) || 0) + 1);
-      }
-    }
-
-    console.log("\nTopics covered:");
-    for (const [section, count] of sections) {
-      console.log(`  ${section}: ${count} entries`);
-    }
-
-    console.log("\nFocus areas:");
-    for (const [tag, count] of focusTags) {
-      console.log(`  ${tag}: ${count} entries`);
-    }
-
-    console.log("\nNew entries:");
-    for (const e of allNewEntries) {
-      console.log(`  ${e.chunk_id}: "${e.question.slice(0, 60)}${e.question.length > 60 ? "..." : ""}"`);
-    }
-  }
-
-  if (skippedDuplicates.length > 0) {
-    console.log("\nDuplicates flagged:");
-    for (const d of skippedDuplicates) {
-      console.log(`  ${d}`);
-    }
-  }
-
-  if (failures.length > 0) {
-    console.log("\nFailures:");
-    for (const f of failures) {
-      console.log(`  Exchange ${f.index + 1}: ${f.error.slice(0, 100)}`);
-    }
-    process.exit(1);
-  }
-}
-
-async function checkDuplicate(
-  newText: string,
-  existingEntries: ExistingEntry[]
-): Promise<boolean> {
-  // Embed new text
-  const { embedding: newEmb } = await embed({
-    model: openai.embedding("text-embedding-3-large"),
-    value: newText,
+      return object.entries;
+    },
   });
-
-  // Check against Pinecone for similarity
-  const indexName = process.env.PINECONE_INDEX_NAME;
-  if (!indexName) return false;
-
-  try {
-    const pc = getPineconeClient();
-    const index = pc.index(indexName);
-    const ns = index.namespace("resume");
-
-    const results = await ns.query({
-      vector: newEmb,
-      topK: 1,
-      includeMetadata: false,
-    });
-
-    if (results.matches.length > 0 && (results.matches[0].score ?? 0) > 0.9) {
-      return true;
-    }
-  } catch {
-    // If Pinecone is unavailable, skip dedup
-  }
-
-  return false;
+  console.log(`Captured ${entries.length} new knowledge entries.`);
 }
 
-main().catch((err) => {
-  console.error("Structuring failed:", err);
-  process.exit(1);
-});
+if (process.argv[1]?.endsWith("scripts/structure.ts")) {
+  main().catch((error) => {
+    console.error("Structuring failed:", error);
+    process.exitCode = 1;
+  });
+}

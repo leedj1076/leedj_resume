@@ -43,3 +43,6 @@ export const NewKnowledgeEntrySchema = KnowledgeEntrySchema.extend({
   start_date: CalendarMonthSchema.nullable(),
   end_date: CalendarMonthSchema.nullable(),
 });
+
+// The model returns authored fields; the structuring service computes token_count.
+export const GeneratedKnowledgeEntrySchema = NewKnowledgeEntrySchema.omit({ token_count: true });

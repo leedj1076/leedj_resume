@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
 import { AdminGate } from "@/components/admin/AdminGate";
 import { adminTransportFetch } from "@/lib/admin/client";
+import { serializeTranscript, type Transcript } from "@/lib/chat/transcript";
 
 export default function CapturePage() {
   return <AdminGate><CaptureContent /></AdminGate>;
@@ -35,43 +36,21 @@ function CaptureContent() {
     setInput("");
   };
 
-  function downloadTranscript() {
-    const transcript = messages.map((m) => ({
-      role: m.role,
-      content: m.parts
-        .filter((p) => p.type === "text")
-        .map((p) => ("text" in p ? p.text : ""))
-        .join(""),
-    }));
-
+  function downloadTranscript(format: "json" | "text") {
+    const transcript: Transcript = { version: 1, turns: messages
+      .filter((message) => message.role === "assistant" || message.role === "user")
+      .map((message) => ({
+        speaker: message.role === "assistant" ? "interviewer" as const : "subject" as const,
+        text: message.parts.filter((part) => part.type === "text").map((part) => part.text).join(""),
+      })) };
     const date = new Date().toISOString().split("T")[0];
-    const blob = new Blob([JSON.stringify(transcript, null, 2)], {
-      type: "application/json",
+    const blob = new Blob([serializeTranscript(transcript, format)], {
+      type: format === "json" ? "application/json" : "text/plain",
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `capture-${date}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function downloadAsText() {
-    const lines = messages.map((m) => {
-      const content = m.parts
-        .filter((p) => p.type === "text")
-        .map((p) => ("text" in p ? p.text : ""))
-        .join("");
-      const role = m.role === "user" ? "Human" : "Assistant";
-      return `${role}: ${content}`;
-    });
-
-    const date = new Date().toISOString().split("T")[0];
-    const blob = new Blob([lines.join("\n\n")], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `capture-${date}.txt`;
+    a.download = `capture-${date}.${format === "json" ? "json" : "txt"}`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -90,14 +69,14 @@ function CaptureContent() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={downloadAsText}
+            onClick={() => downloadTranscript("text")}
             disabled={messages.length === 0}
             className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Save .txt
           </button>
           <button
-            onClick={downloadTranscript}
+            onClick={() => downloadTranscript("json")}
             disabled={messages.length === 0}
             className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
