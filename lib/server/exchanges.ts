@@ -91,3 +91,13 @@ export async function finishReviewExchange(
   if (error) throw new Error(`Database review completion failed: ${error.message}`);
   return data ? exchangeSchema.parse(data) : null;
 }
+
+export async function recordUncertainCorrection(id: number, ownerToken: string, detail: string): Promise<Exchange | null> {
+  const { data, error } = await requireDatabase().rpc("record_uncertain_correction_review", {
+    p_exchange_id: id,
+    p_owner_token: ownerToken,
+    p_error: detail,
+  });
+  if (error) throw new Error(`Database uncertain correction update failed: ${error.message}`);
+  return data ? exchangeSchema.parse(data) : null;
+}

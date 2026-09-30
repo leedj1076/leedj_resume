@@ -5,11 +5,25 @@ import { openai } from "@ai-sdk/openai";
 import { getResumeIndex } from "../pinecone";
 import { EMBEDDING_MODEL } from "../domain/models";
 import { reviewInputSchema, type ReviewInput, type ReviewResult } from "../domain/admin";
-import { claimReviewExchange, finishReviewExchange, loadReviewExchange } from "./exchanges";
+import { claimReviewExchange, finishReviewExchange, loadReviewExchange, recordUncertainCorrection } from "./exchanges";
 import { HttpError } from "./http";
 
 const failureMessage = "Review saved, but correction indexing failed. Retry this review to synchronize it.";
 const heldClaimMessage = "Review saved, but synchronization could not be confirmed. An administrator must verify provider activity has ended before releasing this review claim.";
+
+function errorDetail(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function releaseAfterConfirmedFailure(exchangeId: number, ownerToken: string, error: unknown): Promise<ReviewResult> {
+  let failureRecorded = false;
+  try {
+    failureRecorded = Boolean(await finishReviewExchange(exchangeId, ownerToken, "failed", null, errorDetail(error)));
+  } catch {
+    // Without acknowledgement, retain the claim and require manual recovery.
+  }
+  return { success: false, pineconeChunkId: null, correctionStatus: "failed", correctionError: failureRecorded ? failureMessage : heldClaimMessage };
+}
 
 export async function saveReview(input: ReviewInput): Promise<ReviewResult> {
   const parsed = reviewInputSchema.safeParse(input);
@@ -36,11 +50,17 @@ export async function saveReview(input: ReviewInput): Promise<ReviewResult> {
   }
 
   const chunkId = `dj-correction-${exchangeId}`;
+  let embedding: number[];
   try {
-    const { embedding } = await embed({
+    ({ embedding } = await embed({
       model: openai.embedding(EMBEDDING_MODEL),
       value: saved.query.slice(0, 2000),
-    });
+    }));
+  } catch (error) {
+    return releaseAfterConfirmedFailure(exchangeId, ownerToken, error);
+  }
+
+  try {
     await getResumeIndex().namespace("resume").upsert({ records: [{
       id: chunkId,
       values: embedding,
@@ -54,17 +74,20 @@ export async function saveReview(input: ReviewInput): Promise<ReviewResult> {
         original_query: saved.query.slice(0, 500),
       },
     }] });
+  } catch (error) {
+    try {
+      await recordUncertainCorrection(exchangeId, ownerToken, errorDetail(error));
+    } catch {
+      // The pending intent and owner claim remain if even failure recording is unavailable.
+    }
+    return { success: false, pineconeChunkId: null, correctionStatus: "failed", correctionError: heldClaimMessage };
+  }
+
+  try {
     const applied = await finishReviewExchange(exchangeId, ownerToken, "applied", chunkId);
     if (!applied) throw new Error("Review claim lost before acknowledgement");
     return { success: true, pineconeChunkId: chunkId, correctionStatus: "applied" };
   } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    let failureRecorded = false;
-    try {
-      failureRecorded = Boolean(await finishReviewExchange(exchangeId, ownerToken, "failed", null, detail));
-    } catch {
-      // The saved pending intent remains retryable even if failure recording is unavailable.
-    }
-    return { success: false, pineconeChunkId: null, correctionStatus: "failed", correctionError: failureRecorded ? failureMessage : heldClaimMessage };
+    return releaseAfterConfirmedFailure(exchangeId, ownerToken, error);
   }
 }

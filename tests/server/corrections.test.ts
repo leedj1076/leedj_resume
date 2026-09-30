@@ -8,6 +8,8 @@ type Vector = { id: string; values: number[]; metadata: Record<string, unknown> 
 const state = vi.hoisted(() => ({
   rows: new Map<number, Row>(),
   writes: [] as Vector[],
+  indexedVectors: new Map<string, Vector>(),
+  lateProviderWrite: null as null | (() => void),
   embeddingFails: false,
   upsertFails: false,
   acknowledgementFails: false,
@@ -67,6 +69,14 @@ vi.mock("@/lib/supabase", () => {
         state.rows.set(id, updated);
         return { data: updated, error: null };
       }
+      if (name === "record_uncertain_correction_review") {
+        if (!row || row.correction_owner_token !== args.p_owner_token) return { data: null, error: null };
+        if (state.failureRecordFails) return { data: null, error: { message: "failure record unavailable" } };
+        const updated = { ...row, correction_status: "failed", correction_error: args.p_error };
+        state.databaseWrites++;
+        state.rows.set(id, updated);
+        return { data: updated, error: null };
+      }
       throw new Error(`Unexpected RPC ${name}`);
     },
     from(table: string) {
@@ -113,8 +123,15 @@ vi.mock("@/lib/pinecone", () => ({
     if (name !== "resume") throw new Error(`Unexpected namespace ${name}`);
     return { async upsert({ records }: { records: Vector[] }) {
       state.statusAtVectorWrite.push(state.rows.get(42)?.correction_status);
-      state.writes.push(...records);
-      if (state.upsertFails) throw new Error("index unavailable");
+      const write = () => {
+        state.writes.push(...records);
+        for (const record of records) state.indexedVectors.set(record.id, record);
+      };
+      if (state.upsertFails) {
+        state.lateProviderWrite = write;
+        throw new Error("index acknowledgement unavailable");
+      }
+      write();
     } };
   } }),
 }));
@@ -147,6 +164,8 @@ beforeEach(() => {
   process.env.ADMIN_SESSION_SECRET = "review-secret";
   state.rows.clear();
   state.writes = [];
+  state.indexedVectors.clear();
+  state.lateProviderWrite = null;
   state.embeddingFails = false;
   state.upsertFails = false;
   state.acknowledgementFails = false;
@@ -212,20 +231,46 @@ describe("admin correction synchronization", () => {
     expect(state.rows.get(42)).toMatchObject({ improvement_text: "  Updated answer  ", correction_status: "applied", pinecone_chunk_id: "dj-correction-42" });
   });
 
-  it.each(["embeddingFails", "upsertFails"] as const)("keeps correction retryable when %s", async (failure) => {
+  it("retries immediately after embedding fails before any vector write", async () => {
     state.rows.set(42, exchange(42));
-    state[failure] = true;
+    state.embeddingFails = true;
     const failedResult = await submit({ exchangeId: 42, rating: "needs_improvement", comment: "Review note", improvementText: "Correct answer" });
     expect(failedResult.status).toBe(502);
     expect(failedResult.body).toMatchObject({ success: false, pineconeChunkId: null, correctionStatus: "failed" });
     expect(failedResult.body.correctionError).toEqual(expect.any(String));
     expect(state.rows.get(42)).toMatchObject({ dj_rating: "needs_improvement", dj_comment: "Review note", improvement_text: "Correct answer", correction_status: "failed", pinecone_chunk_id: null });
     expect(state.rows.get(42)?.correction_error).toEqual(expect.any(String));
-    state[failure] = false;
+    state.embeddingFails = false;
     const retried = await submit({ exchangeId: 42, rating: "needs_improvement" });
     expect(retried.body).toMatchObject({ success: true, pineconeChunkId: "dj-correction-42", correctionStatus: "applied" });
     expect(new Set(state.writes.map((record) => record.id))).toEqual(new Set(["dj-correction-42"]));
     expect(state.rows.get(42)).toMatchObject({ improvement_text: "Correct answer", correction_status: "applied", correction_error: null });
+  });
+
+  it("holds the claim when a rejected upsert can still write later", async () => {
+    state.rows.set(42, exchange(42));
+    state.upsertFails = true;
+    const rejected = await submit({ exchangeId: 42, rating: "needs_improvement", improvementText: "First correction" });
+    expect(rejected.status).toBe(502);
+    expect(rejected.body).toMatchObject({ success: false, correctionStatus: "failed", pineconeChunkId: null });
+    expect(rejected.body.correctionError).toMatch(/administrator/i);
+    expect(state.rows.get(42)).toMatchObject({ improvement_text: "First correction", correction_status: "failed", pinecone_chunk_id: null });
+    expect(state.rows.get(42)?.correction_owner_token).toEqual(expect.any(String));
+    expect(state.writes).toEqual([]);
+
+    state.upsertFails = false;
+    expect((await submit({ exchangeId: 42, rating: "good", improvementText: "Second correction" })).status).toBe(409);
+    expect(state.writes).toEqual([]);
+    state.lateProviderWrite!();
+    expect(state.indexedVectors.get("dj-correction-42")?.metadata.enrichedText).toBe("First correction");
+    expect((await submit({ exchangeId: 42, rating: "good", improvementText: "Second correction" })).status).toBe(409);
+    expect(state.rows.get(42)).toMatchObject({ improvement_text: "First correction", correction_status: "failed" });
+
+    // An administrator verifies the old provider call has ended, then releases its claim.
+    state.rows.set(42, { ...state.rows.get(42)!, correction_owner_token: null, correction_claimed_at: null });
+    expect((await submit({ exchangeId: 42, rating: "good", improvementText: "Second correction" })).body).toMatchObject({ success: true, correctionStatus: "applied" });
+    expect(state.indexedVectors.get("dj-correction-42")?.metadata.enrichedText).toBe("Second correction");
+    expect(state.rows.get(42)).toMatchObject({ improvement_text: "Second correction", correction_status: "applied" });
   });
 
   it("reports acknowledgement loss as failure and retries the same vector", async () => {

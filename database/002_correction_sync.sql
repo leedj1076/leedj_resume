@@ -103,9 +103,33 @@ begin
 end;
 $$;
 
+-- An upsert rejection is ambiguous: the provider may still write later.
+-- Record the error without releasing the claim, fencing any newer review.
+create function public.record_uncertain_correction_review(
+  p_exchange_id integer,
+  p_owner_token text,
+  p_error text
+) returns public.chat_exchanges
+language plpgsql security invoker set search_path = public, pg_temp
+as $$
+declare
+  recorded public.chat_exchanges;
+begin
+  update public.chat_exchanges as e
+  set correction_status = 'failed',
+      correction_error = p_error
+  where e.id = p_exchange_id and e.correction_owner_token = p_owner_token
+  returning e.* into recorded;
+
+  return recorded;
+end;
+$$;
+
 revoke all on function public.claim_correction_review(integer, text, text, text, text, timestamptz) from public, anon, authenticated;
 revoke all on function public.finish_correction_review(integer, text, text, text, text) from public, anon, authenticated;
+revoke all on function public.record_uncertain_correction_review(integer, text, text) from public, anon, authenticated;
 grant execute on function public.claim_correction_review(integer, text, text, text, text, timestamptz) to service_role;
 grant execute on function public.finish_correction_review(integer, text, text, text, text) to service_role;
+grant execute on function public.record_uncertain_correction_review(integer, text, text) to service_role;
 
 commit;
