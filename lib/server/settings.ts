@@ -29,9 +29,7 @@ function mergeLabels(base: AppSettings["personaLabels"], override: unknown): App
   return result;
 }
 
-async function readValue(key: string): Promise<string | null> {
-  const client = getSupabaseClient();
-  if (!client) return null;
+async function readValue(key: string, client: NonNullable<ReturnType<typeof getSupabaseClient>>): Promise<string | null> {
   const { data, error } = await client.from("app_settings").select("value").eq("key", key).single();
   if (error && error.code !== "PGRST116") throw new Error(`Settings read failed: ${error.message}`);
   if (data === null) return null;
@@ -39,17 +37,22 @@ async function readValue(key: string): Promise<string | null> {
   return data.value;
 }
 
-export async function readSettings(): Promise<AppSettings> {
+async function loadSettings(strict: boolean): Promise<AppSettings> {
   const result = defaults();
-  if (!getSupabaseClient()) return result;
+  const client = getSupabaseClient();
+  if (!client) {
+    if (strict) throw new HttpError(503, "storage_unavailable", "Settings are temporarily unavailable");
+    return result;
+  }
   let mode: string | null;
   let visible: string | null;
   let labels: string | null;
   try {
     [mode, visible, labels] = await Promise.all([
-      readValue("answer_mode"), readValue("visible_personas"), readValue("persona_labels"),
+      readValue("answer_mode", client), readValue("visible_personas", client), readValue("persona_labels", client),
     ]);
   } catch {
+    if (strict) throw new HttpError(503, "storage_unavailable", "Settings are temporarily unavailable");
     // Public experiences remain usable when optional settings storage is down.
     return result;
   }
@@ -70,12 +73,16 @@ export async function readSettings(): Promise<AppSettings> {
   return appSettingsSchema.parse(result);
 }
 
+export async function readSettings(): Promise<AppSettings> {
+  return loadSettings(false);
+}
+
 export async function saveSettings(patch: SettingsPatch): Promise<AppSettings> {
   const parsed = settingsPatchSchema.safeParse(patch);
   if (!parsed.success) throw new HttpError(400, "invalid_settings", "Invalid settings");
   if (Object.keys(parsed.data).length === 0) return readSettings();
   const client = requireDatabase();
-  const current = await readSettings();
+  const current = await loadSettings(true);
   const next: AppSettings = {
     mode: parsed.data.mode ?? current.mode,
     visiblePersonas: parsed.data.visiblePersonas === undefined ? current.visiblePersonas

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type Row = Record<string, unknown>;
-const database = vi.hoisted(() => ({ available: true, rejectWrite: false, rejectRead: false, settings: new Map<string, string>(), exchanges: [] as Row[], ranges: [] as [number, number][] }));
+const database = vi.hoisted(() => ({ available: true, rejectWrite: false, rejectRead: false, rejectReadAfterWrite: false, settings: new Map<string, string>(), exchanges: [] as Row[], ranges: [] as [number, number][] }));
 
 vi.mock("@/lib/supabase", () => {
   const client = { from(table: string) {
@@ -14,6 +14,7 @@ vi.mock("@/lib/supabase", () => {
       async upsert(input: Row | Row[]) {
         if (database.rejectWrite) return { data: null, error: { message: "write rejected" } };
         for (const row of Array.isArray(input) ? input : [input]) database.settings.set(String(row.key), String(row.value));
+        if (database.rejectReadAfterWrite) database.rejectRead = true;
         return { data: input, error: null };
       },
     };
@@ -48,7 +49,7 @@ function exchange(id: number, sessionId = `session-${id}`): Row {
 }
 
 describe("settings persistence", () => {
-  beforeEach(() => { database.available = true; database.rejectWrite = false; database.rejectRead = false; database.settings.clear(); });
+  beforeEach(() => { database.available = true; database.rejectWrite = false; database.rejectRead = false; database.rejectReadAfterWrite = false; database.settings.clear(); });
   it("does not report rejected writes as saved", async () => {
     database.rejectWrite = true;
     await expect(saveSettings({ mode: "pyramid" })).rejects.toThrow("write rejected");
@@ -63,10 +64,21 @@ describe("settings persistence", () => {
     database.rejectRead = true;
     expect((await readSettings()).mode).toBe("default");
   });
-  it("reports a successful write accurately when the following read is unavailable", async () => {
+  it("rejects a partial write before mutation when stored state cannot be read", async () => {
+    database.settings.set("answer_mode", "pyramid");
+    database.settings.set("visible_personas", '["vc","recruiter"]');
     database.rejectRead = true;
-    expect((await saveSettings({ mode: "pyramid" })).mode).toBe("pyramid");
-    expect(database.settings.get("answer_mode")).toBe("pyramid");
+    await expect(saveSettings({ visiblePersonas: ["vc"] })).rejects.toMatchObject({ status: 503 });
+    expect(Object.fromEntries(database.settings)).toEqual({
+      answer_mode: "pyramid", visible_personas: '["vc","recruiter"]',
+    });
+  });
+  it("returns known current plus persisted patch without a post-write read", async () => {
+    database.settings.set("answer_mode", "pyramid");
+    database.rejectReadAfterWrite = true;
+    const saved = await saveSettings({ visiblePersonas: ["vc"] });
+    expect(saved).toMatchObject({ mode: "pyramid", visiblePersonas: ["vc"] });
+    expect(database.settings.get("visible_personas")).toBe('["vc"]');
   });
   it("fresh reads observe changed answer modes", async () => {
     await setAnswerMode("pyramid");
