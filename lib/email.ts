@@ -1,44 +1,48 @@
 import { waitUntil } from "@vercel/functions";
 import { Resend } from "resend";
 
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-export function sendNewSessionAlert(data: {
+export interface NewSessionAlert {
   query: string;
   persona: string;
   focus: string;
   lang: string;
   sessionId: string;
   visitorEmail?: string;
-}): void {
-  if (!resend) return;
+  internal?: boolean;
+}
+
+let warnedIncomplete = false;
+
+export function sendNewSessionAlert(data: NewSessionAlert): void {
+  if (data.internal) return;
+  const { RESEND_API_KEY: key, RESEND_FROM: from, RESEND_TO: to } = process.env;
+  if (!key || !from || !to) {
+    if (!warnedIncomplete) {
+      console.warn("[EMAIL] Alert disabled: RESEND_API_KEY, RESEND_FROM, and RESEND_TO are required");
+      warnedIncomplete = true;
+    }
+    return;
+  }
 
   const timestamp = new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" });
+  const text = [
+    "New chat session",
+    `Query: ${data.query}`,
+    `Persona: ${data.persona}`,
+    `Focus: ${data.focus}`,
+    `Language: ${data.lang}`,
+    `Visitor Email: ${data.visitorEmail || "N/A"}`,
+    `Session: ${data.sessionId}`,
+    `Time (KST): ${timestamp}`,
+  ].join("\n");
 
-  // Keep the function alive until the send settles (see lib/analytics.ts)
-  waitUntil(
-    resend.emails
-      .send({
-      from: "Ask DJ <onboarding@resend.dev>",
-      to: "leedj.1076@gmail.com",
-      subject: `New visitor: ${data.visitorEmail || "anonymous"}`,
-      html: `<p><strong>New chat session</strong></p>
-        <p><strong>Query:</strong> ${data.query}</p>
-        <p><strong>Persona:</strong> ${data.persona}</p>
-        <p><strong>Focus:</strong> ${data.focus}</p>
-        <p><strong>Language:</strong> ${data.lang}</p>
-        <p><strong>Visitor Email:</strong> ${data.visitorEmail || "N/A"}</p>
-        <p><strong>Session:</strong> ${data.sessionId}</p>
-        <p><strong>Time (KST):</strong> ${timestamp}</p>`,
-    })
-      .then((result) => {
-        if (result.error) {
-          console.error("[EMAIL] Resend error:", result.error.message);
-        } else {
-          console.log("[EMAIL] Alert sent for session:", data.sessionId);
-        }
-      })
-  );
+  const send = Promise.resolve().then(() => new Resend(key).emails.send({
+    from, to, subject: "New Ask DJ visitor", text,
+  })).then((result) => {
+    if (result.error) console.error("[EMAIL] Alert provider rejected the send:", result.error.message);
+  }).catch((error: unknown) => {
+    console.error("[EMAIL] Alert send failed:", error instanceof Error ? error.message : "unknown error");
+  });
+  try { waitUntil(send); }
+  catch (error) { console.error("[EMAIL] Alert scheduling failed:", error); }
 }

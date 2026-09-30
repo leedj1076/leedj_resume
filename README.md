@@ -135,13 +135,15 @@ SUPABASE_SERVICE_ROLE_KEY=your-server-side-service-role-key
 
 # Optional: enable new-session email alerts
 RESEND_API_KEY=your-resend-api-key
+RESEND_FROM="Ask DJ <sender@example.com>"
+RESEND_TO=owner@example.com
 ```
 
 Environment files are ignored by Git. All provider credentials remain server-side; none need a `NEXT_PUBLIC_` prefix.
 
-Before enabling persistence, provision the tables expected by the code: `analytics_events`, `chat_exchanges`, and `app_settings`. This checkout **does not yet include a database migration or schema bootstrap**. Credentials alone do not set up a fresh database. [`lib/analytics.ts`](lib/analytics.ts), [`lib/settings.ts`](lib/settings.ts), and the admin handlers define the current field contracts.
+Before enabling persistence, provision the tables expected by the code: `analytics_events`, `chat_exchanges`, and `app_settings`. For a clean project, review [`database/001_initial.sql`](database/001_initial.sql) and [`database/README.md`](database/README.md). An existing project needs an inspected adoption migration. Credentials alone do not set up a fresh database.
 
-Without Supabase configuration, public settings fall back to defaults and persistent conversation/review features are unavailable. Without Resend, alerts are disabled. Before enabling Resend for another deployment, update the sender and recipient in [`lib/email.ts`](lib/email.ts).
+Without Supabase configuration, public settings fall back to defaults and persistent conversation/review features are unavailable. Alerts remain disabled until all three Resend variables are configured.
 
 Populate a development Pinecone index, then start the app:
 
