@@ -37,6 +37,12 @@ export type ReviewResult = {
   correctionStatus: CorrectionStatus;
   correctionError?: string;
 };
+export const reviewResultSchema = z.object({
+  success: z.boolean(),
+  pineconeChunkId: z.string().nullable(),
+  correctionStatus: z.enum(["none", "pending", "applied", "failed"]),
+  correctionError: z.string().optional(),
+});
 
 export const sessionSchema = z.object({
   session_id: z.string(), persona: z.string(), focus: z.string(), lang: z.string(),
