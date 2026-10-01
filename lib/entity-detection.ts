@@ -54,12 +54,25 @@ export function detectFilter(query: string): DetectedFilter {
   const yearMatch = query.match(/\b(20[12]\d)\b/);
   if (yearMatch) {
     const year = parseInt(yearMatch[1], 10);
+    const yearStart = year * 100 + 1;
+    const yearEnd = year * 100 + 12;
     return {
       type: "temporal",
       filter: {
-        $and: [
-          { start_date: { $lte: year * 100 + 12 } },
-          { end_date: { $gte: year * 100 + 1 } },
+        $or: [
+          { $and: [
+            { start_date: { $lte: yearEnd } },
+            { end_date: { $gte: yearStart } },
+          ] },
+          { $and: [
+            { section: { $eq: "experience" } },
+            { start_date: { $gt: 0 } },
+            { start_date: { $lte: yearEnd } },
+            { $or: [
+              { is_ongoing: { $eq: true } },
+              { end_date: { $eq: 0 } },
+            ] },
+          ] },
         ],
       },
     };
