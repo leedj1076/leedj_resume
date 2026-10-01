@@ -1,6 +1,6 @@
 import type { ChunkRecord } from "./types";
 
-const CHUNK_LABELS: Record<string, string> = {
+export const CHUNK_LABELS: Record<string, string> = {
   "exp-dug-overview": "Devs United Games",
   "exp-dug-partnerships": "DUG Partnerships",
   "exp-dug-revenue": "DUG Revenue",
