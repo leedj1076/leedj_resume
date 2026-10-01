@@ -5,25 +5,35 @@ import { Button } from "@/components/ui/button";
 
 interface FeedbackButtonsProps {
   messageId: string;
-  onFeedback: (id: string, value: "up" | "down") => void;
+  onFeedback: (id: string, value: "up" | "down") => Promise<void> | void;
 }
 
 export default function FeedbackButtons({ messageId, onFeedback }: FeedbackButtonsProps) {
   const [selected, setSelected] = useState<"up" | "down" | null>(null);
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  const handleClick = (value: "up" | "down") => {
-    if (selected) return;
-    setSelected(value);
-    onFeedback(messageId, value);
+  const handleClick = async (value: "up" | "down") => {
+    if (selected || pending) return;
+    setPending(true);
+    setFailed(false);
+    try {
+      await onFeedback(messageId, value);
+      setSelected(value);
+    } catch {
+      setFailed(true);
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
-    <div className="flex gap-1 mt-1">
+    <div className="flex gap-1 mt-1 items-center">
       <Button
         variant="ghost"
         size="icon-xs"
         onClick={() => handleClick("up")}
-        disabled={selected !== null}
+        disabled={selected !== null || pending}
         aria-label="Thumbs up"
         className={`${
           selected === "up"
@@ -42,7 +52,7 @@ export default function FeedbackButtons({ messageId, onFeedback }: FeedbackButto
         variant="ghost"
         size="icon-xs"
         onClick={() => handleClick("down")}
-        disabled={selected !== null}
+        disabled={selected !== null || pending}
         aria-label="Thumbs down"
         className={`${
           selected === "down"
@@ -57,6 +67,7 @@ export default function FeedbackButtons({ messageId, onFeedback }: FeedbackButto
           <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
         </svg>
       </Button>
+      {failed && <span role="alert" className="text-[11px] text-red-600 dark:text-red-400">Could not save. Try again.</span>}
     </div>
   );
 }

@@ -2,13 +2,14 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Markdown from "react-markdown";
 import type { VisitorData } from "@/lib/types";
 import { PERSONA_QUESTIONS } from "@/lib/persona-config";
 import WelcomeModal from "@/components/WelcomeModal";
 import FeedbackButtons from "@/components/FeedbackButtons";
 import SkeletonLoader from "@/components/SkeletonLoader";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 type Lang = "en" | "ko";
 
@@ -69,7 +70,8 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [lang, setLang] = useState<Lang>("en");
   const [sessionId] = useState(() => crypto.randomUUID());
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [chatGeneration, setChatGeneration] = useState(0);
+  const initGeneration = useRef(0);
 
   const visitorDataRef = useRef<VisitorData | null>(null);
   useEffect(() => {
@@ -81,21 +83,14 @@ export default function Home() {
     langRef.current = lang;
   }, [lang]);
 
-  const transportRef = useRef(
-    new DefaultChatTransport({
-      api: "/api/chat",
-      body: () => ({
-        visitorData: visitorDataRef.current ?? undefined,
-        sessionId,
-        lang: langRef.current,
-      }),
-    })
-  );
+  const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat" }), []);
 
   const { messages, sendMessage, stop, setMessages, status, error } = useChat({
-    transport: transportRef.current,
+    id: `${sessionId}-${chatGeneration}`,
+    transport,
     onError: (err) => console.error("Chat error:", err),
   });
+  const { scrollRef, onScroll } = useAutoScroll(messages, status);
 
   const t = UI[lang];
   const isLoading = status === "submitted" || status === "streaming";
@@ -111,23 +106,23 @@ export default function Home() {
     document.documentElement.lang = lang;
   }, [lang]);
 
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, status, coldStartLoading]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-    sendMessage({ text: input });
+    initGeneration.current += 1;
+    setColdStartLoading(false);
+    void sendMessage({ text: input.trim() }, { body: { visitorData: visitorDataRef.current ?? undefined, sessionId, lang: langRef.current } });
     setInput("");
   };
 
   const handleSuggestion = (question: string) => {
-    sendMessage({ text: question });
+    initGeneration.current += 1;
+    setColdStartLoading(false);
+    void sendMessage({ text: question }, { body: { visitorData: visitorDataRef.current ?? undefined, sessionId, lang: langRef.current } });
   };
 
   async function handleModalSubmit(data: VisitorData) {
+    const requestGeneration = ++initGeneration.current;
     setVisitorData(data);
     visitorDataRef.current = data;
     setShowModal(false);
@@ -144,7 +139,10 @@ export default function Home() {
           lang,
         }),
       });
+      if (!res.ok) throw new Error(`Welcome failed (${res.status})`);
       const { welcome } = await res.json();
+      if (typeof welcome !== "string" || !welcome.trim()) throw new Error("Invalid welcome");
+      if (requestGeneration !== initGeneration.current) return;
       setMessages([
         {
           id: "welcome",
@@ -153,6 +151,7 @@ export default function Home() {
         },
       ]);
     } catch {
+      if (requestGeneration !== initGeneration.current) return;
       setMessages([
         {
           id: "welcome",
@@ -161,13 +160,16 @@ export default function Home() {
         },
       ]);
     } finally {
-      setColdStartLoading(false);
+      if (requestGeneration === initGeneration.current) setColdStartLoading(false);
     }
   }
 
   function handleReset() {
     if (window.confirm(t.resetConfirm)) {
-      setMessages([]);
+      initGeneration.current += 1;
+      void stop();
+      setChatGeneration((current) => current + 1);
+      setColdStartLoading(false);
       setVisitorData(null);
       visitorDataRef.current = null;
       setShowModal(true);
@@ -175,8 +177,8 @@ export default function Home() {
   }
 
   const handleFeedback = useCallback(
-    (messageId: string, value: "up" | "down") => {
-      fetch("/api/feedback", {
+    async (messageId: string, value: "up" | "down") => {
+      const response = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -186,7 +188,8 @@ export default function Home() {
           focus: visitorData?.focus,
           sessionId,
         }),
-      }).catch(() => {});
+      });
+      if (!response.ok) throw new Error(`Feedback failed (${response.status})`);
     },
     [visitorData, sessionId]
   );
@@ -234,7 +237,7 @@ export default function Home() {
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div ref={scrollRef} onScroll={onScroll} className="flex-1 overflow-y-auto px-4 py-6" role="log" aria-label={lang === "en" ? "Conversation" : "대화"}>
         <div className="max-w-2xl mx-auto space-y-4">
           {/* Cold start skeleton */}
           {coldStartLoading && (
@@ -355,8 +358,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Auto-scroll anchor */}
-          <div ref={messagesEndRef} />
         </div>
       </div>
 
