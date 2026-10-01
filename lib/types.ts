@@ -2,17 +2,8 @@ import type { UIMessage } from "ai";
 
 export type { Persona, Focus, VisitorData, PersonaLabel, PersonaOption } from "./domain/personas";
 
-export interface TraceStep {
-  label: string;
-  timestamp: number; // ms since request start
-  summary: string;   // one-line human-readable summary
-  data: Record<string, unknown>;
-}
-
-export interface TraceData {
-  steps: TraceStep[];
-  totalDurationMs: number;
-}
+export type { TraceStep, TraceData } from "./rag/trace";
+import type { TraceData } from "./rag/trace";
 
 export type MessageMetadata = {
   sourceTags?: string[];

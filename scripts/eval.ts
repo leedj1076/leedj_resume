@@ -1,9 +1,7 @@
-import { embed } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { getPineconeClient } from "../lib/pinecone";
-import { detectFilter, getCompanyOverviewId } from "../lib/entity-detection";
+import { existsSync } from "node:fs";
+import { parseChatRequest } from "../lib/server/chat-request";
+import { prepareAnswer } from "../lib/server/rag-service";
 
-// Test cases: query → expected chunk IDs that should appear in results
 const TEST_CASES: { query: string; expectedIds: string[]; description: string }[] = [
   {
     query: "What did you do at Devs United Games?",
@@ -68,8 +66,8 @@ const TEST_CASES: { query: string; expectedIds: string[]; description: string }[
   },
   {
     query: "What is your most recent role?",
-    expectedIds: ["exp-dug-overview"],
-    description: "Recency query should resolve to DUG",
+    expectedIds: ["changjo-2026-current-role"],
+    description: "Recency query should resolve to Changjo",
   },
   {
     query: "데브스에서 무엇을 하셨나요?",
@@ -88,126 +86,37 @@ const TEST_CASES: { query: string; expectedIds: string[]; description: string }[
   },
 ];
 
-const BASE_PINNED_IDS = ["narrative-career-trajectory", "personal-summary"];
+const usage = `Usage: npm run eval -- [--help | --offline]
 
-async function runEval() {
-  const indexName = process.env.PINECONE_INDEX_NAME!;
-  const pc = getPineconeClient();
-  const index = pc.index(indexName);
-  const ns = index.namespace("resume");
+Without flags, evaluates expected IDs using the retrieval-only prepareAnswer path.
+--offline lists the cases without contacting providers.
+--help prints this message.`;
 
-  let passed = 0;
-  let failed = 0;
-
-  for (const testCase of TEST_CASES) {
-    const { query, expectedIds, description } = testCase;
-
-    // 1. Detect filter
-    const detected = detectFilter(query);
-
-    // 2. Embed query
-    const { embedding } = await embed({
-      model: openai.embedding("text-embedding-3-large"),
-      value: query,
-    });
-
-    // 3. Build pinned IDs
-    const pinnedIds = [...BASE_PINNED_IDS];
-    if (detected?.type === "company") {
-      const overviewId = getCompanyOverviewId(detected.value);
-      if (overviewId) pinnedIds.push(overviewId);
-    }
-
-    // 4. Retrieve chunks (same logic as route.ts)
-    const retrievedIds = new Set<string>();
-
-    if (detected?.type === "company") {
-      const [semanticResults, companyResults, pinnedResults] = await Promise.all([
-        ns.query({ vector: embedding, topK: 5, includeMetadata: true }),
-        ns.query({
-          vector: embedding,
-          topK: 20,
-          includeMetadata: true,
-          filter: { company: { $eq: detected.value } },
-        }),
-        ns.fetch({ ids: pinnedIds }),
-      ]);
-      for (const id of pinnedIds) {
-        if (pinnedResults.records[id]) retrievedIds.add(id);
-      }
-      for (const m of companyResults.matches) retrievedIds.add(m.id);
-      for (const m of semanticResults.matches) retrievedIds.add(m.id);
-    } else if (detected?.type === "temporal") {
-      const [semanticResults, temporalResults, pinnedResults] = await Promise.all([
-        ns.query({ vector: embedding, topK: 5, includeMetadata: true }),
-        ns.query({
-          vector: embedding,
-          topK: 15,
-          includeMetadata: true,
-          filter: detected.filter,
-        }),
-        ns.fetch({ ids: pinnedIds }),
-      ]);
-      for (const id of pinnedIds) {
-        if (pinnedResults.records[id]) retrievedIds.add(id);
-      }
-      for (const m of temporalResults.matches) retrievedIds.add(m.id);
-      for (const m of semanticResults.matches) retrievedIds.add(m.id);
-    } else if (detected?.type === "section") {
-      const [semanticResults, sectionResults, pinnedResults] = await Promise.all([
-        ns.query({ vector: embedding, topK: 5, includeMetadata: true }),
-        ns.query({
-          vector: embedding,
-          topK: 15,
-          includeMetadata: true,
-          filter: { section: { $eq: detected.value } },
-        }),
-        ns.fetch({ ids: pinnedIds }),
-      ]);
-      for (const id of pinnedIds) {
-        if (pinnedResults.records[id]) retrievedIds.add(id);
-      }
-      for (const m of sectionResults.matches) retrievedIds.add(m.id);
-      for (const m of semanticResults.matches) retrievedIds.add(m.id);
-    } else {
-      const [semanticResults, pinnedResults] = await Promise.all([
-        ns.query({ vector: embedding, topK: 10, includeMetadata: true }),
-        ns.fetch({ ids: pinnedIds }),
-      ]);
-      for (const id of pinnedIds) {
-        if (pinnedResults.records[id]) retrievedIds.add(id);
-      }
-      for (const m of semanticResults.matches) retrievedIds.add(m.id);
-    }
-
-    // 5. Check recall
-    const foundIds = expectedIds.filter((id) => retrievedIds.has(id));
-    const missingIds = expectedIds.filter((id) => !retrievedIds.has(id));
-    const recall = foundIds.length / expectedIds.length;
-    const pass = recall === 1.0;
-
-    if (pass) {
-      passed++;
-      console.log(`  PASS  ${description}`);
-      console.log(`        Filter: ${detected ? JSON.stringify(detected) : "none"} | Retrieved: ${retrievedIds.size} chunks | Recall: ${(recall * 100).toFixed(0)}%`);
-    } else {
-      failed++;
-      console.log(`  FAIL  ${description}`);
-      console.log(`        Filter: ${detected ? JSON.stringify(detected) : "none"} | Retrieved: ${retrievedIds.size} chunks | Recall: ${(recall * 100).toFixed(0)}%`);
-      console.log(`        Missing: ${missingIds.join(", ")}`);
-      console.log(`        Got: ${[...retrievedIds].join(", ")}`);
-    }
-    console.log();
+async function runEval(): Promise<void> {
+  if (process.argv.includes("--help")) { console.log(usage); return; }
+  if (process.argv.includes("--offline")) {
+    console.log(`${TEST_CASES.length} retrieval cases ready (offline; no provider calls).`);
+    return;
   }
-
-  console.log("=".repeat(60));
-  console.log(`Results: ${passed} passed, ${failed} failed out of ${TEST_CASES.length} tests`);
-  console.log(`Overall recall: ${((passed / TEST_CASES.length) * 100).toFixed(0)}%`);
-
-  if (failed > 0) process.exit(1);
+  if (existsSync(".env.local")) process.loadEnvFile(".env.local");
+  let passed = 0;
+  for (const testCase of TEST_CASES) {
+    const request = parseChatRequest({ messages: [{ role: "user", content: testCase.query }],
+      visitorData: { persona: "vc", focus: "full_stack" } });
+    if (request.type !== "chat") throw new Error("Expected chat request");
+    const prepared = await prepareAnswer(request, new AbortController().signal, { answerMode: "default" });
+    const retrievedIds = new Set(prepared.context.usedChunks.map(chunk => chunk.id));
+    const missing = testCase.expectedIds.filter(id => !retrievedIds.has(id));
+    const pass = missing.length === 0;
+    if (pass) passed++;
+    console.log(`${pass ? "PASS" : "FAIL"} ${testCase.description}`);
+    if (!pass) console.log(`  Missing: ${missing.join(", ")}`);
+  }
+  console.log(`Results: ${passed}/${TEST_CASES.length} passed`);
+  if (passed !== TEST_CASES.length) process.exitCode = 1;
 }
 
-runEval().catch((err) => {
-  console.error("Eval failed:", err);
-  process.exit(1);
+runEval().catch(error => {
+  console.error("Eval failed:", error);
+  process.exitCode = 1;
 });

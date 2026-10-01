@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { TraceData, TraceStep } from "@/lib/types";
+import { TRACE_LABELS } from "@/lib/rag/trace";
 
 const STEP_COLORS: Record<string, string> = {
   "Query Processing": "bg-blue-500",
@@ -254,7 +255,7 @@ function ContextAssemblyDetail({ data }: { data: Record<string, unknown> }) {
 function QueryRewritePromptDetail({ data }: { data: Record<string, unknown> }) {
   return (
     <div>
-      <Row label="Target"><Pill color="blue">gpt-5.4</Pill></Row>
+      <Row label="Target"><Pill color="blue">{String(data.model)}</Pill></Row>
       <PromptBlock label="Full prompt" text={String(data.prompt)} />
     </div>
   );
@@ -281,7 +282,6 @@ function GenerationDetail({ data }: { data: Record<string, unknown> }) {
         </Pill>
       </Row>
       <Row label="Answer mode"><Pill>{String(data.answerMode)}</Pill></Row>
-      <Row label="Temperature">{String(data.temperature)}</Row>
       <Row label="Max tokens">{Number(data.maxOutputTokens).toLocaleString()}</Row>
       <Row label="Context">{Number(data.contextLength).toLocaleString()} chars</Row>
       {data.systemPrompt ? <PromptBlock label="System prompt" text={String(data.systemPrompt)} /> : null}
@@ -306,8 +306,9 @@ const DETAIL_RENDERERS: Record<string, React.ComponentType<{ data: Record<string
 
 function TraceStepItem({ step, isLast, duration }: { step: TraceStep; isLast: boolean; duration: number }) {
   const [expanded, setExpanded] = useState(false);
-  const dotColor = STEP_COLORS[step.label] ?? "bg-gray-400";
-  const DetailRenderer = DETAIL_RENDERERS[step.label];
+  const label = TRACE_LABELS[step.type];
+  const dotColor = STEP_COLORS[label] ?? "bg-gray-400";
+  const DetailRenderer = DETAIL_RENDERERS[label];
 
   return (
     <div className="relative pl-6">
@@ -324,7 +325,7 @@ function TraceStepItem({ step, isLast, duration }: { step: TraceStep; isLast: bo
       >
         <div className="flex items-center gap-2 mb-0.5">
           <span className="text-[12px] font-semibold text-gray-800 dark:text-gray-200">
-            {step.label}
+            {label}
           </span>
           <span className="text-[10px] font-mono text-gray-400 dark:text-gray-500">
             {duration > 0 ? `${duration}ms` : "<1ms"}
@@ -349,7 +350,7 @@ function TraceStepItem({ step, isLast, duration }: { step: TraceStep; isLast: bo
       {expanded && (
         <div className="mt-1.5 mb-1 p-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg">
           {DetailRenderer ? (
-            <DetailRenderer data={step.data} />
+            <DetailRenderer data={step.data as Record<string, unknown>} />
           ) : (
             <pre className="text-[10px] text-gray-600 dark:text-gray-300 font-mono leading-relaxed whitespace-pre-wrap break-all">
               {JSON.stringify(step.data, null, 2)}
@@ -407,7 +408,7 @@ export default function TracePanel({
           const duration = nextTimestamp - step.timestamp;
           return (
             <TraceStepItem
-              key={`${step.label}-${i}`}
+              key={`${step.type}-${i}`}
               step={step}
               isLast={i === trace.steps.length - 1}
               duration={duration}
@@ -424,13 +425,14 @@ export default function TracePanel({
             const nextTimestamp = trace.steps[i + 1]?.timestamp ?? trace.totalDurationMs;
             const duration = nextTimestamp - step.timestamp;
             const widthPct = Math.max((duration / trace.totalDurationMs) * 100, 2);
-            const dotColor = STEP_COLORS[step.label] ?? "bg-gray-400";
+            const label = TRACE_LABELS[step.type];
+            const dotColor = STEP_COLORS[label] ?? "bg-gray-400";
             return (
               <div
                 key={i}
                 className={`${dotColor} rounded-sm h-full opacity-70 hover:opacity-100 transition-opacity cursor-default`}
                 style={{ width: `${widthPct}%` }}
-                title={`${step.label}: ${duration}ms`}
+                title={`${label}: ${duration}ms`}
               />
             );
           })}
