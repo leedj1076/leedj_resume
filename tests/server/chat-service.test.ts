@@ -130,6 +130,57 @@ describe("SDK response contracts", () => {
 });
 
 describe("prototype orchestration", () => {
+  const prototypeRequest = (persona: "developer_partnerships" | "recruiter", focus: "full_stack" | "business_development" = "full_stack") => ({
+    query: "Tell me about your work", persona, focus,
+    messages: [{ id: "m", role: "user" as const, parts: [{ type: "text" as const, text: "Tell me about your work" }] }],
+  });
+  const chunk = (id: string, section: string, overrides: Record<string, unknown> = {}) => ({
+    id, enrichedText: id, depth: "surface", section, skills: [], isCoreStrength: false, pineconeScore: 0, ...overrides,
+  });
+
+  it("keeps the original section ranking even for suppressed and persona-dampened IDs", async () => {
+    p.search.mockResolvedValue([
+      chunk("interview-q2.1-why-vc", "experience"),
+      chunk("another-why-vc", "experience"),
+      chunk("ordinary-project", "project"),
+    ]);
+    p.generate.mockResolvedValue("Answer");
+    const { handlePrototypeChat } = await import("@/lib/server/prototype-service");
+    const result = await handlePrototypeChat(prototypeRequest("developer_partnerships"), new AbortController().signal);
+    expect(result.chunksUsed).toEqual(["interview-q2.1-why-vc", "another-why-vc", "ordinary-project"]);
+    expect(p.generate.mock.calls[0][0].system).toContain("interview-q2.1-why-vc");
+  });
+
+  it("keeps the original first 15 when core strength and semantic scores differ", async () => {
+    const semantic = Array.from({ length: 10 }, (_, index) =>
+      chunk(`semantic-${index}`, "experience", { skills: ["partnership management"], pineconeScore: index / 10 }));
+    semantic[0].id = "interview-q2.1-why-vc";
+    const focused = Array.from({ length: 6 }, (_, index) =>
+      chunk(`focused-${index}`, "experience", { skills: ["partnership management"], pineconeScore: 1 - index / 10,
+        isCoreStrength: index === 5 }));
+    p.search.mockResolvedValueOnce(semantic).mockResolvedValueOnce(focused);
+    p.generate.mockResolvedValue("Answer");
+    const { handlePrototypeChat } = await import("@/lib/server/prototype-service");
+    const result = await handlePrototypeChat(prototypeRequest("developer_partnerships", "business_development"), new AbortController().signal);
+    expect(result.chunksUsed).toEqual([
+      "interview-q2.1-why-vc", "semantic-1", "semantic-2", "semantic-3", "semantic-4",
+      "semantic-5", "semantic-6", "semantic-7", "semantic-8", "semantic-9",
+      "focused-0", "focused-1", "focused-2", "focused-3", "focused-4",
+    ]);
+    expect(p.generate.mock.calls[0][0].system).not.toContain("focused-5");
+  });
+
+  it("does not let a high semantic score outrank a stronger section", async () => {
+    p.search.mockResolvedValue([
+      chunk("experience-low-score", "experience", { pineconeScore: 0.01 }),
+      chunk("project-high-score", "project", { pineconeScore: 0.99 }),
+    ]);
+    p.generate.mockResolvedValue("Answer");
+    const { handlePrototypeChat } = await import("@/lib/server/prototype-service");
+    const result = await handlePrototypeChat(prototypeRequest("developer_partnerships"), new AbortController().signal);
+    expect(result.chunksUsed).toEqual(["experience-low-score", "project-high-score"]);
+  });
+
   it("keeps pinned text when semantic retrieval repeats its ID", async () => {
     const id = "personal-summary";
     const base = { id, depth: "surface", section: "summary", skills: [], isCoreStrength: false, pineconeScore: 0 };

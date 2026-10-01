@@ -1,8 +1,7 @@
 import type { ModelMessage } from "ai";
 import type { PrototypeRequest } from "./chat-request";
-import { CORE_STRENGTH_IDS, FOCUS_HIGHLIGHT, FOCUS_SKILL_TERMS, PERSONA_TONE } from "../persona-config";
+import { CORE_STRENGTH_IDS, FOCUS_HIGHLIGHT, FOCUS_SKILL_TERMS, PERSONA_SECTION_WEIGHTS, PERSONA_TONE } from "../persona-config";
 import { ANSWER_MODE_PROMPTS } from "../answer-modes";
-import { selectEvidence } from "../rag/selection";
 import { assembleContext } from "../rag/context";
 import { embedQuery, fetchChunks, generateAnswer, readAnswerMode, searchChunks } from "./providers";
 
@@ -22,9 +21,15 @@ export async function handlePrototypeChat(request: PrototypeRequest, signal: Abo
   for (const chunk of [...pinned, ...semantic, ...focused]) {
     if (!byId.has(chunk.id)) byId.set(chunk.id, chunk);
   }
-  const chunks = [...byId.values()];
-  const selection = selectEvidence(chunks, [], { persona: request.persona, focus: request.focus }, "specific");
-  const context = assembleContext(selection);
+  // The prototype retains its original section-and-focus ranking policy.
+  const weights = PERSONA_SECTION_WEIGHTS[request.persona];
+  const rankedChunks = [...byId.values()]
+    .map(chunk => ({ chunk, score: (weights[chunk.section] ?? 1.0) *
+      (chunk.skills.some(skill => focusTerms.includes(skill)) ? 1.25 : 1.0) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 15)
+    .map(result => result.chunk);
+  const context = assembleContext({ rankedChunks, directMatchChunk: null, droppedSuppressedIds: [] });
   const answerMode = await readAnswerMode();
   signal.throwIfAborted();
   const messages: ModelMessage[] = request.messages.slice(-10).map(message => ({ role: message.role, content: message.parts.map(part => part.text).join("") }));
@@ -52,5 +57,5 @@ ${FOCUS_HIGHLIGHT[request.focus]}
 --- MY RESUME ---
 ${context.text}` });
   signal.throwIfAborted();
-  return { response, chunksUsed: context.usedChunks.map(chunk => chunk.id) };
+  return { response, chunksUsed: rankedChunks.map(chunk => chunk.id) };
 }
