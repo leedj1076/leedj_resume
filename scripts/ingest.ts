@@ -1,65 +1,11 @@
-import { embedMany } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { getPineconeClient } from "../lib/pinecone";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
-
-interface ResumeEntry {
-  chunk_id: string;
-  text: string;
-  source_type: string;
-  section: string;
-  company: string | null;
-  role: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  skills: string[];
-  keywords: string[];
-  token_count: number;
-  depth?: string;
-  focus_tags?: string[];
-  is_core_strength?: boolean;
-}
-
-interface QAEntry extends ResumeEntry {
-  question: string;
-  answer_summary: string;
-}
-
-type AnyEntry = ResumeEntry | QAEntry;
-
-function isQAEntry(entry: AnyEntry): entry is QAEntry {
-  return "question" in entry && typeof entry.question === "string";
-}
-
-function buildEnrichedText(entry: AnyEntry): string {
-  const parts: string[] = [];
-
-  if (entry.role) parts.push(entry.role);
-  if (entry.company) parts.push(`at ${entry.company}`);
-  if (entry.start_date || entry.end_date) {
-    const dates = [entry.start_date, entry.end_date].filter(Boolean).join(" – ");
-    parts.push(`(${dates})`);
-  }
-
-  const prefix = parts.length > 0 ? `${parts.join(" ")}. ` : "";
-
-  // For Q&A entries, prepend the question for better retrieval matching
-  const questionPrefix = isQAEntry(entry) && entry.question
-    ? `Q: ${entry.question}. `
-    : "";
-
-  return `${prefix}${questionPrefix}${entry.text}`;
-}
-
-// Convert "YYYY-MM" to numeric YYYYMM for Pinecone filter comparisons
-function dateToNum(date: string): number {
-  return parseInt(date.replace("-", ""), 10);
-}
+import { KnowledgeEntrySchema, type KnowledgeEntry } from "../lib/domain/knowledge";
+import { syncKnowledge } from "../lib/server/ingestion";
 
 function printCoverageReport(
-  resumeEntries: ResumeEntry[],
-  qaEntries: QAEntry[]
+  resumeEntries: KnowledgeEntry[],
+  qaEntries: KnowledgeEntry[]
 ) {
   console.log("\n" + "=".repeat(60));
   console.log("COVERAGE GAP REPORT");
@@ -131,136 +77,26 @@ function printCoverageReport(
 }
 
 async function main() {
-  const indexName = process.env.PINECONE_INDEX_NAME!;
-  const NAMESPACE = "resume";
-  const DIMENSION = 3072;
-
-  // 1. Read resume data
+  const args = process.argv.slice(2);
+  if (args.includes("--help")) {
+    console.log("Usage: npm run ingest -- [--dry-run]");
+    return;
+  }
+  if (args.some((arg) => arg !== "--dry-run")) {
+    throw new Error(`Unknown argument: ${args.find((arg) => arg !== "--dry-run")}`);
+  }
+  const dryRun = args.includes("--dry-run");
   const resumePath = join(__dirname, "../data/resume.json");
-  const resumeRaw = readFileSync(resumePath, "utf-8");
-  const resumeEntries: ResumeEntry[] = JSON.parse(resumeRaw);
-  console.log(`Loaded ${resumeEntries.length} resume entries`);
-
-  // 2. Read Q&A entries if they exist
   const qaPath = join(__dirname, "../data/knowledge_entries.json");
-  let qaEntries: QAEntry[] = [];
-  if (existsSync(qaPath)) {
-    const qaRaw = readFileSync(qaPath, "utf-8");
-    qaEntries = JSON.parse(qaRaw);
-    console.log(`Loaded ${qaEntries.length} Q&A entries`);
-  } else {
-    console.log("No knowledge_entries.json found — indexing resume only");
-  }
-
-  // 3. Combine all entries
-  const allEntries: AnyEntry[] = [...resumeEntries, ...qaEntries];
-  console.log(`Total entries to index: ${allEntries.length}`);
-
-  // 4. Build enriched text with contextual injection
-  const enrichedTexts = allEntries.map(buildEnrichedText);
-
-  // 5. Generate embeddings
-  console.log("Generating embeddings with text-embedding-3-large...");
-  const { embeddings } = await embedMany({
-    model: openai.embedding("text-embedding-3-large"),
-    values: enrichedTexts,
-  });
-  console.log(
-    `Generated ${embeddings.length} embeddings (dim=${embeddings[0].length})`
-  );
-
-  // 6. Create Pinecone index if it doesn't exist
-  const pc = getPineconeClient();
-  const existingIndexes = await pc.listIndexes();
-  const indexExists = existingIndexes.indexes?.some(
-    (i) => i.name === indexName
-  );
-
-  if (!indexExists) {
-    console.log(`Creating index "${indexName}"...`);
-    await pc.createIndex({
-      name: indexName,
-      dimension: DIMENSION,
-      metric: "cosine",
-      spec: {
-        serverless: {
-          cloud: "aws",
-          region: "us-east-1",
-        },
-      },
-      waitUntilReady: true,
-    });
-    console.log("Index created and ready");
-  } else {
-    console.log(`Index "${indexName}" already exists`);
-  }
-
-  // 7. Delete all existing vectors in namespace (skip on error for fresh index)
-  const index = pc.index(indexName);
-  try {
-    console.log(`Deleting all existing vectors in namespace "${NAMESPACE}"...`);
-    await index.namespace(NAMESPACE).deleteAll();
-  } catch (err) {
-    console.log("Delete skipped (index may be freshly created):", (err as Error).message?.slice(0, 100));
-  }
-
-  // 8. Upsert vectors with metadata
-  const vectors = allEntries.map((entry, i) => {
-    const baseMetadata = {
-      section: entry.section,
-      company: entry.company ?? "",
-      role: entry.role ?? "",
-      start_date: entry.start_date ? dateToNum(entry.start_date) : 0,
-      end_date: entry.end_date ? dateToNum(entry.end_date) : 0,
-      skills: entry.skills,
-      keywords: entry.keywords,
-      depth: entry.depth ?? "surface",
-      focus_tags: entry.focus_tags ?? [],
-      is_core_strength: entry.is_core_strength ?? false,
-      enrichedText: enrichedTexts[i],
-    };
-
-    // Add Q&A-specific metadata
-    if (isQAEntry(entry)) {
-      return {
-        id: entry.chunk_id,
-        values: embeddings[i],
-        metadata: {
-          ...baseMetadata,
-          chunk_type: "qa_story",
-          question: entry.question ?? "",
-          answer_summary: entry.answer_summary ?? "",
-        },
-      };
-    }
-
-    return {
-      id: entry.chunk_id,
-      values: embeddings[i],
-      metadata: baseMetadata,
-    };
-  });
-
-  // Upsert in batches of 100 (Pinecone best practice)
-  const BATCH_SIZE = 100;
-  for (let i = 0; i < vectors.length; i += BATCH_SIZE) {
-    const batch = vectors.slice(i, i + BATCH_SIZE);
-    await index.namespace(NAMESPACE).upsert({ records: batch });
-    console.log(
-      `Upserted batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(vectors.length / BATCH_SIZE)} (${batch.length} vectors)`
-    );
-  }
-
-  console.log(
-    `\nUpserted ${vectors.length} vectors to namespace "${NAMESPACE}"`
-  );
-  console.log("Ingestion complete!");
-
-  // 9. Coverage gap report
+  const resumeEntries = KnowledgeEntrySchema.array().parse(JSON.parse(readFileSync(resumePath, "utf-8")));
+  const qaEntries = existsSync(qaPath)
+    ? KnowledgeEntrySchema.array().parse(JSON.parse(readFileSync(qaPath, "utf-8"))) : [];
+  const report = await syncKnowledge([...resumeEntries, ...qaEntries], { dryRun });
+  console.log(`${dryRun ? "Dry run" : "Ingestion complete"}: ${JSON.stringify(report)}`);
   printCoverageReport(resumeEntries, qaEntries);
 }
 
-main().catch((err) => {
-  console.error("Ingestion failed:", err);
-  process.exit(1);
+main().catch((error) => {
+  console.error("Ingestion failed:", error);
+  process.exitCode = 1;
 });
