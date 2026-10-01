@@ -13,9 +13,10 @@ const stream = () => new Response('data: {"type":"start","messageId":"a1"}\n\nda
 
 it("reset aborts and isolates a delayed SDK stream, history, error, and trace", async () => {
   let deliver!: (response: Response) => void;
-  const fetcher = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((resolve) => {
+  const fetcher = vi.fn((url: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((resolve) => {
+    expect(url).toBe("/api/chat");
+    expect(init?.signal).toBeDefined();
     deliver = resolve;
-    init?.signal?.addEventListener("abort", () => {});
   }));
   vi.stubGlobal("fetch", fetcher);
   const { result } = renderHook(() => useProfileConversation(options));
@@ -27,10 +28,43 @@ it("reset aborts and isolates a delayed SDK stream, history, error, and trace", 
   expect(sent.lang).toBe("en");
   act(() => result.current.selectTrace("old-trace"));
   act(() => result.current.reset());
+  expect(fetcher.mock.calls[0][1]?.signal?.aborted).toBe(true);
   expect(result.current.messages).toEqual([]);
   expect(result.current.selectedTraceMessageId).toBeNull();
   expect(result.current.error).toBeUndefined();
   await act(async () => { deliver(stream()); await Promise.resolve(); });
+  expect(result.current.messages).toEqual([]);
+});
+
+it("reset removes a visible partial answer and ignores later chunks from its stream", async () => {
+  const encoder = new TextEncoder();
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  let requestSignal!: AbortSignal;
+  const fetcher = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
+    requestSignal = init?.signal as AbortSignal;
+    return Promise.resolve(new Response(new ReadableStream<Uint8Array>({
+      start(streamController) { controller = streamController; },
+    }), { headers: { "content-type": "text/event-stream", "x-vercel-ai-ui-message-stream": "v1" } }));
+  });
+  vi.stubGlobal("fetch", fetcher);
+  const { result } = renderHook(() => useProfileConversation(options));
+  act(() => result.current.send("Hello"));
+  await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+  await act(async () => {
+    controller.enqueue(encoder.encode('data: {"type":"start","messageId":"partial"}\n\ndata: {"type":"text-start","id":"part"}\n\ndata: {"type":"text-delta","id":"part","delta":"First chunk"}\n\n'));
+  });
+  await waitFor(() => expect(result.current.messages.some((message) =>
+    message.role === "assistant" && message.parts.some((part) => part.type === "text" && part.text.includes("First chunk")))).toBe(true));
+  act(() => result.current.reset());
+  expect(requestSignal.aborted).toBe(true);
+  expect(result.current.messages).toEqual([]);
+  await act(async () => {
+    try {
+      controller.enqueue(encoder.encode('data: {"type":"text-delta","id":"part","delta":"Late chunk"}\n\ndata: {"type":"text-end","id":"part"}\n\ndata: {"type":"finish"}\n\n'));
+      controller.close();
+    } catch { /* Aborted readers may cancel the stream before this write. */ }
+    await Promise.resolve();
+  });
   expect(result.current.messages).toEqual([]);
 });
 
