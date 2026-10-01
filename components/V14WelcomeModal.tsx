@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { V14_PERSONA_OPTIONS } from "@/lib/profile-data";
 import type { Lang } from "@/lib/profile-data";
 import {
   Dialog,
@@ -11,19 +10,21 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import PersonaSelector from "./profile/PersonaSelector";
+import { resolvePersonaOptions, type Persona, type PersonaOption } from "@/lib/domain/personas";
 
 interface V14WelcomeModalProps {
   onStart: (lang: Lang, persona: string, email?: string) => void;
-  options?: { value: string; en: string; kr: string }[];
+  options?: readonly PersonaOption[];
   defaultPersona?: string;
 }
 
 export default function V14WelcomeModal({ onStart, options, defaultPersona }: V14WelcomeModalProps) {
-  const personaOptions = options ?? V14_PERSONA_OPTIONS;
+  const personaOptions = options ?? resolvePersonaOptions(undefined, undefined);
   const [lang, setLang] = useState<Lang>("en");
-  const [persona, setPersona] = useState<string | null>(
+  const [persona, setPersona] = useState<Persona | null>(
     defaultPersona && personaOptions.some((o) => o.value === defaultPersona)
-      ? defaultPersona
+      ? defaultPersona as Persona
       : null
   );
   const [email, setEmail] = useState("");
@@ -33,7 +34,7 @@ export default function V14WelcomeModal({ onStart, options, defaultPersona }: V1
     <Dialog open onOpenChange={() => {}}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[720px] sm:max-w-[720px] px-20 py-12 rounded-2xl bg-[var(--color-page-bg)] border-[var(--color-border-primary)]"
+        className="max-w-[720px] sm:max-w-[720px] w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto px-6 sm:px-20 py-6 sm:py-12 rounded-2xl bg-[var(--color-page-bg)] border-[var(--color-border-primary)]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -89,22 +90,7 @@ export default function V14WelcomeModal({ onStart, options, defaultPersona }: V1
           <p className="text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-widest mb-4">
             {en ? "I'm visiting as a..." : "저는..."}
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            {personaOptions.map((opt) => (
-              <Button
-                key={opt.value}
-                variant="outline"
-                onClick={() => setPersona(opt.value)}
-                className={`py-2.5 h-auto text-[14px] rounded-lg whitespace-normal ${
-                  persona === opt.value
-                    ? "bg-[var(--color-surface-inverted)] dark:bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] dark:text-[var(--color-text-inverted)] border-[var(--color-surface-inverted)] dark:border-[var(--color-surface-inverted)] font-medium hover:bg-[var(--color-surface-inverted)] dark:hover:bg-[var(--color-surface-inverted)] hover:text-[var(--color-text-inverted)]"
-                    : "bg-[var(--color-page-bg)] dark:bg-[var(--color-page-bg)] text-[var(--color-text-primary)] dark:text-[var(--color-text-primary)] border-[var(--color-border-secondary)] dark:border-[var(--color-border-secondary)] hover:border-[var(--color-hover-border)]"
-                }`}
-              >
-                {en ? opt.en : opt.kr}
-              </Button>
-            ))}
-          </div>
+          <PersonaSelector options={personaOptions} value={persona} onChange={setPersona} lang={lang} variant="welcome" />
         </div>
 
         {/* Disclaimer + Email */}
@@ -116,6 +102,7 @@ export default function V14WelcomeModal({ onStart, options, defaultPersona }: V1
           </p>
           <input
             type="email"
+            aria-label={en ? "Email (optional)" : "이메일 (선택)"}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email@example.com"

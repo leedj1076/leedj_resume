@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Markdown from "react-markdown";
-import FeedbackButtons from "./FeedbackButtons";
+import { useState } from "react";
+import { getMessageText, parseFollowUps } from "@/lib/chat/messages";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
+import ChatMessage from "./chat/ChatMessage";
+import ChatComposer from "./chat/ChatComposer";
+import FollowUpSuggestions from "./chat/FollowUpSuggestions";
 import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, type Lang } from "@/lib/profile-data";
 import type { ChatUIMessage } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ChatPanelProps {
   lang: Lang;
@@ -19,27 +20,11 @@ interface ChatPanelProps {
   onSend: (text: string) => void;
   onStop: () => void;
   onReset: () => void;
-  onFeedback: (messageId: string, value: "up" | "down") => void;
+  onFeedback: (messageId: string, value: "up" | "down") => Promise<void> | void;
   starterIndices: number[];
   internal?: boolean;
   selectedTraceMessageId?: string | null;
   onSelectTrace?: (messageId: string) => void;
-}
-
-function getMessageText(message: ChatUIMessage): string {
-  return message.parts
-    .filter((p) => p.type === "text")
-    .map((p) => ("text" in p ? p.text : ""))
-    .join("");
-}
-
-function parseFollowUps(text: string): { clean: string; followUps: string[] } {
-  const match = text.match(/<followup>\n?([\s\S]*?)<\/followup>\s*$/);
-  if (!match) return { clean: text, followUps: [] };
-  return {
-    clean: text.replace(match[0], "").trimEnd(),
-    followUps: match[1].trim().split("\n").filter(Boolean).slice(0, 2),
-  };
 }
 
 export default function ChatPanel({
@@ -58,9 +43,7 @@ export default function ChatPanel({
   onSelectTrace,
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
-  const endRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { scrollRef, onScroll } = useAutoScroll(messages, status);
   const en = lang === "en";
   const isLoading = status === "submitted" || status === "streaming";
 
@@ -182,45 +165,9 @@ export default function ChatPanel({
     doc.save(`dj-lee-chat-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
-  // Scroll to bottom — use instant scroll during streaming to avoid
-  // smooth-scroll conflicts that cause bouncing with reasoning models (GPT-5.4)
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const isStreaming = status === "streaming";
-    if (isStreaming) {
-      // During streaming: snap to bottom instantly (no smooth animation conflicts)
-      el.scrollTop = el.scrollHeight;
-    } else {
-      // After completion or new user message: smooth scroll
-      endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, status]);
-
-  // Auto-resize textarea
-  useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    const next = Math.min(el.scrollHeight, 120);
-    el.style.height = next + "px";
-    el.style.overflowY = el.scrollHeight > 120 ? "auto" : "hidden";
-  }, [input]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-    onSend(input.trim());
+  const handleSend = (text: string) => {
+    onSend(text);
     setInput("");
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (!input.trim() || isLoading) return;
-      onSend(input.trim());
-      setInput("");
-    }
   };
 
   // Derive starters from current lang + persona (indices are stable across lang switches)
@@ -317,7 +264,7 @@ export default function ChatPanel({
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="profile-scroll flex-1 overflow-y-auto px-6 py-4">
+      <div ref={scrollRef} onScroll={onScroll} className="profile-scroll flex-1 overflow-y-auto px-6 py-4" role="log" aria-label={en ? "Conversation" : "대화"}>
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="animate-[fadeIn_0.4s_ease-out]">
@@ -363,142 +310,13 @@ export default function ChatPanel({
         )}
 
         {/* Message bubbles */}
-        {messages.map((m) => {
-          const rawText = getMessageText(m);
-          const isAssistant = m.role === "assistant";
-          const { clean: text } = isAssistant
-            ? parseFollowUps(rawText)
-            : { clean: rawText };
-          return (
-            <div
-              key={m.id}
-              className="mb-3 animate-[slideUp_0.25s_ease-out]"
-            >
-              {m.role === "user" ? (
-                <div className="flex justify-end items-start gap-2">
-                  <div className="max-w-[80%] px-3.5 py-2.5 rounded-[12px_12px_4px_12px] bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[14px] leading-relaxed">
-                    {text}
-                  </div>
-                  <Avatar size="sm" className="mt-0.5">
-                    <AvatarFallback className="bg-[var(--color-avatar-user-bg)] text-[var(--color-avatar-user-text)]">
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              ) : (
-                <>
-                  <div className="flex justify-start items-start gap-2">
-                    <Avatar size="sm" className="mt-0.5">
-                      <AvatarFallback className="bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] text-[10px] font-semibold">
-                        DJ
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="max-w-[85%] px-4 py-3 rounded-[12px_12px_12px_4px] bg-[var(--color-surface-tertiary)] border border-[var(--color-border-primary)]">
-                      <div className="prose prose-sm dark:prose-invert max-w-none text-[14px] text-[var(--color-text-primary)] leading-[1.7] prose-p:my-1.5 prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0.5 prose-li:text-[var(--color-text-primary)] prose-strong:text-[var(--color-text-primary)] prose-strong:font-semibold prose-headings:text-[15px] prose-headings:font-semibold prose-headings:mt-3 prose-headings:mb-1 prose-headings:text-[var(--color-text-primary)] prose-a:text-[var(--color-key)]">
-                        <Markdown>{text}</Markdown>
-                      </div>
-                      {status === "streaming" &&
-                        m.id === messages[messages.length - 1]?.id &&
-                        rawText && (
-                          <span className="inline-block w-0.5 h-[13px] bg-[var(--color-text-primary)] ml-0.5 animate-pulse align-text-bottom" />
-                        )}
-                    </div>
-                  </div>
-                  <div className="flex justify-start items-center gap-2 ml-8">
-                    <FeedbackButtons
-                      messageId={m.id}
-                      onFeedback={onFeedback}
-                    />
-                    {m.metadata?.sourceTags && m.metadata.sourceTags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {m.metadata.sourceTags.map((tag, ti) => (
-                          <Badge
-                            key={ti}
-                            variant="secondary"
-                            className="text-[11px] px-1.5 py-0.5 bg-[var(--color-surface-secondary)] text-[var(--color-text-muted)] border border-[var(--color-border-primary)]"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    {internal && m.metadata?.trace && onSelectTrace && (
-                      <button
-                        onClick={() => onSelectTrace(m.id)}
-                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors ${
-                          selectedTraceMessageId === m.id
-                            ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
-                            : "bg-gray-100 text-gray-400 hover:bg-violet-50 hover:text-violet-600 dark:bg-gray-800 dark:text-gray-500 dark:hover:bg-violet-900/20 dark:hover:text-violet-400"
-                        }`}
-                        title="View RAG trace"
-                      >
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14 2 14 8 20 8" />
-                          <line x1="16" y1="13" x2="8" y2="13" />
-                          <line x1="16" y1="17" x2="8" y2="17" />
-                        </svg>
-                        trace
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })}
+        {messages.map((message) => <ChatMessage key={message.id} m={message} status={status}
+          lastMessageId={messages[messages.length - 1]?.id} internal={internal}
+          selectedTraceMessageId={selectedTraceMessageId} onSelectTrace={onSelectTrace}
+          onFeedback={onFeedback} />)}
 
-        {/* Follow-up chips — AI-generated "Dig deeper" + generic "Or try" */}
-        {showDigDeeper && (
-          <div className="mb-2 animate-[fadeIn_0.3s_ease-out]">
-            <span className="text-[11px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1.5 block">
-              {en ? "Dig deeper" : "더 알아보기"}
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {aiFollowUps.map((q, i) => (
-                <button
-                  key={`ai-${i}`}
-                  onClick={() => onSend(q)}
-                  className="px-3 py-1.5 text-[13px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        {showOrTry && (
-          <div className="mb-3 animate-[fadeIn_0.3s_ease-out]">
-            <span className="text-[11px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1.5 block">
-              {showDigDeeper
-                ? (en ? "Or try" : "또는")
-                : (en ? "Ask about" : "질문해보기")}
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {unusedStarters.slice(0, 2).map((q, i) => (
-                <button
-                  key={`gen-${i}`}
-                  onClick={() => onSend(q)}
-                  className="px-3 py-1.5 text-[13px] text-[var(--color-text-secondary)] bg-[var(--color-page-bg)] border border-[var(--color-border-secondary)] rounded-full cursor-pointer hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] hover:text-[var(--color-text-primary)] transition-colors"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <FollowUpSuggestions lang={lang} aiFollowUps={aiFollowUps} unusedStarters={unusedStarters}
+          showDigDeeper={showDigDeeper} showOrTry={showOrTry} onSend={onSend} />
 
         {/* Typing indicator */}
         {isLoading &&
@@ -545,44 +363,14 @@ export default function ChatPanel({
           </div>
         )}
 
-        <div ref={endRef} />
+        <div className="sr-only" role="status" aria-live="polite">
+          {status === "ready" && messages[messages.length - 1]?.role === "assistant"
+            ? (en ? "Answer complete" : "답변 완료") : ""}
+        </div>
       </div>
 
-      {/* Input */}
-      <form
-        onSubmit={handleSubmit}
-        className="px-6 py-3 pb-5 border-t border-[var(--color-border-primary)] flex gap-2 items-end shrink-0"
-      >
-        <Textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={isLoading}
-          rows={1}
-          placeholder={en ? "Ask me anything..." : "무엇이든 물어보세요..."}
-          className="flex-1 text-[14px] px-3.5 py-2.5 min-h-0 border-[var(--color-border-secondary)] rounded-lg text-[var(--color-text-primary)] bg-[var(--color-page-bg)] focus-visible:border-[var(--color-key)] focus-visible:ring-[var(--color-key)]/20 resize-none shadow-none"
-          style={{ maxHeight: 120, overflowY: "hidden", fieldSizing: "fixed" }}
-        />
-        {isLoading ? (
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={onStop}
-            className="text-xs font-medium px-4 py-2.5 h-auto rounded-lg shrink-0"
-          >
-            Stop
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            disabled={!input.trim()}
-            className="text-xs font-medium px-4 py-2.5 h-auto rounded-lg shrink-0 bg-[var(--color-surface-inverted)] text-[var(--color-text-inverted)] hover:bg-[var(--color-button-send-hover)] disabled:bg-[var(--color-button-send-disabled)] disabled:opacity-100"
-          >
-            {en ? "Send" : "전송"}
-          </Button>
-        )}
-      </form>
+      <ChatComposer value={input} onChange={setInput} onSend={handleSend} onStop={onStop}
+        disabled={isLoading} streaming={isLoading} lang={lang} />
     </div>
   );
 }

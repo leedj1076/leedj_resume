@@ -54,6 +54,7 @@ it("failed feedback stays retryable and only success selects it", async () => {
   render(<FeedbackButtons messageId="a1" onFeedback={onFeedback} />);
   fireEvent.click(screen.getByRole("button", { name: "Thumbs up" }));
   await waitFor(() => expect(screen.getByRole("button", { name: "Thumbs up" })).toBeEnabled());
+  expect(screen.getByRole("alert")).toHaveTextContent(/try again/i);
   fireEvent.click(screen.getByRole("button", { name: "Thumbs up" }));
   await waitFor(() => expect(screen.getByRole("button", { name: "Thumbs up" })).toBeDisabled());
   expect(onFeedback).toHaveBeenCalledTimes(2);

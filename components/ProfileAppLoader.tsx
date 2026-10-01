@@ -2,18 +2,11 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
-
-type PersonaLabels = Record<string, { en: string; kr: string }>;
+import type { ProfileAppProps } from "./ProfileApp";
 
 const ProfileApp = dynamic(() => import("@/components/ProfileApp"), {
   ssr: false,
-}) as React.ComponentType<{
-  internal?: boolean;
-  visiblePersonas?: string[];
-  personaLabels?: PersonaLabels;
-  source?: string;
-  defaultPersona?: string;
-}>;
+}) as React.ComponentType<ProfileAppProps>;
 
 export default function ProfileAppLoader({
   internal,
@@ -21,13 +14,7 @@ export default function ProfileAppLoader({
   personaLabels,
   source,
   defaultPersona,
-}: {
-  internal?: boolean;
-  visiblePersonas?: string[];
-  personaLabels?: PersonaLabels;
-  source?: string;
-  defaultPersona?: string;
-}) {
+}: ProfileAppProps) {
   return (
     <ProfileApp
       internal={internal}
