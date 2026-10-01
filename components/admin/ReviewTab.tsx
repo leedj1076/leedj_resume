@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import Markdown from "react-markdown";
-import { ReviewEditor } from "./ReviewEditor";
+import { ReviewEditor, initialReviewDraft, type ReviewDraft } from "./ReviewEditor";
 import { useAdminSessions } from "@/hooks/useAdminSessions";
 import { PERSONA_OPTIONS } from "@/lib/domain/personas";
 import { ADMIN_PERSONA_LABELS } from "@/lib/admin/persona-labels";
@@ -10,12 +10,32 @@ import type { ExchangeQuery } from "@/lib/domain/admin";
 
 const RATING_COLORS: Record<string, string> = { good: "bg-green-100 text-green-800", needs_improvement: "bg-yellow-100 text-yellow-800" };
 
-export function ReviewTab({ refreshKey = 0 }: { refreshKey?: number }) {
-  const [page, setPage] = useState(1);
-  const [filter, setFilter] = useState<ExchangeQuery["filter"]>("all");
-  const [personaFilter, setPersonaFilter] = useState("");
-  const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
-  const [expandedExchangeId, setExpandedExchangeId] = useState<number | null>(null);
+export type ReviewWorkspace = {
+  page: number;
+  filter: ExchangeQuery["filter"];
+  personaFilter: string;
+  expandedSessionId: string | null;
+  expandedExchangeId: number | null;
+  drafts: Record<number, ReviewDraft>;
+};
+export function initialReviewWorkspace(): ReviewWorkspace {
+  return { page: 1, filter: "all", personaFilter: "", expandedSessionId: null, expandedExchangeId: null, drafts: {} };
+}
+
+export function ReviewTab({ refreshKey = 0, workspace, onWorkspaceChange }: {
+  refreshKey?: number;
+  workspace?: ReviewWorkspace;
+  onWorkspaceChange?: Dispatch<SetStateAction<ReviewWorkspace>>;
+}) {
+  const [localWorkspace, setLocalWorkspace] = useState<ReviewWorkspace>(initialReviewWorkspace);
+  const current = workspace ?? localWorkspace;
+  const update = onWorkspaceChange ?? setLocalWorkspace;
+  const { page, filter, personaFilter, expandedSessionId, expandedExchangeId } = current;
+  const setPage = (value: number) => update((previous) => ({ ...previous, page: value }));
+  const setFilter = (value: ExchangeQuery["filter"]) => update((previous) => ({ ...previous, filter: value }));
+  const setPersonaFilter = (value: string) => update((previous) => ({ ...previous, personaFilter: value }));
+  const setExpandedSessionId = (value: string | null) => update((previous) => ({ ...previous, expandedSessionId: value }));
+  const setExpandedExchangeId = (value: number | null) => update((previous) => ({ ...previous, expandedExchangeId: value }));
   const { data, loading, error, refresh } = useAdminSessions({ page, filter, persona: personaFilter || undefined });
   useEffect(() => { if (refreshKey) void refresh(); }, [refreshKey, refresh]);
   const sessions = data?.sessions ?? [];
@@ -173,7 +193,12 @@ export function ReviewTab({ refreshKey = 0 }: { refreshKey?: number }) {
                                 </div>
                               </div>
                             )}
-                            <ReviewEditor key={ex.id} exchange={ex} onSaved={() => { void refresh(); }} />
+                            <ReviewEditor key={ex.id} exchange={ex} onSaved={() => { void refresh(); }}
+                              draft={current.drafts[ex.id] ?? initialReviewDraft(ex)}
+                              onDraftChange={(next) => update((previous) => {
+                                const currentDraft = previous.drafts[ex.id] ?? initialReviewDraft(ex);
+                                return { ...previous, drafts: { ...previous.drafts, [ex.id]: typeof next === "function" ? next(currentDraft) : next } };
+                              })} />
                           </div>
                         )}
                       </div>

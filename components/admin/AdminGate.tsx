@@ -3,7 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useAdminSession } from "@/hooks/useAdminSession";
 
-export function AdminGate({ children }: { children: ReactNode }) {
+export function AdminGate({ children, onSignedOut }: { children: ReactNode; onSignedOut?: () => void }) {
   const { status, error, login, logout, retry } = useAdminSession();
   const [password, setPassword] = useState("");
 
@@ -22,5 +22,5 @@ export function AdminGate({ children }: { children: ReactNode }) {
       <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded-lg">Sign in</button>
     </form></div>;
   }
-  return <><div className="absolute right-4 top-2 z-50"><button onClick={() => void logout().catch(() => {})} className="text-sm underline">Sign out</button>{error && <p role="alert">{error}</p>}</div>{children}</>;
+  return <><div className="absolute right-4 top-2 z-50"><button onClick={() => void logout().then(onSignedOut).catch(() => {})} className="text-sm underline">Sign out</button>{error && <p role="alert">{error}</p>}</div>{children}</>;
 }

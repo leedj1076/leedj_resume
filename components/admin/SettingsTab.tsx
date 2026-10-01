@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { PERSONA_OPTIONS } from "@/lib/domain/personas";
 import type { AppSettings } from "@/lib/domain/admin";
 
 type PersonaLabelMap = AppSettings["personaLabels"];
+export type SettingsDraft = { personas: string[] | null; labels: PersonaLabelMap | null };
+export function initialSettingsDraft(): SettingsDraft {
+  return { personas: null, labels: null };
+}
 
 const MODES = [
   {
@@ -26,32 +30,40 @@ const MODES = [
   },
 ];
 
-export function SettingsTab() {
+export function SettingsTab({ draft, onDraftChange }: {
+  draft?: SettingsDraft;
+  onDraftChange?: Dispatch<SetStateAction<SettingsDraft>>;
+} = {}) {
   const { saved: settings, save, loading, saving, error, refresh } = useAdminSettings();
   const savedPersonas = settings?.visiblePersonas ?? PERSONA_OPTIONS.map((option) => option.value);
   const savedLabels = settings?.personaLabels ?? Object.fromEntries(PERSONA_OPTIONS.map((option) => [option.value, { en: option.en, kr: option.kr }]));
   const answerMode = settings?.mode ?? "default";
-  const [draftPersonas, setDraftPersonas] = useState<string[] | null>(null);
-  const [draftLabels, setDraftLabels] = useState<PersonaLabelMap | null>(null);
+  const [localDraft, setLocalDraft] = useState<SettingsDraft>(initialSettingsDraft);
+  const currentDraft = draft ?? localDraft;
+  const updateDraft = onDraftChange ?? setLocalDraft;
+  const { personas: draftPersonas, labels: draftLabels } = currentDraft;
   const [personasSaved, setPersonasSaved] = useState(false);
   const [modeSaved, setModeSaved] = useState(false);
   const visibleDraft = draftPersonas ?? savedPersonas;
   const labelDraft = draftLabels ?? savedLabels;
   const onTogglePersona = (value: string) => {
     setPersonasSaved(false);
-    setDraftPersonas((current) => {
-      const list = current ?? savedPersonas;
+    updateDraft((current) => {
+      const list = current.personas ?? savedPersonas;
       const next = list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
-      return next.length ? next : list;
+      return { ...current, personas: next.length ? next : list };
     });
   };
   const onLabelChange = (value: string, lang: "en" | "kr", text: string) => {
     setPersonasSaved(false);
-    setDraftLabels((current) => ({ ...(current ?? savedLabels), [value]: { ...(current ?? savedLabels)[value], [lang]: text } }));
+    updateDraft((current) => ({
+      ...current,
+      labels: { ...(current.labels ?? savedLabels), [value]: { ...(current.labels ?? savedLabels)[value], [lang]: text } },
+    }));
   };
   const onApplyPersonaSettings = async () => {
     const result = await save({ visiblePersonas: visibleDraft as AppSettings["visiblePersonas"], personaLabels: labelDraft });
-    if (result) { setDraftPersonas(result.visiblePersonas); setDraftLabels(result.personaLabels); }
+    if (result) updateDraft({ personas: result.visiblePersonas, labels: result.personaLabels });
     setPersonasSaved(Boolean(result));
   };
   const onModeChange = async (mode: string) => {

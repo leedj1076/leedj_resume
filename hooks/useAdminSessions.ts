@@ -25,7 +25,7 @@ export function useAdminSessions(query: ExchangeQuery) {
       if (current === generation.current) setResponse({ key: queryKey, value: result });
     } catch (failure) {
       if (current === generation.current) {
-        setResponse(null);
+        setResponse((previous) => previous?.key === queryKey ? previous : null);
         setError(failure instanceof Error ? failure.message : "Unable to load sessions.");
       }
     } finally {
