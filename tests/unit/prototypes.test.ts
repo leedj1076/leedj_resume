@@ -24,7 +24,9 @@ const assets = [
 ] as const;
 
 it("catalogs every existing HTML prototype with its gallery metadata", () => {
-  expect(PROTOTYPES.map(({ slug, filename }) => [slug, filename])).toEqual(assets);
+  expect(PROTOTYPES.map(({ slug, filename }) => [slug, filename])).toEqual(
+    assets,
+  );
   for (const [slug, filename] of assets) {
     expect(findPrototype(slug)).toMatchObject({ slug, filename });
     expect(findPrototype(slug)?.title).toBeTruthy();
@@ -32,16 +34,30 @@ it("catalogs every existing HTML prototype with its gallery metadata", () => {
   }
 });
 
-it.each(["constructor", "toString", "__proto__", "../README.md", "unknown", "v1-original"])(
-  "rejects unlisted prototype name %s",
-  (name) => expect(findPrototype(name)).toBeUndefined(),
+it.each([
+  "constructor",
+  "toString",
+  "__proto__",
+  "../README.md",
+  "unknown",
+  "v1-original",
+])("rejects unlisted prototype name %s", (name) =>
+  expect(findPrototype(name)).toBeUndefined(),
 );
 
 it("returns 404 for unlisted names before reading the filesystem", async () => {
   const { GET } = await import("@/app/ui/[name]/route");
-  for (const name of ["constructor", "toString", "__proto__", "../README.md", "unknown"]) {
+  for (const name of [
+    "constructor",
+    "toString",
+    "__proto__",
+    "../README.md",
+    "unknown",
+  ]) {
     readFile.mockClear();
-    const response = await GET(new Request("http://localhost/ui/test"), { params: Promise.resolve({ name }) });
+    const response = await GET(new Request("http://localhost/ui/test"), {
+      params: Promise.resolve({ name }),
+    });
     expect(response.status).toBe(404);
     expect(readFile).not.toHaveBeenCalled();
   }
@@ -50,7 +66,9 @@ it("returns 404 for unlisted names before reading the filesystem", async () => {
 it("serves a cataloged HTML prototype unchanged", async () => {
   readFile.mockResolvedValueOnce("<!doctype html><title>Prototype</title>");
   const { GET } = await import("@/app/ui/[name]/route");
-  const response = await GET(new Request("http://localhost/ui/v2-full-suite"), { params: Promise.resolve({ name: "v2-full-suite" }) });
+  const response = await GET(new Request("http://localhost/ui/v2-full-suite"), {
+    params: Promise.resolve({ name: "v2-full-suite" }),
+  });
   expect(response.status).toBe(200);
   expect(response.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
   expect(await response.text()).toBe("<!doctype html><title>Prototype</title>");

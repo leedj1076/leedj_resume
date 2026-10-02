@@ -6,7 +6,10 @@ import { PERSONA_OPTIONS } from "@/lib/domain/personas";
 import type { AppSettings } from "@/lib/domain/admin";
 
 type PersonaLabelMap = AppSettings["personaLabels"];
-export type SettingsDraft = { personas: string[] | null; labels: PersonaLabelMap | null };
+export type SettingsDraft = {
+  personas: string[] | null;
+  labels: PersonaLabelMap | null;
+};
 export function initialSettingsDraft(): SettingsDraft {
   return { personas: null, labels: null };
 }
@@ -18,7 +21,7 @@ const MODES = [
     description:
       "Warm and natural — like chatting over coffee. Uses overview first, then goes deeper on follow-up questions.",
     example:
-      "\"I've spent 15+ years bridging tech and business across Korea and the US...\n\n• **Samsung SDS** — Led a 40-person engineering team...\n• **Flint** — Co-founded and scaled to $2M ARR...\n\nWant me to dive deeper into any of these?\"",
+      '"I\'ve spent 15+ years bridging tech and business across Korea and the US...\n\n• **Samsung SDS** — Led a 40-person engineering team...\n• **Flint** — Co-founded and scaled to $2M ARR...\n\nWant me to dive deeper into any of these?"',
   },
   {
     id: "pyramid",
@@ -26,19 +29,38 @@ const MODES = [
     description:
       "Barbara Minto's framework — lead with the direct answer first, support with logically grouped arguments (MECE), back each with specific evidence.",
     example:
-      "\"I bring 15+ years of cross-functional leadership across AI, BD, and venture capital.\n\n**Proven operator who scales revenue**\n• Built $2M ARR at Flint...\n• Drove $30M pipeline at Samsung...\n\n**Deep AI/LLM implementation experience**\n• Shipped 3 production AI systems...\n\n**Cross-cultural bridge between US and Korea**\n• Bilingual, led deals across both markets...\"",
+      '"I bring 15+ years of cross-functional leadership across AI, BD, and venture capital.\n\n**Proven operator who scales revenue**\n• Built $2M ARR at Flint...\n• Drove $30M pipeline at Samsung...\n\n**Deep AI/LLM implementation experience**\n• Shipped 3 production AI systems...\n\n**Cross-cultural bridge between US and Korea**\n• Bilingual, led deals across both markets..."',
   },
 ];
 
-export function SettingsTab({ draft, onDraftChange }: {
+export function SettingsTab({
+  draft,
+  onDraftChange,
+}: {
   draft?: SettingsDraft;
   onDraftChange?: Dispatch<SetStateAction<SettingsDraft>>;
 } = {}) {
-  const { saved: settings, save, loading, saving, error, refresh } = useAdminSettings();
-  const savedPersonas = settings?.visiblePersonas ?? PERSONA_OPTIONS.map((option) => option.value);
-  const savedLabels = settings?.personaLabels ?? Object.fromEntries(PERSONA_OPTIONS.map((option) => [option.value, { en: option.en, kr: option.kr }]));
+  const {
+    saved: settings,
+    save,
+    loading,
+    saving,
+    error,
+    refresh,
+  } = useAdminSettings();
+  const savedPersonas =
+    settings?.visiblePersonas ?? PERSONA_OPTIONS.map((option) => option.value);
+  const savedLabels =
+    settings?.personaLabels ??
+    Object.fromEntries(
+      PERSONA_OPTIONS.map((option) => [
+        option.value,
+        { en: option.en, kr: option.kr },
+      ]),
+    );
   const answerMode = settings?.mode ?? "default";
-  const [localDraft, setLocalDraft] = useState<SettingsDraft>(initialSettingsDraft);
+  const [localDraft, setLocalDraft] =
+    useState<SettingsDraft>(initialSettingsDraft);
   const currentDraft = draft ?? localDraft;
   const updateDraft = onDraftChange ?? setLocalDraft;
   const { personas: draftPersonas, labels: draftLabels } = currentDraft;
@@ -50,7 +72,9 @@ export function SettingsTab({ draft, onDraftChange }: {
     setPersonasSaved(false);
     updateDraft((current) => {
       const list = current.personas ?? savedPersonas;
-      const next = list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
+      const next = list.includes(value)
+        ? list.filter((item) => item !== value)
+        : [...list, value];
       return { ...current, personas: next.length ? next : list };
     });
   };
@@ -58,12 +82,22 @@ export function SettingsTab({ draft, onDraftChange }: {
     setPersonasSaved(false);
     updateDraft((current) => ({
       ...current,
-      labels: { ...(current.labels ?? savedLabels), [value]: { ...(current.labels ?? savedLabels)[value], [lang]: text } },
+      labels: {
+        ...(current.labels ?? savedLabels),
+        [value]: { ...(current.labels ?? savedLabels)[value], [lang]: text },
+      },
     }));
   };
   const onApplyPersonaSettings = async () => {
-    const result = await save({ visiblePersonas: visibleDraft as AppSettings["visiblePersonas"], personaLabels: labelDraft });
-    if (result) updateDraft({ personas: result.visiblePersonas, labels: result.personaLabels });
+    const result = await save({
+      visiblePersonas: visibleDraft as AppSettings["visiblePersonas"],
+      personaLabels: labelDraft,
+    });
+    if (result)
+      updateDraft({
+        personas: result.visiblePersonas,
+        labels: result.personaLabels,
+      });
     setPersonasSaved(Boolean(result));
   };
   const onModeChange = async (mode: string) => {
@@ -71,15 +105,26 @@ export function SettingsTab({ draft, onDraftChange }: {
     const result = await save({ mode: mode as AppSettings["mode"] });
     setModeSaved(Boolean(result));
   };
-  if (loading && !settings) return <p className="text-center py-12 text-gray-400">Loading settings...</p>;
-  if (!settings) return <p role="alert" className="text-sm text-red-700">{error ?? "Unable to load settings."} <button onClick={() => void refresh()} className="underline">Retry</button></p>;
+  if (loading && !settings)
+    return (
+      <p className="text-center py-12 text-gray-400">Loading settings...</p>
+    );
+  if (!settings)
+    return (
+      <p role="alert" className="text-sm text-red-700">
+        {error ?? "Unable to load settings."}{" "}
+        <button onClick={() => void refresh()} className="underline">
+          Retry
+        </button>
+      </p>
+    );
   const visibilityDirty =
     visibleDraft.length !== savedPersonas.length ||
     [...visibleDraft].sort().join(",") !== [...savedPersonas].sort().join(",");
   const labelsDirty = PERSONA_OPTIONS.some(
     (o) =>
       labelDraft[o.value]?.en !== savedLabels[o.value]?.en ||
-      labelDraft[o.value]?.kr !== savedLabels[o.value]?.kr
+      labelDraft[o.value]?.kr !== savedLabels[o.value]?.kr,
   );
   const personasDirty = visibilityDirty || labelsDirty;
   return (
@@ -112,8 +157,7 @@ export function SettingsTab({ draft, onDraftChange }: {
                 aria-label={`${opt.en} visibility`}
                 aria-pressed={visible}
                 onClick={() => {
-                  if (!saving && !isLastActive)
-                    onTogglePersona(opt.value);
+                  if (!saving && !isLastActive) onTogglePersona(opt.value);
                 }}
                 disabled={saving || isLastActive}
                 title={
@@ -181,7 +225,11 @@ export function SettingsTab({ draft, onDraftChange }: {
         })}
       </div>
 
-      {error && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-3 text-sm text-red-700">
+          {error}
+        </p>
+      )}
       {/* Apply — persona changes only take effect when this is clicked */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -209,9 +257,7 @@ export function SettingsTab({ draft, onDraftChange }: {
 
       <div className="border-t border-gray-200 my-8" />
 
-      <h2 className="text-lg font-semibold text-gray-900 mb-1">
-        Answer Mode
-      </h2>
+      <h2 className="text-lg font-semibold text-gray-900 mb-1">Answer Mode</h2>
       <p className="text-sm text-gray-500 mb-6">
         Controls how the RAG system structures its responses. Applies to all
         chat endpoints (main app + UI prototypes).
@@ -272,9 +318,7 @@ export function SettingsTab({ draft, onDraftChange }: {
 
       {/* Status indicator */}
       <div className="mt-4 h-6 flex items-center">
-        {saving && (
-          <span className="text-sm text-gray-500">Saving...</span>
-        )}
+        {saving && <span className="text-sm text-gray-500">Saving...</span>}
         {modeSaved && (
           <span className="text-sm text-green-600">
             Saved — new conversations will use this mode

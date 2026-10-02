@@ -79,7 +79,7 @@
   --color-avatar-user-text: #737373;
 
   /* Key accent (toned-down Claude terracotta) */
-  --color-key: #C4725C;
+  --color-key: #c4725c;
 
   /* Separator */
   --color-separator: #d6d6d6;
@@ -152,7 +152,7 @@
   --color-avatar-user-bg: #2a2a2a;
   --color-avatar-user-text: #9a9a9a;
 
-  --color-key: #D4836E;
+  --color-key: #d4836e;
 
   --color-separator: #3a3a3a;
   --color-separator-light: #2a2a2a;
@@ -203,27 +203,60 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* V14 profile scrollbar */
-.profile-scroll::-webkit-scrollbar { width: 4px; }
-.profile-scroll::-webkit-scrollbar-track { background: transparent; }
-.profile-scroll::-webkit-scrollbar-thumb { background: var(--color-border-tertiary); border-radius: 2px; }
-.profile-scroll::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
+.profile-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.profile-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.profile-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border-tertiary);
+  border-radius: 2px;
+}
+.profile-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}

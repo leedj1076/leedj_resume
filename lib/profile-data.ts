@@ -158,7 +158,10 @@ export const TIMELINE: TimelineEntry[] = [
   },
   {
     period: { en: "Feb 2024 – Aug 2025", kr: "2024.02 – 2025.08" },
-    role: { en: "Director, Business & Publishing", kr: "사업 및 퍼블리싱 디렉터" },
+    role: {
+      en: "Director, Business & Publishing",
+      kr: "사업 및 퍼블리싱 디렉터",
+    },
     company: "Devs United Games",
     highlight: {
       en: "Secured Meta Quest+, launched on Apple Vision Pro (App Store Awards finalist), initiated Google Android XR. 55% YoY revenue growth.",
@@ -197,7 +200,10 @@ export const TIMELINE: TimelineEntry[] = [
   },
   {
     period: { en: "Feb 2018 – May 2021", kr: "2018.02 – 2021.05" },
-    role: { en: "Software Engineer → Team Lead", kr: "소프트웨어 엔지니어 → 팀리드" },
+    role: {
+      en: "Software Engineer → Team Lead",
+      kr: "소프트웨어 엔지니어 → 팀리드",
+    },
     company: "TmaxTibero",
     highlight: {
       en: "Enterprise DB migrations for Samsung and Hyundai; built distributed infrastructure (Hadoop, K8s). Promoted to Team Lead, Achievement Award.",
@@ -312,7 +318,8 @@ export const PORTFOLIO: PortfolioItem[] = [
   },
 ];
 
-export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] = PERSONA_OPTIONS.map((option) => ({ ...option }));
+export const V14_PERSONA_OPTIONS: { value: string; en: string; kr: string }[] =
+  PERSONA_OPTIONS.map((option) => ({ ...option }));
 
 export const STARTER_QUESTIONS: Record<Lang, string[]> = {
   en: [
@@ -333,7 +340,9 @@ export const STARTER_QUESTIONS: Record<Lang, string[]> = {
   ],
 };
 
-export const PERSONA_STARTER_QUESTIONS: Partial<Record<string, Record<Lang, string[]>>> = {
+export const PERSONA_STARTER_QUESTIONS: Partial<
+  Record<string, Record<Lang, string[]>>
+> = {
   recruiter: {
     en: [
       "What hands-on experience does DJ have building AI or ML-based products?",

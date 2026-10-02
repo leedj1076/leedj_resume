@@ -61,9 +61,17 @@ PRIORITY GAPS TO FILL:
 7. Soft skills: communication style, cross-cultural collaboration, mentoring
 8. Personal projects: beyond whiskey RAG`;
 
-export async function handleCapture(messages: ChatUIMessage[], signal: AbortSignal): Promise<Response> {
+export async function handleCapture(
+  messages: ChatUIMessage[],
+  signal: AbortSignal,
+): Promise<Response> {
   signal.throwIfAborted();
   const modelMessages = await convertToModelMessages(messages);
   signal.throwIfAborted();
-  return streamAnswer({ system: INTERVIEW_SYSTEM_PROMPT, messages: modelMessages, maxOutputTokens: 1024, signal }).toUIMessageStreamResponse();
+  return streamAnswer({
+    system: INTERVIEW_SYSTEM_PROMPT,
+    messages: modelMessages,
+    maxOutputTokens: 1024,
+    signal,
+  }).toUIMessageStreamResponse();
 }

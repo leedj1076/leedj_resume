@@ -6,7 +6,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Chat with My Resume",
-  description: "Ask natural language questions about my professional experience",
+  description:
+    "Ask natural language questions about my professional experience",
 };
 
 export default function RootLayout({

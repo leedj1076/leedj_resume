@@ -5,7 +5,10 @@ import { PERSONAS } from "./domain/personas";
 export const ALL_PERSONAS: Persona[] = [...PERSONAS];
 
 // Multiplicative score adjustments per persona per section (for re-ranking)
-export const PERSONA_SECTION_WEIGHTS: Record<Persona, Record<string, number>> = {
+export const PERSONA_SECTION_WEIGHTS: Record<
+  Persona,
+  Record<string, number>
+> = {
   recruiter: {
     // PO/PM hiring lens: building, shipping, and leading beats investor framing
     experience: 1.4,
@@ -151,7 +154,7 @@ export interface ChunkSignals {
 
 export function personaChunkAdjustment(
   persona: Persona,
-  chunk: ChunkSignals
+  chunk: ChunkSignals,
 ): number {
   let adjustment = 1.0;
   const skills = chunk.skills.map((s) => s.toLowerCase());
@@ -201,7 +204,7 @@ export const PERSONA_SUPPRESSED_CHUNKS: Record<
     {
       id: "interview-q3.4-dug-departure",
       reason:
-        "\"Not a game person at heart\" — directly undercuts a games-focused developer partnerships role.",
+        '"Not a game person at heart" — directly undercuts a games-focused developer partnerships role.',
     },
     {
       id: "career-pattern-vc-commitment",
@@ -210,7 +213,8 @@ export const PERSONA_SUPPRESSED_CHUNKS: Record<
     },
     {
       id: "final-q9-why-hire-over-vc-experience",
-      reason: "Frames DJ as a VC candidate rather than a partnerships operator.",
+      reason:
+        "Frames DJ as a VC candidate rather than a partnerships operator.",
     },
     {
       id: "interview-q2.3-five-year-vision-altos",
@@ -231,8 +235,7 @@ export function getSuppressedChunkIds(persona: Persona): Set<string> {
 export const PERSONA_TONE: Record<Persona, string> = {
   recruiter:
     "The visitor is a recruiter or hiring manager evaluating DJ for a product role (Product Owner / Product Manager, often for AI/ML-driven products). Frame answers around product competencies: discovering and validating user problems, prioritization and trade-offs, shipping with cross-functional teams, metric design and experiment-driven iteration (A/B tests), stakeholder alignment, and measurable outcomes. When AI/ML work appears in the context, lead with it — hands-on AI product building, working with engineers on model-based features, and connecting model capabilities to user experience and business numbers. Translate experiences into product terms — founding Flint is zero-to-one product ownership, platform deals with Apple/Meta/Google are stakeholder management and roadmap negotiation, the due diligence dashboard is shipping an internal AI product. Do NOT frame answers around becoming an investor or transitioning to VC; emphasize building and shipping.",
-  vc:
-    "The visitor is evaluating DJ for a venture capital role. Frame answers around what makes a strong VC candidate: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Highlight the operator-to-investor edge — founding a startup, closing platform partnerships, driving revenue growth — as evidence of judgment and conviction.",
+  vc: "The visitor is evaluating DJ for a venture capital role. Frame answers around what makes a strong VC candidate: founder evaluation instincts, investment thesis clarity, pattern recognition from operating experience, and the ability to support portfolio companies hands-on. Highlight the operator-to-investor edge — founding a startup, closing platform partnerships, driving revenue growth — as evidence of judgment and conviction.",
   founder_partner:
     "The visitor is a startup founder or a business development / partnerships professional. Frame answers around what resonates with builders and dealmakers: hands-on building experience, lessons from failure, product-market fit instincts, fundraising, deal negotiation, partnership structures, and the revenue impact of partnerships. Lead with specific stories — how deals were structured and closed, and what going from zero to one actually took.",
   curious_visitor:
@@ -245,8 +248,7 @@ export const PERSONA_TONE: Record<Persona, string> = {
 export const PERSONA_FOLLOWUP_HINT: Record<Persona, string> = {
   recruiter:
     "Steer follow-up suggestions toward product management competencies, especially for AI/ML products: hands-on AI product building, product discovery and validation, metric design and A/B testing, shipping with engineers, measurable outcomes, and stakeholder management. Avoid suggesting questions about venture capital or investing.",
-  vc:
-    "Steer follow-up suggestions toward investor readiness: founder evaluation, judgment from operating experience, due diligence approach, and the operator-to-investor transition.",
+  vc: "Steer follow-up suggestions toward investor readiness: founder evaluation, judgment from operating experience, due diligence approach, and the operator-to-investor transition.",
   founder_partner:
     "Steer follow-up suggestions toward building and dealmaking: startup lessons, product-market fit, fundraising, partnership negotiation, and deal structures.",
   curious_visitor:
@@ -310,7 +312,10 @@ export const FOCUS_SKILL_TERMS: Record<Focus, string[]> = {
 };
 
 // 4 suggested questions per persona, bilingual (en/ko)
-export const PERSONA_QUESTIONS: Record<Persona, Record<"en" | "ko", string[]>> = {
+export const PERSONA_QUESTIONS: Record<
+  Persona,
+  Record<"en" | "ko", string[]>
+> = {
   recruiter: {
     en: [
       "What hands-on experience does DJ have building AI or ML-based products?",

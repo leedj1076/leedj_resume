@@ -11,7 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import PersonaSelector from "./profile/PersonaSelector";
-import { resolvePersonaOptions, type Persona, type PersonaOption } from "@/lib/domain/personas";
+import {
+  resolvePersonaOptions,
+  type Persona,
+  type PersonaOption,
+} from "@/lib/domain/personas";
 
 interface V14WelcomeModalProps {
   onStart: (lang: Lang, persona: string, email?: string) => void;
@@ -19,13 +23,17 @@ interface V14WelcomeModalProps {
   defaultPersona?: string;
 }
 
-export default function V14WelcomeModal({ onStart, options, defaultPersona }: V14WelcomeModalProps) {
+export default function V14WelcomeModal({
+  onStart,
+  options,
+  defaultPersona,
+}: V14WelcomeModalProps) {
   const personaOptions = options ?? resolvePersonaOptions(undefined, undefined);
   const [lang, setLang] = useState<Lang>("en");
   const [persona, setPersona] = useState<Persona | null>(
     defaultPersona && personaOptions.some((o) => o.value === defaultPersona)
-      ? defaultPersona as Persona
-      : null
+      ? (defaultPersona as Persona)
+      : null,
   );
   const [email, setEmail] = useState("");
   const en = lang === "en";
@@ -90,7 +98,13 @@ export default function V14WelcomeModal({ onStart, options, defaultPersona }: V1
           <p className="text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-widest mb-4">
             {en ? "I'm visiting as a..." : "저는..."}
           </p>
-          <PersonaSelector options={personaOptions} value={persona} onChange={setPersona} lang={lang} variant="welcome" />
+          <PersonaSelector
+            options={personaOptions}
+            value={persona}
+            onChange={setPersona}
+            lang={lang}
+            variant="welcome"
+          />
         </div>
 
         {/* Disclaimer + Email */}

@@ -31,17 +31,28 @@ export interface ExchangeEvent {
   source?: string;
 }
 
-function scheduleInsert(table: "analytics_events" | "chat_exchanges", row: Record<string, unknown>): void {
+function scheduleInsert(
+  table: "analytics_events" | "chat_exchanges",
+  row: Record<string, unknown>,
+): void {
   const client = getSupabaseClient();
   if (!client) return;
-  const pending = Promise.resolve().then(() => client.from(table).insert(row))
+  const pending = Promise.resolve()
+    .then(() => client.from(table).insert(row))
     .then(({ error }) => {
       if (error) console.error(`[${table}] Insert failed:`, error.message);
-    }).catch((error: unknown) => {
-      console.error(`[${table}] Insert failed:`, error instanceof Error ? error.message : "unknown error");
+    })
+    .catch((error: unknown) => {
+      console.error(
+        `[${table}] Insert failed:`,
+        error instanceof Error ? error.message : "unknown error",
+      );
     });
-  try { waitUntil(pending); }
-  catch (error) { console.error(`[${table}] Scheduling failed:`, error); }
+  try {
+    waitUntil(pending);
+  } catch (error) {
+    console.error(`[${table}] Scheduling failed:`, error);
+  }
 }
 
 export function logAnalytics(event: AnalyticsEvent): void {

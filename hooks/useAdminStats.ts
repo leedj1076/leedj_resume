@@ -18,18 +18,33 @@ export function useAdminStats() {
     setLoading(true);
     setError(null);
     try {
-      const result = await adminRequest("/api/admin/stats", {}, statsSchema, request.signal);
+      const result = await adminRequest(
+        "/api/admin/stats",
+        {},
+        statsSchema,
+        request.signal,
+      );
       if (current === generation.current) setData(result);
     } catch (failure) {
       if (current === generation.current) {
         setData(null);
-        setError(failure instanceof Error ? failure.message : "Unable to load analytics.");
+        setError(
+          failure instanceof Error
+            ? failure.message
+            : "Unable to load analytics.",
+        );
       }
     } finally {
       if (current === generation.current) setLoading(false);
     }
   }, []);
-  const invalidate = useCallback(() => { generation.current++; controller.current?.abort(); }, []);
-  useEffect(() => { void refresh(); return invalidate; }, [refresh, invalidate]);
+  const invalidate = useCallback(() => {
+    generation.current++;
+    controller.current?.abort();
+  }, []);
+  useEffect(() => {
+    void refresh();
+    return invalidate;
+  }, [refresh, invalidate]);
   return { data, loading, error, refresh };
 }

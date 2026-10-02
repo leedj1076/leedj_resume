@@ -79,18 +79,18 @@ gates.
 
 ## Routes and owner workflow
 
-| Route | Purpose |
-| --- | --- |
-| `/dj` | Profile and streaming chat |
-| `/dj/apple-immersive-video` | Apple immersive video work sample |
-| `/dj/b2b-saas-km-analysis` | B2B SaaS knowledge-management analysis |
-| `/dj/breakout-game-analysis` | Game analysis work sample |
-| `/dj/flint-analysis` | Flint retrospective |
-| `/admin/dashboard` | Reviews, metrics, corrections, and settings |
-| `/admin/internal` | Authenticated retrieval and prompt diagnostics |
-| `/admin/capture` | Authenticated interview capture |
-| `/v1` | Earlier chat interface |
-| `/ui`, `/ui/[name]` | Historical prototype gallery and HTML routes |
+| Route                        | Purpose                                        |
+| ---------------------------- | ---------------------------------------------- |
+| `/dj`                        | Profile and streaming chat                     |
+| `/dj/apple-immersive-video`  | Apple immersive video work sample              |
+| `/dj/b2b-saas-km-analysis`   | B2B SaaS knowledge-management analysis         |
+| `/dj/breakout-game-analysis` | Game analysis work sample                      |
+| `/dj/flint-analysis`         | Flint retrospective                            |
+| `/admin/dashboard`           | Reviews, metrics, corrections, and settings    |
+| `/admin/internal`            | Authenticated retrieval and prompt diagnostics |
+| `/admin/capture`             | Authenticated interview capture                |
+| `/v1`                        | Earlier chat interface                         |
+| `/ui`, `/ui/[name]`          | Historical prototype gallery and HTML routes   |
 
 Owner sessions use an eight-hour signed cookie (`HttpOnly`, `SameSite=Strict`,
 and `Secure` in production). Owner mutations require same-origin requests;

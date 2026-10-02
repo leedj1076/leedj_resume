@@ -28,7 +28,7 @@ const COMPANY_OVERVIEW_IDS: Record<string, string> = {
   "Changjo Architecture": "exp-changjo-current",
   "Devs United Games": "exp-dug-overview",
   "Flint Technologies": "exp-flint-overview",
-  "TmaxTibero": "exp-tmax-team-lead",
+  TmaxTibero: "exp-tmax-team-lead",
 };
 
 // "most recent" patterns — maps to current role
@@ -60,19 +60,22 @@ export function detectFilter(query: string): DetectedFilter {
       type: "temporal",
       filter: {
         $or: [
-          { $and: [
-            { start_date: { $lte: yearEnd } },
-            { end_date: { $gte: yearStart } },
-          ] },
-          { $and: [
-            { section: { $eq: "experience" } },
-            { start_date: { $gt: 0 } },
-            { start_date: { $lte: yearEnd } },
-            { $or: [
-              { is_ongoing: { $eq: true } },
-              { end_date: { $eq: 0 } },
-            ] },
-          ] },
+          {
+            $and: [
+              { start_date: { $lte: yearEnd } },
+              { end_date: { $gte: yearStart } },
+            ],
+          },
+          {
+            $and: [
+              { section: { $eq: "experience" } },
+              { start_date: { $gt: 0 } },
+              { start_date: { $lte: yearEnd } },
+              {
+                $or: [{ is_ongoing: { $eq: true } }, { end_date: { $eq: 0 } }],
+              },
+            ],
+          },
         ],
       },
     };

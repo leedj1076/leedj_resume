@@ -1,21 +1,44 @@
 import type { ModelMessage } from "ai";
 import type { PrototypeRequest } from "./chat-request";
-import { CORE_STRENGTH_IDS, FOCUS_HIGHLIGHT, FOCUS_SKILL_TERMS, PERSONA_SECTION_WEIGHTS, PERSONA_TONE } from "../persona-config";
+import {
+  CORE_STRENGTH_IDS,
+  FOCUS_HIGHLIGHT,
+  FOCUS_SKILL_TERMS,
+  PERSONA_SECTION_WEIGHTS,
+  PERSONA_TONE,
+} from "../persona-config";
 import { ANSWER_MODE_PROMPTS } from "../answer-modes";
 import { assembleContext } from "../rag/context";
-import { embedQuery, fetchChunks, generateAnswer, readAnswerMode, searchChunks } from "./providers";
+import {
+  embedQuery,
+  fetchChunks,
+  generateAnswer,
+  readAnswerMode,
+  searchChunks,
+} from "./providers";
 
-export async function handlePrototypeChat(request: PrototypeRequest, signal: AbortSignal): Promise<{ response: string; chunksUsed: string[] }> {
+export async function handlePrototypeChat(
+  request: PrototypeRequest,
+  signal: AbortSignal,
+): Promise<{ response: string; chunksUsed: string[] }> {
   signal.throwIfAborted();
   const vector = await embedQuery(request.query, signal);
   signal.throwIfAborted();
   const focusTerms = FOCUS_SKILL_TERMS[request.focus];
   const semantic = await searchChunks({ vector, topK: 10 }, signal);
   signal.throwIfAborted();
-  const pinned = await fetchChunks(["narrative-career-trajectory", "personal-summary", ...CORE_STRENGTH_IDS], signal);
+  const pinned = await fetchChunks(
+    ["narrative-career-trajectory", "personal-summary", ...CORE_STRENGTH_IDS],
+    signal,
+  );
   signal.throwIfAborted();
-  const focused = request.focus !== "full_stack" && focusTerms.length
-    ? await searchChunks({ vector, topK: 8, filter: { skills: { $in: focusTerms } } }, signal) : [];
+  const focused =
+    request.focus !== "full_stack" && focusTerms.length
+      ? await searchChunks(
+          { vector, topK: 8, filter: { skills: { $in: focusTerms } } },
+          signal,
+        )
+      : [];
   signal.throwIfAborted();
   const byId = new Map<string, (typeof pinned)[number]>();
   for (const chunk of [...pinned, ...semantic, ...focused]) {
@@ -24,17 +47,34 @@ export async function handlePrototypeChat(request: PrototypeRequest, signal: Abo
   // The prototype retains its original section-and-focus ranking policy.
   const weights = PERSONA_SECTION_WEIGHTS[request.persona];
   const rankedChunks = [...byId.values()]
-    .map(chunk => ({ chunk, score: (weights[chunk.section] ?? 1.0) *
-      (chunk.skills.some(skill => focusTerms.includes(skill)) ? 1.25 : 1.0) }))
+    .map((chunk) => ({
+      chunk,
+      score:
+        (weights[chunk.section] ?? 1.0) *
+        (chunk.skills.some((skill) => focusTerms.includes(skill)) ? 1.25 : 1.0),
+    }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 15)
-    .map(result => result.chunk);
-  const context = assembleContext({ rankedChunks, rankingInputCount: byId.size, directMatchChunk: null, droppedSuppressedIds: [] });
+    .map((result) => result.chunk);
+  const context = assembleContext({
+    rankedChunks,
+    rankingInputCount: byId.size,
+    directMatchChunk: null,
+    droppedSuppressedIds: [],
+  });
   const answerMode = await readAnswerMode();
   signal.throwIfAborted();
-  const messages: ModelMessage[] = request.messages.slice(-10).map(message => ({ role: message.role, content: message.parts.map(part => part.text).join("") }));
-  const response = await generateAnswer({ maxOutputTokens: 2048, signal, messages, system:
-    `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
+  const messages: ModelMessage[] = request.messages
+    .slice(-10)
+    .map((message) => ({
+      role: message.role,
+      content: message.parts.map((part) => part.text).join(""),
+    }));
+  const response = await generateAnswer({
+    maxOutputTokens: 2048,
+    signal,
+    messages,
+    system: `You are the professional whose resume is provided below. Answer questions as if you are speaking about yourself in first person ("I", "my", "me").
 Stay grounded in the facts from your resume.
 
 ${ANSWER_MODE_PROMPTS[answerMode]}
@@ -55,7 +95,8 @@ ${PERSONA_TONE[request.persona]}
 ${FOCUS_HIGHLIGHT[request.focus]}
 
 --- MY RESUME ---
-${context.text}` });
+${context.text}`,
+  });
   signal.throwIfAborted();
-  return { response, chunksUsed: rankedChunks.map(chunk => chunk.id) };
+  return { response, chunksUsed: rankedChunks.map((chunk) => chunk.id) };
 }

@@ -37,18 +37,25 @@ const UI = {
   },
   ko: {
     title: "\uB0B4 \uC774\uB825\uC11C\uC640 \uB300\uD654\uD558\uAE30",
-    subtitle: "\uACBD\uB825\uC5D0 \uB300\uD574 \uBB50\uB4E0\uC9C0 \uBB3C\uC5B4\uBCF4\uC138\uC694",
-    welcome: "\uD658\uC601\uD569\uB2C8\uB2E4! \uC774\uB825\uC11C\uC5D0 \uB300\uD55C \uC9C8\uBB38\uC5D0 \uB2F5\uBCC0\uD560 \uC900\uBE44\uAC00 \uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4.",
-    startPrompt: "\uC544\uB798 \uC9C8\uBB38\uC73C\uB85C \uC2DC\uC791\uD574 \uBCF4\uC138\uC694:",
-    placeholder: "\uACBD\uB825\uC5D0 \uB300\uD574 \uC9C8\uBB38\uD574 \uBCF4\uC138\uC694...",
+    subtitle:
+      "\uACBD\uB825\uC5D0 \uB300\uD574 \uBB50\uB4E0\uC9C0 \uBB3C\uC5B4\uBCF4\uC138\uC694",
+    welcome:
+      "\uD658\uC601\uD569\uB2C8\uB2E4! \uC774\uB825\uC11C\uC5D0 \uB300\uD55C \uC9C8\uBB38\uC5D0 \uB2F5\uBCC0\uD560 \uC900\uBE44\uAC00 \uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4.",
+    startPrompt:
+      "\uC544\uB798 \uC9C8\uBB38\uC73C\uB85C \uC2DC\uC791\uD574 \uBCF4\uC138\uC694:",
+    placeholder:
+      "\uACBD\uB825\uC5D0 \uB300\uD574 \uC9C8\uBB38\uD574 \uBCF4\uC138\uC694...",
     send: "\uC804\uC1A1",
     thinking: "\uC0DD\uAC01 \uC911...",
     user: "\uBA74\uC811\uAD00",
     assistant: "\uC5B4\uC2DC\uC2A4\uD134\uD2B8",
-    error: "\uBB38\uC81C\uAC00 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4. \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.",
+    error:
+      "\uBB38\uC81C\uAC00 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4. \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.",
     settingsTooltip: "\uC124\uC815 \uCD08\uAE30\uD654",
-    resetConfirm: "\uB300\uD654\uB97C \uCD08\uAE30\uD654\uD558\uACE0 \uC124\uC815\uC744 \uBCC0\uACBD\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
-    coldStartLoading: "\uB9DE\uCDA4\uD615 \uACBD\uD5D8\uC744 \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4...",
+    resetConfirm:
+      "\uB300\uD654\uB97C \uCD08\uAE30\uD654\uD558\uACE0 \uC124\uC815\uC744 \uBCC0\uACBD\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+    coldStartLoading:
+      "\uB9DE\uCDA4\uD615 \uACBD\uD5D8\uC744 \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4...",
     questions: [
       "\uB370\uBE0C\uC2A4 \uC720\uB098\uC774\uD2F0\uB4DC\uC5D0\uC11C \uBB34\uC5C7\uC744 \uD558\uC168\uB098\uC694?",
       "\uC5B4\uB5A4 \uAE30\uC220\uC744 \uB2E4\uB8E8\uC2DC\uB098\uC694?",
@@ -83,7 +90,10 @@ export default function Home() {
     langRef.current = lang;
   }, [lang]);
 
-  const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat" }), []);
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: "/api/chat" }),
+    [],
+  );
 
   const { messages, sendMessage, stop, setMessages, status, error } = useChat({
     id: `${sessionId}-${chatGeneration}`,
@@ -96,10 +106,9 @@ export default function Home() {
   const isLoading = status === "submitted" || status === "streaming";
 
   // Suggested questions: persona-aware or static fallback
-  const suggestedQuestions =
-    visitorData
-      ? PERSONA_QUESTIONS[visitorData.persona][lang]
-      : t.questions;
+  const suggestedQuestions = visitorData
+    ? PERSONA_QUESTIONS[visitorData.persona][lang]
+    : t.questions;
 
   // Sync html lang attribute with selected language
   useEffect(() => {
@@ -111,14 +120,32 @@ export default function Home() {
     if (!input.trim() || isLoading) return;
     initGeneration.current += 1;
     setColdStartLoading(false);
-    void sendMessage({ text: input.trim() }, { body: { visitorData: visitorDataRef.current ?? undefined, sessionId, lang: langRef.current } });
+    void sendMessage(
+      { text: input.trim() },
+      {
+        body: {
+          visitorData: visitorDataRef.current ?? undefined,
+          sessionId,
+          lang: langRef.current,
+        },
+      },
+    );
     setInput("");
   };
 
   const handleSuggestion = (question: string) => {
     initGeneration.current += 1;
     setColdStartLoading(false);
-    void sendMessage({ text: question }, { body: { visitorData: visitorDataRef.current ?? undefined, sessionId, lang: langRef.current } });
+    void sendMessage(
+      { text: question },
+      {
+        body: {
+          visitorData: visitorDataRef.current ?? undefined,
+          sessionId,
+          lang: langRef.current,
+        },
+      },
+    );
   };
 
   async function handleModalSubmit(data: VisitorData) {
@@ -141,7 +168,8 @@ export default function Home() {
       });
       if (!res.ok) throw new Error(`Welcome failed (${res.status})`);
       const { welcome } = await res.json();
-      if (typeof welcome !== "string" || !welcome.trim()) throw new Error("Invalid welcome");
+      if (typeof welcome !== "string" || !welcome.trim())
+        throw new Error("Invalid welcome");
       if (requestGeneration !== initGeneration.current) return;
       setMessages([
         {
@@ -160,7 +188,8 @@ export default function Home() {
         },
       ]);
     } finally {
-      if (requestGeneration === initGeneration.current) setColdStartLoading(false);
+      if (requestGeneration === initGeneration.current)
+        setColdStartLoading(false);
     }
   }
 
@@ -191,7 +220,7 @@ export default function Home() {
       });
       if (!response.ok) throw new Error(`Feedback failed (${response.status})`);
     },
-    [visitorData, sessionId]
+    [visitorData, sessionId],
   );
 
   return (
@@ -220,7 +249,16 @@ export default function Home() {
               title={t.settingsTooltip}
               className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
@@ -237,7 +275,13 @@ export default function Home() {
       </header>
 
       {/* Messages */}
-      <div ref={scrollRef} onScroll={onScroll} className="flex-1 overflow-y-auto px-4 py-6" role="log" aria-label={lang === "en" ? "Conversation" : "대화"}>
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        className="flex-1 overflow-y-auto px-4 py-6"
+        role="log"
+        aria-label={lang === "en" ? "Conversation" : "대화"}
+      >
         <div className="max-w-2xl mx-auto space-y-4">
           {/* Cold start skeleton */}
           {coldStartLoading && (
@@ -319,22 +363,24 @@ export default function Home() {
           ))}
 
           {/* Suggested questions after welcome message */}
-          {messages.length === 1 && messages[0].role === "assistant" && !isLoading && (
-            <div className="text-center py-4">
-              <p className="text-sm text-gray-500 mb-3">{t.startPrompt}</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {suggestedQuestions.map((question) => (
-                  <button
-                    key={question}
-                    onClick={() => handleSuggestion(question)}
-                    className="px-4 py-2 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:bg-gray-100 hover:border-gray-400 transition-colors"
-                  >
-                    {question}
-                  </button>
-                ))}
+          {messages.length === 1 &&
+            messages[0].role === "assistant" &&
+            !isLoading && (
+              <div className="text-center py-4">
+                <p className="text-sm text-gray-500 mb-3">{t.startPrompt}</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {suggestedQuestions.map((question) => (
+                    <button
+                      key={question}
+                      onClick={() => handleSuggestion(question)}
+                      className="px-4 py-2 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:bg-gray-100 hover:border-gray-400 transition-colors"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {isLoading && messages[messages.length - 1]?.role === "user" && (
             <div className="flex justify-start">
@@ -357,7 +403,6 @@ export default function Home() {
               </div>
             </div>
           )}
-
         </div>
       </div>
 

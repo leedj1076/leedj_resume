@@ -10,7 +10,10 @@ export class HttpError extends Error {
   }
 }
 
-export async function readJsonBody(req: Request, maxBytes = 64 * 1024): Promise<unknown> {
+export async function readJsonBody(
+  req: Request,
+  maxBytes = 64 * 1024,
+): Promise<unknown> {
   const length = Number(req.headers.get("content-length"));
   if (Number.isFinite(length) && length > maxBytes) {
     throw new HttpError(413, "body_too_large", "Request body is too large");
@@ -51,9 +54,17 @@ export async function readJsonBody(req: Request, maxBytes = 64 * 1024): Promise<
 export function errorResponse(error: unknown): Response {
   const known = error instanceof HttpError;
   const status = known ? error.status : 500;
-  const message = known ? error.message : "Something went wrong. Please try again.";
+  const message = known
+    ? error.message
+    : "Something went wrong. Please try again.";
   const code = known ? error.code : "internal_error";
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (known && error.retryAfterSeconds !== undefined) headers["Retry-After"] = String(error.retryAfterSeconds);
-  return new Response(JSON.stringify({ error: message, code }), { status, headers });
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (known && error.retryAfterSeconds !== undefined)
+    headers["Retry-After"] = String(error.retryAfterSeconds);
+  return new Response(JSON.stringify({ error: message, code }), {
+    status,
+    headers,
+  });
 }

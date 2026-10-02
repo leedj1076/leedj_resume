@@ -13,7 +13,11 @@ export interface PdfMetrics {
   lineHeight: number;
   messageGap: number;
   textOffset: number;
-  wrapText: (text: string, width: number, role: "user" | "assistant") => string[];
+  wrapText: (
+    text: string,
+    width: number,
+    role: "user" | "assistant",
+  ) => string[];
 }
 
 export interface PdfLine {
@@ -36,10 +40,15 @@ export interface PdfPage {
   accents: PdfAccent[];
 }
 
-export interface PdfLayout { pages: PdfPage[] }
+export interface PdfLayout {
+  pages: PdfPage[];
+}
 
 /** Compute each body baseline before drawing so wrapping and page breaks share one cursor. */
-export function layoutConversation(messages: readonly ChatUIMessage[], metrics: PdfMetrics): PdfLayout {
+export function layoutConversation(
+  messages: readonly ChatUIMessage[],
+  metrics: PdfMetrics,
+): PdfLayout {
   const pages: PdfPage[] = [{ lines: [], accents: [] }];
   const textX = metrics.leftMargin + metrics.textOffset;
   const textWidth = metrics.pageWidth - metrics.rightMargin - textX;
@@ -49,7 +58,8 @@ export function layoutConversation(messages: readonly ChatUIMessage[], metrics: 
   for (const message of messages) {
     if (message.role !== "user" && message.role !== "assistant") continue;
     const raw = getMessageText(message);
-    const clean = message.role === "assistant" ? parseFollowUps(raw).clean : raw;
+    const clean =
+      message.role === "assistant" ? parseFollowUps(raw).clean : raw;
     const text = clean.replace(/\*\*/g, "").trim();
     if (!text) continue;
     const lines = metrics.wrapText(text, textWidth, message.role);
@@ -65,11 +75,25 @@ export function layoutConversation(messages: readonly ChatUIMessage[], metrics: 
       const page = pages[pages.length - 1];
       const startsSegment = !segment;
       if (!segment) {
-        segment = { role: message.role, yStart: Math.max(metrics.topMargin - 2.5, y - 2.5), yEnd: y };
+        segment = {
+          role: message.role,
+          yStart: Math.max(metrics.topMargin - 2.5, y - 2.5),
+          yEnd: y,
+        };
         page.accents.push(segment);
       }
-      page.lines.push({ text: line, x: textX, y, role: message.role, messageId: message.id, startsSegment });
-      segment.yEnd = Math.min(metrics.pageHeight - metrics.bottomMargin, y + metrics.lineHeight - 1);
+      page.lines.push({
+        text: line,
+        x: textX,
+        y,
+        role: message.role,
+        messageId: message.id,
+        startsSegment,
+      });
+      segment.yEnd = Math.min(
+        metrics.pageHeight - metrics.bottomMargin,
+        y + metrics.lineHeight - 1,
+      );
       y += metrics.lineHeight;
     }
     y += metrics.messageGap;
@@ -126,7 +150,10 @@ export async function exportConversation(
   const en = options.lang === "en";
   const subtitle = en ? "Interactive Profile" : "인터랙티브 프로필";
   const date = options.date.toLocaleDateString(en ? "en-US" : "ko-KR", {
-    year: "numeric", month: en ? "long" : "numeric", day: "numeric", timeZone: "UTC",
+    year: "numeric",
+    month: en ? "long" : "numeric",
+    day: "numeric",
+    timeZone: "UTC",
   });
 
   layout.pages.forEach((page, index) => {
@@ -152,13 +179,22 @@ export async function exportConversation(
       const isUser = accent.role === "user";
       doc.setDrawColor(isUser ? 60 : 215, isUser ? 60 : 215, isUser ? 60 : 215);
       doc.setLineWidth(0.3);
-      doc.line(metrics.leftMargin + 6.5, accent.yStart, metrics.leftMargin + 6.5, accent.yEnd);
+      doc.line(
+        metrics.leftMargin + 6.5,
+        accent.yStart,
+        metrics.leftMargin + 6.5,
+        accent.yEnd,
+      );
     }
     for (const line of page.lines) {
       const isUser = line.role === "user";
       if (line.startsSegment) {
         doc.setFontSize(7);
-        doc.setTextColor(isUser ? 30 : 155, isUser ? 30 : 155, isUser ? 30 : 155);
+        doc.setTextColor(
+          isUser ? 30 : 155,
+          isUser ? 30 : 155,
+          isUser ? 30 : 155,
+        );
         doc.text(isUser ? "Q" : "A", metrics.leftMargin, line.y + 0.5);
       }
       doc.setFontSize(isUser ? 10 : 9.5);
@@ -170,7 +206,9 @@ export async function exportConversation(
     doc.setTextColor(155, 155, 155);
     doc.text("DJ LEE", metrics.leftMargin, pageHeight - 14);
     doc.text(subtitle, metrics.leftMargin + 17, pageHeight - 14);
-    doc.text(`${index + 1}`, pageWidth - metrics.rightMargin, pageHeight - 14, { align: "right" });
+    doc.text(`${index + 1}`, pageWidth - metrics.rightMargin, pageHeight - 14, {
+      align: "right",
+    });
   });
 
   doc.save(`dj-lee-chat-${options.date.toISOString().slice(0, 10)}.pdf`);

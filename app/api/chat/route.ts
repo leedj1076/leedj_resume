@@ -18,8 +18,11 @@ export async function POST(req: Request): Promise<Response> {
       if (denied) return denied;
       throw error;
     }
-    const requestedInternal = raw !== null && typeof raw === "object" && !Array.isArray(raw)
-      && (raw as Record<string, unknown>).internal === true;
+    const requestedInternal =
+      raw !== null &&
+      typeof raw === "object" &&
+      !Array.isArray(raw) &&
+      (raw as Record<string, unknown>).internal === true;
     if (requestedInternal) {
       await requireAdmin(req);
       requireSameOrigin(req);
@@ -28,7 +31,10 @@ export async function POST(req: Request): Promise<Response> {
       if (denied) return denied;
     }
     const request = parseChatRequest(raw);
-    return await handleChat(request, { signal: req.signal, internal: requestedInternal });
+    return await handleChat(request, {
+      signal: req.signal,
+      internal: requestedInternal,
+    });
   } catch (error) {
     if (!(error instanceof HttpError)) console.error("[RAG] Error:", error);
     return errorResponse(error);

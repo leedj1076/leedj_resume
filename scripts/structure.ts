@@ -1,13 +1,30 @@
 import { generateObject, embed } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { Pinecone } from "@pinecone-database/pinecone";
-import { existsSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { parseTranscript, toInterviewExchanges, type TranscriptFormat } from "../lib/chat/transcript";
-import { GeneratedKnowledgeEntrySchema, KnowledgeEntrySchema, type KnowledgeEntry } from "../lib/domain/knowledge";
-import { structureKnowledge, type KnowledgeGenerator } from "../lib/server/knowledge-structuring";
+import {
+  parseTranscript,
+  toInterviewExchanges,
+  type TranscriptFormat,
+} from "../lib/chat/transcript";
+import {
+  GeneratedKnowledgeEntrySchema,
+  KnowledgeEntrySchema,
+  type KnowledgeEntry,
+} from "../lib/domain/knowledge";
+import {
+  structureKnowledge,
+  type KnowledgeGenerator,
+} from "../lib/server/knowledge-structuring";
 
 const STRUCTURING_PROMPT = `You are a knowledge structuring agent. Given a raw interview exchange between
 an interviewer and DJ (Dong Jae Lee), extract structured knowledge entries.
@@ -37,19 +54,33 @@ export interface ProcessTranscriptOptions {
   format: TranscriptFormat;
   generate: KnowledgeGenerator;
   skipDedup?: boolean;
-  isDuplicate?: (text: string, existing: readonly KnowledgeEntry[]) => Promise<boolean>;
+  isDuplicate?: (
+    text: string,
+    existing: readonly KnowledgeEntry[],
+  ) => Promise<boolean>;
   rename?: typeof renameSync;
 }
 
 function readEntries(path: string): KnowledgeEntry[] {
   if (!existsSync(path)) return [];
-  return KnowledgeEntrySchema.array().parse(JSON.parse(readFileSync(path, "utf8")));
+  return KnowledgeEntrySchema.array().parse(
+    JSON.parse(readFileSync(path, "utf8")),
+  );
 }
 
-function writeAtomically(path: string, entries: readonly KnowledgeEntry[], rename: typeof renameSync): void {
-  const tempPath = join(dirname(path), `.${basename(path)}.${randomUUID()}.tmp`);
+function writeAtomically(
+  path: string,
+  entries: readonly KnowledgeEntry[],
+  rename: typeof renameSync,
+): void {
+  const tempPath = join(
+    dirname(path),
+    `.${basename(path)}.${randomUUID()}.tmp`,
+  );
   try {
-    writeFileSync(tempPath, JSON.stringify(entries, null, 2) + "\n", { flag: "wx" });
+    writeFileSync(tempPath, JSON.stringify(entries, null, 2) + "\n", {
+      flag: "wx",
+    });
     rename(tempPath, path);
   } catch (error) {
     rmSync(tempPath, { force: true });
@@ -57,45 +88,73 @@ function writeAtomically(path: string, entries: readonly KnowledgeEntry[], renam
   }
 }
 
-export async function processTranscriptFile(options: ProcessTranscriptOptions): Promise<KnowledgeEntry[]> {
+export async function processTranscriptFile(
+  options: ProcessTranscriptOptions,
+): Promise<KnowledgeEntry[]> {
   const { inputPath, knowledgePath, resumePath, format, generate } = options;
   // Parse before provider setup or writes. Unknown formats never become a whole-document prompt.
-  const exchanges = toInterviewExchanges(parseTranscript(readFileSync(inputPath, "utf8"), format));
-  if (!exchanges.length) throw new Error("Transcript has no completed interviewer/subject exchanges");
+  const exchanges = toInterviewExchanges(
+    parseTranscript(readFileSync(inputPath, "utf8"), format),
+  );
+  if (!exchanges.length)
+    throw new Error(
+      "Transcript has no completed interviewer/subject exchanges",
+    );
   const existingKnowledge = readEntries(knowledgePath);
   const existingResume = readEntries(resumePath);
   const existing = [...existingResume, ...existingKnowledge];
   const existingIds = new Set<string>();
   for (const entry of existing) {
-    if (existingIds.has(entry.chunk_id)) throw new Error(`Duplicate existing chunk_id: ${entry.chunk_id}`);
+    if (existingIds.has(entry.chunk_id))
+      throw new Error(`Duplicate existing chunk_id: ${entry.chunk_id}`);
     existingIds.add(entry.chunk_id);
   }
 
   const generated = await structureKnowledge(exchanges, generate);
   for (const entry of generated) {
-    if (existingIds.has(entry.chunk_id)) throw new Error(`Duplicate chunk_id with existing knowledge: ${entry.chunk_id}`);
+    if (existingIds.has(entry.chunk_id))
+      throw new Error(
+        `Duplicate chunk_id with existing knowledge: ${entry.chunk_id}`,
+      );
   }
   const accepted: KnowledgeEntry[] = [];
   for (const entry of generated) {
-    const isDuplicate = !options.skipDedup && options.isDuplicate
-      ? await options.isDuplicate(entry.text, [...existing, ...accepted])
-      : false;
+    const isDuplicate =
+      !options.skipDedup && options.isDuplicate
+        ? await options.isDuplicate(entry.text, [...existing, ...accepted])
+        : false;
     if (!isDuplicate) accepted.push(entry);
   }
   if (accepted.length) {
-    const merged = KnowledgeEntrySchema.array().parse([...existingKnowledge, ...accepted]);
+    const merged = KnowledgeEntrySchema.array().parse([
+      ...existingKnowledge,
+      ...accepted,
+    ]);
     writeAtomically(knowledgePath, merged, options.rename ?? renameSync);
   }
   return accepted;
 }
 
-async function checkDuplicate(text: string, existing: readonly KnowledgeEntry[]): Promise<boolean> {
+async function checkDuplicate(
+  text: string,
+  existing: readonly KnowledgeEntry[],
+): Promise<boolean> {
   const indexName = process.env.PINECONE_INDEX_NAME;
   if (!indexName || existing.length === 0) return false;
-  if (!process.env.PINECONE_API_KEY) throw new Error("PINECONE_API_KEY is required for deduplication; use --skip-dedup to bypass it");
-  const { embedding } = await embed({ model: openai.embedding("text-embedding-3-large"), value: text });
+  if (!process.env.PINECONE_API_KEY)
+    throw new Error(
+      "PINECONE_API_KEY is required for deduplication; use --skip-dedup to bypass it",
+    );
+  const { embedding } = await embed({
+    model: openai.embedding("text-embedding-3-large"),
+    value: text,
+  });
   const index = new Pinecone().index(indexName).namespace("resume");
-  const results = await index.query({ vector: embedding, topK: 1, includeMetadata: false });
+  const results = await index.query({
+    vector: embedding,
+    topK: 1,
+    includeMetadata: false,
+  });
   return (results.matches[0]?.score ?? 0) > 0.9;
 }
 
@@ -105,8 +164,13 @@ async function main(): Promise<void> {
   const formatFlag = args.indexOf("--format");
   const inputPath = inputFlag >= 0 ? args[inputFlag + 1] : undefined;
   const requestedFormat = formatFlag >= 0 ? args[formatFlag + 1] : "auto";
-  if (!inputPath || !["auto", "capture-legacy", "qa"].includes(requestedFormat)) {
-    throw new Error("Usage: npm run structure -- --input <transcript> [--format capture-legacy|qa] [--skip-dedup]");
+  if (
+    !inputPath ||
+    !["auto", "capture-legacy", "qa"].includes(requestedFormat)
+  ) {
+    throw new Error(
+      "Usage: npm run structure -- --input <transcript> [--format capture-legacy|qa] [--skip-dedup]",
+    );
   }
   const format = requestedFormat as TranscriptFormat;
   const root = join(__dirname, "..");

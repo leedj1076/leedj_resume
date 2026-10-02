@@ -12,7 +12,14 @@ export function CaptureInterview() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const [transport] = useState(() => new DefaultChatTransport({ api: "/api/capture", credentials: "same-origin", fetch: adminTransportFetch }));
+  const [transport] = useState(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/capture",
+        credentials: "same-origin",
+        fetch: adminTransportFetch,
+      }),
+  );
 
   const { messages, sendMessage, stop, status, error } = useChat({
     transport,
@@ -26,12 +33,23 @@ export function CaptureInterview() {
   }, [messages, status]);
 
   function downloadTranscript(format: "json" | "text") {
-    const transcript: Transcript = { version: 1, turns: messages
-      .filter((message) => message.role === "assistant" || message.role === "user")
-      .map((message) => ({
-        speaker: message.role === "assistant" ? "interviewer" as const : "subject" as const,
-        text: message.parts.filter((part) => part.type === "text").map((part) => part.text).join(""),
-      })) };
+    const transcript: Transcript = {
+      version: 1,
+      turns: messages
+        .filter(
+          (message) => message.role === "assistant" || message.role === "user",
+        )
+        .map((message) => ({
+          speaker:
+            message.role === "assistant"
+              ? ("interviewer" as const)
+              : ("subject" as const),
+          text: message.parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join(""),
+        })),
+    };
     const date = new Date().toISOString().split("T")[0];
     const blob = new Blob([serializeTranscript(transcript, format)], {
       type: format === "json" ? "application/json" : "text/plain",
@@ -52,9 +70,7 @@ export function CaptureInterview() {
           <h1 className="text-xl font-semibold text-gray-900">
             Knowledge Capture Interview
           </h1>
-          <p className="text-sm text-gray-500">
-            {messages.length} messages
-          </p>
+          <p className="text-sm text-gray-500">{messages.length} messages</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -83,10 +99,13 @@ export function CaptureInterview() {
                 Ready to start an interview session
               </h2>
               <p className="text-sm text-gray-500 mb-4">
-                The AI will ask you structured questions to capture your professional experience.
+                The AI will ask you structured questions to capture your
+                professional experience.
               </p>
               <button
-                onClick={() => sendMessage({ text: "Let's start. Show me the topic menu." })}
+                onClick={() =>
+                  sendMessage({ text: "Let's start. Show me the topic menu." })
+                }
                 className="px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors"
               >
                 Start Interview
@@ -162,7 +181,19 @@ export function CaptureInterview() {
       </div>
 
       <div className="border-t border-gray-200 bg-white max-w-3xl w-full mx-auto">
-        <ChatComposer value={input} onChange={setInput} onSend={(text) => { sendMessage({ text }); setInput(""); }} onStop={stop} disabled={false} streaming={isLoading} lang="en" inputLabel="Your answer" />
+        <ChatComposer
+          value={input}
+          onChange={setInput}
+          onSend={(text) => {
+            sendMessage({ text });
+            setInput("");
+          }}
+          onStop={stop}
+          disabled={false}
+          streaming={isLoading}
+          lang="en"
+          inputLabel="Your answer"
+        />
       </div>
     </div>
   );

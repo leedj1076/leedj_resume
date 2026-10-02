@@ -85,10 +85,20 @@ export const CHUNK_LABELS: Record<string, string> = {
   "leadership-cross-functional-management": "Cross-Functional Leadership",
 };
 
-const ALWAYS_PINNED = new Set(["narrative-career-trajectory", "personal-summary", "contact-info"]);
+const ALWAYS_PINNED = new Set([
+  "narrative-career-trajectory",
+  "personal-summary",
+  "contact-info",
+]);
 const MAX_SOURCE_TAGS = 3;
 
 export function getSourceTags(chunks: readonly ChunkRecord[]): string[] {
-  return [...new Set(chunks.filter(chunk => !ALWAYS_PINNED.has(chunk.id))
-    .map(chunk => CHUNK_LABELS[chunk.id]).filter((label): label is string => Boolean(label)))].slice(0, MAX_SOURCE_TAGS);
+  return [
+    ...new Set(
+      chunks
+        .filter((chunk) => !ALWAYS_PINNED.has(chunk.id))
+        .map((chunk) => CHUNK_LABELS[chunk.id])
+        .filter((label): label is string => Boolean(label)),
+    ),
+  ].slice(0, MAX_SOURCE_TAGS);
 }

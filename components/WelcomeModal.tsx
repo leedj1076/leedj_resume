@@ -13,9 +13,17 @@ const PERSONA_OPTIONS: { value: Persona; en: string; ko: string }[] = [
 ];
 
 const FOCUS_OPTIONS: { value: Focus; en: string; ko: string }[] = [
-  { value: "business_development", en: "Business Development", ko: "사업 개발" },
+  {
+    value: "business_development",
+    en: "Business Development",
+    ko: "사업 개발",
+  },
   { value: "ai_llms", en: "AI / LLMs", ko: "AI / LLM" },
-  { value: "leadership_strategy", en: "Leadership & Strategy", ko: "리더십 & 전략" },
+  {
+    value: "leadership_strategy",
+    en: "Leadership & Strategy",
+    ko: "리더십 & 전략",
+  },
   { value: "full_stack", en: "Full Overview", ko: "전체 보기" },
 ];
 
@@ -25,7 +33,8 @@ const LABELS = {
     personaLabel: "I am a...",
     focusLabel: "I'm interested in...",
     submit: "Start Chat \u2192",
-    privacy: "Your questions help improve this AI. No personal data is collected.",
+    privacy:
+      "Your questions help improve this AI. No personal data is collected.",
   },
   ko: {
     title: "환영합니다! 자기소개를 해주세요",
@@ -57,7 +66,9 @@ export default function WelcomeModal({ lang, onSubmit }: WelcomeModalProps) {
 
         {/* Persona selection */}
         <div className="mb-5">
-          <p className="text-sm font-medium text-gray-700 mb-2">{t.personaLabel}</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            {t.personaLabel}
+          </p>
           <div
             role="radiogroup"
             aria-label={t.personaLabel}
@@ -84,7 +95,9 @@ export default function WelcomeModal({ lang, onSubmit }: WelcomeModalProps) {
 
         {/* Focus selection */}
         <div className="mb-6">
-          <p className="text-sm font-medium text-gray-700 mb-2">{t.focusLabel}</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            {t.focusLabel}
+          </p>
           <div
             role="radiogroup"
             aria-label={t.focusLabel}

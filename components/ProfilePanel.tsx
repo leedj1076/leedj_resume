@@ -51,7 +51,9 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
             Dong Jae Lee
           </h1>
           <p className="text-[15px] text-[var(--color-text-secondary)] mt-1.5 leading-relaxed">
-            {en ? "Founder-Operator | Early-Stage Tech & Startups" : "파운더-오퍼레이터 | 초기 스타트업 & 기술 생태계"}
+            {en
+              ? "Founder-Operator | Early-Stage Tech & Startups"
+              : "파운더-오퍼레이터 | 초기 스타트업 & 기술 생태계"}
           </p>
           <p className="text-[14px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
             {en
@@ -95,7 +97,20 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
               download
               className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--color-key)] hover:underline"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
               {en ? "Resume PDF" : "이력서 PDF"}
             </a>
           </div>
@@ -113,7 +128,9 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
                 <div className="flex flex-col items-center w-3 shrink-0">
                   <div
                     className={`w-2 h-2 rounded-full mt-0.5 shrink-0 ${
-                      i === 0 ? "bg-[var(--color-key)]" : "bg-[var(--color-border-tertiary)]"
+                      i === 0
+                        ? "bg-[var(--color-key)]"
+                        : "bg-[var(--color-border-tertiary)]"
                     }`}
                   />
                   {i < TIMELINE.length - 1 && (
@@ -203,7 +220,9 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
             href="https://www.linkedin.com/in/dongjae-lee/"
             target="_blank"
             rel="noopener noreferrer"
-            title={en ? "View DJ's LinkedIn profile" : "DJ의 LinkedIn 프로필 보기"}
+            title={
+              en ? "View DJ's LinkedIn profile" : "DJ의 LinkedIn 프로필 보기"
+            }
             className="text-[13px] text-[var(--color-text-secondary)] border border-[var(--color-border-secondary)] rounded-md px-3 py-1.5 hover:border-[var(--color-text-primary)] hover:text-[var(--color-text-primary)] transition-colors no-underline"
           >
             LinkedIn

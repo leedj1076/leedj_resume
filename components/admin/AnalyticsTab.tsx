@@ -6,8 +6,18 @@ import { ADMIN_PERSONA_LABELS } from "@/lib/admin/persona-labels";
 
 export function AnalyticsTab({ refreshKey = 0 }: { refreshKey?: number }) {
   const { data: stats, loading, error, refresh } = useAdminStats();
-  useEffect(() => { if (refreshKey) void refresh(); }, [refreshKey, refresh]);
-  if (error) return <div role="alert" className="text-sm text-red-700">{error} <button onClick={() => void refresh()} className="underline">Retry</button></div>;
+  useEffect(() => {
+    if (refreshKey) void refresh();
+  }, [refreshKey, refresh]);
+  if (error)
+    return (
+      <div role="alert" className="text-sm text-red-700">
+        {error}{" "}
+        <button onClick={() => void refresh()} className="underline">
+          Retry
+        </button>
+      </div>
+    );
   if (loading || !stats) {
     return (
       <div className="text-center py-12 text-gray-400">
@@ -19,7 +29,7 @@ export function AnalyticsTab({ refreshKey = 0 }: { refreshKey?: number }) {
   const maxDaily = Math.max(
     ...Object.values(stats.dailySessions),
     ...Object.values(stats.dailyExchanges),
-    1
+    1,
   );
 
   return (
@@ -28,7 +38,11 @@ export function AnalyticsTab({ refreshKey = 0 }: { refreshKey?: number }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <SummaryCard label="Total Sessions" value={stats.totalSessions} />
         <SummaryCard label="Total Exchanges" value={stats.totalExchanges} />
-        <SummaryCard label="Avg per Session" value={stats.avgExchangesPerSession} color="blue" />
+        <SummaryCard
+          label="Avg per Session"
+          value={stats.avgExchangesPerSession}
+          color="blue"
+        />
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <p className="text-sm text-gray-500">Reviewed / Unreviewed</p>
           <p className="text-2xl font-semibold">
@@ -50,14 +64,20 @@ export function AnalyticsTab({ refreshKey = 0 }: { refreshKey?: number }) {
         <DistributionCard
           title="Focus Area Distribution (by session)"
           data={Object.fromEntries(
-            Object.entries(stats.focusCounts).filter(([k]) => k !== "full_stack")
+            Object.entries(stats.focusCounts).filter(
+              ([k]) => k !== "full_stack",
+            ),
           )}
           color="purple"
         />
         <DistributionCard
           title="Rating Distribution (by exchange)"
           data={stats.ratingCounts}
-          labels={{ good: "Good", needs_improvement: "Needs Improvement", unrated: "Unrated" }}
+          labels={{
+            good: "Good",
+            needs_improvement: "Needs Improvement",
+            unrated: "Unrated",
+          }}
           color="green"
         />
         <DistributionCard
@@ -97,18 +117,30 @@ export function AnalyticsTab({ refreshKey = 0 }: { refreshKey?: number }) {
                 <span className="text-xs text-gray-500">
                   {exchanges || sessions ? `${sessions}/${exchanges}` : ""}
                 </span>
-                <div className="w-full flex gap-[1px] items-end" style={{ height: `${(Math.max(sessions, exchanges) / maxDaily) * 100}%`, minHeight: (sessions > 0 || exchanges > 0) ? "4px" : "0px" }}>
+                <div
+                  className="w-full flex gap-[1px] items-end"
+                  style={{
+                    height: `${(Math.max(sessions, exchanges) / maxDaily) * 100}%`,
+                    minHeight: sessions > 0 || exchanges > 0 ? "4px" : "0px",
+                  }}
+                >
                   <div
                     className="flex-1 bg-blue-600 rounded-t"
                     style={{
-                      height: sessions > 0 ? `${(sessions / Math.max(sessions, exchanges)) * 100}%` : "0px",
+                      height:
+                        sessions > 0
+                          ? `${(sessions / Math.max(sessions, exchanges)) * 100}%`
+                          : "0px",
                       minHeight: sessions > 0 ? "4px" : "0px",
                     }}
                   />
                   <div
                     className="flex-1 bg-blue-300 rounded-t"
                     style={{
-                      height: exchanges > 0 ? `${(exchanges / Math.max(sessions, exchanges)) * 100}%` : "0px",
+                      height:
+                        exchanges > 0
+                          ? `${(exchanges / Math.max(sessions, exchanges)) * 100}%`
+                          : "0px",
                       minHeight: exchanges > 0 ? "4px" : "0px",
                     }}
                   />

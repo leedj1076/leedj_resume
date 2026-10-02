@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import PersonaSelector from "@/components/profile/PersonaSelector";
 import ChatComposer from "@/components/chat/ChatComposer";
 import { resolvePersonaOptions } from "@/lib/domain/personas";
@@ -9,7 +15,10 @@ import { CaptureInterview } from "@/components/admin/CaptureInterview";
 import ProfilePanel from "@/components/ProfilePanel";
 import { CHAT_MODEL } from "@/lib/domain/models";
 
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 it("identifies the configured public chat model in both profile languages", () => {
   const { rerender } = render(<ProfilePanel lang="en" onAskChat={vi.fn()} />);
@@ -19,43 +28,106 @@ it("identifies the configured public chat model in both profile languages", () =
 });
 
 it("labels the capture composer as an answer while public chat stays a question", () => {
-  Object.defineProperty(HTMLElement.prototype, "scrollIntoView", { configurable: true, value: vi.fn() });
+  Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+    configurable: true,
+    value: vi.fn(),
+  });
   render(<CaptureInterview />);
-  expect(screen.getByRole("textbox", { name: "Your answer" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("textbox", { name: "Your answer" }),
+  ).toBeInTheDocument();
   cleanup();
-  render(<ChatComposer value="" onChange={vi.fn()} onSend={vi.fn()} onStop={vi.fn()} disabled={false} streaming={false} lang="en" />);
-  expect(screen.getByRole("textbox", { name: "Ask a question" })).toBeInTheDocument();
+  render(
+    <ChatComposer
+      value=""
+      onChange={vi.fn()}
+      onSend={vi.fn()}
+      onStop={vi.fn()}
+      disabled={false}
+      streaming={false}
+      lang="en"
+    />,
+  );
+  expect(
+    screen.getByRole("textbox", { name: "Ask a question" }),
+  ).toBeInTheDocument();
 });
 
 it("uses identical visible custom persona labels in desktop, mobile, and welcome selection", () => {
-  const options = resolvePersonaOptions(["recruiter", "vc"], { recruiter: { en: "Talent", kr: "인재" } });
+  const options = resolvePersonaOptions(["recruiter", "vc"], {
+    recruiter: { en: "Talent", kr: "인재" },
+  });
   const onChange = vi.fn();
-  const { rerender } = render(<PersonaSelector options={options} value="vc" onChange={onChange} lang="en" variant="desktop" />);
+  const { rerender } = render(
+    <PersonaSelector
+      options={options}
+      value="vc"
+      onChange={onChange}
+      lang="en"
+      variant="desktop"
+    />,
+  );
   expect(screen.getByRole("button", { name: "Talent" })).toBeInTheDocument();
-  expect(screen.queryByRole("button", { name: /founder/i })).not.toBeInTheDocument();
-  rerender(<PersonaSelector options={options} value="vc" onChange={onChange} lang="kr" variant="mobile" />);
+  expect(
+    screen.queryByRole("button", { name: /founder/i }),
+  ).not.toBeInTheDocument();
+  rerender(
+    <PersonaSelector
+      options={options}
+      value="vc"
+      onChange={onChange}
+      lang="kr"
+      variant="mobile"
+    />,
+  );
   fireEvent.click(screen.getByRole("button", { name: "인재" }));
   expect(onChange).toHaveBeenCalledWith("recruiter");
-  rerender(<PersonaSelector options={options} value="vc" onChange={onChange} lang="kr" variant="welcome" />);
+  rerender(
+    <PersonaSelector
+      options={options}
+      value="vc"
+      onChange={onChange}
+      lang="kr"
+      variant="welcome"
+    />,
+  );
   expect(screen.getByRole("button", { name: "인재" })).toBeInTheDocument();
-  expect(screen.queryByRole("button", { name: /창업자/i })).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: /창업자/i }),
+  ).not.toBeInTheDocument();
 });
 
 it("keeps the public profile usable when session storage throws", () => {
-  vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => { throw new Error("blocked"); });
-  vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("blocked"); });
+  vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    throw new Error("blocked");
+  });
+  vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+    throw new Error("blocked");
+  });
   render(<ProfileApp visiblePersonas={["vc"]} />);
   const dialog = screen.getByRole("dialog");
   fireEvent.click(within(dialog).getByRole("button", { name: "VC" }));
   fireEvent.click(within(dialog).getByRole("button", { name: "Start" }));
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-  expect(screen.getByRole("textbox", { name: "Ask a question" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("textbox", { name: "Ask a question" }),
+  ).toBeInTheDocument();
 });
 
 it("composer respects composition, Enter, Shift+Enter, empty input, and loading", () => {
   const onSend = vi.fn();
   const onChange = vi.fn();
-  const { rerender } = render(<ChatComposer value="질문" onChange={onChange} onSend={onSend} onStop={vi.fn()} disabled={false} streaming={false} lang="kr" />);
+  const { rerender } = render(
+    <ChatComposer
+      value="질문"
+      onChange={onChange}
+      onSend={onSend}
+      onStop={vi.fn()}
+      disabled={false}
+      streaming={false}
+      lang="kr"
+    />,
+  );
   const input = screen.getByRole("textbox", { name: /질문/i });
   fireEvent.compositionStart(input);
   fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
@@ -65,10 +137,30 @@ it("composer respects composition, Enter, Shift+Enter, empty input, and loading"
   expect(onSend).toHaveBeenCalledTimes(1);
   fireEvent.keyDown(input, { key: "Enter", code: "Enter", shiftKey: true });
   expect(onSend).toHaveBeenCalledTimes(1);
-  rerender(<ChatComposer value="  " onChange={onChange} onSend={onSend} onStop={vi.fn()} disabled={false} streaming={false} lang="kr" />);
+  rerender(
+    <ChatComposer
+      value="  "
+      onChange={onChange}
+      onSend={onSend}
+      onStop={vi.fn()}
+      disabled={false}
+      streaming={false}
+      lang="kr"
+    />,
+  );
   fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
   expect(onSend).toHaveBeenCalledTimes(1);
-  rerender(<ChatComposer value="질문" onChange={onChange} onSend={onSend} onStop={vi.fn()} disabled streaming lang="kr" />);
+  rerender(
+    <ChatComposer
+      value="질문"
+      onChange={onChange}
+      onSend={onSend}
+      onStop={vi.fn()}
+      disabled
+      streaming
+      lang="kr"
+    />,
+  );
   fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
   expect(onSend).toHaveBeenCalledTimes(1);
 });

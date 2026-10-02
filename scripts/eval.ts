@@ -2,7 +2,11 @@ import { existsSync } from "node:fs";
 import { parseChatRequest } from "../lib/server/chat-request";
 import { prepareAnswer } from "../lib/server/rag-service";
 
-const TEST_CASES: { query: string; expectedIds: string[]; description: string }[] = [
+const TEST_CASES: {
+  query: string;
+  expectedIds: string[];
+  description: string;
+}[] = [
   {
     query: "What did you do at Devs United Games?",
     expectedIds: [
@@ -57,7 +61,8 @@ const TEST_CASES: { query: string; expectedIds: string[]; description: string }[
   {
     query: "What AI tools have you used?",
     expectedIds: ["exp-dug-ai-ops"],
-    description: "Cross-cutting query should find AI ops chunk via semantic search",
+    description:
+      "Cross-cutting query should find AI ops chunk via semantic search",
   },
   {
     query: "What were you doing in 2020?",
@@ -93,20 +98,33 @@ Without flags, evaluates expected IDs using the retrieval-only prepareAnswer pat
 --help prints this message.`;
 
 async function runEval(): Promise<void> {
-  if (process.argv.includes("--help")) { console.log(usage); return; }
+  if (process.argv.includes("--help")) {
+    console.log(usage);
+    return;
+  }
   if (process.argv.includes("--offline")) {
-    console.log(`${TEST_CASES.length} retrieval cases ready (offline; no provider calls).`);
+    console.log(
+      `${TEST_CASES.length} retrieval cases ready (offline; no provider calls).`,
+    );
     return;
   }
   if (existsSync(".env.local")) process.loadEnvFile(".env.local");
   let passed = 0;
   for (const testCase of TEST_CASES) {
-    const request = parseChatRequest({ messages: [{ role: "user", content: testCase.query }],
-      visitorData: { persona: "vc", focus: "full_stack" } });
+    const request = parseChatRequest({
+      messages: [{ role: "user", content: testCase.query }],
+      visitorData: { persona: "vc", focus: "full_stack" },
+    });
     if (request.type !== "chat") throw new Error("Expected chat request");
-    const prepared = await prepareAnswer(request, new AbortController().signal, { answerMode: "default" });
-    const retrievedIds = new Set(prepared.context.usedChunks.map(chunk => chunk.id));
-    const missing = testCase.expectedIds.filter(id => !retrievedIds.has(id));
+    const prepared = await prepareAnswer(
+      request,
+      new AbortController().signal,
+      { answerMode: "default" },
+    );
+    const retrievedIds = new Set(
+      prepared.context.usedChunks.map((chunk) => chunk.id),
+    );
+    const missing = testCase.expectedIds.filter((id) => !retrievedIds.has(id));
     const pass = missing.length === 0;
     if (pass) passed++;
     console.log(`${pass ? "PASS" : "FAIL"} ${testCase.description}`);
@@ -116,7 +134,7 @@ async function runEval(): Promise<void> {
   if (passed !== TEST_CASES.length) process.exitCode = 1;
 }
 
-runEval().catch(error => {
+runEval().catch((error) => {
   console.error("Eval failed:", error);
   process.exitCode = 1;
 });

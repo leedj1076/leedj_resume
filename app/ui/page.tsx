@@ -9,7 +9,8 @@ const VERSIONS: readonly (Prototype | Omit<Prototype, "filename">)[] = [
     slug: "v1-original",
     label: "V1",
     title: "Original",
-    description: "Production app — streaming chat, gateway modal, persona-aware RAG",
+    description:
+      "Production app — streaming chat, gateway modal, persona-aware RAG",
     tags: ["Streaming", "Gateway", "RAG"],
     accent: "#3b82f6",
     href: "/v1",
@@ -19,7 +20,9 @@ const VERSIONS: readonly (Prototype | Omit<Prototype, "filename">)[] = [
 
 export default function UIIndex() {
   const [preview, setPreview] = useState<string | null>(null);
-  const [activeVersion, setActiveVersion] = useState<(typeof VERSIONS)[0] | null>(null);
+  const [activeVersion, setActiveVersion] = useState<
+    (typeof VERSIONS)[0] | null
+  >(null);
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
@@ -31,7 +34,8 @@ export default function UIIndex() {
               Ask DJ — UI Lab
             </h1>
             <p className="text-[13px] text-white/40 mt-0.5">
-              {VERSIONS.length} prototypes &middot; hover to preview, click to open
+              {VERSIONS.length} prototypes &middot; hover to preview, click to
+              open
             </p>
           </div>
           <Link

@@ -8,31 +8,51 @@ const alert = vi.hoisted(() => ({
   rejectInsert: false,
 }));
 
-vi.mock("@vercel/functions", () => ({ waitUntil: (promise: Promise<unknown>) => { alert.pending.push(promise); } }));
-vi.mock("resend", () => ({ Resend: class {
-  emails = { send: async (payload: Record<string, unknown>) => {
-    alert.sends.push(payload);
-    if (alert.reject) throw new Error("provider rejected");
-    return { data: { id: "sent" }, error: null };
-  } };
-} }));
-vi.mock("@/lib/supabase", () => ({ getSupabaseClient: () => ({
-  from() { return { insert: async (row: Record<string, unknown>) => {
-    alert.inserts.push(row);
-    if (alert.rejectInsert) throw new Error("insert rejected");
-    return { data: null, error: null };
-  } }; },
-}) }));
+vi.mock("@vercel/functions", () => ({
+  waitUntil: (promise: Promise<unknown>) => {
+    alert.pending.push(promise);
+  },
+}));
+vi.mock("resend", () => ({
+  Resend: class {
+    emails = {
+      send: async (payload: Record<string, unknown>) => {
+        alert.sends.push(payload);
+        if (alert.reject) throw new Error("provider rejected");
+        return { data: { id: "sent" }, error: null };
+      },
+    };
+  },
+}));
+vi.mock("@/lib/supabase", () => ({
+  getSupabaseClient: () => ({
+    from() {
+      return {
+        insert: async (row: Record<string, unknown>) => {
+          alert.inserts.push(row);
+          if (alert.rejectInsert) throw new Error("insert rejected");
+          return { data: null, error: null };
+        },
+      };
+    },
+  }),
+}));
 
 const details = {
-  query: "<script>alert('x')</script>", persona: "vc", focus: "general",
-  lang: "en", sessionId: "session-1", visitorEmail: "person@example.com",
+  query: "<script>alert('x')</script>",
+  persona: "vc",
+  focus: "general",
+  lang: "en",
+  sessionId: "session-1",
+  visitorEmail: "person@example.com",
 };
 
 describe("session alerts", () => {
   beforeEach(() => {
     vi.resetModules();
-    alert.sends = []; alert.pending = []; alert.reject = false;
+    alert.sends = [];
+    alert.pending = [];
+    alert.reject = false;
     process.env.RESEND_API_KEY = "offline-test-key";
     process.env.RESEND_FROM = "Ask DJ <sender@example.com>";
     process.env.RESEND_TO = "owner@example.com";
@@ -43,7 +63,9 @@ describe("session alerts", () => {
     sendNewSessionAlert(details);
     await Promise.all(alert.pending);
     expect(alert.sends).toHaveLength(1);
-    expect(alert.sends[0]).toMatchObject({ text: expect.stringContaining(details.query) });
+    expect(alert.sends[0]).toMatchObject({
+      text: expect.stringContaining(details.query),
+    });
     expect(alert.sends[0]).not.toHaveProperty("html");
   });
 
@@ -75,14 +97,25 @@ describe("session alerts", () => {
 });
 
 describe("analytics delivery", () => {
-  beforeEach(() => { vi.resetModules(); alert.pending = []; alert.inserts = []; alert.rejectInsert = false; });
+  beforeEach(() => {
+    vi.resetModules();
+    alert.pending = [];
+    alert.inserts = [];
+    alert.rejectInsert = false;
+  });
 
   it("keeps waitUntil while avoiding sensitive console payloads", async () => {
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     const { logAnalytics } = await import("@/lib/analytics");
-    logAnalytics({ type: "query", query: "private user question", sessionId: "session-1" });
+    logAnalytics({
+      type: "query",
+      query: "private user question",
+      sessionId: "session-1",
+    });
     await Promise.all(alert.pending);
-    expect(alert.inserts).toMatchObject([{ query: "private user question", session_id: "session-1" }]);
+    expect(alert.inserts).toMatchObject([
+      { query: "private user question", session_id: "session-1" },
+    ]);
     expect(log).not.toHaveBeenCalled();
     log.mockRestore();
   });
@@ -91,7 +124,17 @@ describe("analytics delivery", () => {
     alert.rejectInsert = true;
     const diagnostic = vi.spyOn(console, "error").mockImplementation(() => {});
     const { logExchange } = await import("@/lib/analytics");
-    expect(() => logExchange({ sessionId: "s", persona: "vc", focus: "general", lang: "en", query: "private", response: "answer", chunksUsed: [] })).not.toThrow();
+    expect(() =>
+      logExchange({
+        sessionId: "s",
+        persona: "vc",
+        focus: "general",
+        lang: "en",
+        query: "private",
+        response: "answer",
+        chunksUsed: [],
+      }),
+    ).not.toThrow();
     await expect(Promise.all(alert.pending)).resolves.toBeDefined();
     expect(diagnostic).toHaveBeenCalled();
     diagnostic.mockRestore();

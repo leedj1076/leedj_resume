@@ -10,10 +10,17 @@ export async function getStats(now = new Date()): Promise<Stats> {
   const rows = await fetchAllExchanges();
   const sessions = new Map<string, Exchange[]>();
   const stats: Stats = {
-    totalSessions: 0, totalExchanges: rows.length, avgExchangesPerSession: 0,
-    reviewed: 0, unreviewed: 0, personaCounts: {}, focusCounts: {},
+    totalSessions: 0,
+    totalExchanges: rows.length,
+    avgExchangesPerSession: 0,
+    reviewed: 0,
+    unreviewed: 0,
+    personaCounts: {},
+    focusCounts: {},
     ratingCounts: { good: 0, needs_improvement: 0, unrated: 0 },
-    langCounts: {}, dailySessions: {}, dailyExchanges: {},
+    langCounts: {},
+    dailySessions: {},
+    dailyExchanges: {},
   };
   for (let daysAgo = 13; daysAgo >= 0; daysAgo--) {
     const day = new Date(now);
@@ -34,7 +41,9 @@ export async function getStats(now = new Date()): Promise<Stats> {
     if (day in stats.dailyExchanges) stats.dailyExchanges[day]++;
   }
   stats.totalSessions = sessions.size;
-  stats.avgExchangesPerSession = stats.totalSessions ? Math.round(rows.length / stats.totalSessions * 10) / 10 : 0;
+  stats.avgExchangesPerSession = stats.totalSessions
+    ? Math.round((rows.length / stats.totalSessions) * 10) / 10
+    : 0;
   for (const exchanges of sessions.values()) {
     const first = exchanges[0];
     increment(stats.personaCounts, first.persona);

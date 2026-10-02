@@ -18,13 +18,17 @@ export function sendNewSessionAlert(data: NewSessionAlert): void {
   const { RESEND_API_KEY: key, RESEND_FROM: from, RESEND_TO: to } = process.env;
   if (!key || !from || !to) {
     if (!warnedIncomplete) {
-      console.warn("[EMAIL] Alert disabled: RESEND_API_KEY, RESEND_FROM, and RESEND_TO are required");
+      console.warn(
+        "[EMAIL] Alert disabled: RESEND_API_KEY, RESEND_FROM, and RESEND_TO are required",
+      );
       warnedIncomplete = true;
     }
     return;
   }
 
-  const timestamp = new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" });
+  const timestamp = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Seoul",
+  });
   const text = [
     "New chat session",
     `Query: ${data.query}`,
@@ -36,13 +40,31 @@ export function sendNewSessionAlert(data: NewSessionAlert): void {
     `Time (KST): ${timestamp}`,
   ].join("\n");
 
-  const send = Promise.resolve().then(() => new Resend(key).emails.send({
-    from, to, subject: "New Ask DJ visitor", text,
-  })).then((result) => {
-    if (result.error) console.error("[EMAIL] Alert provider rejected the send:", result.error.message);
-  }).catch((error: unknown) => {
-    console.error("[EMAIL] Alert send failed:", error instanceof Error ? error.message : "unknown error");
-  });
-  try { waitUntil(send); }
-  catch (error) { console.error("[EMAIL] Alert scheduling failed:", error); }
+  const send = Promise.resolve()
+    .then(() =>
+      new Resend(key).emails.send({
+        from,
+        to,
+        subject: "New Ask DJ visitor",
+        text,
+      }),
+    )
+    .then((result) => {
+      if (result.error)
+        console.error(
+          "[EMAIL] Alert provider rejected the send:",
+          result.error.message,
+        );
+    })
+    .catch((error: unknown) => {
+      console.error(
+        "[EMAIL] Alert send failed:",
+        error instanceof Error ? error.message : "unknown error",
+      );
+    });
+  try {
+    waitUntil(send);
+  } catch (error) {
+    console.error("[EMAIL] Alert scheduling failed:", error);
+  }
 }

@@ -7,7 +7,9 @@ export function buildEnrichedText(entry: KnowledgeEntry): string {
   if (entry.role) context.push(entry.role);
   if (entry.company) context.push(`at ${entry.company}`);
   if (entry.start_date || entry.end_date) {
-    context.push(`(${[entry.start_date, entry.end_date].filter(Boolean).join(" – ")})`);
+    context.push(
+      `(${[entry.start_date, entry.end_date].filter(Boolean).join(" – ")})`,
+    );
   }
   const prefix = context.length ? `${context.join(" ")}. ` : "";
   const question = entry.question ? `Q: ${entry.question}. ` : "";
@@ -26,7 +28,10 @@ export function buildKnowledgeMetadata(entry: KnowledgeEntry) {
     role: entry.role ?? "",
     start_date: dateToNumber(entry.start_date),
     end_date: dateToNumber(entry.end_date),
-    is_ongoing: entry.section === "experience" && Boolean(entry.start_date) && entry.end_date === null,
+    is_ongoing:
+      entry.section === "experience" &&
+      Boolean(entry.start_date) &&
+      entry.end_date === null,
     skills: entry.skills,
     keywords: entry.keywords,
     depth: entry.depth ?? "surface",
@@ -35,7 +40,12 @@ export function buildKnowledgeMetadata(entry: KnowledgeEntry) {
     enrichedText: buildEnrichedText(entry),
   };
   if (entry.source_type === "qa_story" || entry.question) {
-    return { ...base, chunk_type: "qa_story", question: entry.question ?? "", answer_summary: entry.answer_summary ?? "" };
+    return {
+      ...base,
+      chunk_type: "qa_story",
+      question: entry.question ?? "",
+      answer_summary: entry.answer_summary ?? "",
+    };
   }
   return base;
 }

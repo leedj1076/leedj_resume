@@ -1,10 +1,16 @@
 import type { ChatUIMessage } from "../types";
 
 export function getMessageText(message: ChatUIMessage): string {
-  return message.parts.filter((part) => part.type === "text").map((part) => part.text).join("");
+  return message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
 }
 
-export function parseFollowUps(text: string): { clean: string; followUps: string[] } {
+export function parseFollowUps(text: string): {
+  clean: string;
+  followUps: string[];
+} {
   const match = text.match(/<followup>\n?([\s\S]*?)<\/followup>\s*$/);
   if (!match) return { clean: text, followUps: [] };
   return {

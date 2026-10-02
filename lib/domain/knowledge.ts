@@ -2,10 +2,24 @@ import { z } from "zod";
 import { FOCUSES } from "./personas";
 
 export const KNOWLEDGE_SECTIONS = [
-  "summary", "skills", "education", "experience", "leadership", "awards", "project", "stories",
-  "motivation", "career_transition", "founder_philosophy", "failure_learning",
-  "founder_empathy", "narrative", "investment_philosophy",
-  "final_40_resume_narrative", "deep_dive_changjo_2026", "deep_dive_career_pattern",
+  "summary",
+  "skills",
+  "education",
+  "experience",
+  "leadership",
+  "awards",
+  "project",
+  "stories",
+  "motivation",
+  "career_transition",
+  "founder_philosophy",
+  "failure_learning",
+  "founder_empathy",
+  "narrative",
+  "investment_philosophy",
+  "final_40_resume_narrative",
+  "deep_dive_changjo_2026",
+  "deep_dive_career_pattern",
   "deep_dive_flint_failure",
 ] as const;
 
@@ -45,4 +59,6 @@ export const NewKnowledgeEntrySchema = KnowledgeEntrySchema.extend({
 });
 
 // The model returns authored fields; the structuring service computes token_count.
-export const GeneratedKnowledgeEntrySchema = NewKnowledgeEntrySchema.omit({ token_count: true });
+export const GeneratedKnowledgeEntrySchema = NewKnowledgeEntrySchema.omit({
+  token_count: true,
+});

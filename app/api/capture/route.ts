@@ -10,8 +10,11 @@ export async function POST(req: Request): Promise<Response> {
     requireSameOrigin(req);
     await requireAdmin(req);
     const body = await readJsonBody(req);
-    const messages = parseCaptureMessages(body && typeof body === "object" && !Array.isArray(body)
-      ? (body as Record<string, unknown>).messages : undefined);
+    const messages = parseCaptureMessages(
+      body && typeof body === "object" && !Array.isArray(body)
+        ? (body as Record<string, unknown>).messages
+        : undefined,
+    );
     return await handleCapture(messages, req.signal);
   } catch (error) {
     if (!(error instanceof HttpError)) console.error("[CAPTURE] Error:", error);

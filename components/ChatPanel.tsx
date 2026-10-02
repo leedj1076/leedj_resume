@@ -6,7 +6,11 @@ import { useAutoScroll } from "@/hooks/useAutoScroll";
 import ChatMessage from "./chat/ChatMessage";
 import ChatComposer from "./chat/ChatComposer";
 import FollowUpSuggestions from "./chat/FollowUpSuggestions";
-import { STARTER_QUESTIONS, PERSONA_STARTER_QUESTIONS, type Lang } from "@/lib/profile-data";
+import {
+  STARTER_QUESTIONS,
+  PERSONA_STARTER_QUESTIONS,
+  type Lang,
+} from "@/lib/profile-data";
 import type { ChatUIMessage } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -57,7 +61,13 @@ export default function ChatPanel({
       const { exportConversation } = await import("@/lib/chat/export-pdf");
       await exportConversation(messages, { lang, date: new Date() });
     } catch (cause) {
-      setExportError(cause instanceof Error ? cause.message : (en ? "PDF export failed. Please try again." : "PDF 내보내기에 실패했습니다. 다시 시도해 주세요."));
+      setExportError(
+        cause instanceof Error
+          ? cause.message
+          : en
+            ? "PDF export failed. Please try again."
+            : "PDF 내보내기에 실패했습니다. 다시 시도해 주세요.",
+      );
     } finally {
       setIsExporting(false);
     }
@@ -99,8 +109,7 @@ export default function ChatPanel({
 
   // Error categorization
   const getErrorMessage = () => {
-    if (!error)
-      return en ? "Something went wrong." : "문제가 발생했습니다.";
+    if (!error) return en ? "Something went wrong." : "문제가 발생했습니다.";
     const msg = error.message?.toLowerCase() ?? "";
     if (msg.includes("429") || msg.includes("rate limit")) {
       return en
@@ -154,7 +163,14 @@ export default function ChatPanel({
             </Button>
           </div>
         </div>
-        {exportError && <p role="alert" className="text-[13px] text-red-600 dark:text-red-400 mt-1">{exportError}</p>}
+        {exportError && (
+          <p
+            role="alert"
+            className="text-[13px] text-red-600 dark:text-red-400 mt-1"
+          >
+            {exportError}
+          </p>
+        )}
         <p className="text-[13px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
           {en
             ? "Ask anything about my experience, skills, or career. Answers are grounded in verified professional data."
@@ -163,7 +179,13 @@ export default function ChatPanel({
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} onScroll={onScroll} className="profile-scroll flex-1 overflow-y-auto px-6 py-4" role="log" aria-label={en ? "Conversation" : "대화"}>
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        className="profile-scroll flex-1 overflow-y-auto px-6 py-4"
+        role="log"
+        aria-label={en ? "Conversation" : "대화"}
+      >
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="animate-[fadeIn_0.4s_ease-out]">
@@ -186,7 +208,11 @@ export default function ChatPanel({
             </p>
             <div className="flex flex-col gap-2">
               <button
-                onClick={() => onSend(en ? "Please introduce yourself." : "자기소개를 해주세요.")}
+                onClick={() =>
+                  onSend(
+                    en ? "Please introduce yourself." : "자기소개를 해주세요.",
+                  )
+                }
                 style={{ animation: "fadeInUp 0.4s ease-out 0s both" }}
                 className="text-left px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] bg-[var(--color-surface-secondary)] border border-[var(--color-border-primary)] rounded-lg cursor-pointer leading-relaxed hover:bg-[var(--color-hover-accent-bg)] hover:border-[var(--color-hover-accent-border)] transition-colors"
               >
@@ -209,13 +235,27 @@ export default function ChatPanel({
         )}
 
         {/* Message bubbles */}
-        {messages.map((message) => <ChatMessage key={message.id} m={message} status={status}
-          lastMessageId={messages[messages.length - 1]?.id} internal={internal}
-          selectedTraceMessageId={selectedTraceMessageId} onSelectTrace={onSelectTrace}
-          onFeedback={onFeedback} />)}
+        {messages.map((message) => (
+          <ChatMessage
+            key={message.id}
+            m={message}
+            status={status}
+            lastMessageId={messages[messages.length - 1]?.id}
+            internal={internal}
+            selectedTraceMessageId={selectedTraceMessageId}
+            onSelectTrace={onSelectTrace}
+            onFeedback={onFeedback}
+          />
+        ))}
 
-        <FollowUpSuggestions lang={lang} aiFollowUps={aiFollowUps} unusedStarters={unusedStarters}
-          showDigDeeper={showDigDeeper} showOrTry={showOrTry} onSend={onSend} />
+        <FollowUpSuggestions
+          lang={lang}
+          aiFollowUps={aiFollowUps}
+          unusedStarters={unusedStarters}
+          showDigDeeper={showDigDeeper}
+          showOrTry={showOrTry}
+          onSend={onSend}
+        />
 
         {/* Typing indicator */}
         {isLoading &&
@@ -250,7 +290,9 @@ export default function ChatPanel({
         {status === "error" && error && (
           <div className="flex justify-start">
             <div className="bg-[var(--color-error-bg)] border border-[var(--color-error-border)] rounded-2xl px-4 py-3">
-              <p className="text-sm text-red-600 dark:text-red-400">{getErrorMessage()}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {getErrorMessage()}
+              </p>
               <Button
                 variant="link"
                 onClick={onReset}
@@ -263,13 +305,24 @@ export default function ChatPanel({
         )}
 
         <div className="sr-only" role="status" aria-live="polite">
-          {status === "ready" && messages[messages.length - 1]?.role === "assistant"
-            ? (en ? "Answer complete" : "답변 완료") : ""}
+          {status === "ready" &&
+          messages[messages.length - 1]?.role === "assistant"
+            ? en
+              ? "Answer complete"
+              : "답변 완료"
+            : ""}
         </div>
       </div>
 
-      <ChatComposer value={input} onChange={setInput} onSend={handleSend} onStop={onStop}
-        disabled={isLoading} streaming={isLoading} lang={lang} />
+      <ChatComposer
+        value={input}
+        onChange={setInput}
+        onSend={handleSend}
+        onStop={onStop}
+        disabled={isLoading}
+        streaming={isLoading}
+        lang={lang}
+      />
     </div>
   );
 }

@@ -1,17 +1,20 @@
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
-import { KnowledgeEntrySchema, type KnowledgeEntry } from "../lib/domain/knowledge";
+import {
+  KnowledgeEntrySchema,
+  type KnowledgeEntry,
+} from "../lib/domain/knowledge";
 import { syncKnowledge } from "../lib/server/ingestion";
 
 function printCoverageReport(
   resumeEntries: KnowledgeEntry[],
-  qaEntries: KnowledgeEntry[]
+  qaEntries: KnowledgeEntry[],
 ) {
   console.log("\n" + "=".repeat(60));
   console.log("COVERAGE GAP REPORT");
   console.log("=".repeat(60));
   console.log(
-    `Indexed ${resumeEntries.length} resume chunks + ${qaEntries.length} Q&A entries = ${resumeEntries.length + qaEntries.length} vectors total.\n`
+    `Indexed ${resumeEntries.length} resume chunks + ${qaEntries.length} Q&A entries = ${resumeEntries.length + qaEntries.length} vectors total.\n`,
   );
 
   // Coverage by section
@@ -43,7 +46,7 @@ function printCoverageReport(
         ? `  ⚠️  Recommend ${target}+ Q&A entries`
         : "";
     console.log(
-      `  ${section}: ${total} entries (${counts.resume} resume + ${counts.qa} qa)${warning}`
+      `  ${section}: ${total} entries (${counts.resume} resume + ${counts.qa} qa)${warning}`,
     );
   }
 
@@ -51,7 +54,7 @@ function printCoverageReport(
   for (const [section, target] of Object.entries(sectionTargets)) {
     if (!sectionMap.has(section)) {
       console.log(
-        `  ${section}: 0 entries  ⚠️  Recommend ${target}+ Q&A entries`
+        `  ${section}: 0 entries  ⚠️  Recommend ${target}+ Q&A entries`,
       );
     }
   }
@@ -71,7 +74,7 @@ function printCoverageReport(
 
   // Core strengths
   const coreCount = [...resumeEntries, ...qaEntries].filter(
-    (e) => e.is_core_strength
+    (e) => e.is_core_strength,
   ).length;
   console.log(`\nCore strengths: ${coreCount} entries marked is_core_strength`);
 }
@@ -83,16 +86,27 @@ async function main() {
     return;
   }
   if (args.some((arg) => arg !== "--dry-run")) {
-    throw new Error(`Unknown argument: ${args.find((arg) => arg !== "--dry-run")}`);
+    throw new Error(
+      `Unknown argument: ${args.find((arg) => arg !== "--dry-run")}`,
+    );
   }
   const dryRun = args.includes("--dry-run");
   const resumePath = join(__dirname, "../data/resume.json");
   const qaPath = join(__dirname, "../data/knowledge_entries.json");
-  const resumeEntries = KnowledgeEntrySchema.array().parse(JSON.parse(readFileSync(resumePath, "utf-8")));
+  const resumeEntries = KnowledgeEntrySchema.array().parse(
+    JSON.parse(readFileSync(resumePath, "utf-8")),
+  );
   const qaEntries = existsSync(qaPath)
-    ? KnowledgeEntrySchema.array().parse(JSON.parse(readFileSync(qaPath, "utf-8"))) : [];
-  const report = await syncKnowledge([...resumeEntries, ...qaEntries], { dryRun });
-  console.log(`${dryRun ? "Dry run" : "Ingestion complete"}: ${JSON.stringify(report)}`);
+    ? KnowledgeEntrySchema.array().parse(
+        JSON.parse(readFileSync(qaPath, "utf-8")),
+      )
+    : [];
+  const report = await syncKnowledge([...resumeEntries, ...qaEntries], {
+    dryRun,
+  });
+  console.log(
+    `${dryRun ? "Dry run" : "Ingestion complete"}: ${JSON.stringify(report)}`,
+  );
   printCoverageReport(resumeEntries, qaEntries);
 }
 
