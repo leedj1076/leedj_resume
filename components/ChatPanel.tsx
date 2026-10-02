@@ -43,126 +43,24 @@ export default function ChatPanel({
   onSelectTrace,
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState("");
   const { scrollRef, onScroll } = useAutoScroll(messages, status);
   const en = lang === "en";
   const isLoading = status === "submitted" || status === "streaming";
 
-  const exportConversation = async () => {
-    if (messages.length === 0) return;
-    const { jsPDF } = await import("jspdf");
-    const doc = new jsPDF({ unit: "mm", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const pageH = doc.internal.pageSize.getHeight();
-    const mL = 26;
-    const mR = 26;
-    const contentW = pageW - mL - mR;
-    let y = 32;
-
-    const addPage = () => { doc.addPage(); y = 26; };
-    const need = (h: number) => { if (y + h > pageH - 22) addPage(); };
-
-    const date = new Date().toLocaleDateString("en-US", {
-      year: "numeric", month: "long", day: "numeric",
-    });
-
-    // ── Section label — small, bold, ultra-wide tracking ──
-    doc.setFontSize(6.5);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(30, 30, 30);
-    doc.setCharSpace(4.5);
-    doc.text("CONVERSATION", mL, y);
-    doc.setCharSpace(0);
-    y += 18;
-
-    // ── Title — large, light weight ──
-    doc.setFontSize(28);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(30, 30, 30);
-    doc.text("DJ Lee", mL, y);
-    y += 12;
-
-    // ── Subtitle ──
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(190, 190, 190);
-    doc.text("Interactive Profile", mL, y);
-    y += 6;
-    doc.setFontSize(9);
-    doc.setTextColor(200, 200, 200);
-    doc.text(date, mL, y);
-    y += 16;
-
-    // ── Hairline rule ──
-    doc.setDrawColor(215, 215, 215);
-    doc.setLineWidth(0.15);
-    doc.line(mL, y, pageW - mR, y);
-    y += 16;
-
-    // ── Messages ──
-    for (const m of messages) {
-      const isUser = m.role === "user";
-      const text = getMessageText(m).replace(/\*\*/g, "");
-
-      // Generous text column offset from label
-      const labelX = mL;
-      const textX = mL + 12;
-      const textW = contentW - 12;
-
-      const fontSize = isUser ? 10 : 9.5;
-      const lineH = 5.5;
-
-      doc.setFontSize(fontSize);
-      doc.setFont("helvetica", isUser ? "bold" : "normal");
-      const lines = doc.splitTextToSize(text, textW);
-      const blockH = lines.length * lineH;
-      need(blockH + 16);
-
-      // Label — single letter, wide-tracked
-      doc.setFontSize(7);
-      doc.setFont("helvetica", "bold");
-      doc.setCharSpace(2);
-      if (isUser) {
-        doc.setTextColor(30, 30, 30);
-      } else {
-        doc.setTextColor(195, 195, 195);
-      }
-      doc.text(isUser ? "Q" : "A", labelX, y + 0.5);
-      doc.setCharSpace(0);
-
-      // Thin vertical accent — subtle, minimal style
-      doc.setDrawColor(isUser ? 60 : 215, isUser ? 60 : 215, isUser ? 60 : 215);
-      doc.setLineWidth(0.3);
-      doc.line(labelX + 6.5, y - 2.5, labelX + 6.5, y + blockH - 1);
-
-      // Body text
-      doc.setFontSize(fontSize);
-      doc.setFont("helvetica", isUser ? "bold" : "normal");
-      doc.setTextColor(isUser ? 35 : 100, isUser ? 35 : 100, isUser ? 35 : 100);
-      let ty = y;
-      for (const line of lines) {
-        need(lineH + 2);
-        doc.text(line, textX, ty);
-        ty += lineH;
-      }
-      y = ty + 12;
+  const handleExport = async () => {
+    if (messages.length === 0 || isLoading || isExporting) return;
+    setIsExporting(true);
+    setExportError("");
+    try {
+      const { exportConversation } = await import("@/lib/chat/export-pdf");
+      await exportConversation(messages, { lang, date: new Date() });
+    } catch (cause) {
+      setExportError(cause instanceof Error ? cause.message : (en ? "PDF export failed. Please try again." : "PDF 내보내기에 실패했습니다. 다시 시도해 주세요."));
+    } finally {
+      setIsExporting(false);
     }
-
-    // ── Footer on every page ──
-    const total = doc.getNumberOfPages();
-    for (let p = 1; p <= total; p++) {
-      doc.setPage(p);
-      doc.setFontSize(6.5);
-      doc.setFont("helvetica", "normal");
-      doc.setCharSpace(1.5);
-      doc.setTextColor(195, 195, 195);
-      doc.text("DJ LEE", mL, pageH - 14);
-      doc.setCharSpace(0);
-      doc.setFontSize(7);
-      doc.text("Interactive Profile", mL + 16, pageH - 14);
-      doc.text(`${p}`, pageW - mR, pageH - 14, { align: "right" });
-    }
-
-    doc.save(`dj-lee-chat-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
   const handleSend = (text: string) => {
@@ -239,8 +137,8 @@ export default function ChatPanel({
             <Button
               variant="ghost"
               size="xs"
-              onClick={exportConversation}
-              disabled={messages.length === 0}
+              onClick={handleExport}
+              disabled={messages.length === 0 || isLoading || isExporting}
               className="text-[12px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
             >
               {en ? "Export" : "내보내기"}
@@ -256,6 +154,7 @@ export default function ChatPanel({
             </Button>
           </div>
         </div>
+        {exportError && <p role="alert" className="text-[13px] text-red-600 dark:text-red-400 mt-1">{exportError}</p>}
         <p className="text-[13px] text-[var(--color-text-tertiary)] mt-1 leading-relaxed">
           {en
             ? "Ask anything about my experience, skills, or career. Answers are grounded in verified professional data."

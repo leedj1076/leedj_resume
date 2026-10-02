@@ -1,6 +1,6 @@
 // Keep this TypeScript config in CommonJS form for Vite's native config loader.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { defineConfig } = require("vitest/config") as typeof import("vitest/config");
+const { defineConfig, configDefaults } = require("vitest/config") as typeof import("vitest/config");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { fileURLToPath } = require("node:url") as typeof import("node:url");
 
@@ -14,5 +14,6 @@ module.exports = defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
+    exclude: [...configDefaults.exclude, "tests/e2e/**"],
   },
 });
