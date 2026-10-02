@@ -14,7 +14,6 @@
     "structure": "tsx --env-file=.env.local scripts/structure.ts"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.29",
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.118",
     "@pinecone-database/pinecone": "^7.0.0",
@@ -25,9 +24,9 @@
     "ai": "^6.0.116",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "jspdf": "^4.2.0",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.575.0",
-    "next": "16.1.6",
+    "next": "^16.3.8",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -46,11 +45,17 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "^16.3.8",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.2"
+  },
+  "overrides": {
+    "@babel/core": "7.29.7",
+    "@humanfs/node": "0.16.8",
+    "ajv": "6.15.0",
+    "ws": "8.22.0"
   }
 }
