@@ -9,6 +9,7 @@ import {
   type Lang,
 } from "@/lib/profile-data";
 import { Button } from "@/components/ui/button";
+import { CHAT_MODEL } from "@/lib/domain/models";
 
 interface ProfilePanelProps {
   lang: Lang;
@@ -220,8 +221,8 @@ export default function ProfilePanel({ lang, onAskChat }: ProfilePanelProps) {
         <div className="mt-10 pt-5 border-t border-[var(--color-border-primary)]">
           <p className="text-[13px] text-[var(--color-text-muted)] leading-relaxed">
             {en
-              ? "Designed and vibe-coded by DJ with Claude Code, Next.js, Pinecone & Gemini. AI answers grounded in DJ's own Q&A database."
-              : "해당 페이지는 Claude Code, Next.js, Pinecone & Gemini로 직접 설계하고 구현되었습니다. AI 답변은 DJ가 구축한 Q&A 데이터베이스에 기반합니다."}
+              ? `Designed and vibe-coded by DJ with Claude Code, Next.js, Pinecone & ${CHAT_MODEL}. AI answers grounded in DJ's own Q&A database.`
+              : `해당 페이지는 Claude Code, Next.js, Pinecone & ${CHAT_MODEL}로 직접 설계하고 구현되었습니다. AI 답변은 DJ가 구축한 Q&A 데이터베이스에 기반합니다.`}
           </p>
         </div>
       </div>

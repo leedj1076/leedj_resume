@@ -47,5 +47,5 @@ export function selectEvidence(
     .sort((a, b) => b.personaScore - a.personaScore)
     .slice(0, MAX_RANKED_CHUNKS)
     .map(result => result.chunk);
-  return { rankedChunks, directMatchChunk, droppedSuppressedIds };
+  return { rankedChunks, rankingInputCount: candidates.size, directMatchChunk, droppedSuppressedIds };
 }

@@ -162,7 +162,7 @@ export function CaptureInterview() {
       </div>
 
       <div className="border-t border-gray-200 bg-white max-w-3xl w-full mx-auto">
-        <ChatComposer value={input} onChange={setInput} onSend={(text) => { sendMessage({ text }); setInput(""); }} onStop={stop} disabled={false} streaming={isLoading} lang="en" />
+        <ChatComposer value={input} onChange={setInput} onSend={(text) => { sendMessage({ text }); setInput(""); }} onStop={stop} disabled={false} streaming={isLoading} lang="en" inputLabel="Your answer" />
       </div>
     </div>
   );

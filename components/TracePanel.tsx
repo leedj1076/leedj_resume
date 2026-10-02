@@ -197,7 +197,7 @@ function DirectMatchDetail({ data }: { data: Record<string, unknown> }) {
 
 function RerankingDetail({ data }: { data: Record<string, unknown> }) {
   const topChunks = (data.topChunks ?? []) as Array<{
-    id: string; label: string; section: string; pineconeScore: number; personaMultiplier: number;
+    id: string; label: string; section: string; pineconeScore: number;
   }>;
   return (
     <div>
@@ -211,7 +211,6 @@ function RerankingDetail({ data }: { data: Record<string, unknown> }) {
               <tr className="text-gray-400 dark:text-gray-500 border-b border-gray-100 dark:border-gray-800">
                 <th className="text-left font-medium py-0.5 pr-2">Chunk</th>
                 <th className="text-right font-medium py-0.5 px-1 w-12">Score</th>
-                <th className="text-right font-medium py-0.5 pl-1 w-8">Mult</th>
               </tr>
             </thead>
             <tbody>
@@ -222,11 +221,6 @@ function RerankingDetail({ data }: { data: Record<string, unknown> }) {
                     <span className="text-gray-300 dark:text-gray-600 ml-1">({c.section})</span>
                   </td>
                   <td className="text-right py-1 px-1 font-mono text-gray-500">{c.pineconeScore.toFixed(3)}</td>
-                  <td className="text-right py-1 pl-1 font-mono">
-                    <span className={c.personaMultiplier > 1 ? "text-emerald-600 dark:text-emerald-400" : "text-gray-400"}>
-                      {c.personaMultiplier > 1 ? `${c.personaMultiplier.toFixed(2)}x` : "1x"}
-                    </span>
-                  </td>
                 </tr>
               ))}
             </tbody>

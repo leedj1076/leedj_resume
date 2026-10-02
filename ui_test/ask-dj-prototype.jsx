@@ -408,22 +408,16 @@ function ChatMode({ visitorData, initialQuestion, profile }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [evidenceCards, setEvidenceCards] = useState([]);
+  const evidenceCards = [];
   const [showEvidence, setShowEvidence] = useState(true);
   const chatEndRef = useRef(null);
+  const sentInitialQuestion = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Handle initial question from Brief mode
-  useEffect(() => {
-    if (initialQuestion) {
-      simulateChat(initialQuestion);
-    }
-  }, []);
-
-  const simulateChat = async (text) => {
+  const simulateChat = useCallback(async (text) => {
     const history = messages.map(m=>({role:m.role,text:m.content}));
     const userMsg = { id: Date.now(), role: "user", content: text };
     setMessages((prev) => [...prev, userMsg]);
@@ -447,7 +441,7 @@ function ChatMode({ visitorData, initialQuestion, profile }) {
         content: data.response || "Sorry, something went wrong.",
       };
       setMessages((prev) => [...prev, aiMsg]);
-    } catch(e) {
+    } catch {
       setMessages((prev) => [...prev, {
         id: Date.now() + 1,
         role: "assistant",
@@ -455,7 +449,18 @@ function ChatMode({ visitorData, initialQuestion, profile }) {
       }]);
     }
     setIsTyping(false);
-  };
+  }, [messages, visitorData]);
+
+  // Handle each question from Brief mode once, even as chat history changes.
+  useEffect(() => {
+    if (initialQuestion && sentInitialQuestion.current !== initialQuestion) {
+      const timer = setTimeout(() => {
+        sentInitialQuestion.current = initialQuestion;
+        void simulateChat(initialQuestion);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [initialQuestion, simulateChat]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -474,10 +479,10 @@ function ChatMode({ visitorData, initialQuestion, profile }) {
             <div className="text-center py-16">
               <div className="text-4xl mb-4">💬</div>
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Chat with DJ's AI
+                Chat with DJ&apos;s AI
               </h3>
               <p className="text-sm text-slate-500 mb-8 max-w-md mx-auto">
-                Ask anything about DJ's experience. Evidence and proof points will appear in the side panel.
+                Ask anything about DJ&apos;s experience. Evidence and proof points will appear in the side panel.
               </p>
               <div className="flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
                 {profile.sections.map((s) => (
@@ -630,7 +635,7 @@ function ChatMode({ visitorData, initialQuestion, profile }) {
 }
 
 // ─── MODE: FIT ANALYSIS ───
-function FitMode({ visitorData, profile }) {
+function FitMode({ visitorData }) {
   const [needsInput, setNeedsInput] = useState("");
   const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -644,7 +649,7 @@ function FitMode({ visitorData, profile }) {
       "Hiring for a senior role combining business development with technical AI/product expertise",
   };
 
-  const runAnalysis = (input) => {
+  const runAnalysis = () => {
     setIsAnalyzing(true);
     setAnalysis(null);
 
@@ -694,8 +699,8 @@ function FitMode({ visitorData, profile }) {
               Fit Analysis
             </h2>
             <p className="text-slate-500 max-w-lg mx-auto">
-              Describe what you're looking for — a role, a partnership opportunity, an
-              investment thesis — and I'll show you exactly how DJ's experience maps
+              Describe what you&apos;re looking for — a role, a partnership opportunity, an
+              investment thesis — and I&apos;ll show you exactly how DJ&apos;s experience maps
               to your needs.
             </p>
           </div>
@@ -749,7 +754,7 @@ function FitMode({ visitorData, profile }) {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                Analyzing DJ's profile against your requirements...
+                Analyzing DJ&apos;s profile against your requirements...
               </div>
             </div>
           )}
@@ -923,7 +928,7 @@ export default function AskDJ() {
           />
         )}
         {mode === "fit" && (
-          <FitMode visitorData={visitorData} profile={DJ_PROFILE} />
+          <FitMode visitorData={visitorData} />
         )}
       </div>
     </div>

@@ -29,6 +29,17 @@ beforeEach(() => {
 });
 
 describe("prepareAnswer", () => {
+  it("reports raw Q&A candidates in ranking input without invented multipliers", async () => {
+    p.search.mockImplementation(({ filter }: { filter?: { chunk_type?: unknown } }) =>
+      filter?.chunk_type ? [{ id: "raw-story", enrichedText: "Story", depth: "surface", section: "experience", skills: [], isCoreStrength: false, pineconeScore: 0.8 }] : []);
+    const { prepareAnswer } = await import("@/lib/server/rag-service");
+    const prepared = await prepareAnswer(request("Tell me the story"), new AbortController().signal, { answerMode: "default" });
+    const ranking = prepared.trace.steps.find(step => step.type === "ranking");
+    expect(ranking?.data.inputCount).toBe(1);
+    expect(ranking?.data.topChunks).toHaveLength(1);
+    expect(ranking?.data.topChunks[0]).not.toHaveProperty("personaMultiplier");
+  });
+
   it("answers an ambiguous request without vector search", async () => {
     p.rewrite.mockResolvedValue(JSON.stringify({ intent: "ambiguous", query: "thing", clarifications: ["Which role?"] }));
     const { prepareAnswer } = await import("@/lib/server/rag-service");

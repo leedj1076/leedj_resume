@@ -32,6 +32,7 @@ export interface RetrievalPlan {
 
 export interface EvidenceSelection {
   rankedChunks: ChunkRecord[];
+  rankingInputCount: number;
   directMatchChunk: ChunkRecord | null;
   droppedSuppressedIds: string[];
 }

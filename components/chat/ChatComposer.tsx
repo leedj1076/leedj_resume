@@ -13,9 +13,10 @@ interface ChatComposerProps {
   disabled: boolean;
   streaming: boolean;
   lang: Language;
+  inputLabel?: string;
 }
 
-export default function ChatComposer({ value, onChange, onSend, onStop, disabled, streaming, lang }: ChatComposerProps) {
+export default function ChatComposer({ value, onChange, onSend, onStop, disabled, streaming, lang, inputLabel }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composing = useRef(false);
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function ChatComposer({ value, onChange, onSend, onStop, disabled
           event.preventDefault(); send();
         }
       }}
-      disabled={disabled} rows={1} aria-label={lang === "en" ? "Ask a question" : "질문 입력"}
+      disabled={disabled} rows={1} aria-label={inputLabel ?? (lang === "en" ? "Ask a question" : "질문 입력")}
       placeholder={lang === "en" ? "Ask me anything..." : "무엇이든 물어보세요..."}
       className="flex-1 text-[14px] px-3.5 py-2.5 min-h-0 border-[var(--color-border-secondary)] rounded-lg text-[var(--color-text-primary)] bg-[var(--color-page-bg)] focus-visible:border-[var(--color-key)] focus-visible:ring-[var(--color-key)]/20 resize-none shadow-none"
       style={{ maxHeight: 120, overflowY: "hidden", fieldSizing: "fixed" }} />

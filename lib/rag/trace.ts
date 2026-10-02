@@ -8,7 +8,7 @@ export type TraceStep =
   | { type: "retrieval"; timestamp: number; summary: string; data: { totalChunks: number; filterType: string; filterValue?: string; pinnedIds: string[]; hasFocusFilter: boolean; chunkIds: string[]; topScores: Array<{ id: string; score: number; section: string }> } }
   | { type: "direct-match"; timestamp: number; summary: string; data: { found: boolean; matchId?: string; matchScore?: number; matchQuestion?: string } }
   | { type: "suppression"; timestamp: number; summary: string; data: { persona: string; dropped: string[] } }
-  | { type: "ranking"; timestamp: number; summary: string; data: { inputCount: number; outputCount: number; topChunks: Array<{ id: string; label: string; section: string; pineconeScore: number; personaMultiplier: number }> } }
+  | { type: "ranking"; timestamp: number; summary: string; data: { inputCount: number; outputCount: number; topChunks: Array<{ id: string; label: string; section: string; pineconeScore: number }> } }
   | { type: "context"; timestamp: number; summary: string; data: { mode: string; contextLength: number; overviewChunks: number; deepDiveChunks: number; usedChunkIds: string[] } }
   | { type: "generation"; timestamp: number; summary: string; data: { model: string; answerMode: string; responseMode: string; maxOutputTokens: number; contextLength: number; systemPrompt: string } };
 

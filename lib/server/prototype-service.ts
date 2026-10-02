@@ -29,7 +29,7 @@ export async function handlePrototypeChat(request: PrototypeRequest, signal: Abo
     .sort((a, b) => b.score - a.score)
     .slice(0, 15)
     .map(result => result.chunk);
-  const context = assembleContext({ rankedChunks, directMatchChunk: null, droppedSuppressedIds: [] });
+  const context = assembleContext({ rankedChunks, rankingInputCount: byId.size, directMatchChunk: null, droppedSuppressedIds: [] });
   const answerMode = await readAnswerMode();
   signal.throwIfAborted();
   const messages: ModelMessage[] = request.messages.slice(-10).map(message => ({ role: message.role, content: message.parts.map(part => part.text).join("") }));

@@ -166,10 +166,10 @@ export async function prepareAnswer(request: ChatOnly, signal: AbortSignal, opti
   if (selection.droppedSuppressedIds.length) add({ type: "suppression", summary: `${selection.droppedSuppressedIds.length} chunks suppressed`, data: {
     persona: request.visitorData.persona, dropped: selection.droppedSuppressedIds,
   } });
-  add({ type: "ranking", summary: `${candidates.length} → ${selection.rankedChunks.length} chunks`, data: {
-    inputCount: candidates.length, outputCount: selection.rankedChunks.length,
+  add({ type: "ranking", summary: `${selection.rankingInputCount} → ${selection.rankedChunks.length} chunks`, data: {
+    inputCount: selection.rankingInputCount, outputCount: selection.rankedChunks.length,
     topChunks: selection.rankedChunks.slice(0, 8).map(chunk => ({ id: chunk.id, label: CHUNK_LABELS[chunk.id] ?? chunk.id,
-      section: chunk.section, pineconeScore: chunk.pineconeScore, personaMultiplier: 1 })),
+      section: chunk.section, pineconeScore: chunk.pineconeScore })),
   } });
   const context = assembleContext(selection);
   add({ type: "context", summary: `${context.usedChunks.length} chunks in context`, data: {
