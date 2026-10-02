@@ -1,7 +1,7 @@
 // Keep this TypeScript config in CommonJS form for Vite's native config loader.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { defineConfig, configDefaults } =
-  require("vitest/config") as typeof import("vitest/config");
+const config = require("vitest/config") as typeof import("vitest/config");
+const { defineConfig, configDefaults } = config;
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { fileURLToPath } = require("node:url") as typeof import("node:url");
 
