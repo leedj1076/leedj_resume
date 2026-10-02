@@ -122,4 +122,14 @@ describe("bounded fixed-window limiter", () => {
     now = 110; limiter.consume("d");
     expect(limiter.consume("b").allowed).toBe(true);
   });
+
+  it("expires a key before capacity pressure", () => {
+    let now = 0;
+    const limiter = createRateLimiter({ max: 1, windowMs: 100, maxKeys: 3, now: () => now });
+    expect(limiter.consume("a").allowed).toBe(true);
+    now = 99;
+    expect(limiter.consume("a").allowed).toBe(false);
+    now = 100;
+    expect(limiter.consume("a").allowed).toBe(true);
+  });
 });

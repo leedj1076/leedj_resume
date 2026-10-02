@@ -8,7 +8,16 @@ export const maxDuration = 30;
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    const raw = await readJsonBody(req);
+    let raw: unknown;
+    try {
+      raw = await readJsonBody(req);
+    } catch (error) {
+      // Invalid JSON cannot establish the internal-session exemption. Count it
+      // against public admission before returning the parsing error.
+      const denied = admitPublicChat(req);
+      if (denied) return denied;
+      throw error;
+    }
     const requestedInternal = raw !== null && typeof raw === "object" && !Array.isArray(raw)
       && (raw as Record<string, unknown>).internal === true;
     if (requestedInternal) {

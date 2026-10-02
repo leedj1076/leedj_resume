@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type Row = Record<string, unknown>;
-const database = vi.hoisted(() => ({ available: true, rejectWrite: false, rejectRead: false, rejectReadAfterWrite: false, settings: new Map<string, string>(), exchanges: [] as Row[], ranges: [] as [number, number][] }));
+const database = vi.hoisted(() => ({ available: true, rejectWrite: false, rejectRead: false, rejectReadAfterWrite: false, settings: new Map<string, string>(), exchanges: [] as Row[], ranges: [] as [number, number][], afterFirstPage: null as null | (() => void) }));
 
 vi.mock("@/lib/supabase", () => {
   const client = { from(table: string) {
@@ -24,13 +24,15 @@ vi.mock("@/lib/supabase", () => {
     const builder = {
       select() { return builder; },
       eq(column: string, value: unknown) { clauses.push((row) => row[column] === value); return builder; },
+      gt(column: string, value: number) { clauses.push((row) => Number(row[column]) > value); return builder; },
       is(column: string, value: null) { clauses.push((row) => row[column] === value); return builder; },
       not(column: string, _operator: string, value: null) { clauses.push((row) => row[column] !== value); return builder; },
       order(column: string, options: { ascending: boolean }) { if (column === "created_at") ascending = options.ascending; return builder; },
       range(first: number, last: number) { start = first; end = last; database.ranges.push([first, last]); return builder; },
       then(resolve: (result: unknown) => unknown) {
+        if (database.ranges.length === 2 && database.afterFirstPage) { const mutate = database.afterFirstPage; database.afterFirstPage = null; mutate(); }
         const rows = database.exchanges.filter((row) => clauses.every((clause) => clause(row)))
-          .sort((a, b) => (String(a.created_at).localeCompare(String(b.created_at)) || Number(a.id) - Number(b.id)) * (ascending ? 1 : -1));
+          .sort((a, b) => (Number(a.id) - Number(b.id)) * (ascending ? 1 : -1));
         return Promise.resolve(resolve({ data: rows.slice(start, end + 1), count: rows.length, error: null }));
       },
     };
@@ -89,7 +91,7 @@ describe("settings persistence", () => {
 });
 
 describe("paged exchanges and statistics", () => {
-  beforeEach(() => { database.available = true; database.exchanges = []; database.ranges = []; });
+  beforeEach(() => { database.available = true; database.exchanges = []; database.ranges = []; database.afterFirstPage = null; });
   it("returns empty pages and zero statistics", async () => {
     expect(await listExchanges({ page: 1, filter: "all" })).toMatchObject({ exchanges: [], total: 0, pageSize: 20 });
     expect(await listSessions({ page: 1, filter: "all" })).toMatchObject({ sessions: [], totalSessions: 0, pageSize: 10 });
@@ -101,7 +103,7 @@ describe("paged exchanges and statistics", () => {
     expect(stats.totalExchanges).toBe(2501);
     expect(stats.totalSessions).toBe(1251);
     expect(stats.personaCounts.founder).toBe(1251);
-    expect(database.ranges).toEqual([[0, 499], [500, 999], [1000, 1499], [1500, 1999], [2000, 2499], [2500, 2999]]);
+    expect(database.ranges).toEqual(Array.from({ length: 6 }, () => [0, 499]));
     const sessions = await listSessions({ page: 1, filter: "all" });
     expect(sessions.totalSessions).toBe(1251);
     expect(sessions.sessions).toHaveLength(10);
@@ -115,7 +117,14 @@ describe("paged exchanges and statistics", () => {
   it("continues once past an exact batch boundary", async () => {
     database.exchanges = Array.from({ length: 1000 }, (_, index) => exchange(index + 1));
     expect((await getStats()).totalExchanges).toBe(1000);
-    expect(database.ranges).toEqual([[0, 499], [500, 999], [1000, 1499]]);
+    expect(database.ranges).toEqual(Array.from({ length: 3 }, () => [0, 499]));
+  });
+  it("does not skip an exchange when an earlier row disappears between batches", async () => {
+    database.exchanges = Array.from({ length: 501 }, (_, index) => exchange(index + 1));
+    database.afterFirstPage = () => { database.exchanges = database.exchanges.filter((row) => row.id !== 10); };
+    const result = await getStats();
+    expect(result.totalExchanges).toBe(501);
+    expect(database.ranges).toEqual([[0, 499], [0, 499]]);
   });
   it("rejects invalid filters and pages", async () => {
     await expect(listExchanges({ page: 0, filter: "all" })).rejects.toMatchObject({ status: 400 });
@@ -125,7 +134,7 @@ describe("paged exchanges and statistics", () => {
     database.exchanges = [exchange(1), { ...exchange(2), reviewed_at: "2026-09-21T00:00:00.000Z", dj_rating: "good" }];
     expect((await listExchanges({ page: 1, filter: "good" })).exchanges.map((row) => row.id)).toEqual([2]);
     expect((await listSessions({ page: 1, filter: "unreviewed" })).totalSessions).toBe(1);
-    database.exchanges = [{ ...exchange(1), id: "not-an-integer" }];
+    database.exchanges = [{ ...exchange(1), persona: 5 }];
     await expect(getStats()).rejects.toThrow();
   });
 });

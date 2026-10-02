@@ -23,6 +23,14 @@ describe("transcript attribution", () => {
       .toEqual([{ question: "어떤 일을 했나요?", answer: "검색 시스템을 만들었습니다.\n정확도를 높였습니다.\n\n팀과 함께 출시했습니다." }]);
   });
 
+  it("round trips indentation and trailing blank lines in versioned text", () => {
+    const exact: Transcript = { version: 1, turns: [
+      { speaker: "interviewer", text: "  Indented question?\n" },
+      { speaker: "subject", text: "  answer\n\n\\Subject: literal\n\n" },
+    ] };
+    expect(parseTranscript(serializeTranscript(exact, "text"))).toEqual(exact);
+  });
+
   it("maps capture JSON arrays and legacy text to the capture roles", () => {
     const legacy = JSON.stringify([{ role: "assistant", content: "What changed?" }, { role: "user", content: "I changed the design." }]);
     expect(toInterviewExchanges(parseTranscript(legacy, "auto")))

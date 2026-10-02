@@ -1,13 +1,14 @@
 import { readFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 import { expect, test } from "@playwright/test";
-
-test.use({ baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000" });
+import { blockUnexpectedRequests } from "./fixtures/chat-stream";
 
 for (const fixture of [
   { lang: "en", question: "Synthetic English question", answer: "Synthetic English answer", exportLabel: "Export", inputLabel: "Ask a question", sendLabel: "Send" },
   { lang: "kr", question: "합성 한국어 질문", answer: "합성 한국어 답변", exportLabel: "내보내기", inputLabel: "질문 입력", sendLabel: "전송" },
 ] as const) {
   test(`downloads a readable ${fixture.lang} conversation PDF`, async ({ page }) => {
+    await blockUnexpectedRequests(page);
     await page.addInitScript(() => sessionStorage.setItem("v14-welcomed", "1"));
     await page.route("**/api/chat", async (route) => {
       const body = [
@@ -34,5 +35,7 @@ for (const fixture of [
     const bytes = await readFile(await download.path());
     expect(bytes.subarray(0, 5).toString()).toBe("%PDF-");
     expect(bytes.length).toBeGreaterThan(10_000);
+    const extracted = execFileSync("pdftotext", ["-", "-"], { input: bytes }).toString("utf8");
+    expect(extracted).toContain(fixture.answer);
   });
 }

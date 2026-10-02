@@ -7,15 +7,16 @@ const entry = resume[0] as KnowledgeEntry;
 
 function fixture(ids: Array<{ id: string; owner?: string }>, pageSize = 2) {
   const records = new Map(ids.map(({ id, owner }) => [id, { source_owner: owner }]));
-  const calls = { embeds: 0, upserts: [] as string[][], deletes: [] as string[][], creates: 0, fetched: [] as string[][] };
+  const calls = { exists: 0, pages: 0, embeds: 0, upserts: [] as string[][], deletes: [] as string[][], creates: 0, fetched: [] as string[][] };
   let failPage = false;
   let failFetch = false;
   let failEmbed = false;
   let failUpload = 0;
   const gateway: IngestionGateway = {
-    async indexExists() { return true; },
+    async indexExists() { calls.exists++; return true; },
     async createIndex() { calls.creates++; },
     async listPage(token) {
+      calls.pages++;
       if (failPage) throw new Error("inventory failed");
       const start = token ? Number(token) : 0;
       return { ids: ids.slice(start, start + pageSize).map((item) => item.id),
@@ -46,7 +47,7 @@ describe("knowledge synchronization", () => {
     const fake = fixture([]);
     await expect(syncKnowledge([], { dryRun: false }, fake.gateway)).rejects.toThrow(/empty/i);
     await expect(syncKnowledge([{ ...entry, chunk_id: "dj-correction-9" }], { dryRun: false }, fake.gateway)).rejects.toThrow(/reserved/i);
-    expect(fake.calls).toMatchObject({ embeds: 0, upserts: [], deletes: [], creates: 0, fetched: [] });
+    expect(fake.calls).toMatchObject({ exists: 0, pages: 0, embeds: 0, upserts: [], deletes: [], creates: 0, fetched: [] });
   });
 
   it("dry run inventories every page and fetches metadata without mutations", async () => {

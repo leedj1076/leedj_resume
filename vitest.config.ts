@@ -12,7 +12,7 @@ module.exports = defineConfig({
     },
   },
   test: {
-    environment: "jsdom",
+    environment: "node",
     setupFiles: ["./tests/setup.ts"],
     exclude: [...configDefaults.exclude, "tests/e2e/**"],
   },

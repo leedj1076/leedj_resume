@@ -1,205 +1,127 @@
 # Ask DJ
 
-An interactive professional profile for Dong Jae Lee. Visitors can explore his career, read work samples, and ask questions in English or Korean. Answers stream from a retrieval-augmented generation (RAG) pipeline grounded in curated career facts and personal stories.
+Ask DJ is Dong Jae Lee's bilingual professional profile. Visitors can read his
+career and four work samples, choose a visitor perspective, and ask questions
+through a streaming chat grounded in curated career records. The owner can
+inspect conversations, review answers, add corrections, adjust settings, and
+capture interview material. `/` redirects to `/dj`.
 
-The project combines a resume website, a conversational interface, and an owner workflow for inspecting answers and improving the knowledge base.
+The app uses Next.js 16, React 19, TypeScript, the AI SDK, OpenAI, Pinecone,
+Supabase, and optional Resend notifications. The public profile renders without
+provider credentials. Live chat needs OpenAI and Pinecone; persistence and owner
+workflows need Supabase and admin credentials. [Architecture and operational
+boundaries](docs/architecture.md) describes each path in detail.
 
-## What it does
+## Local setup
 
-- **Explore a profile:** career timeline, achievements, portfolio, and a downloadable resume.
-- **Ask follow-up questions:** streamed answers, source labels, suggested questions, feedback, and conversation export.
-- **Choose a perspective:** recruiting, venture capital, founder/partner, general visitor, or developer partnerships. The selected persona changes retrieval priorities and answer framing.
-- **Review quality:** inspect conversations, rate answers, add corrections, and adjust persona visibility, labels, and answer style.
-- **Capture experience:** an interview assistant and transcript-processing script turn detailed stories into searchable knowledge.
-
-The current public entry point is `/dj`; `/` redirects there. `/v1` and `/ui` retain earlier versions and design experiments.
-
-## Stack
-
-| Layer | Implementation |
-| --- | --- |
-| Application | Next.js 16 App Router, React 19, TypeScript |
-| Interface | Tailwind CSS 4, Radix UI primitives, Lucide icons, React Markdown |
-| AI transport | Vercel AI SDK 6 and its React hooks |
-| Text generation | OpenAI; currently configured as `gpt-5.6-terra` in source |
-| Embeddings | OpenAI `text-embedding-3-large`, 3,072 dimensions |
-| Retrieval | Pinecone, cosine similarity, `resume` namespace |
-| Persistence | Supabase for events, conversations, reviews, and settings |
-| Notifications | Optional Resend email alerts |
-| Hosting integration | Vercel Analytics and `waitUntil` for background writes |
-| Local tooling | npm, ESLint, TypeScript, and `tsx` scripts |
-
-These model identifiers describe this checkout. Running AI features requires credentials with access to the configured models.
-
-## Architecture
-
-There are two data paths: an offline path that prepares searchable knowledge and an online path that answers a visitor's question.
-
-```mermaid
-flowchart TD
-    Resume["data/resume.json"] --> Ingest["Enrich and embed source records"]
-    Stories["data/knowledge_entries.json"] --> Ingest
-    Ingest --> Index["Pinecone: resume namespace"]
-
-    Visitor["Profile and chat UI"] --> Route["POST /api/chat"]
-    Route --> Rewrite["Rewrite query and classify intent"]
-    Rewrite --> Retrieval["Retrieve, filter, and rank evidence"]
-    Index --> Retrieval
-    Retrieval --> Answer["Assemble context and stream answer"]
-    Answer --> Visitor
-    Route --> Events["Supabase events and exchanges"]
-    Route --> Alerts["Optional Resend alert"]
-
-    Admin["Admin dashboard"] --> Settings["Supabase settings and reviews"]
-    Settings --> Route
-    Admin --> Corrections["Correction embeddings"]
-    Corrections --> Index
-```
-
-### Answer pipeline
-
-The main implementation is [`app/api/chat/route.ts`](app/api/chat/route.ts).
-
-1. Read message history, visitor persona, focus, language, and session metadata. Apply a per-instance request limit.
-2. Detect company, section, or time-period references. Rewrite the question for retrieval and classify it as specific, broad, or ambiguous.
-3. For an ambiguous question, stream clarifying suggestions without querying Pinecone.
-4. Embed the search query. Combine semantic matches, entity-filtered matches, focus matches, and pinned career context. A separate original-question search can identify a close match to a prepared Q&A.
-5. Remove persona-suppressed entries and rank candidates by persona and focus priorities. Assemble either a primary answer with supporting evidence or an overview with detailed stories.
-6. Build the answer prompt, include recent conversation history, and stream through the AI SDK. Attach source labels as message metadata.
-7. Record events and completed exchanges asynchronously. Owner reviews can add correction vectors for subsequent retrieval.
-
-The source-grounding rules are prompt instructions, not a factual verification system. The live evaluator checks retrieval recall rather than the accuracy of every generated answer.
-
-### Content ownership
-
-| Source | Purpose |
-| --- | --- |
-| [`data/resume.json`](data/resume.json) | Structured career facts and accomplishments |
-| [`data/knowledge_entries.json`](data/knowledge_entries.json) | Prepared questions, answer summaries, and detailed stories |
-| [`lib/profile-data.ts`](lib/profile-data.ts) | Bilingual profile content and starter questions |
-| [`lib/persona-config.ts`](lib/persona-config.ts) | Persona tone, retrieval priorities, focus terms, and suppression rules |
-| [`lib/answer-modes.ts`](lib/answer-modes.ts) | Default and pyramid-style answer instructions |
-| Pinecone | Embedded source records and owner-created corrections |
-| Supabase | Events, exchanges, review status, and runtime settings |
-
-Profile display content and retrieval content are maintained separately. Updating the knowledge JSON requires re-indexing; changing profile text does not update Pinecone. Admin corrections currently live in the remote index and exchange records, not in the source JSON.
-
-### Code map
-
-```text
-app/
-  dj/                    Public profile and work-sample pages
-  admin/                 Dashboard, knowledge capture, internal debugger
-  api/                   Chat, feedback, capture, and admin handlers
-  ui/                    Prototype gallery and HTML-serving route
-  v1/                    Earlier chat interface
-components/
-  ProfileApp.tsx         Profile state and AI SDK chat integration
-  ProfilePanel.tsx       Career and portfolio presentation
-  ChatPanel.tsx          Messages, composer, suggestions, PDF export
-  TracePanel.tsx         Retrieval and prompt inspection
-  ui/                   Reusable UI primitives
-lib/                     Domain configuration and service helpers
-scripts/                 Ingestion, retrieval evaluation, transcript structuring
-public/                  Resume PDF and static assets
-data/                    Curated knowledge and archived source material
-prompts/                 Historical prompts and architecture notes
-ui_test/                 Earlier interface prototypes
-```
-
-`prompts/` and prototype documents describe earlier iterations. Executable source and this README describe the current implementation.
-
-## Run locally
-
-Node.js 22 and npm match the environment used to verify this checkout. Dependencies are pinned in `package-lock.json`.
+Use Node 22 (`.nvmrc`), npm, and Docker for database tests:
 
 ```bash
 npm ci
-```
-
-Create `.env.local` in the repository root:
-
-```dotenv
-# Required for live chat, retrieval, and indexing
-OPENAI_API_KEY=your-openai-api-key
-PINECONE_API_KEY=your-pinecone-api-key
-PINECONE_INDEX_NAME=your-development-index
-
-# Required for intended administrator protection
-ADMIN_PASSWORD=choose-a-long-unique-password
-ADMIN_SESSION_SECRET=choose-an-independent-long-random-secret
-
-# Optional for public chat; required for persistent admin workflows
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-server-side-service-role-key
-
-# Optional: enable new-session email alerts
-RESEND_API_KEY=your-resend-api-key
-RESEND_FROM="Ask DJ <sender@example.com>"
-RESEND_TO=owner@example.com
-```
-
-Environment files are ignored by Git. All provider credentials remain server-side; none need a `NEXT_PUBLIC_` prefix.
-
-Before enabling persistence, provision the tables expected by the code: `analytics_events`, `chat_exchanges`, and `app_settings`. For a clean project, review [`database/001_initial.sql`](database/001_initial.sql) and [`database/README.md`](database/README.md). An existing project needs an inspected adoption migration. Credentials alone do not set up a fresh database.
-
-Without Supabase configuration, public settings fall back to defaults and persistent conversation/review features are unavailable. Alerts remain disabled until all three Resend variables are configured.
-
-Populate a development Pinecone index, then start the app:
-
-```bash
-npm run ingest
 npm run dev
 ```
 
-Open [http://localhost:3000/dj](http://localhost:3000/dj). Ingestion creates a missing index with cosine similarity, 3,072 dimensions, and a serverless deployment in AWS `us-east-1`.
+Open [http://localhost:3000/dj](http://localhost:3000/dj). The profile and
+work samples load with no environment file. For live integrations, copy
+`.env.example` to `.env.local` and replace its placeholders with development
+credentials. Never commit that file or expose the Supabase service-role key to
+the browser. `OPENAI_API_KEY`, `PINECONE_API_KEY`, and `PINECONE_INDEX_NAME`
+enable live chat and indexing. `SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY` enable persistence. Both `ADMIN_PASSWORD` and
+`ADMIN_SESSION_SECRET` are required for owner sign-in. All three
+`RESEND_API_KEY`, `RESEND_FROM`, and `RESEND_TO` values enable optional
+new-session alerts; an incomplete set disables alerts.
 
-**Current ingestion behavior:** `npm run ingest` deletes every vector in the `resume` namespace before uploading the JSON records. This includes admin corrections. Use a development index for setup, and preserve corrections before running it against an existing index. Safe ingestion is a priority in the refactor design.
+Before using persistence, review [database/README.md](database/README.md) and
+manually apply `database/001_initial.sql` followed by
+`database/002_correction_sync.sql` to a **new, empty** Supabase project. For an
+existing project, inspect its schema and data, back it up, and prepare an
+adoption migration for any differences. The app never runs migrations. The
+`npm run db:test` command uses disposable local PostgreSQL only.
 
-## Development commands
+To populate a development Pinecone index, first review the source JSON and
+run the read-only plan:
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the Next.js development server |
-| `npm run build` | Create a production build |
-| `npm start` | Serve an existing production build |
-| `npm run lint` | Run ESLint |
-| `npx tsc --noEmit` | Check TypeScript independently |
-| `npm run ingest` | Rebuild the configured Pinecone namespace from source JSON |
-| `npm run eval` | Run 12 live retrieval-recall cases |
-| `npm run structure -- --input path/to/transcript.txt` | Extract knowledge entries from a transcript |
+```bash
+npm run ingest -- --dry-run
+npm run ingest
+```
 
-The data scripts load `.env.local` through `tsx`. Ingestion, evaluation, and structuring make live provider calls and may incur usage charges; they are not an offline test suite.
+Ingestion validates source IDs before provider access. It upserts stable
+source-owned IDs before deleting stale IDs with the exact source ownership
+marker. It preserves owner correction vectors and legacy unmarked vectors.
+The dry run inventories the configured index without embedding or mutation;
+it still requires read access to that development index. Review the plan
+before any live run. No production re-index was performed for this refactor.
 
-The structuring script appends generated entries to `data/knowledge_entries.json`; it does not re-index them. Review the diff for factual accuracy and duplicates before indexing. `--skip-dedup` disables the similarity check. The current capture TXT exporter and transcript parser disagree about speaker roles; check interviewer/question and DJ/answer attribution manually until that defect is fixed.
+## Verification
+
+```bash
+npm run check       # Prettier scope, ESLint, TypeScript, offline Vitest
+npm run build       # No AI or database credentials needed
+npx playwright install chromium
+npm run test:e2e    # Against the production build on local port 3100
+npm run db:test     # Disposable Docker PostgreSQL 16, fresh and adoption paths
+```
+
+The PDF browser test requires `pdftotext` (Poppler). CI installs Chromium,
+Poppler, and a local PostgreSQL container, then runs these same gates from a
+clean checkout. Browser chat responses are synthetic fixtures. Vitest suites
+reject unmocked external requests. `npm run format` applies Prettier to
+maintained source, configuration, and selected documentation; authored JSON,
+historical HTML, local files, and generated output are outside that scope.
+
+`npm run eval` performs **live retrieval-recall evaluation**, using the same
+retrieval path as chat. It needs provider access and does not verify generated
+answer accuracy. Live provider behavior, production persistence, email
+delivery, deployment, and production migrations remain unverified by offline
+gates.
 
 ## Routes and owner workflow
 
 | Route | Purpose |
 | --- | --- |
-| `/dj` | Public profile and streaming chat |
+| `/dj` | Profile and streaming chat |
 | `/dj/apple-immersive-video` | Apple immersive video work sample |
 | `/dj/b2b-saas-km-analysis` | B2B SaaS knowledge-management analysis |
 | `/dj/breakout-game-analysis` | Game analysis work sample |
 | `/dj/flint-analysis` | Flint retrospective |
-| `/admin/dashboard` | Review, metrics, corrections, and persona settings |
-| `/admin/internal` | Profile with retrieval and prompt traces |
-| `/admin/capture` | Interview assistant for capturing new material |
+| `/admin/dashboard` | Reviews, metrics, corrections, and settings |
+| `/admin/internal` | Authenticated retrieval and prompt diagnostics |
+| `/admin/capture` | Authenticated interview capture |
 | `/v1` | Earlier chat interface |
-| `/ui`, `/ui/[name]` | Gallery and selected historical interfaces |
+| `/ui`, `/ui/[name]` | Historical prototype gallery and HTML routes |
 
-The owner workflow is: inspect an exchange, mark it good or needing improvement, and optionally supply a corrected answer. A correction is embedded using the original question and upserted into Pinecone. Persona visibility, bilingual labels, and answer mode are managed in the dashboard.
+Owner sessions use an eight-hour signed cookie (`HttpOnly`, `SameSite=Strict`,
+and `Secure` in production). Owner mutations require same-origin requests;
+internal chat and capture require a valid session before provider access.
+Expiring sessions return to sign-in. The capture and internal pages keep
+bounded in-memory drafts through reauthentication; explicit sign-out clears
+them. Rate limits are process-local, and deployments must have a trusted
+reverse proxy that overwrites `X-Forwarded-For` for per-visitor limiting.
 
-The current admin implementation uses a shared password. It needs the authentication and trace-access fixes described in the [baseline review](docs/reviews/2026-09-29-codebase-review.md); the internal debugger is not a secure boundary in this revision.
+For reviews, the database first saves the review and pending correction under
+an atomic owner claim. Only that owner can finalize or release it. A failed
+embedding before vector access releases the claim for retry. If a vector
+upsert is rejected or times out, the claim remains held because the provider
+may still write later. An administrator may clear it only after confirming
+that the old worker and provider activity have ended. See
+[database/README.md](database/README.md) for recovery details.
 
-## Deployment and local-only files
+Capture exports versioned JSON and versioned labelled text. `npm run
+structure -- --input path/to/transcript` accepts those formats, legacy capture
+JSON, and Q/A text. Ambiguous `Human`/`Assistant` text requires `--format
+capture-legacy`; explicit Q/A mode is `--format qa`. Structuring uses live
+generation and may use Pinecone for deduplication. It validates and appends
+entries atomically to `data/knowledge_entries.json`; it does not index them.
+Review generated facts and duplicates before a development ingestion run.
 
-Deploy the committed repository as a Node.js Next.js application. Configure the server-side environment variables, provision the data services, and build with `npm run build`. Vercel is the current integration target: the app uses Vercel Analytics and `waitUntil` to keep logging and notifications alive after a response. Other hosts need equivalent background-task lifecycle handling. The build uses Google-hosted Geist fonts through `next/font`.
+The conversation PDF exporter uses a bundled Korean-capable font, checks page
+boundaries, and preserves English and Korean answer text. Its source and
+license are recorded in [public/fonts/README.md](public/fonts/README.md).
+Geist fonts are bundled through the `geist` npm package, so production builds
+have no font network dependency.
 
-Deploy from a clean Git checkout. Personal Meta preparation routes, exports, scripts, and notes are intentionally ignored and may remain on a developer's machine. `.gitignore` excludes them from Git; it does not prevent Next.js from building a local route or serving a local `public/` file.
-
-## Quality and refactor status
-
-The [baseline review](docs/reviews/2026-09-29-codebase-review.md) records verified issues and check results. The [proposed refactor design](docs/superpowers/specs/2026-09-29-codebase-refactor-design.md) defines boundaries, compatibility requirements, and acceptance checks.
-
-At baseline, the tracked snapshot passes `npm run build -- --webpack`; the default Turbopack build has not yet been verified. ESLint reports 14 errors and 8 warnings, and there is no checked-in automated test suite or CI workflow. The proposed refactor makes reproducible setup, tested behavior, and clear ownership of code part of the project.
+Personal Meta preparation files are intentionally ignored. They can exist in
+a local checkout but are absent from a clean Git build; the ignore rules do
+not stop a local Next.js server from building or serving those files.

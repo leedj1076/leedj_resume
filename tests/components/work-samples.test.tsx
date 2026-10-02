@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import AppleImmersiveVideoPage from "@/app/dj/apple-immersive-video/page";

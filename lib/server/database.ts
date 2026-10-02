@@ -12,14 +12,17 @@ export function requireDatabase() {
 export async function fetchAllExchanges(): Promise<Exchange[]> {
   const client = requireDatabase();
   const rows: Exchange[] = [];
-  for (let offset = 0; ; offset += 500) {
+  let lastId = 0;
+  for (;;) {
     const { data, error } = await client.from("chat_exchanges").select("*")
-      .order("created_at", { ascending: true }).order("id", { ascending: true })
-      .range(offset, offset + 499);
+      .gt("id", lastId).order("id", { ascending: true }).range(0, 499);
     if (error) throw new Error(`Database read failed: ${error.message}`);
     if (!data) throw new Error("Database read returned no data");
-    rows.push(...data.map((row) => exchangeSchema.parse(row)));
+    const page = data.map((row) => exchangeSchema.parse(row));
+    rows.push(...page);
+    if (page.length) lastId = page.at(-1)!.id;
     if (data.length < 500) break;
   }
-  return rows;
+  // Consumer session ordering is chronological, independent of identity allocation.
+  return rows.sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id - b.id);
 }

@@ -52,13 +52,14 @@ function parseLabelledText(raw: string, labels: Record<string, "interviewer" | "
   let speaker: "interviewer" | "subject" | null = null;
   let content: string[] = [];
   const flush = () => {
-    if (speaker) turns.push({ speaker, text: content.join("\n").trim() });
+    if (speaker) turns.push({ speaker, text: header ? content.join("\n") : content.join("\n").trim() });
     content = [];
   };
   for (const line of lines) {
     const match = /^([A-Za-z]+):(?:[ \t]*(.*))?$/.exec(line);
     const nextSpeaker = match ? labels[match[1].toLowerCase()] : undefined;
     if (nextSpeaker) {
+      if (header && speaker && content.at(-1) === "") content.pop();
       flush();
       speaker = nextSpeaker;
       if (match?.[2]) content.push(match[2]);
@@ -82,7 +83,7 @@ export function parseTranscript(raw: string, format: TranscriptFormat = "auto"):
   if (trimmed.startsWith("{") || trimmed.startsWith("[")) return parseJson(trimmed, format);
   if (format === "capture-legacy") return parseLabelledText(trimmed, { assistant: "interviewer", human: "subject", user: "subject" });
   if (format === "qa") return parseLabelledText(trimmed, { q: "interviewer", a: "subject" });
-  if (/^Transcript v1(?:\r?\n|$)/.test(trimmed)) return parseLabelledText(trimmed, { interviewer: "interviewer", subject: "subject" }, "Transcript v1");
+  if (/^Transcript v1(?:\r?\n|$)/.test(trimmed)) return parseLabelledText(raw, { interviewer: "interviewer", subject: "subject" }, "Transcript v1");
   if (/^(?:Human|User|Assistant):/im.test(trimmed)) throw new Error("Ambiguous Human/Assistant transcript; use --format capture-legacy to assign roles");
   if (/^(?:Q|A):/im.test(trimmed)) return parseLabelledText(trimmed, { q: "interviewer", a: "subject" });
   throw new Error("Unknown transcript format. Use versioned capture export, --format capture-legacy, or --format qa");

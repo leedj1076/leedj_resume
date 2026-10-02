@@ -29,6 +29,14 @@ describe("public chat route", () => {
     expect(boundary.chat).not.toHaveBeenCalled();
   });
 
+  it("applies public admission when JSON cannot be parsed", async () => {
+    const { POST } = await import("@/app/api/chat/route");
+    const response = await POST(new Request(url, { method: "POST", body: "{" }));
+    expect(response.status).toBe(400);
+    expect(boundary.admit).toHaveBeenCalledOnce();
+    expect(boundary.chat).not.toHaveBeenCalled();
+  });
+
   it("rejects unauthenticated internal traffic before providers and never admits it as public", async () => {
     boundary.admin.mockRejectedValue(new HttpError(401, "unauthorized", "Unauthorized"));
     const { POST } = await import("@/app/api/chat/route");

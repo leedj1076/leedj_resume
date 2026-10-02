@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { expect, it } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import TracePanel from "@/components/TracePanel";

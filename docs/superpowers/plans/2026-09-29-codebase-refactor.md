@@ -291,4 +291,7 @@ Recommended: **subagent-driven execution**, one implementation task at a time wi
 
 Alternative: **native execution** in this session, then a fresh whole-branch reviewer. This uses fewer agent contexts but postpones independent review.
 
-The user must review this plan and select an execution method before implementation, as required by the writing-plans workflow. No method has been selected yet.
+The user approved subagent-driven execution. Tasks 1–13 have been implemented
+and reviewed in the isolated `codex/resume-refactor` worktree; Task 14 integrates
+offline browser, SQL, and clean-checkout verification. No production migration,
+indexing, deployment, or live model evaluation is part of this execution.

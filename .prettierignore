@@ -1,0 +1,15 @@
+.next/
+node_modules/
+.superpowers/
+playwright-report/
+test-results/
+coverage/
+data/
+prompts/
+ui_test/
+public/
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo
+app/dj/meta/
+scripts/export-meta-*-mobile.mjs
