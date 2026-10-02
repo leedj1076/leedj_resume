@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import ArticleShell from "@/components/work-samples/ArticleShell";
 
 export const metadata: Metadata = {
   title: "Flint: Knowledge Management Crisis Analysis — DJ Lee",
@@ -9,24 +9,7 @@ export const metadata: Metadata = {
 
 export default function FlintAnalysisPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)]">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-[var(--color-page-bg)]/80 backdrop-blur-md border-b border-[var(--color-border-primary)]">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
-          <Link
-            href="/dj"
-            className="text-[13px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors no-underline"
-          >
-            &larr; Back to profile
-          </Link>
-          <span className="text-[12px] text-[var(--color-text-muted)] uppercase tracking-[0.15em]">
-            Work Samples
-          </span>
-        </div>
-      </header>
-
-      {/* Article */}
-      <article className="max-w-3xl mx-auto px-6 pt-16 pb-24">
+    <ArticleShell title={<>
         {/* Title block */}
         <div className="mb-12">
           <h1 className="text-[32px] md:text-[40px] font-semibold text-[var(--color-text-primary)] tracking-[-0.03em] leading-tight">
@@ -40,6 +23,7 @@ export default function FlintAnalysisPage() {
           </p>
         </div>
 
+    </>}>
         {/* Prose body */}
         <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:tracking-[-0.02em] prose-h2:text-[24px] prose-h2:mt-14 prose-h2:mb-4 prose-h3:text-[18px] prose-h3:mt-10 prose-h3:mb-3 prose-p:text-[15px] prose-p:leading-relaxed prose-p:text-[var(--color-text-secondary)] prose-li:text-[15px] prose-li:leading-relaxed prose-li:text-[var(--color-text-secondary)] prose-strong:text-[var(--color-text-primary)] prose-th:text-[14px] prose-td:text-[14px] prose-blockquote:text-[14px] prose-blockquote:text-[var(--color-text-tertiary)] prose-blockquote:border-[var(--color-border-tertiary)]">
 
@@ -447,22 +431,6 @@ export default function FlintAnalysisPage() {
             tools for <em>using</em> it are not. That is the gap Flint is built to close.
           </p>
         </div>
-      </article>
-
-      {/* Footer */}
-      <footer className="border-t border-[var(--color-border-primary)]">
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          <p className="text-[13px] text-[var(--color-text-muted)]">
-            Written by Dong Jae Lee &middot;{" "}
-            <Link
-              href="/dj"
-              className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors no-underline"
-            >
-              Back to profile
-            </Link>
-          </p>
-        </div>
-      </footer>
-    </div>
+    </ArticleShell>
   );
 }

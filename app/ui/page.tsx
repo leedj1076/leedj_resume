@@ -2,121 +2,19 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const VERSIONS = [
+import { PROTOTYPES, type Prototype } from "@/lib/prototypes";
+
+const VERSIONS: readonly (Prototype | Omit<Prototype, "filename">)[] = [
   {
     slug: "v1-original",
     label: "V1",
     title: "Original",
-    desc: "Production app — streaming chat, gateway modal, persona-aware RAG",
+    description: "Production app — streaming chat, gateway modal, persona-aware RAG",
     tags: ["Streaming", "Gateway", "RAG"],
     accent: "#3b82f6",
     href: "/v1",
   },
-  {
-    slug: "v2-full-suite",
-    label: "V2",
-    title: "Full Suite",
-    desc: "Gateway + 3 modes: Brief overview, Chat with evidence panel, Fit Analysis — dual theme, education, skills",
-    tags: ["Fit Analysis", "Evidence Panel", "Dual Theme"],
-    accent: "#8b5cf6",
-  },
-  {
-    slug: "v3-narrative",
-    label: "V3",
-    title: "Narrative",
-    desc: "Story-driven chapters with progressive reveal, serif typography, timeline markers",
-    tags: ["Chapters", "Timeline", "Serif"],
-    accent: "#f59e0b",
-  },
-  {
-    slug: "v4-signal-deck",
-    label: "V4",
-    title: "Signal Deck",
-    desc: "Presentation deck with snap-scroll sections, evidence-first framing, cinematic feel",
-    tags: ["Scroll-snap", "Deck", "Cinematic"],
-    accent: "#10b981",
-  },
-  {
-    slug: "v5-merged",
-    label: "V5",
-    title: "Merged",
-    desc: "No gateway — quick-scan grid, topic accordions, floating orbs, direct chat",
-    tags: ["No Gateway", "Accordions", "Ambient"],
-    accent: "#ec4899",
-  },
-  {
-    slug: "v6-dd-room",
-    label: "V6",
-    title: "DD Data Room",
-    desc: "VC due diligence data room — split-screen investment memo + DD copilot chat with citation cross-refs",
-    tags: ["Split-Screen", "Memo", "Citations"],
-    accent: "#ef4444",
-  },
-  {
-    slug: "v7-terminal",
-    label: "V7",
-    title: "Hacker Terminal",
-    desc: "CLI data room — terminal commands, streaming RAG, CRT scanlines, command history, tab autocomplete",
-    tags: ["CLI", "Monospace", "CRT"],
-    accent: "#34d399",
-  },
-  {
-    slug: "v8-memo",
-    label: "V8",
-    title: "Living Memo",
-    desc: "Editorial investment memo — hover any paragraph to summon inline AI threads, Playfair serif, no chat window",
-    tags: ["Editorial", "Inline AI", "Serif"],
-    accent: "#6366f1",
-  },
-  {
-    slug: "v9-ic-dashboard",
-    label: "V9",
-    title: "IC Dashboard",
-    desc: "VC deal management SaaS — tabbed deal review (thesis, metrics, risks, skills) + IC debate thread with deal sponsor AI",
-    tags: ["Deal SaaS", "Tabbed", "IC Debate"],
-    accent: "#0ea5e9",
-  },
-  {
-    slug: "v10-altos-memo-hub",
-    label: "V10",
-    title: "Memo Hub",
-    desc: "Candidate memo data room — sidebar nav, competency map, case studies, bilingual (EN/KR), dark/light theme. RAG not connected.",
-    tags: ["Data Room", "Bilingual", "Sidebar Nav"],
-    accent: "#f97316",
-  },
-  {
-    slug: "v11-altos-final",
-    label: "V11",
-    title: "Editorial Final",
-    desc: "Best-of merge per evaluation report — Source Serif 4 editorial memo, bilingual (EN/KR), inline AI threads, risk self-assessment, collapsible quick-scan sidebar",
-    tags: ["Memo", "Bilingual", "Quick-Scan", "Risks"],
-    accent: "#4f46e5",
-  },
-  {
-    slug: "v12-auditable",
-    label: "V12",
-    title: "Auditable Memo",
-    desc: "Evidence-first investment memo — 12 claim anchors with source popovers, 3 reading paths (90s/5min/Full DD), JD signal tags, section progress nav, streaming AI threads, default-open quick-scan",
-    tags: ["Evidence Ledger", "Reading Paths", "JD Signals", "Streaming AI"],
-    accent: "#7c3aed",
-  },
-  {
-    slug: "v13-auditable-plus",
-    label: "V13",
-    title: "Auditable+",
-    desc: "V12 + 6 improvements — JD coverage matrix, founder question framework (5 accordion cards), bull/bear IC synthesis, 90-day operating plan with failure triggers, upgraded evidence popovers (verification + confidence + invalidation), AI citation enforcement",
-    tags: ["JD Matrix", "Bull/Bear", "90-Day Plan", "Founder Questions", "Citation AI"],
-    accent: "#4f46e5",
-  },
-  {
-    slug: "v14-profile",
-    label: "V14",
-    title: "Interactive Profile",
-    desc: "Split-screen profile + chat — neutral palette, career timeline, stats grid, streaming AI chat with starter questions. Audience-neutral, no VC framing.",
-    tags: ["Split-Screen", "Profile", "Chat", "Bilingual"],
-    accent: "#22c55e",
-    href: "/",
-  },
+  ...PROTOTYPES,
 ];
 
 export default function UIIndex() {
@@ -195,7 +93,7 @@ export default function UIIndex() {
                           </span>
                         </div>
                         <p className="text-[13px] text-white/40 mt-1.5 leading-relaxed">
-                          {v.desc}
+                          {v.description}
                         </p>
                         <div className="flex gap-1.5 mt-2.5">
                           {v.tags.map((tag) => (

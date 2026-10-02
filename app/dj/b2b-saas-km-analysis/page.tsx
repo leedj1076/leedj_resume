@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import ArticleShell from "@/components/work-samples/ArticleShell";
 
 export const metadata: Metadata = {
   title:
@@ -10,24 +10,7 @@ export const metadata: Metadata = {
 
 export default function B2BSaaSKMAnalysisPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)]">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-[var(--color-page-bg)]/80 backdrop-blur-md border-b border-[var(--color-border-primary)]">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
-          <Link
-            href="/dj"
-            className="text-[13px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors no-underline"
-          >
-            &larr; Back to profile
-          </Link>
-          <span className="text-[12px] text-[var(--color-text-muted)] uppercase tracking-[0.15em]">
-            Work Samples
-          </span>
-        </div>
-      </header>
-
-      {/* Article */}
-      <article className="max-w-3xl mx-auto px-6 pt-16 pb-24">
+    <ArticleShell footerStyle="compact" title={<>
         {/* Title block */}
         <header className="mb-16">
           <h1 className="text-[32px] sm:text-[40px] font-bold leading-[1.15] tracking-tight text-[var(--color-text-primary)] mb-4">
@@ -41,6 +24,7 @@ export default function B2BSaaSKMAnalysisPage() {
           </p>
         </header>
 
+    </>}>
         {/* Prose */}
         <div className="prose prose-neutral dark:prose-invert max-w-none text-[var(--color-text-secondary)] prose-headings:text-[var(--color-text-primary)] prose-strong:text-[var(--color-text-primary)] prose-a:text-[var(--color-key)] prose-blockquote:border-[var(--color-key)] prose-blockquote:text-[var(--color-text-tertiary)]">
           {/* Introduction */}
@@ -311,19 +295,6 @@ export default function B2BSaaSKMAnalysisPage() {
             </p>
           </section>
         </div>
-      </article>
-
-      {/* Footer */}
-      <footer className="max-w-3xl mx-auto px-6 pb-16">
-        <div className="border-t border-[var(--color-border-primary)] pt-8">
-          <Link
-            href="/dj"
-            className="text-[14px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors no-underline"
-          >
-            &larr; Back to profile
-          </Link>
-        </div>
-      </footer>
-    </div>
+    </ArticleShell>
   );
 }
