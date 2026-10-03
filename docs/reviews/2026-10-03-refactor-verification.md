@@ -1,8 +1,9 @@
 # Final refactor fixes and verification
 
 The final implementation wave addresses all seven findings from the whole-branch
-review at `03b3816`. **The controller's scoped re-review is pending.** This record
-is implementation evidence, not an independent review approval or deployment.
+review at `03b3816`. **Independent scoped re-review completed on 2026-10-04:**
+all seven findings were addressed, with no new Critical or Important issue found
+in `03b3816..06b297e`. This record describes local verification, not deployment.
 
 ## Resolved behavior
 
@@ -65,3 +66,19 @@ original-checkout modification was performed. Retrieval weights, provider/SDK
 security pins, authored career content, and local personal files are unchanged.
 Conversation retention is bounded and memory-only, so page reload/navigation
 intentionally clears it; this is not durable autosave.
+
+## Review closure — 2026-10-04
+
+The independent reviewer inspected the final test/build/browser/CLI logs and the
+negative Next client-build error. The controller then reran `npm test` on
+`06b297e`: all 25 files and 223 tests passed. The original checkout's 18 local
+Meta files matched the recorded SHA-256 values, remained ignored, and were not
+tracked. The implementation worktree was clean.
+
+One non-blocking, pre-existing limitation remains: internal feedback requests
+have no cancellation signal. A delayed feedback 401 can request sign-in again
+after a newer login. The implemented and tested stale-401 protection applies to
+canceled chat transports; it is not a guarantee for every admin request.
+
+The branch remains `codex/resume-refactor`; it has not been merged, pushed, or
+deployed as part of this refactor verification.
