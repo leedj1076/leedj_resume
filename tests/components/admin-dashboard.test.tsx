@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { StrictMode } from "react";
 import { afterEach, expect, it, vi } from "vitest";
 import {
   act,
@@ -466,4 +467,61 @@ it("keeps edited labels after a failed settings save", async () => {
   expect(await screen.findByRole("alert")).toHaveTextContent(/server/i);
   expect(label).toHaveValue("Investor");
   expect(screen.queryByText("Saved")).not.toBeInTheDocument();
+});
+
+it.each([true, false])(
+  "settles review saves under StrictMode (success=%s)",
+  async (success) => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        Response.json(
+          success
+            ? {
+                success: true,
+                pineconeChunkId: null,
+                correctionStatus: "none",
+              }
+            : { error: "Actionable failure" },
+          { status: success ? 200 : 500 },
+        ),
+      ),
+    );
+    const onSaved = vi.fn();
+    render(
+      <StrictMode>
+        <ReviewEditor exchange={exchange} onSaved={onSaved} />
+      </StrictMode>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Good" }));
+    fireEvent.click(screen.getByRole("button", { name: "Submit Review" }));
+    expect(
+      await screen.findByRole(success ? "status" : "alert"),
+    ).toHaveTextContent(success ? "Saved" : /failure|server/i);
+    expect(screen.getByRole("button", { name: "Submit Review" })).toBeEnabled();
+    expect(onSaved).toHaveBeenCalledTimes(success ? 1 : 0);
+  },
+);
+it("ignores a review response after genuine unmount", async () => {
+  const response = deferred<Response>();
+  vi.stubGlobal("fetch", vi.fn().mockReturnValue(response.promise));
+  const onSaved = vi.fn();
+  const view = render(
+    <StrictMode>
+      <ReviewEditor exchange={exchange} onSaved={onSaved} />
+    </StrictMode>,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Good" }));
+  fireEvent.click(screen.getByRole("button", { name: "Submit Review" }));
+  view.unmount();
+  await act(async () =>
+    response.resolve(
+      Response.json({
+        success: true,
+        pineconeChunkId: null,
+        correctionStatus: "none",
+      }),
+    ),
+  );
+  expect(onSaved).not.toHaveBeenCalled();
 });

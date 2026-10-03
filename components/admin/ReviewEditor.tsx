@@ -50,12 +50,12 @@ export function ReviewEditor({
   const [status, setStatus] = useState<string | null>(null);
   const busy = useRef(false);
   const mounted = useRef(true);
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
       mounted.current = false;
-    },
-    [],
-  );
+    };
+  }, []);
 
   const submit = async () => {
     if (!rating || busy.current) return;
