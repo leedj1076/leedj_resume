@@ -64,5 +64,11 @@
     "@humanfs/node": "0.16.8",
     "ajv": "6.15.0",
     "ws": "8.22.0"
+  },
+  "imports": {
+    "#server-only": {
+      "browser": "server-only",
+      "default": "./lib/server/node-only.ts"
+    }
   }
 }

@@ -1,4 +1,4 @@
-import "server-only";
+import "#server-only";
 
 export function getPineconeIndexName(): string {
   const name = process.env.PINECONE_INDEX_NAME;
