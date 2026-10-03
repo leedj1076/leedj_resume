@@ -96,8 +96,12 @@ Owner sessions use an eight-hour signed cookie (`HttpOnly`, `SameSite=Strict`,
 and `Secure` in production). Owner mutations require same-origin requests;
 internal chat and capture require a valid session before provider access.
 Expiring sessions return to sign-in. The capture and internal pages keep
-bounded in-memory drafts through reauthentication; explicit sign-out clears
-them. Rate limits are process-local, and deployments must have a trusted
+bounded in-memory conversation snapshots (latest 50 messages, up to 500,000
+serialized characters) and composer drafts (2,000 characters) through
+reauthentication. Protected UI unmounts and cancels pending chat requests;
+stale replies cannot alter the restored chat or expire a newer session.
+Explicit sign-out clears the snapshot and draft; leaving/reloading the page
+also discards this memory. Rate limits are process-local, and deployments must have a trusted
 reverse proxy that overwrites `X-Forwarded-For` for per-visitor limiting.
 
 For reviews, the database first saves the review and pending correction under

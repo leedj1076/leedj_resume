@@ -63,9 +63,20 @@ shifts. Page sizes remain 10 sessions and 20 exchanges.
 Owner authentication requires both `ADMIN_PASSWORD` and
 `ADMIN_SESSION_SECRET`, even for an existing cookie. The signed cookie expires
 after eight hours and is `HttpOnly`, `SameSite=Strict`, and `Secure` in
-production. Owner pages show sign-in after expiry. Bounded drafts in capture
-and the internal debugger survive reauthentication in memory; explicit
-sign-out clears them. No password is stored in browser storage.
+production. Owner pages show sign-in after expiry. Capture and internal chat
+keep a snapshot owner above the gate: latest 50 messages within 500,000
+serialized characters, plus a 2,000-character composer draft. The protected
+UI unmounts and aborts the old chat; reauthentication creates a fresh SDK chat
+from the retained snapshot. Detached replies cannot update that snapshot or
+expire a new login. Explicit sign-out replaces the memory owner and clears
+it; page reload/navigation discards it. No password or conversation is stored
+in browser storage.
+
+Provider configuration uses the package-local `#server-only` import. Plain
+Node/tsx resolves its Node runtime guard, so the evaluator can load vector
+providers without Next or a test alias. The browser condition resolves Next's
+`server-only` marker, which rejects privileged configuration imports in client
+components at build time. The CLI import probe uses no credentials or network.
 
 ## Content and exports
 
