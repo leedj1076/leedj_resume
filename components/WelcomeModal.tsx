@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { PERSONA_OPTIONS } from "@/lib/domain/personas";
 import type { Persona, Focus, VisitorData } from "@/lib/types";
 
 type Lang = "en" | "ko";
 
-const PERSONA_OPTIONS: { value: Persona; en: string; ko: string }[] = [
-  { value: "recruiter", en: "Recruiter", ko: "채용 담당자" },
-  { value: "vc", en: "VC", ko: "VC" },
-  { value: "founder_partner", en: "Founder / Partner", ko: "창업자 / 파트너" },
-  { value: "curious_visitor", en: "Curious Visitor", ko: "방문자" },
-];
+// Keep the legacy recruiter wording and API language convention; valid IDs
+// and all other labels come from the same domain as the current profile.
+const LEGACY_PERSONA_OPTIONS = PERSONA_OPTIONS.map((option) => ({
+  value: option.value,
+  en: option.value === "recruiter" ? "Recruiter" : option.en,
+  ko: option.value === "recruiter" ? "채용 담당자" : option.kr,
+}));
 
 const FOCUS_OPTIONS: { value: Focus; en: string; ko: string }[] = [
   {
@@ -74,7 +76,7 @@ export default function WelcomeModal({ lang, onSubmit }: WelcomeModalProps) {
             aria-label={t.personaLabel}
             className="flex flex-wrap gap-2"
           >
-            {PERSONA_OPTIONS.map((opt) => (
+            {LEGACY_PERSONA_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 role="radio"

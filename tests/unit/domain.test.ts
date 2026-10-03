@@ -145,7 +145,7 @@ describe("chat message helpers", () => {
     ).toBe("Hello world");
   });
 
-  it("extracts only complete trailing follow-up tags", () => {
+  it("extracts complete suggestions and hides unfinished control suffixes", () => {
     expect(
       parseFollowUps(
         "Answer\n<followup>\nFirst?\nSecond?\nThird?\n</followup>  ",
@@ -155,7 +155,7 @@ describe("chat message helpers", () => {
       followUps: ["First?", "Second?"],
     });
     expect(parseFollowUps("Answer <followup>Incomplete")).toEqual({
-      clean: "Answer <followup>Incomplete",
+      clean: "Answer",
       followUps: [],
     });
     expect(

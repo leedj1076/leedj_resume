@@ -120,3 +120,29 @@ describe("transcript attribution", () => {
     );
   });
 });
+
+it.each([
+  "interviewer",
+  "INTERVIEWER",
+  "iNtErViEwEr",
+  "subject",
+  "SUBJECT",
+  "sUbJeCt",
+])("round trips literal %s labels and backslashes", (label) => {
+  const exact: Transcript = {
+    version: 1,
+    turns: [
+      source.turns[0],
+      {
+        speaker: "subject",
+        text: `Template:
+${label}: literal
+\\${label}: escaped
+\\\\${label}: twice
+End
+`,
+      },
+    ],
+  };
+  expect(parseTranscript(serializeTranscript(exact, "text"))).toEqual(exact);
+});

@@ -7,6 +7,8 @@ import {
   screen,
   within,
 } from "@testing-library/react";
+import WelcomeModal from "@/components/WelcomeModal";
+import { PERSONAS } from "@/lib/domain/personas";
 import PersonaSelector from "@/components/profile/PersonaSelector";
 import ChatComposer from "@/components/chat/ChatComposer";
 import { resolvePersonaOptions } from "@/lib/domain/personas";
@@ -164,3 +166,32 @@ it("composer respects composition, Enter, Shift+Enter, empty input, and loading"
   fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
   expect(onSend).toHaveBeenCalledTimes(1);
 });
+
+it.each(["en", "ko"] as const)(
+  "legacy welcome uses all canonical personas in %s",
+  (lang) => {
+    const onSubmit = vi.fn();
+    render(<WelcomeModal lang={lang} onSubmit={onSubmit} />);
+    const groups = screen.getAllByRole("radiogroup");
+    const options = within(groups[0]).getAllByRole("radio");
+    expect(options).toHaveLength(PERSONAS.length);
+    fireEvent.click(
+      within(groups[0]).getByRole("radio", {
+        name:
+          lang === "en"
+            ? "Recruiter (Strategic Partnerships)"
+            : "채용 담당자 (전략 파트너십)",
+      }),
+    );
+    fireEvent.click(within(groups[1]).getAllByRole("radio")[0]);
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: lang === "en" ? /Start Chat/ : /대화 시작/,
+      }),
+    );
+    expect(onSubmit).toHaveBeenCalledWith({
+      persona: "developer_partnerships",
+      focus: "business_development",
+    });
+  },
+);

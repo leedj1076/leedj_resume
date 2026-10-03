@@ -28,7 +28,7 @@ export function serializeTranscript(
     "Transcript v1",
     ...valid.turns.map(({ speaker, text }) => {
       const escaped = text.replace(
-        /^([\\]|(?:Interviewer|Subject):)/gm,
+        /^([\\]|(?:Interviewer|Subject):)/gim,
         "\\$1",
       );
       return `${explicitLabels[speaker]}:\n${escaped}`;
@@ -111,7 +111,7 @@ function parseLabelledText(
       continue;
     }
     content.push(
-      header && /^\\(?:\\|(?:Interviewer|Subject):)/.test(line)
+      header && /^\\(?:\\|(?:Interviewer|Subject):)/i.test(line)
         ? line.slice(1)
         : line,
     );

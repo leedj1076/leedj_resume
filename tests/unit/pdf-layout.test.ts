@@ -128,3 +128,11 @@ describe("PDF conversation layout", () => {
     expect(lines.map((line) => line.text)).toEqual(["A clear answer."]);
   });
 });
+
+it("omits an unfinished control suffix from a stopped answer PDF", () => {
+  expect(
+    bodyLines([
+      message("assistant", "Answer body.\n<followup>\nCould you tell me"),
+    ]).map((line) => line.text),
+  ).toEqual(["Answer body."]);
+});
