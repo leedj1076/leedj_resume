@@ -20,8 +20,15 @@ function handleAdminResponse(response: Response): Response {
   return response;
 }
 
-export const adminTransportFetch: typeof fetch = async (input, init) =>
-  handleAdminResponse(await fetch(input, init));
+export const adminTransportFetch: typeof fetch = async (input, init) => {
+  const response = await fetch(input, init);
+  const signal =
+    init?.signal ?? (input instanceof Request ? input.signal : undefined);
+  // A detached transport may resolve after cancellation. Its 401 must not
+  // expire a new session that the owner has already authenticated.
+  signal?.throwIfAborted();
+  return handleAdminResponse(response);
+};
 
 export async function adminRequest<T>(
   url: string,

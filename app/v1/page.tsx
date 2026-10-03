@@ -1,5 +1,6 @@
 "use client";
 
+import { prepareChatRequest } from "@/lib/chat/request";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
@@ -91,7 +92,11 @@ export default function Home() {
   }, [lang]);
 
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/chat" }),
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        prepareSendMessagesRequest: prepareChatRequest,
+      }),
     [],
   );
 

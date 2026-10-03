@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { prepareChatRequest } from "@/lib/chat/request";
+import { useConversationMemory } from "@/components/admin/AdminConversationWorkspace";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { adminTransportFetch } from "@/lib/admin/client";
@@ -24,13 +26,18 @@ export function useProfileConversation(
   },
 ) {
   const { internal, lang, persona, source, visitorEmail } = options;
-  const [sessionId] = useState(() => crypto.randomUUID());
+  const memory = useConversationMemory();
+  const [sessionId] = useState(
+    () => memory?.read().sessionId ?? crypto.randomUUID(),
+  );
+  const [restoredMessages] = useState(() => memory?.read().messages ?? []);
   const [generation, setGeneration] = useState(0);
   const [selectedTraceMessageId, selectTrace] = useState<string | null>(null);
   const transport = useMemo(
     () =>
       new DefaultChatTransport<ChatUIMessage>({
         api: "/api/chat",
+        prepareSendMessagesRequest: prepareChatRequest,
         credentials: "same-origin",
         fetch: internal ? adminTransportFetch : undefined,
       }),
@@ -47,8 +54,20 @@ export function useProfileConversation(
   } = useChat<ChatUIMessage>({
     id: `${sessionId}-${generation}`,
     transport,
+    messages: generation === 0 ? restoredMessages : [],
     onError: (err) => console.error("Chat error:", err),
   });
+
+  useEffect(() => {
+    memory?.saveSessionId(sessionId);
+    memory?.saveMessages(messages);
+  }, [memory, messages, sessionId]);
+  useEffect(
+    () => () => {
+      void sdkStop();
+    },
+    [sdkStop],
+  );
 
   const send = useCallback(
     (text: string) => {

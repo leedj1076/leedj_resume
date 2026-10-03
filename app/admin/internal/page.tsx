@@ -1,12 +1,12 @@
 "use client";
 
 import ProfileAppLoader from "@/components/ProfileAppLoader";
-import { AdminGate } from "@/components/admin/AdminGate";
+import { AdminConversationWorkspace } from "@/components/admin/AdminConversationWorkspace";
 
 export default function InternalPage() {
   return (
-    <AdminGate>
+    <AdminConversationWorkspace>
       <ProfileAppLoader internal />
-    </AdminGate>
+    </AdminConversationWorkspace>
   );
 }

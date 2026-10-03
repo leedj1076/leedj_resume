@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useConversationDraft } from "./admin/AdminConversationWorkspace";
 import { getMessageText, parseFollowUps } from "@/lib/chat/messages";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import ChatMessage from "./chat/ChatMessage";
@@ -46,7 +47,7 @@ export default function ChatPanel({
   selectedTraceMessageId,
   onSelectTrace,
 }: ChatPanelProps) {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useConversationDraft();
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState("");
   const { scrollRef, onScroll } = useAutoScroll(messages, status);

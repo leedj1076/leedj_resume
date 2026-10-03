@@ -1,5 +1,10 @@
 "use client";
 
+import { prepareChatRequest } from "@/lib/chat/request";
+import {
+  useConversationMemory,
+  useConversationDraft,
+} from "./AdminConversationWorkspace";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
@@ -9,13 +14,16 @@ import { adminTransportFetch } from "@/lib/admin/client";
 import { serializeTranscript, type Transcript } from "@/lib/chat/transcript";
 
 export function CaptureInterview() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useConversationDraft();
+  const memory = useConversationMemory();
+  const [restoredMessages] = useState(() => memory?.read().messages ?? []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [transport] = useState(
     () =>
       new DefaultChatTransport({
         api: "/api/capture",
+        prepareSendMessagesRequest: prepareChatRequest,
         credentials: "same-origin",
         fetch: adminTransportFetch,
       }),
@@ -23,8 +31,19 @@ export function CaptureInterview() {
 
   const { messages, sendMessage, stop, status, error } = useChat({
     transport,
+    messages: restoredMessages,
     onError: (err) => console.error("Capture error:", err),
   });
+
+  useEffect(() => {
+    memory?.saveMessages(messages);
+  }, [memory, messages]);
+  useEffect(
+    () => () => {
+      void stop();
+    },
+    [stop],
+  );
 
   const isLoading = status === "submitted" || status === "streaming";
 
