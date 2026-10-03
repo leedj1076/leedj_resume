@@ -1,27 +1,66 @@
 -- Runs in two disposable PostgreSQL databases after migrations 001 + 002.
 -- :is_adoption=true/false; psql exits on any assertion failure.
 do $$
+declare
+  app_table text;
+  app_sequence text;
+  rpc_signature text;
+  public_role text;
+  privilege text;
+  rls_enabled boolean;
 begin
-  if not (select bool_and(relrowsecurity) from pg_class where oid in
-    ('public.app_settings'::regclass, 'public.analytics_events'::regclass, 'public.chat_exchanges'::regclass)) then
-    raise exception 'RLS is not enabled on all application tables';
-  end if;
-  if has_table_privilege('anon', 'public.chat_exchanges', 'SELECT')
-     or has_table_privilege('authenticated', 'public.chat_exchanges', 'SELECT')
-     or has_table_privilege('anon', 'public.app_settings', 'UPDATE')
-     or has_table_privilege('authenticated', 'public.analytics_events', 'INSERT') then
-    raise exception 'Public roles have application table privileges';
-  end if;
-  if not (has_table_privilege('service_role', 'public.chat_exchanges', 'SELECT, INSERT, UPDATE')
-     and has_table_privilege('service_role', 'public.app_settings', 'SELECT, INSERT, UPDATE')
-     and has_table_privilege('service_role', 'public.analytics_events', 'SELECT, INSERT')) then
-    raise exception 'Service role lacks required table privileges';
-  end if;
-  if has_function_privilege('anon', 'public.claim_correction_review(integer,text,text,text,text,timestamptz)', 'EXECUTE')
-     or has_function_privilege('authenticated', 'public.finish_correction_review(integer,text,text,text,text)', 'EXECUTE')
-     or not has_function_privilege('service_role', 'public.record_uncertain_correction_review(integer,text,text)', 'EXECUTE') then
-    raise exception 'Correction RPC grants are incorrect';
-  end if;
+  foreach app_table in array array['app_settings', 'analytics_events', 'chat_exchanges'] loop
+    select c.relrowsecurity into rls_enabled
+      from pg_class c where c.oid = format('public.%I', app_table)::regclass;
+    if rls_enabled is distinct from true then
+      raise exception 'RLS is not enabled on %', app_table;
+    end if;
+    foreach public_role in array array['anon', 'authenticated'] loop
+      foreach privilege in array array['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER'] loop
+        if has_table_privilege(public_role, format('public.%I', app_table), privilege) then
+          raise exception '% has forbidden % on %', public_role, privilege, app_table;
+        end if;
+      end loop;
+    end loop;
+    foreach privilege in array array['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER'] loop
+      if not has_table_privilege('service_role', format('public.%I', app_table), privilege) then
+        raise exception 'service_role lacks % on %', privilege, app_table;
+      end if;
+    end loop;
+  end loop;
+
+  foreach app_sequence in array array['analytics_events_id_seq', 'chat_exchanges_id_seq'] loop
+    foreach public_role in array array['anon', 'authenticated'] loop
+      foreach privilege in array array['USAGE', 'SELECT', 'UPDATE'] loop
+        if has_sequence_privilege(public_role, format('public.%I', app_sequence), privilege) then
+          raise exception '% has forbidden % on %', public_role, privilege, app_sequence;
+        end if;
+      end loop;
+    end loop;
+    foreach privilege in array array['USAGE', 'SELECT'] loop
+      if not has_sequence_privilege('service_role', format('public.%I', app_sequence), privilege) then
+        raise exception 'service_role lacks % on %', privilege, app_sequence;
+      end if;
+    end loop;
+    if has_sequence_privilege('service_role', format('public.%I', app_sequence), 'UPDATE') then
+      raise exception 'service_role has unneeded UPDATE on %', app_sequence;
+    end if;
+  end loop;
+
+  foreach rpc_signature in array array[
+    'public.claim_correction_review(integer,text,text,text,text,timestamptz)',
+    'public.finish_correction_review(integer,text,text,text,text)',
+    'public.record_uncertain_correction_review(integer,text,text)'
+  ] loop
+    foreach public_role in array array['anon', 'authenticated'] loop
+      if has_function_privilege(public_role, rpc_signature, 'EXECUTE') then
+        raise exception '% can execute %', public_role, rpc_signature;
+      end if;
+    end loop;
+    if not has_function_privilege('service_role', rpc_signature, 'EXECUTE') then
+      raise exception 'service_role cannot execute %', rpc_signature;
+    end if;
+  end loop;
 end $$;
 
 \if :{?is_adoption}
